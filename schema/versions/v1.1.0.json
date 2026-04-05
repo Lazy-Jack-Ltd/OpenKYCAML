@@ -13,12 +13,12 @@
       "properties": {
         "primaryIdentifier": {
           "type": "string",
-          "description": "Family name / surname of the natural person.",
+          "description": "Family name / surname of the natural person. Maps to eIDAS 2.0 PID attribute 'family_name' when nameIdentifierType is LEGL.",
           "maxLength": 100
         },
         "secondaryIdentifier": {
           "type": "string",
-          "description": "Given name(s) / forename(s) of the natural person.",
+          "description": "Given name(s) / forename(s) of the natural person. Maps to eIDAS 2.0 PID attribute 'given_name'.",
           "maxLength": 100
         },
         "nameIdentifierType": {
@@ -73,7 +73,7 @@
       "properties": {
         "nationalIdentifier": {
           "type": "string",
-          "description": "Identifier value (e.g., passport number, tax ID).",
+          "description": "Identifier value (e.g., passport number, tax ID). Maps to eIDAS 2.0 PID attribute 'person_identifier' or 'personal_administrative_number'. For legal entities with LEIX type, maps to eIDAS 2.0 LPID attribute 'unique_identifier'.",
           "maxLength": 35
         },
         "nationalIdentifierType": {
@@ -102,11 +102,11 @@
         "dateOfBirth": {
           "type": "string",
           "format": "date",
-          "description": "Date of birth in ISO 8601 format (YYYY-MM-DD)."
+          "description": "Date of birth in ISO 8601 format (YYYY-MM-DD). Maps to eIDAS 2.0 PID attribute 'birth_date'."
         },
         "placeOfBirth": {
           "type": "string",
-          "description": "City or municipality of birth.",
+          "description": "City or municipality of birth. Maps to eIDAS 2.0 PID attribute 'birth_place' (optional in eIDAS; required by IVMS 101 §3.3).",
           "maxLength": 70
         }
       }
@@ -143,7 +143,7 @@
         "geographicAddress": {
           "type": "array",
           "items": { "$ref": "#/$defs/Address" },
-          "description": "Geographic address(es) of the natural person."
+          "description": "Geographic address(es) of the natural person. Maps to eIDAS 2.0 PID attribute 'resident_address' (structured)."
         },
         "nationalIdentification": {
           "$ref": "#/$defs/NationalIdentification",
@@ -159,7 +159,12 @@
         },
         "countryOfResidence": {
           "type": "string",
-          "description": "ISO 3166-1 alpha-2 country of residence.",
+          "description": "ISO 3166-1 alpha-2 country of residence. Maps to eIDAS 2.0 PID attribute 'resident_country'.",
+          "pattern": "^[A-Z]{2}$"
+        },
+        "nationality": {
+          "type": "string",
+          "description": "ISO 3166-1 alpha-2 nationality of the natural person. Maps to eIDAS 2.0 PID attribute 'nationality'. Use when nationality differs from country of residence.",
           "pattern": "^[A-Z]{2}$"
         }
       }
@@ -172,7 +177,7 @@
       "properties": {
         "legalPersonName": {
           "type": "string",
-          "description": "Registered legal name of the entity.",
+          "description": "Registered legal name of the entity. Maps to eIDAS 2.0 LPID attribute 'current_legal_name' when legalPersonNameIdentifierType is LEGL.",
           "maxLength": 100
         },
         "legalPersonNameIdentifierType": {
@@ -209,12 +214,18 @@
         },
         "geographicAddress": {
           "type": "array",
-          "items": { "$ref": "#/$defs/Address" }
+          "items": { "$ref": "#/$defs/Address" },
+          "description": "Geographic address(es) of the legal person. Maps to eIDAS 2.0 LPID attribute 'current_address'."
         },
         "customerNumber": {
           "type": "string",
-          "description": "Internal customer or account reference number assigned by the originating VASP/institution to the legal entity.",
+          "description": "Internal customer or account reference number assigned by the originating VASP/institution to the legal entity. Also used to carry optional eIDAS 2.0 LPID attributes such as VAT number, tax reference, or EORI number when applicable.",
           "maxLength": 50
+        },
+        "lei": {
+          "type": "string",
+          "description": "Legal Entity Identifier (LEI) per ISO 17442. Maps directly to eIDAS 2.0 LPID attribute 'lei'. Also expressible via nationalIdentification with nationalIdentifierType LEIX; this field provides an explicit top-level mapping for LPID interoperability.",
+          "pattern": "^[A-Z0-9]{20}$"
         },
         "nationalIdentification": {
           "$ref": "#/$defs/NationalIdentification",
@@ -222,7 +233,7 @@
         },
         "countryOfRegistration": {
           "type": "string",
-          "description": "ISO 3166-1 alpha-2 country of registration.",
+          "description": "ISO 3166-1 alpha-2 country of registration. Derivable from the LEI or unique_identifier in eIDAS 2.0 LPID.",
           "pattern": "^[A-Z]{2}$"
         }
       }
