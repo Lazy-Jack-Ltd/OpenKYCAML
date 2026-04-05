@@ -98,7 +98,10 @@ class SanctionsScreening(BaseModel):
     """KYC profile — sanctions screening result."""
 
     screeningStatus: Literal["CLEAR", "MATCH", "PENDING", "ERROR"]
-    screeningDate: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    screeningDate: datetime = Field(
+        ...,
+        description="Date and time the screening was performed. Must be explicitly provided to avoid misleading audit records.",
+    )
     screeningProvider: str | None = None
     listsChecked: list[str] = Field(default_factory=list)
     matchDetails: list[dict[str, Any]] = Field(default_factory=list)
@@ -117,7 +120,10 @@ class AuditMetadata(BaseModel):
 
     recordId: str = Field(default_factory=lambda: str(uuid.uuid4()))
     recordCreatedAt: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
-    recordUpdatedAt: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    recordUpdatedAt: datetime | None = Field(
+        None,
+        description="Set explicitly on update. Leave as None on first creation; the system layer is responsible for tracking update timestamps.",
+    )
     recordVersion: int = 1
     createdBy: str | None = None
     dataSourceSystem: str | None = None
@@ -138,6 +144,9 @@ class KYCProfileModel(BaseModel):
     auditMetadata: AuditMetadata = Field(default_factory=AuditMetadata)
 
 
+_SD_JWT_DEFAULT_HASH_ALG = "sha-256"
+
+
 # ---------------------------------------------------------------------------
 # SD-JWT selective disclosure models
 # ---------------------------------------------------------------------------
@@ -155,15 +164,15 @@ class DecodedDisclosure(BaseModel):
         raw = json.dumps([self.salt, self.claimName, self.claimValue], separators=(",", ":"))
         return urlsafe_b64encode(raw.encode()).rstrip(b"=").decode()
 
-    def digest(self) -> str:
-        """Return the SHA-256 digest of the encoded disclosure (hex)."""
+    def digest_hex(self) -> str:
+        """Return the hex-encoded SHA-256 digest of the Base64url-encoded disclosure."""
         return hashlib.sha256(self.encode().encode()).hexdigest()
 
 
 class SelectiveDisclosure(BaseModel):
     """SD-JWT selective disclosure descriptor."""
 
-    sd_alg: str = Field("sha-256", alias="_sd_alg")
+    sd_alg: str = Field(_SD_JWT_DEFAULT_HASH_ALG, alias="_sd_alg")
     requiredClaimPaths: list[str] = Field(default_factory=list)
     disclosableClaimPaths: list[str] = Field(default_factory=list)
     decodedDisclosures: list[DecodedDisclosure] = Field(default_factory=list)
@@ -475,12 +484,16 @@ class OpenKYCAMLVC(BaseModel):
         }
 
         if cfg.signing_key_jwk:
-            proof["signingKeyPresent"] = True
             proof["proofValue"] = (
-                "<sign envelope['verifiableCredential'] with your JWT/LD-Proof library>"
+                "<sign the canonicalized JSON of envelope['verifiableCredential'] "
+                "using your JWT/LD-Proof library and the provided signing key>"
             )
         else:
-            proof["proofValue"] = "<placeholder — provide signing_key_jwk in IssueConfig>"
+            proof["proofValue"] = (
+                "<placeholder — provide signing_key_jwk in IssueConfig; "
+                "sign the canonicalized JSON of envelope['verifiableCredential'] "
+                "before production use>"
+            )
 
         envelope["verifiableCredential"]["proof"] = proof
         return envelope
