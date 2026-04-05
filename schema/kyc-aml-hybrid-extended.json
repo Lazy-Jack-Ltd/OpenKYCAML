@@ -580,6 +580,61 @@
             "type": { "type": "string", "const": "JsonSchemaValidator2018" }
           }
         },
+        "evidence": {
+          "type": "array",
+          "description": "W3C VC §6.4 evidence block. Used in EUDI Wallet flows to reference the source credential(s) — typically a PID or LPID — that were presented by the subject and from which the IVMS 101 / kycProfile data was derived. Enables triangulation of the identity chain: PID Issuer → Subject Wallet → VASP.",
+          "items": {
+            "type": "object",
+            "required": ["id", "type"],
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "uri",
+                "description": "Unique identifier of the source credential or presentation event."
+              },
+              "type": {
+                "type": "array",
+                "items": { "type": "string" },
+                "description": "Type(s) of the evidence record (e.g. ['PIDCredential', 'EUDIWalletPresentationEvidence'])."
+              },
+              "verifier": {
+                "type": "string",
+                "format": "uri",
+                "description": "DID of the relying party / verifier that received the original presentation (typically the VASP)."
+              },
+              "credentialIssuer": {
+                "type": "string",
+                "format": "uri",
+                "description": "DID of the authority that originally issued the source credential (e.g. national PID Provider, Bundesanzeiger LPID Issuer)."
+              },
+              "evidenceDocument": {
+                "type": "string",
+                "description": "Human-readable description of the source document or credential (e.g. 'German National Identity Card (eIDAS 2.0 PID)').",
+                "maxLength": 200
+              },
+              "subjectPresence": {
+                "type": "string",
+                "enum": ["Physical", "Digital"],
+                "description": "Whether the subject was physically or digitally present during the presentation."
+              },
+              "documentPresence": {
+                "type": "string",
+                "enum": ["Physical", "Digital"],
+                "description": "Whether the document was presented physically or digitally."
+              },
+              "presentationMethod": {
+                "type": "string",
+                "description": "Protocol used for the presentation (e.g. 'OpenID4VP', 'MDOC', 'ISO-18013-5').",
+                "maxLength": 100
+              },
+              "presentationDate": {
+                "type": "string",
+                "format": "date-time",
+                "description": "ISO 8601 datetime when the credential was presented."
+              }
+            }
+          }
+        },
         "proof": { "$ref": "#/$defs/VerifiableCredentialProof" }
       }
     },
@@ -1034,7 +1089,7 @@
                 "enum": [
                   "VELOCITY", "THRESHOLD", "STRUCTURING", "GEOGRAPHY",
                   "COUNTERPARTY_RISK", "BEHAVIOUR_CHANGE", "PEP_SANCTIONS",
-                  "TRAVEL_RULE", "CTF", "OTHER"
+                  "TRAVEL_RULE", "CTF", "IDENTITY", "OTHER"
                 ]
               },
               "ruleResult": {
@@ -1318,7 +1373,7 @@
         "auditMetadata": { "$ref": "#/$defs/AuditMetadata" },
         "onboardingChannel": {
           "type": "string",
-          "enum": ["IN_PERSON", "REMOTE_VIDEO", "REMOTE_AUTOMATED", "THIRD_PARTY_CDD", "CORRESPONDENT"],
+          "enum": ["IN_PERSON", "REMOTE_VIDEO", "REMOTE_AUTOMATED", "THIRD_PARTY_CDD", "CORRESPONDENT", "EUDI_WALLET"],
           "description": "Channel through which the customer was onboarded (relevant to AMLR Article 22 remote onboarding requirements)."
         },
         "kycCompletionDate": {
