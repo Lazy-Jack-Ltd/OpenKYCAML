@@ -9,6 +9,9 @@ Welcome to the OpenKYCAML documentation. This directory contains detailed techni
 | [Mapping: IVMS 101 / eIDAS 2.0 / AMLR](mapping-ivms101-eidas-amlr.md) | Field-level mapping across IVMS 101, eIDAS 2.0 ARF, and EU AMLR |
 | [Adoption Guide](adoption-guide.md) | Step-by-step guide for VASPs, banks, and KYC utilities |
 | [Compliance Matrix](compliance-matrix.md) | Alignment with FATF, AMLR, ISO 20022, LEI, eIDAS ARF |
+| [AMLR 2027 Compliance Checklist](amlr-2027-compliance-checklist.md) | Operational checklist for obliged entities — schema configuration and process obligations |
+| [ERC-3643 (T-REX) Mapping](mapping-erc3643.md) | Field-level mapping from OpenKYCAML to ERC-3643 on-chain identity and security token standard |
+| [Sovrin / Hyperledger Indy (AnonCreds) Mapping](mapping-sovrin.md) | Field-level mapping from OpenKYCAML to Sovrin DID Method, Hyperledger Indy ledger transactions, and AnonCreds ZKP credential model |
 | [Roadmap](roadmap.md) | Planned features, community milestones, and version history |
 
 ## Schema

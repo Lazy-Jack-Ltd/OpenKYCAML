@@ -9,7 +9,7 @@
         {
           "legalPerson": {
             "name": {
-              "nameIdentifiers": [
+              "nameIdentifier": [
                 {
                   "legalPersonName": "Global Trade Solutions GmbH",
                   "legalPersonNameIdentifierType": "LEGL"
@@ -20,7 +20,7 @@
                 }
               ]
             },
-            "geographicAddresses": [
+            "geographicAddress": [
               {
                 "addressType": "BIZZ",
                 "streetName": "Frankfurter Allee",
@@ -35,7 +35,7 @@
               "nationalIdentifierType": "LEIX",
               "registrationAuthority": "RA000687"
             },
-            "customerIdentification": "CORP-DE-0001234",
+            "customerNumber": "CORP-DE-0001234",
             "countryOfRegistration": "DE"
           }
         }
@@ -50,7 +50,7 @@
         {
           "legalPerson": {
             "name": {
-              "nameIdentifiers": [
+              "nameIdentifier": [
                 {
                   "legalPersonName": "Pacific Rim Investments Pte Ltd",
                   "legalPersonNameIdentifierType": "LEGL"
@@ -65,7 +65,7 @@
                 }
               ]
             },
-            "geographicAddresses": [
+            "geographicAddress": [
               {
                 "addressType": "BIZZ",
                 "buildingNumber": "1",
@@ -83,43 +83,17 @@
           }
         }
       ],
-      "accountNumber": ["SG29DBSS0000000012345678"]
+      "accountNumber": [
+        "SG29DBSS0000000012345678"
+      ]
     },
     "originatingVASP": {
-      "originatingVASP": {
-        "name": {
-          "nameIdentifiers": [
-            {
-              "legalPersonName": "Deutsche Krypto Bank AG",
-              "legalPersonNameIdentifierType": "LEGL"
-            }
-          ]
-        },
-        "nationalIdentification": {
-          "nationalIdentifier": "DKBDE2HXXX",
-          "nationalIdentifierType": "RAID",
-          "countryOfIssue": "DE"
-        },
-        "countryOfRegistration": "DE"
-      }
+      "name": "Deutsche Krypto Bank AG",
+      "vaspIdentifier": "DE-Deutsche Krypto Bank AG"
     },
     "beneficiaryVASP": {
-      "beneficiaryVASP": {
-        "name": {
-          "nameIdentifiers": [
-            {
-              "legalPersonName": "MAS-Licensed Digital Assets Exchange",
-              "legalPersonNameIdentifierType": "LEGL"
-            }
-          ]
-        },
-        "nationalIdentification": {
-          "nationalIdentifier": "M12345678X",
-          "nationalIdentifierType": "RAID",
-          "countryOfIssue": "SG"
-        },
-        "countryOfRegistration": "SG"
-      }
+      "name": "MAS-Licensed Digital Assets Exchange",
+      "vaspIdentifier": "SG-MAS-Licensed Digital Assets Exchange"
     },
     "transferredAmount": {
       "amount": "500000.00",

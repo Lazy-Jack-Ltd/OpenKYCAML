@@ -1,6 +1,6 @@
 # OpenKYCAML Compliance Matrix
 
-This matrix documents the alignment of the OpenKYCAML v1.0.0 schema with major regulatory and technical standards.
+This matrix documents the alignment of the OpenKYCAML v1.2.0 schema with major regulatory and technical standards.
 
 **Legend:**
 - ✅ Full alignment — the standard is directly addressed.
@@ -43,6 +43,7 @@ This matrix documents the alignment of the OpenKYCAML v1.0.0 schema with major r
 | **Art. 28–31** — PEP provisions | PEP identification and EDD | ✅ | `kycProfile.pepStatus` |
 | **Art. 29** — EDD measures | Enhanced due diligence | ✅ | `kycProfile.dueDiligenceType` = `EDD`, `kycProfile.sourceOfFundsWealth` |
 | **Art. 56** — Record keeping | 5-year minimum retention | ✅ | `kycProfile.auditMetadata.dataRetentionDate`, `changeLog` |
+| **Art. 48** — CDD reliance on third parties | Third-party reliance conditions, written arrangement, access to data | ✅ | `kycProfile.thirdPartyCDDReliance` (`relyingPartyId`, `providingPartyId`, `relianceScope`, `relianceContractRef`, `accessToUnderlyingDataConfirmed`, `providingPartyEligibilityConfirmed`, `liabilityNote`) |
 | **Art. 83** — Transfer of funds (Travel Rule) | VASP Travel Rule obligations | ✅ | `ivms101` block |
 
 ---
@@ -86,9 +87,13 @@ This matrix documents the alignment of the OpenKYCAML v1.0.0 schema with major r
 | VC Subject (User DID) | ✅ | `verifiableCredential.credentialSubject.id` |
 | Credential Status / Revocation | ✅ | `verifiableCredential.credentialStatus` (StatusList2021) |
 | Proof suites (Ed25519, JWS, DataIntegrity) | ✅ | `verifiableCredential.proof.type` |
+| PID (Person Identification Data) — natural persons | ✅ | `NaturalPerson.*` fields with eIDAS attribute annotations (`family_name`, `given_name`, `birth_date`, `resident_address`, etc.) |
+| **LPID (Legal Person Identification Data)** — legal entities | ✅ | `legalPerson.lpid` — `LegalPersonIdentificationData` definition; covers mandatory (`currentLegalName`, `uniqueIdentifier`) and optional attributes (`lei`, `vatRegistrationNumber`, `taxReferenceNumber`, `eoriNumber`, `europeanUniqueIdentifier`, `currentAddress`) |
+| **QEAA / Representation & Mandates** | ✅ | `legalPerson.lpid.mandates[]` — natural person representatives with `roleOrPower`, `validFrom`/`validUntil`; supports AMLR authorised representative and UBO verification |
+| LPID in VC credentialSubject | ✅ | `verifiableCredential.credentialSubject.lpid` — standalone LPID VC for EUDI Wallet issuance flows |
 | OpenID4VCI (issuance) | ⬜ | Transport protocol — out of schema scope |
 | OpenID4VP (presentation) | ⬜ | Transport protocol — out of schema scope |
-| SD-JWT selective disclosure | 🟡 | Schema is compatible; SD-JWT framing not part of schema definition |
+| SD-JWT selective disclosure | ✅ | `verifiableCredential.selectiveDisclosure` block: `_sd_alg`, `disclosableClaimPaths`, `requiredClaimPaths`, `decodedDisclosures` (added v1.2.0) |
 
 ---
 
@@ -126,4 +131,79 @@ This matrix documents the alignment of the OpenKYCAML v1.0.0 schema with major r
 
 ---
 
-*Last updated: v1.0.0 — June 2024. Maintained by the OpenKYCAML Technical Working Group.*
+## 10. ERC-3643 (T-REX) — On-Chain Permissioned Token Standard
+
+> ERC-3643 is the Ethereum standard for regulated / security token issuance. It uses ONCHAINID (ERC-734/735) to manage investor identities on-chain. The full field-level mapping is in [mapping-erc3643.md](mapping-erc3643.md).
+
+| ERC-3643 Data Point | Coverage | OpenKYCAML Field(s) |
+|---|---|---|
+| **Investor wallet address** (`investorAddress`) | ✅ | `kycProfile.blockchainAccountIds[].address` |
+| **ONCHAINID contract address** (`identity`) | ✅ | `kycProfile.blockchainAccountIds[].onchainIDAddress` |
+| **Investor country** (`investorCountry`, uint16 ISO 3166-1 numeric) | ✅ | `ivms101.*.naturalPerson.countryOfResidence` (alpha-2; numeric conversion documented in mapping) |
+| **Eligibility flag** (`isVerified()`) | ✅ | `kycProfile.isEligible` (boolean) |
+| **Eligibility date** (last confirmed) | ✅ | `kycProfile.eligibilityLastConfirmed` |
+| **Wallet frozen** (`isFrozen(address)`) | ✅ | `kycProfile.blockchainAccountIds[].isFrozen` |
+| **Frozen token amount** (`getFrozenTokens(address)`) | ✅ | `kycProfile.blockchainAccountIds[].frozenTokenAmount` |
+| **Claim topic 1 — KYC** | ✅ | `kycProfile.kycCompletionDate` + `kycProfile.dueDiligenceRequirements` |
+| **Claim topic 2 — AML** | ✅ | `kycProfile.sanctionsScreening` + `kycProfile.adverseMedia` |
+| **Claim topic 3 — Country** | ✅ | `ivms101.*.naturalPerson.countryOfResidence` |
+| **Claim topic 101 — Accredited Investor** | ✅ | `kycProfile.customerClassification.accreditedInvestor` + `investorCategoryJurisdiction` |
+| **Claim issuer** (`issuer` address → DID) | ✅ | `verifiableCredential.issuer` + `verifiableCredential.evidence[].credentialIssuer` |
+| **Claim signature** (ERC-735 signature bytes) | ✅ | `verifiableCredential.proof.proofValue` / `verifiableCredential.proof.jws` |
+| **Claim data** (ABI-encoded payload) | ✅ | Structured JSON across `ivms101.*` and `kycProfile.*` |
+| **Claim URI** | ✅ | `verifiableCredential.credentialSchema.id` |
+| **Claim topic type** | ✅ | `verifiableCredential.type[]` |
+| **ERC-734 Claim signing key** | ✅ | `verifiableCredential.proof.verificationMethod` |
+| **Trusted Issuers Registry** (per issuer + topics) | 🔄 | `verifiableCredential.evidence[].credentialIssuer` (per credential); no central registry ref in the KYC record |
+| **Claim Topics Registry** (required topics) | 🔄 | `kycProfile.dueDiligenceRequirements.verifiedAttributes[]` (attributes per DD tier) |
+| **Transfer compliance (`canTransfer`)** | 🔄 | Off-chain: `kycProfile.isEligible` + `kycProfile.customerRiskRating` + `kycProfile.sanctionsScreening` |
+| **Token contract metadata** (name, symbol, decimals) | ℹ️ | Out of scope — token-level, not investor KYC |
+
+_✅ = full field mapping. 🔄 = conceptual equivalent (see [mapping-erc3643.md](mapping-erc3643.md)). ℹ️ = out of scope._
+
+> _AMLA (Anti-Money Laundering Authority, established under Regulation (EU) 2024/1620) is mandated to issue Regulatory Technical Standards (RTS) and Guidelines under the AMLR. Several RTS are anticipated but not yet published as of April 2026. This section tracks alignment with draft and final RTS._
+
+| AMLA RTS Topic | Expected Legal Basis | Status | OpenKYCAML Coverage |
+|---|---|---|---|
+| **RTS on CDD attribute sets** — mandatory attribute sets for SDD, CDD, and EDD tiers | AMLR Art. 22(4) | 🟡 Pending AMLA RTS publication | `kycProfile.dueDiligenceRequirements` captures applied tier and verified attributes; `dueDiligenceType` enum (SDD / CDD / EDD). Field designed to be updated once the binding RTS attribute lists are published. |
+| **RTS on EDD for high-risk third countries** — specific EDD measures | AMLR Art. 29(4) | 🟡 Pending AMLA RTS publication | `kycProfile.riskRatingDetail.riskFactors.geographicRisk`; `kycProfile.dueDiligenceType` = `EDD`; `kycProfile.monitoringInfo.eddRequired`. |
+| **RTS on CDD reliance conditions** — conditions, form of written arrangement, access to underlying data | AMLR Art. 48(5) | ✅ Schema ready | `kycProfile.thirdPartyCDDReliance` block: `relyingPartyId`, `providingPartyId`, `relianceScope`, `relianceContractRef`, `relianceDate`, `accessToUnderlyingDataConfirmed`, `providingPartyEligibilityConfirmed`, `liabilityNote` (Art. 48(3)–(4)). |
+| **RTS on PEP lists and harmonised category taxonomy** | AMLR Art. 28(3) / Art. 31 | 🟡 Pending AMLA RTS publication | `kycProfile.pepStatus.pepCategory` updated to AMLA draft taxonomy: `DOMESTIC_PEP`, `FOREIGN_PEP`, `INTERNATIONAL_ORGANISATION`, `FAMILY_MEMBER_OF_PEP`, `CLOSE_ASSOCIATE_OF_PEP`, `FORMER_PEP`, `NOT_PEP`. Enum will be finalised once RTS is adopted. |
+| **RTS on remote CDD and electronic identification** — minimum assurance levels and accepted eID means | AMLR Art. 22(4) | ✅ Schema ready | `kycProfile.dueDiligenceRequirements.verificationMethods[].method` supports `EIDAS_HIGH`, `EIDAS_SUBSTANTIAL`, `EUDI_WALLET_PID`; `assuranceLevel` field (LOW / SUBSTANTIAL / HIGH). |
+| **RTS on group-wide AML/CFT policies and data sharing** | AMLR Art. 15(5) | 🟡 Pending AMLA RTS publication | `kycProfile.auditMetadata.sharingConsentReference`; `dataProvider`; `thirdPartyCDDReliance`. |
+| **Guidelines on risk factors** (successor to EBA Joint Guidelines) | AMLR Art. 20(6) | ✅ Schema ready | `kycProfile.riskRatingDetail.riskFactors` (geographic, product, channel, customer-type risk); `kycProfile.customerRiskRating`. |
+
+---
+
+## 11. Sovrin / Hyperledger Indy (AnonCreds) — Decentralised Identity Network
+
+> Sovrin is a public permissioned blockchain for self-sovereign identity built on Hyperledger Indy, using AnonCreds (Camenisch-Lysyanskaya) zero-knowledge proof credentials. The full field-level mapping is in [mapping-sovrin.md](mapping-sovrin.md).
+
+| Sovrin / Indy Data Point | Coverage | OpenKYCAML Field(s) |
+|---|---|---|
+| **DID** (`did:sov:<base58>` / `did:indy:<ns>:<base58>`) | ✅ | `verifiableCredential.credentialSubject.id` |
+| **Verification key** (Ed25519 base58 public key) | ✅ | `verifiableCredential.proof.verificationMethod` (DID URL) |
+| **Credential Schema ID** (`<did>:2:<name>:<version>`) | ✅ | `verifiableCredential.credentialSchema.id` |
+| **Credential Definition ID** (`<did>:3:CL:<seqNo>:<tag>`) | ✅ | `verifiableCredential.credentialSchema.credDefId` |
+| **Revocation Registry ID** (CL_ACCUM accumulator) | ✅ | `verifiableCredential.credentialStatus.id` |
+| **Revocation type** (`AnonCredsCredentialStatusList2023`) | ✅ | `verifiableCredential.credentialStatus.type` |
+| **CL Proof type** (`CLSignature2019`, `AnonCredsProof2023`) | ✅ | `verifiableCredential.proof.type` |
+| **Natural person attributes** (first_name, last_name, birth_date, address, document numbers) | ✅ | `ivms101.originator.*.naturalPerson.*` |
+| **Legal entity attributes** (org_name, registration_number, LEI, jurisdiction) | ✅ | `ivms101.originator.*.legalPerson.*` |
+| **KYC status** (`kyc_status`, `kyc_verified`) | ✅ | `kycProfile.isEligible` + `kycProfile.kycCompletionDate` |
+| **Risk level** (`risk_level`) | ✅ | `kycProfile.customerRiskRating.overallRiskRating` |
+| **AML check date** | ✅ | `kycProfile.sanctionsScreening.lastScreenedDate` |
+| **UBO / beneficial owner** | ✅ | `kycProfile.beneficialOwnership[]` |
+| **Selective disclosure / ZKP attributes** | ✅ | `verifiableCredential.selectiveDisclosure` |
+| **Consent / TAA acceptance** (TAA mechanism, time, digest) | 🔄 | `kycProfile.consentRecord` (mechanism, timestamp, version) |
+| **Rich Schema** (JSON_LD_CONTEXT, RICH_SCHEMA) | ✅ | `verifiableCredential.credentialSchema.id` (did:sov URI) + `@context[]` |
+| **Rich Schema Credential Definition** (RICH_SCHEMA_CRED_DEF) | ✅ | `verifiableCredential.credentialSchema.credDefId` |
+| **DID Document service endpoints** | ℹ️ | Out of scope — agent infrastructure, not KYC data |
+| **Ledger transaction metadata** (seqNo, txnTime) | ℹ️ | Out of scope — network infrastructure |
+| **NYM network roles** (TRUSTEE, STEWARD, ENDORSER) | ℹ️ | Out of scope — ledger governance, not investor KYC data |
+
+_✅ = full field mapping. 🔄 = conceptual equivalent (see [mapping-sovrin.md](mapping-sovrin.md)). ℹ️ = out of scope._
+
+---
+
+*Last updated: v1.2.0 — April 2026. Maintained by the OpenKYCAML Technical Working Group.*
