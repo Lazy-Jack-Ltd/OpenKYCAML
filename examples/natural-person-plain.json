@@ -1,6 +1,7 @@
 {
   "$schema": "https://openkycaml.org/schema/v1.1.0/kyc-aml-hybrid-extended.json",
   "version": "1.1.0",
+  "messageId": "550e8400-e29b-41d4-a716-446655440001",
   "messageDateTime": "2024-06-15T09:30:00Z",
   "ivms101": {
     "originator": {
@@ -82,7 +83,7 @@
     },
     "originatingVASP": {
       "name": "Acme Crypto Exchange BV",
-      "lei": "724500VNNHZHYDLFMO25",
+      "lei": "724500VNNHZHYDLFMO70",
       "vaspIdentifier": "NL-Acme Crypto Exchange BV"
     },
     "beneficiaryVASP": {

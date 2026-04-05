@@ -102,7 +102,7 @@
         },
         "originatingVASP": {
           "name": "Acme Crypto Exchange BV",
-          "lei": "724500VNNHZHYDLFMO25",
+          "lei": "724500VNNHZHYDLFMO70",
           "vaspIdentifier": "NL-Acme Crypto Exchange BV"
         },
         "beneficiaryVASP": {
