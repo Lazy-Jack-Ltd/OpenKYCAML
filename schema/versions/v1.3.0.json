@@ -2359,13 +2359,13 @@
               },
               "xrplCredentialType": {
                 "type": "string",
-                "description": "XRPL on-ledger credential type associated with this wallet, stored as a lowercase hex string (1–64 bytes, 2–128 hex characters). Mirrors the `CredentialType` field of an XRPL `Credential` ledger object (XLS-40d). Enables round-trip reconstruction of the on-ledger XRPL credential without relying on external state. The decoded human-readable equivalent is captured in `verifiableCredential.type[]`. Examples: '4b594343726564656e7469616c' (KYCCredential), '4f70656e4b5943414d4c43726564656e7469616c' (OpenKYCAMLCredential).",
+                "description": "XRPL on-ledger credential type associated with this wallet, stored as a hexadecimal string (1–64 bytes, 2–128 hex characters, case-insensitive). Mirrors the `CredentialType` field of an XRPL `Credential` ledger object (XLS-40d). Enables round-trip reconstruction of the on-ledger XRPL credential without relying on external state. The decoded human-readable equivalent is captured in `verifiableCredential.type[]`. Examples: '4b594343726564656e7469616c' (KYCCredential), '4f70656e4b5943414d4c43726564656e7469616c' (OpenKYCAMLCredential).",
                 "pattern": "^[0-9a-fA-F]{2,128}$",
                 "maxLength": 128
               },
               "mptIssuanceId": {
                 "type": "string",
-                "description": "XRPL Multi-Purpose Token issuance identifier (MPTokenIssuanceID) for which this wallet holds or has been authorised, stored as a 48-character lowercase hex string (Hash192 = 24 bytes). Mirrors the `MPTokenIssuanceID` field of XRPL `MPTIssuance` and `MPToken` ledger objects (XLS-33d). Useful for multi-issuance scenarios where a single investor holds authorisation for multiple regulated asset pools via separate `MPTokenAuthorize` transactions.",
+                "description": "XRPL Multi-Purpose Token issuance identifier (MPTokenIssuanceID) for which this wallet holds or has been authorised, stored as a 48-character hexadecimal string (case-insensitive; Hash192 = 24 bytes). Mirrors the `MPTokenIssuanceID` field of XRPL `MPTIssuance` and `MPToken` ledger objects (XLS-33d). Useful for multi-issuance scenarios where a single investor holds authorisation for multiple regulated asset pools via separate `MPTokenAuthorize` transactions.",
                 "pattern": "^[0-9a-fA-F]{48}$"
               }
             }

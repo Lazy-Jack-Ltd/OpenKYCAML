@@ -255,8 +255,8 @@ Two optional fields were added to `kycProfile.blockchainAccountIds[]` items to i
 
 | Field | Rationale | Pattern |
 |---|---|---|
-| `kycProfile.blockchainAccountIds[].xrplCredentialType` ⭐ (string, optional) | Stores the hex `CredentialType` value from the XRPL `Credential` object alongside the wallet address entry, enabling round-trip reconstruction of the on-ledger credential without relying on external state. The decoded string equivalent is captured in `verifiableCredential.type[]`. Pattern: `^[0-9a-fA-F]{2,128}$` (2–128 hex chars = 1–64 bytes). | `^[0-9a-fA-F]{2,128}$` |
-| `kycProfile.blockchainAccountIds[].mptIssuanceId` ⭐ (string, optional) | Stores the `MPTokenIssuanceID` (hex Hash192) of the specific MPT issuance this wallet is authorised for. Useful for multi-issuance scenarios where a single investor holds authorisation for multiple regulated asset pools via separate `MPTokenAuthorize` transactions. Pattern: exactly 48 hex characters (24 bytes). | `^[0-9a-fA-F]{48}$` |
+| `kycProfile.blockchainAccountIds[].xrplCredentialType` ⭐ (string, optional) | Stores the hex `CredentialType` value from the XRPL `Credential` object alongside the wallet address entry, enabling round-trip reconstruction of the on-ledger credential without relying on external state. The decoded string equivalent is captured in `verifiableCredential.type[]`. Pattern: `^[0-9a-fA-F]{2,128}$` (2–128 hex chars = 1–64 bytes, case-insensitive). | `^[0-9a-fA-F]{2,128}$` |
+| `kycProfile.blockchainAccountIds[].mptIssuanceId` ⭐ (string, optional) | Stores the `MPTokenIssuanceID` (Hash192) of the specific MPT issuance this wallet is authorised for. Useful for multi-issuance scenarios where a single investor holds authorisation for multiple regulated asset pools via separate `MPTokenAuthorize` transactions. Pattern: exactly 48 hex characters (24 bytes, case-insensitive). | `^[0-9a-fA-F]{48}$` |
 
 Both fields are **additive** — existing payloads without these fields remain fully valid.
 
