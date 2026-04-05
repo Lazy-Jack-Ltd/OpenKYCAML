@@ -213,6 +213,7 @@
         },
         "customerNumber": {
           "type": "string",
+          "description": "Internal customer or account reference number assigned by the originating VASP/institution to the legal entity.",
           "maxLength": 50
         },
         "nationalIdentification": {
@@ -499,7 +500,7 @@
         },
         "isPep": {
           "type": "boolean",
-          "description": "Alias for isPEP (IVMS 101 / reference schema interoperability)."
+          "description": "Alias for isPEP (reference schema interoperability). When both are present, isPEP takes precedence."
         },
         "pepCategory": {
           "type": "string",
@@ -544,8 +545,8 @@
         },
         "status": {
           "type": "string",
-          "description": "Alias for screeningStatus (reference schema interoperability).",
-          "enum": ["CLEAR", "HIT", "PENDING", "ESCALATED"]
+          "description": "Alias for screeningStatus (reference schema interoperability). Accepts all screeningStatus values.",
+          "enum": ["CLEAR", "HIT", "POTENTIAL_MATCH", "FALSE_POSITIVE", "PENDING", "ESCALATED"]
         },
         "screeningDate": {
           "type": "string",
@@ -715,7 +716,7 @@
         },
         "naturalPerson": {
           "$ref": "#/$defs/NaturalPerson",
-          "description": "The beneficial owner as a natural person. Use 'person' for natural or legal person support."
+          "description": "The beneficial owner as a natural person. Legacy field — use 'person' when natural or legal person support is needed. When both 'person' and 'naturalPerson' are present, 'person' takes precedence."
         },
         "ownershipPercentage": {
           "type": "number",
@@ -1202,11 +1203,11 @@
         "sourceOfFundsWealth": {
           "type": "array",
           "items": { "type": "string", "maxLength": 100 },
-          "description": "Declared source(s) of funds or wealth as free-text or coded values (e.g., EMPLOYMENT_INCOME, INHERITANCE)."
+          "description": "Declared source(s) of funds or wealth as free-text or coded values (e.g., EMPLOYMENT_INCOME, INHERITANCE). When sourceOfFundsWealthDetail is also present, it supersedes this field and the values here should match sourceOfFundsWealthDetail.sourceOfFunds."
         },
         "sourceOfFundsWealthDetail": {
           "$ref": "#/$defs/SourceOfFundsWealth",
-          "description": "Detailed and verified source of funds and wealth record including supporting documents."
+          "description": "Detailed and verified source of funds and wealth record including supporting documents. Supersedes sourceOfFundsWealth when present."
         },
         "beneficialOwnership": {
           "type": "array",
