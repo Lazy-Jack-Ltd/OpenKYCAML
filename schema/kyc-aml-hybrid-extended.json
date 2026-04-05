@@ -1100,7 +1100,7 @@
       "type": "string",
       "description": "OpenKYCAML schema version used (semantic versioning).",
       "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$",
-      "examples": ["1.0.0"]
+      "examples": ["1.1.0"]
     },
     "messageId": {
       "type": "string",
