@@ -220,4 +220,36 @@ _✅ = full field mapping. 🔄 = conceptual equivalent (see [mapping-sovrin.md]
 
 ---
 
+## 12. XRPL Credentials (XLS-40d), DIDs (did:xrpl), and Multi-Purpose Tokens (XLS-33d)
+
+> XRPL Credentials provide an on-ledger anchor for W3C VCs; the `did:xrpl` DID method binds XRPL accounts to W3C DIDs; and MPTs (Multi-Purpose Tokens) implement permissioned token issuance with KYC/AML gating analogous to ERC-3643. The full field-level mapping is in [mapping-xrpl-credentials-mpt.md](mapping-xrpl-credentials-mpt.md).
+
+| XRPL Data Point | Coverage | OpenKYCAML Field(s) |
+|---|---|---|
+| **`Credential.Subject`** (XRPL account → `did:xrpl`) | ✅ | `verifiableCredential.credentialSubject.id` (`did:xrpl:1:r...`) |
+| **`Credential.Issuer`** (XRPL account → `did:xrpl`) | ✅ | `verifiableCredential.issuer.id` (`did:xrpl:1:r...`) |
+| **`Credential.URI`** (off-chain VC payload URI) | ✅ | `verifiableCredential.id` (canonical URI of the OpenKYCAML VC) |
+| **`Credential.Expiration`** (Ripple epoch) | ✅ | `verifiableCredential.expirationDate` (ISO 8601; Ripple epoch = Unix − 946684800) |
+| **`Credential.CredentialType`** (hex-encoded type) | 🔄 | `verifiableCredential.type[]` (decoded string; see hex→string table in mapping doc §2.2) |
+| **`lsfAccepted`** (credential accepted by subject) | 🔄 | `kycProfile.auditMetadata.changeLog[]` entry (`credential_accepted`) |
+| **`DID` object** (`DIDDocument` + `URI`) | ✅ | `verifiableCredential.credentialSubject.id` / `verifiableCredential.issuer.id` (DID resolves via XRPL DID resolver) |
+| **`did:xrpl` DID method** | ✅ | All DID fields are DID-method-agnostic; `did:xrpl:1:r...` is a valid value |
+| **DID triangulation** (subject / issuer / relying party) | ✅ | `verifiableCredential.evidence[].credentialIssuer` + `.verifier` + `credentialSubject.id` |
+| **`DepositPreauth` credential gate** (`{Issuer, CredentialType}`) | ✅ | `kycProfile.isEligible: true` + `verifiableCredential.type[]` (off-chain pre-authorisation record) |
+| **`MPToken.lsfMPTAuthorized`** (holder authorised) | ✅ | `kycProfile.isEligible` (boolean) + `kycProfile.eligibilityLastConfirmed` |
+| **`MPToken.lsfMPTLocked`** (holder frozen) | ✅ | `kycProfile.blockchainAccountIds[].isFrozen` |
+| **Holder XRPL wallet address** | ✅ | `kycProfile.blockchainAccountIds[].address` (`network: "xrpl"`) |
+| **`MPTIssuance.lsfMPTRequireAuth`** (gate flag) | 🔄 | `kycProfile.isEligible` — off-chain prerequisite for `MPTokenAuthorize` |
+| **Credential revocation** (`CredentialDelete`) | ✅ | `verifiableCredential.credentialStatus` (StatusList2021Entry) + `kycProfile.isEligible: false` + `changeLog[]` |
+| **KYC type** (`CredentialType = KYCCredential`) | ✅ | `kycProfile.kycCompletionDate` + `kycProfile.dueDiligenceRequirements` |
+| **XRPL `CredentialType` hex** (round-trip reconstruction) | ✅ | `kycProfile.blockchainAccountIds[].xrplCredentialType` ⭐ (hex string, 2–128 chars; added v1.3.0) |
+| **MPT issuance identifier** (`MPTokenIssuanceID`) | ✅ | `kycProfile.blockchainAccountIds[].mptIssuanceId` ⭐ (48-char hex Hash192; added v1.3.0) |
+| **AML type** (`CredentialType = AMLCredential`) | ✅ | `kycProfile.sanctionsScreening` + `kycProfile.adverseMedia` |
+| **Accredited investor type** | ✅ | `kycProfile.customerClassification.accreditedInvestor` + `investorCategoryJurisdiction` |
+| **Travel Rule on XRPL** (FATF Rec 16 / MiCA Art. 83) | ✅ | `ivms101` block; `Credential.URI` anchors the IVMS 101 payload on-ledger |
+
+_✅ = full field mapping. 🔄 = conceptual equivalent (see [mapping-xrpl-credentials-mpt.md](mapping-xrpl-credentials-mpt.md)). ℹ️ = out of scope. ⭐ = schema extended in v1.3.0._
+
+---
+
 *Last updated: v1.3.0 — April 2026. Maintained by the OpenKYCAML Technical Working Group.*
