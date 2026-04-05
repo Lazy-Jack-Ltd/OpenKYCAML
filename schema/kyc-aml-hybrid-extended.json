@@ -32,7 +32,7 @@
       "title": "Address",
       "description": "Structured postal address (IVMS 101 §3.5).",
       "type": "object",
-      "required": ["addressType", "country"],
+      "required": ["country"],
       "properties": {
         "addressType": {
           "type": "string",
@@ -120,27 +120,27 @@
         "name": {
           "type": "object",
           "description": "Name of the natural person.",
-          "required": ["nameIdentifiers"],
+          "required": ["nameIdentifier"],
           "properties": {
-            "nameIdentifiers": {
+            "nameIdentifier": {
               "type": "array",
               "items": { "$ref": "#/$defs/NaturalPersonNameIdentifier" },
               "minItems": 1,
               "description": "One or more name identifiers for the natural person."
             },
-            "localNameIdentifiers": {
+            "localNameIdentifier": {
               "type": "array",
               "items": { "$ref": "#/$defs/NaturalPersonNameIdentifier" },
               "description": "Local-script name identifiers."
             },
-            "phoneticNameIdentifiers": {
+            "phoneticNameIdentifier": {
               "type": "array",
               "items": { "$ref": "#/$defs/NaturalPersonNameIdentifier" },
               "description": "Phonetic name identifiers."
             }
           }
         },
-        "geographicAddresses": {
+        "geographicAddress": {
           "type": "array",
           "items": { "$ref": "#/$defs/Address" },
           "description": "Geographic address(es) of the natural person."
@@ -190,28 +190,28 @@
       "properties": {
         "name": {
           "type": "object",
-          "required": ["nameIdentifiers"],
+          "required": ["nameIdentifier"],
           "properties": {
-            "nameIdentifiers": {
+            "nameIdentifier": {
               "type": "array",
               "items": { "$ref": "#/$defs/LegalPersonNameIdentifier" },
               "minItems": 1
             },
-            "localNameIdentifiers": {
+            "localNameIdentifier": {
               "type": "array",
               "items": { "$ref": "#/$defs/LegalPersonNameIdentifier" }
             },
-            "phoneticNameIdentifiers": {
+            "phoneticNameIdentifier": {
               "type": "array",
               "items": { "$ref": "#/$defs/LegalPersonNameIdentifier" }
             }
           }
         },
-        "geographicAddresses": {
+        "geographicAddress": {
           "type": "array",
           "items": { "$ref": "#/$defs/Address" }
         },
-        "customerIdentification": {
+        "customerNumber": {
           "type": "string",
           "maxLength": 50
         },
@@ -226,27 +226,15 @@
         }
       }
     },
-    "OriginatorBeneficiary": {
-      "title": "OriginatorBeneficiary",
-      "description": "IVMS 101 originator or beneficiary wrapper.",
+    "Originator": {
+      "title": "Originator",
+      "description": "IVMS 101 originator — the sending party in a virtual asset transfer.",
       "type": "object",
+      "required": ["originatorPersons"],
       "properties": {
         "originatorPersons": {
           "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "naturalPerson": { "$ref": "#/$defs/NaturalPerson" },
-              "legalPerson": { "$ref": "#/$defs/LegalPerson" }
-            },
-            "oneOf": [
-              { "required": ["naturalPerson"] },
-              { "required": ["legalPerson"] }
-            ]
-          }
-        },
-        "beneficiaryPersons": {
-          "type": "array",
+          "minItems": 1,
           "items": {
             "type": "object",
             "properties": {
@@ -262,7 +250,57 @@
         "accountNumber": {
           "type": "array",
           "items": { "type": "string", "maxLength": 100 },
-          "description": "Account numbers or virtual asset wallet addresses."
+          "description": "Account numbers or virtual asset wallet addresses of the originator."
+        }
+      }
+    },
+    "Beneficiary": {
+      "title": "Beneficiary",
+      "description": "IVMS 101 beneficiary — the receiving party in a virtual asset transfer.",
+      "type": "object",
+      "required": ["beneficiaryPersons"],
+      "properties": {
+        "beneficiaryPersons": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "properties": {
+              "naturalPerson": { "$ref": "#/$defs/NaturalPerson" },
+              "legalPerson": { "$ref": "#/$defs/LegalPerson" }
+            },
+            "oneOf": [
+              { "required": ["naturalPerson"] },
+              { "required": ["legalPerson"] }
+            ]
+          }
+        },
+        "accountNumber": {
+          "type": "array",
+          "items": { "type": "string", "maxLength": 100 },
+          "description": "Account numbers or virtual asset wallet addresses of the beneficiary."
+        }
+      }
+    },
+    "VASP": {
+      "title": "VASP",
+      "description": "Virtual Asset Service Provider identifier (IVMS 101 §3.14).",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Registered legal or trading name of the VASP.",
+          "maxLength": 100
+        },
+        "vaspIdentifier": {
+          "type": "string",
+          "description": "Internal or network-assigned identifier for this VASP.",
+          "maxLength": 100
+        },
+        "lei": {
+          "type": "string",
+          "description": "Legal Entity Identifier (LEI) of the VASP (ISO 17442).",
+          "pattern": "^[A-Z0-9]{20}$"
         }
       }
     },
@@ -270,22 +308,42 @@
       "title": "IVMS101Payload",
       "description": "Root IVMS 101 Travel Rule message payload.",
       "type": "object",
-      "required": ["originator", "beneficiary", "transferredAmount"],
+      "required": ["originator", "beneficiary", "originatingVASP", "beneficiaryVASP"],
       "properties": {
-        "originator": { "$ref": "#/$defs/OriginatorBeneficiary" },
-        "beneficiary": { "$ref": "#/$defs/OriginatorBeneficiary" },
+        "originator": { "$ref": "#/$defs/Originator" },
+        "beneficiary": { "$ref": "#/$defs/Beneficiary" },
         "originatingVASP": {
-          "type": "object",
-          "description": "The VASP transmitting the Travel Rule message.",
-          "properties": {
-            "originatingVASP": { "$ref": "#/$defs/LegalPerson" }
-          }
+          "$ref": "#/$defs/VASP",
+          "description": "The VASP transmitting the Travel Rule message."
         },
         "beneficiaryVASP": {
+          "$ref": "#/$defs/VASP",
+          "description": "The VASP receiving the Travel Rule message."
+        },
+        "transferPath": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/VASP" },
+          "description": "Ordered list of intermediate VASPs in the transfer chain (IVMS 101 §3.15)."
+        },
+        "payloadMetadata": {
           "type": "object",
-          "description": "The VASP receiving the Travel Rule message.",
+          "description": "Metadata describing this IVMS 101 message.",
           "properties": {
-            "beneficiaryVASP": { "$ref": "#/$defs/LegalPerson" }
+            "transactionIdentifier": {
+              "type": "string",
+              "description": "Unique identifier for this transaction assigned by the originating VASP.",
+              "maxLength": 100
+            },
+            "timestamp": {
+              "type": "string",
+              "format": "date-time",
+              "description": "ISO 8601 datetime when this payload was created."
+            },
+            "version": {
+              "type": "string",
+              "const": "IVMS101.2023",
+              "description": "IVMS 101 version identifier."
+            }
           }
         },
         "transferredAmount": {

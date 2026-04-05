@@ -9,7 +9,7 @@
         {
           "naturalPerson": {
             "name": {
-              "nameIdentifiers": [
+              "nameIdentifier": [
                 {
                   "primaryIdentifier": "Müller",
                   "secondaryIdentifier": "Anna Katharina",
@@ -17,7 +17,7 @@
                 }
               ]
             },
-            "geographicAddresses": [
+            "geographicAddress": [
               {
                 "addressType": "HOME",
                 "streetName": "Unter den Linden",
@@ -41,14 +41,16 @@
           }
         }
       ],
-      "accountNumber": ["0x71C7656EC7ab88b098defB751B7401B5f6d8976F"]
+      "accountNumber": [
+        "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
+      ]
     },
     "beneficiary": {
       "beneficiaryPersons": [
         {
           "naturalPerson": {
             "name": {
-              "nameIdentifiers": [
+              "nameIdentifier": [
                 {
                   "primaryIdentifier": "Rossi",
                   "secondaryIdentifier": "Marco",
@@ -56,7 +58,7 @@
                 }
               ]
             },
-            "geographicAddresses": [
+            "geographicAddress": [
               {
                 "addressType": "HOME",
                 "streetName": "Via Roma",
@@ -75,41 +77,19 @@
           }
         }
       ],
-      "accountNumber": ["0xAb5801a7D398351b8bE11C439e05C5B3259aeC9B"]
+      "accountNumber": [
+        "0xAb5801a7D398351b8bE11C439e05C5B3259aeC9B"
+      ]
     },
     "originatingVASP": {
-      "originatingVASP": {
-        "name": {
-          "nameIdentifiers": [
-            {
-              "legalPersonName": "BerlinDeFi GmbH",
-              "legalPersonNameIdentifierType": "LEGL"
-            }
-          ]
-        },
-        "nationalIdentification": {
-          "nationalIdentifier": "724500TEHJJ2L5MWSK89",
-          "nationalIdentifierType": "LEIX"
-        },
-        "countryOfRegistration": "DE"
-      }
+      "name": "BerlinDeFi GmbH",
+      "lei": "724500TEHJJ2L5MWSK89",
+      "vaspIdentifier": "DE-BerlinDeFi GmbH"
     },
     "beneficiaryVASP": {
-      "beneficiaryVASP": {
-        "name": {
-          "nameIdentifiers": [
-            {
-              "legalPersonName": "MilanoChain S.p.A.",
-              "legalPersonNameIdentifierType": "LEGL"
-            }
-          ]
-        },
-        "nationalIdentification": {
-          "nationalIdentifier": "815600E86C0C8A1F1804",
-          "nationalIdentifierType": "LEIX"
-        },
-        "countryOfRegistration": "IT"
-      }
+      "name": "MilanoChain S.p.A.",
+      "lei": "815600E86C0C8A1F1804",
+      "vaspIdentifier": "IT-MilanoChain S.p.A."
     },
     "transferredAmount": {
       "amount": "2.75",
@@ -122,7 +102,11 @@
       "https://openkycaml.org/contexts/v1"
     ],
     "id": "urn:uuid:550e8400-e29b-41d4-a716-446655440003",
-    "type": ["VerifiableCredential", "OpenKYCAMLCredential", "TravelRuleAttestation"],
+    "type": [
+      "VerifiableCredential",
+      "OpenKYCAMLCredential",
+      "TravelRuleAttestation"
+    ],
     "issuer": {
       "id": "did:web:berlindefi.example.com",
       "name": "BerlinDeFi GmbH"
@@ -137,7 +121,7 @@
             {
               "naturalPerson": {
                 "name": {
-                  "nameIdentifiers": [
+                  "nameIdentifier": [
                     {
                       "primaryIdentifier": "Müller",
                       "secondaryIdentifier": "Anna Katharina",
@@ -145,7 +129,7 @@
                     }
                   ]
                 },
-                "geographicAddresses": [
+                "geographicAddress": [
                   {
                     "addressType": "HOME",
                     "streetName": "Unter den Linden",
@@ -169,14 +153,16 @@
               }
             }
           ],
-          "accountNumber": ["0x71C7656EC7ab88b098defB751B7401B5f6d8976F"]
+          "accountNumber": [
+            "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
+          ]
         },
         "beneficiary": {
           "beneficiaryPersons": [
             {
               "naturalPerson": {
                 "name": {
-                  "nameIdentifiers": [
+                  "nameIdentifier": [
                     {
                       "primaryIdentifier": "Rossi",
                       "secondaryIdentifier": "Marco",
@@ -193,41 +179,19 @@
               }
             }
           ],
-          "accountNumber": ["0xAb5801a7D398351b8bE11C439e05C5B3259aeC9B"]
+          "accountNumber": [
+            "0xAb5801a7D398351b8bE11C439e05C5B3259aeC9B"
+          ]
         },
         "originatingVASP": {
-          "originatingVASP": {
-            "name": {
-              "nameIdentifiers": [
-                {
-                  "legalPersonName": "BerlinDeFi GmbH",
-                  "legalPersonNameIdentifierType": "LEGL"
-                }
-              ]
-            },
-            "nationalIdentification": {
-              "nationalIdentifier": "724500TEHJJ2L5MWSK89",
-              "nationalIdentifierType": "LEIX"
-            },
-            "countryOfRegistration": "DE"
-          }
+          "name": "BerlinDeFi GmbH",
+          "lei": "724500TEHJJ2L5MWSK89",
+          "vaspIdentifier": "DE-BerlinDeFi GmbH"
         },
         "beneficiaryVASP": {
-          "beneficiaryVASP": {
-            "name": {
-              "nameIdentifiers": [
-                {
-                  "legalPersonName": "MilanoChain S.p.A.",
-                  "legalPersonNameIdentifierType": "LEGL"
-                }
-              ]
-            },
-            "nationalIdentification": {
-              "nationalIdentifier": "815600E86C0C8A1F1804",
-              "nationalIdentifierType": "LEIX"
-            },
-            "countryOfRegistration": "IT"
-          }
+          "name": "MilanoChain S.p.A.",
+          "lei": "815600E86C0C8A1F1804",
+          "vaspIdentifier": "IT-MilanoChain S.p.A."
         },
         "transferredAmount": {
           "amount": "2.75",
@@ -260,14 +224,22 @@
           "screeningStatus": "CLEAR",
           "screeningDate": "2024-06-15T13:55:00Z",
           "screeningProvider": "Refinitiv World-Check",
-          "listsChecked": ["OFAC_SDN", "EU_CONSOLIDATED", "UN_CONSOLIDATED", "HMT"],
+          "listsChecked": [
+            "OFAC_SDN",
+            "EU_CONSOLIDATED",
+            "UN_CONSOLIDATED",
+            "HMT"
+          ],
           "matchDetails": []
         },
         "kycCompletionDate": "2024-01-15",
         "consentRecord": {
           "consentGiven": true,
           "consentDate": "2024-01-10T09:45:00Z",
-          "consentPurpose": ["AML_SCREENING", "DATA_SHARING_TRAVEL_RULE"]
+          "consentPurpose": [
+            "AML_SCREENING",
+            "DATA_SHARING_TRAVEL_RULE"
+          ]
         }
       }
     },

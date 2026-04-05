@@ -9,7 +9,7 @@
         {
           "naturalPerson": {
             "name": {
-              "nameIdentifiers": [
+              "nameIdentifier": [
                 {
                   "primaryIdentifier": "Al-Rashidi",
                   "secondaryIdentifier": "Fatima Noor",
@@ -17,7 +17,7 @@
                 }
               ]
             },
-            "geographicAddresses": [
+            "geographicAddress": [
               {
                 "addressType": "HOME",
                 "streetName": "Sheikh Zayed Road",
@@ -41,14 +41,16 @@
           }
         }
       ],
-      "accountNumber": ["0x3fC91A3afd70395Cd496C647d5a6CC9D4B2b7FAD"]
+      "accountNumber": [
+        "0x3fC91A3afd70395Cd496C647d5a6CC9D4B2b7FAD"
+      ]
     },
     "beneficiary": {
       "beneficiaryPersons": [
         {
           "legalPerson": {
             "name": {
-              "nameIdentifiers": [
+              "nameIdentifier": [
                 {
                   "legalPersonName": "Geneva Capital Management SA",
                   "legalPersonNameIdentifierType": "LEGL"
@@ -63,41 +65,19 @@
           }
         }
       ],
-      "accountNumber": ["CH5604835012345678009"]
+      "accountNumber": [
+        "CH5604835012345678009"
+      ]
     },
     "originatingVASP": {
-      "originatingVASP": {
-        "name": {
-          "nameIdentifiers": [
-            {
-              "legalPersonName": "DIFC Digital Asset Exchange LLC",
-              "legalPersonNameIdentifierType": "LEGL"
-            }
-          ]
-        },
-        "nationalIdentification": {
-          "nationalIdentifier": "529900T8BM49AAMSDO55",
-          "nationalIdentifierType": "LEIX"
-        },
-        "countryOfRegistration": "AE"
-      }
+      "name": "DIFC Digital Asset Exchange LLC",
+      "lei": "529900T8BM49AAMSDO55",
+      "vaspIdentifier": "AE-DIFC Digital Asset Exchange LLC"
     },
     "beneficiaryVASP": {
-      "beneficiaryVASP": {
-        "name": {
-          "nameIdentifiers": [
-            {
-              "legalPersonName": "Swiss Digital Finance AG",
-              "legalPersonNameIdentifierType": "LEGL"
-            }
-          ]
-        },
-        "nationalIdentification": {
-          "nationalIdentifier": "549300FJPOIUJ7U9LV82",
-          "nationalIdentifierType": "LEIX"
-        },
-        "countryOfRegistration": "CH"
-      }
+      "name": "Swiss Digital Finance AG",
+      "lei": "549300FJPOIUJ7U9LV82",
+      "vaspIdentifier": "CH-Swiss Digital Finance AG"
     },
     "transferredAmount": {
       "amount": "125000.00",
@@ -134,7 +114,14 @@
       "screeningStatus": "CLEAR",
       "screeningDate": "2024-06-15T08:00:00Z",
       "screeningProvider": "Refinitiv World-Check",
-      "listsChecked": ["OFAC_SDN", "OFAC_NON_SDN", "EU_CONSOLIDATED", "UN_CONSOLIDATED", "HMT", "AUSTRAC"],
+      "listsChecked": [
+        "OFAC_SDN",
+        "OFAC_NON_SDN",
+        "EU_CONSOLIDATED",
+        "UN_CONSOLIDATED",
+        "HMT",
+        "AUSTRAC"
+      ],
       "matchDetails": []
     },
     "adverseMedia": {
@@ -145,7 +132,10 @@
       "summary": "No adverse media found after comprehensive search across 100,000+ global news sources."
     },
     "sourceOfFundsWealth": {
-      "sourceOfFunds": ["INVESTMENT_RETURNS", "BUSINESS_INCOME"],
+      "sourceOfFunds": [
+        "INVESTMENT_RETURNS",
+        "BUSINESS_INCOME"
+      ],
       "sourceOfWealthNarrative": "Client accumulated wealth through senior government positions (salary, pension, legitimate investments) and subsequent private sector advisory roles in the GCC region. Business income derives from three wholly-owned holding companies registered in the UAE and BVI. Investment returns from a diversified portfolio of regional equities and real estate.",
       "verificationStatus": "FULLY_VERIFIED",
       "supportingDocuments": [
@@ -201,14 +191,20 @@
           "timestamp": "2024-01-10T10:00:00Z",
           "changedBy": "onboarding-system",
           "changeType": "CREATED",
-          "fieldsChanged": ["all"],
+          "fieldsChanged": [
+            "all"
+          ],
           "notes": "Initial KYC record created during onboarding."
         },
         {
           "timestamp": "2024-06-01T14:22:00Z",
           "changedBy": "compliance.officer@difc-exchange.ae",
           "changeType": "REVIEWED",
-          "fieldsChanged": ["kycProfile.pepStatus", "kycProfile.sanctionsScreening", "kycProfile.monitoringInfo"],
+          "fieldsChanged": [
+            "kycProfile.pepStatus",
+            "kycProfile.sanctionsScreening",
+            "kycProfile.monitoringInfo"
+          ],
           "notes": "Annual EDD review completed. Risk rating maintained at HIGH. Monitoring level ENHANCED confirmed."
         }
       ]
@@ -218,7 +214,11 @@
     "consentRecord": {
       "consentGiven": true,
       "consentDate": "2024-01-10T09:45:00Z",
-      "consentPurpose": ["AML_SCREENING", "DATA_SHARING_TRAVEL_RULE", "THIRD_PARTY_CDD"]
+      "consentPurpose": [
+        "AML_SCREENING",
+        "DATA_SHARING_TRAVEL_RULE",
+        "THIRD_PARTY_CDD"
+      ]
     }
   }
 }

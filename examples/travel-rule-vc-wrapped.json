@@ -9,7 +9,11 @@
       "https://openkycaml.org/contexts/v1"
     ],
     "id": "urn:uuid:a3f7c210-1b2d-4e56-9f87-cc3344556677",
-    "type": ["VerifiableCredential", "OpenKYCAMLCredential", "TravelRuleAttestation"],
+    "type": [
+      "VerifiableCredential",
+      "OpenKYCAMLCredential",
+      "TravelRuleAttestation"
+    ],
     "issuer": {
       "id": "did:web:acme-crypto.example.nl",
       "name": "Acme Crypto Exchange BV"
@@ -24,7 +28,7 @@
             {
               "naturalPerson": {
                 "name": {
-                  "nameIdentifiers": [
+                  "nameIdentifier": [
                     {
                       "primaryIdentifier": "Nakamoto",
                       "secondaryIdentifier": "Satoshi",
@@ -32,7 +36,7 @@
                     }
                   ]
                 },
-                "geographicAddresses": [
+                "geographicAddress": [
                   {
                     "addressType": "HOME",
                     "streetName": "Blockchain Avenue",
@@ -56,14 +60,16 @@
               }
             }
           ],
-          "accountNumber": ["bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh"]
+          "accountNumber": [
+            "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh"
+          ]
         },
         "beneficiary": {
           "beneficiaryPersons": [
             {
               "naturalPerson": {
                 "name": {
-                  "nameIdentifiers": [
+                  "nameIdentifier": [
                     {
                       "primaryIdentifier": "Finney",
                       "secondaryIdentifier": "Harold Thomas",
@@ -71,7 +77,7 @@
                     }
                   ]
                 },
-                "geographicAddresses": [
+                "geographicAddress": [
                   {
                     "addressType": "HOME",
                     "streetName": "Satoshi Street",
@@ -90,41 +96,19 @@
               }
             }
           ],
-          "accountNumber": ["3J98t1WpEZ73CNmQviecrnyiWrnqRhWNLy"]
+          "accountNumber": [
+            "3J98t1WpEZ73CNmQviecrnyiWrnqRhWNLy"
+          ]
         },
         "originatingVASP": {
-          "originatingVASP": {
-            "name": {
-              "nameIdentifiers": [
-                {
-                  "legalPersonName": "Acme Crypto Exchange BV",
-                  "legalPersonNameIdentifierType": "LEGL"
-                }
-              ]
-            },
-            "nationalIdentification": {
-              "nationalIdentifier": "724500VNNHZHYDLFMOU25",
-              "nationalIdentifierType": "LEIX"
-            },
-            "countryOfRegistration": "NL"
-          }
+          "name": "Acme Crypto Exchange BV",
+          "lei": "724500VNNHZHYDLFMOU25",
+          "vaspIdentifier": "NL-Acme Crypto Exchange BV"
         },
         "beneficiaryVASP": {
-          "beneficiaryVASP": {
-            "name": {
-              "nameIdentifiers": [
-                {
-                  "legalPersonName": "FinTech Exchange Ltd",
-                  "legalPersonNameIdentifierType": "LEGL"
-                }
-              ]
-            },
-            "nationalIdentification": {
-              "nationalIdentifier": "213800WSGIIZCXF1P572",
-              "nationalIdentifierType": "LEIX"
-            },
-            "countryOfRegistration": "GB"
-          }
+          "name": "FinTech Exchange Ltd",
+          "lei": "213800WSGIIZCXF1P572",
+          "vaspIdentifier": "GB-FinTech Exchange Ltd"
         },
         "transferredAmount": {
           "amount": "0.5",

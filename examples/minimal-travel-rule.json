@@ -9,7 +9,7 @@
         {
           "naturalPerson": {
             "name": {
-              "nameIdentifiers": [
+              "nameIdentifier": [
                 {
                   "primaryIdentifier": "Tanaka",
                   "secondaryIdentifier": "Hiroshi",
@@ -27,14 +27,16 @@
           }
         }
       ],
-      "accountNumber": ["bc1qar0srrr7xfkvy5l643lydnw9re59gtzzwf5mdq"]
+      "accountNumber": [
+        "bc1qar0srrr7xfkvy5l643lydnw9re59gtzzwf5mdq"
+      ]
     },
     "beneficiary": {
       "beneficiaryPersons": [
         {
           "naturalPerson": {
             "name": {
-              "nameIdentifiers": [
+              "nameIdentifier": [
                 {
                   "primaryIdentifier": "Kim",
                   "secondaryIdentifier": "Ji-Yeon",
@@ -51,41 +53,24 @@
           }
         }
       ],
-      "accountNumber": ["bc1p0xlxvlhemja6c4dqv22uapctqupfhlxm9h8z3k2e72q4k9hcz7vqzk5jj0"]
+      "accountNumber": [
+        "bc1p0xlxvlhemja6c4dqv22uapctqupfhlxm9h8z3k2e72q4k9hcz7vqzk5jj0"
+      ]
     },
     "originatingVASP": {
-      "originatingVASP": {
-        "name": {
-          "nameIdentifiers": [
-            {
-              "legalPersonName": "Tokyo Digital Assets Co., Ltd.",
-              "legalPersonNameIdentifierType": "LEGL"
-            }
-          ]
-        },
-        "nationalIdentification": {
-          "nationalIdentifier": "3538003FPHWP7EM5C773",
-          "nationalIdentifierType": "LEIX"
-        },
-        "countryOfRegistration": "JP"
-      }
+      "name": "Tokyo Digital Assets Co., Ltd.",
+      "lei": "3538003FPHWP7EM5C773",
+      "vaspIdentifier": "JP-Tokyo Digital Assets Co., Ltd."
     },
     "beneficiaryVASP": {
-      "beneficiaryVASP": {
-        "name": {
-          "nameIdentifiers": [
-            {
-              "legalPersonName": "Seoul Blockchain Exchange Inc.",
-              "legalPersonNameIdentifierType": "LEGL"
-            }
-          ]
-        },
-        "nationalIdentification": {
-          "nationalIdentifier": "724500YRI6OZO6ELB439",
-          "nationalIdentifierType": "LEIX"
-        },
-        "countryOfRegistration": "KR"
-      }
+      "name": "Seoul Blockchain Exchange Inc.",
+      "lei": "724500YRI6OZO6ELB439",
+      "vaspIdentifier": "KR-Seoul Blockchain Exchange Inc."
+    },
+    "payloadMetadata": {
+      "transactionIdentifier": "TDAC-20240615-BTC-0000042",
+      "timestamp": "2024-06-15T10:00:00Z",
+      "version": "IVMS101.2023"
     },
     "transferredAmount": {
       "amount": "1.00",
