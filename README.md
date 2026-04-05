@@ -5,7 +5,7 @@
 **The neutral, open hybrid KYC/AML data standard for the compliant digital economy.**
 
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
-[![Schema Version](https://img.shields.io/badge/schema-v1.1.0-brightgreen.svg)](schema/kyc-aml-hybrid-extended.json)
+[![Schema Version](https://img.shields.io/badge/schema-v1.2.0-brightgreen.svg)](schema/kyc-aml-hybrid-extended.json)
 [![IVMS 101](https://img.shields.io/badge/IVMS%20101-compatible-orange.svg)](docs/mapping-ivms101-eidas-amlr.md)
 [![eIDAS 2.0](https://img.shields.io/badge/eIDAS%202.0-VC%20ready-blueviolet.svg)](docs/mapping-ivms101-eidas-amlr.md)
 [![AMLR 2027 Ready](https://img.shields.io/badge/AMLR%202027-ready-red.svg)](docs/compliance-matrix.md)
@@ -80,21 +80,26 @@ OpenKYCAML payload
 ├── verifiableCredential         ← (optional) W3C VC / eIDAS 2.0 wrapper
 │   ├── @context, type, issuer   ← DID of issuing VASP or KYC utility
 │   ├── credentialSubject        ← Subject DID (EUDI Wallet) + IVMS 101 + kycProfile + lpid
+│   ├── credentialSchema         ← JSON Schema (JsonSchemaValidator2018) or AnonCreds (AnonCredsDefinition + credDefId)
 │   ├── evidence[]               ← Source PID/LPID credential: issuer DID, presentationMethod,
 │   │                                presentationDate — triangulates the identity chain
-│   ├── credentialStatus         ← Revocation endpoint (StatusList2021)
-│   └── proof                    ← Ed25519Signature2020 / JWS
+│   ├── credentialStatus         ← Revocation endpoint (StatusList2021 / AnonCredsCredentialStatusList2023)
+│   ├── selectiveDisclosure      ← SD-JWT selective disclosure metadata (EUDI Wallet / GDPR minimisation)
+│   └── proof                    ← Ed25519Signature2020 / JWS / CLSignature2019 / AnonCredsProof2023
 │
 └── kycProfile                   ← (optional) Full KYC/AML profile
     ├── customerRiskRating        ← Overall risk, score, risk factors
-    ├── customerClassification    ← RETAIL / CORPORATE / VASP / HNW / ...
+    ├── customerClassification    ← RETAIL / CORPORATE / VASP / HNW / ... + accreditedInvestor
     ├── dueDiligenceType          ← SDD / CDD / EDD
     ├── pepStatus                 ← PEP flag, category, role
     ├── sanctionsScreening        ← OFAC, UN, EU, HMT results
     ├── adverseMedia              ← Adverse news screening
     ├── sourceOfFundsWealth       ← SOF/SOW declarations and verification
-    ├── beneficialOwnership[]     ← UBOs (AMLR Art. 26)
+    ├── beneficialOwnership[]     ← UBOs (AMLR Art. 26) + deep intermediate entity chain
     ├── onboardingChannel         ← IN_PERSON / REMOTE_VIDEO / EUDI_WALLET / ...
+    ├── isEligible                ← ERC-3643 eligibility flag (IIdentityRegistry.isVerified)
+    ├── eligibilityLastConfirmed  ← Date eligibility was last confirmed on-chain
+    ├── blockchainAccountIds[]    ← On-chain wallet addresses (ONCHAINID, network, frozen status)
     ├── monitoringInfo            ← Monitoring level, alerts, review dates
     └── auditMetadata             ← Record ID, version, change log
 ```
@@ -121,8 +126,8 @@ node validator.js ../../examples/full-kyc-profile.json
 
 ```json
 {
-  "$schema": "https://openkycaml.org/schema/v1.1.0/kyc-aml-hybrid-extended.json",
-  "version": "1.1.0",
+  "$schema": "https://openkycaml.org/schema/v1.2.0/kyc-aml-hybrid-extended.json",
+  "version": "1.2.0",
   "messageId": "550e8400-e29b-41d4-a716-446655440001",
   "messageDateTime": "2024-06-15T09:30:00Z",
   "ivms101": {
@@ -158,8 +163,8 @@ node validator.js ../../examples/full-kyc-profile.json
 
 ```json
 {
-  "$schema": "https://openkycaml.org/schema/v1.1.0/kyc-aml-hybrid-extended.json",
-  "version": "1.1.0",
+  "$schema": "https://openkycaml.org/schema/v1.2.0/kyc-aml-hybrid-extended.json",
+  "version": "1.2.0",
   "verifiableCredential": {
     "issuer": { "id": "did:web:acme-crypto.example.nl", "name": "Acme Crypto Exchange BV" },
     "credentialSubject": {
@@ -183,12 +188,15 @@ node validator.js ../../examples/full-kyc-profile.json
 
 ## Example Payloads
 
-Every scenario is available in two forms: a **plain IVMS 101** baseline and an **EUDI Wallet VC-wrapped** companion that demonstrates DID triangulation (subject wallet DID · PID/LPID issuer DID · VASP DID).
+Every scenario is available in two forms: a **plain IVMS 101** baseline and an **EUDI Wallet VC-wrapped** companion that demonstrates DID triangulation (subject wallet DID · PID/LPID issuer DID · VASP DID). SD-JWT selective disclosure variants are provided for the natural person and legal entity scenarios.
 
 | Scenario | Plain baseline | EUDI Wallet / DID version |
 |---|---|---|
 | Natural person Travel Rule | [`natural-person-plain.json`](examples/natural-person-plain.json) | [`natural-person-eudi-wallet.json`](examples/natural-person-eudi-wallet.json) |
+| Natural person — SD-JWT selective disclosure | — | [`natural-person-sd-jwt-eudi-wallet.json`](examples/natural-person-sd-jwt-eudi-wallet.json) |
 | Legal entity Travel Rule | [`legal-entity-plain.json`](examples/legal-entity-plain.json) | [`legal-entity-eudi-wallet.json`](examples/legal-entity-eudi-wallet.json) |
+| Legal entity — SD-JWT selective disclosure | — | [`legal-entity-sd-jwt-eudi-wallet.json`](examples/legal-entity-sd-jwt-eudi-wallet.json) |
+| Legal entity — Deep UBO chain (AMLR Art. 26) | [`legal-entity-deep-ubo.json`](examples/legal-entity-deep-ubo.json) | — |
 | Hybrid VC-wrapped (IVMS 101 + kycProfile) | [`hybrid-vc-wrapped.json`](examples/hybrid-vc-wrapped.json) | [`hybrid-vc-eudi-wallet.json`](examples/hybrid-vc-eudi-wallet.json) |
 | Full KYC profile (EDD, PEP, UBOs) | [`full-kyc-profile.json`](examples/full-kyc-profile.json) | [`full-kyc-profile-eudi-wallet.json`](examples/full-kyc-profile-eudi-wallet.json) |
 | Minimal Travel Rule | [`minimal-travel-rule.json`](examples/minimal-travel-rule.json) | [`minimal-travel-rule-eudi-wallet.json`](examples/minimal-travel-rule-eudi-wallet.json) |
@@ -213,7 +221,11 @@ Each `-eudi-wallet.json` example documents a **trust chain** using W3C VC eviden
 |---|---|
 | [Adoption Guide](docs/adoption-guide.md) | Step-by-step integration for VASPs, banks, KYC utilities |
 | [Mapping: IVMS 101 / eIDAS / AMLR](docs/mapping-ivms101-eidas-amlr.md) | Field-level mapping across all referenced standards |
-| [Compliance Matrix](docs/compliance-matrix.md) | Exact alignment with FATF, AMLR, ISO 20022, LEI, eIDAS |
+| [Compliance Matrix](docs/compliance-matrix.md) | Exact alignment with FATF, AMLR, ISO 20022, LEI, eIDAS, ERC-3643, Sovrin |
+| [AMLR 2027 Compliance Checklist](docs/amlr-2027-compliance-checklist.md) | Operational checklist for obliged entities — schema configuration and process obligations |
+| [Travel Rule Implementation Guide](docs/travel-rule-implementation-guide.md) | Protocol-specific integration guide (TRISA, OpenVASP, Notabene, TRP, Sygna Bridge) |
+| [ERC-3643 (T-REX) Mapping](docs/mapping-erc3643.md) | Field-level mapping from OpenKYCAML to ERC-3643 on-chain permissioned token standard |
+| [Sovrin / Hyperledger Indy (AnonCreds) Mapping](docs/mapping-sovrin.md) | Field-level mapping from OpenKYCAML to Sovrin DID Method, Indy ledger transactions, and AnonCreds ZKP credentials |
 | [Roadmap](ROADMAP.md) | Planned features and upcoming versions |
 | [Contributing](CONTRIBUTING.md) | How to contribute to the standard |
 | [Governance](GOVERNANCE.md) | Steering committee model, RFC process |
@@ -230,9 +242,11 @@ Each `-eudi-wallet.json` example documents a **trust chain** using W3C VC eviden
 | **EU AMLR 2024** | ✅ Art. 20–22, 24, 26, 28–31, 56, 83 |
 | **eIDAS 2.0 / ARF** | ✅ W3C VC Data Model v2, DID, Ed25519 proof suites, LPID, QEAA mandates |
 | **EU Digital Identity Wallet (EUDIW)** | ✅ PID + LPID credential flows via OpenID4VP; W3C VC evidence block; EUDI_WALLET onboarding channel |
-| **ISO 20022** | 🟡 Key fields mapped (full serialisation planned for v1.2) |
+| **ISO 20022** | 🟡 Key fields mapped; full pain.001 serialiser planned for v1.3 |
 | **GLEIF / LEI** | ✅ LEIX national identifier type; ISO 17442 check digit validation |
-| **GDPR** | ✅ Consent record, data retention date, EUDI Wallet selective disclosure ready |
+| **GDPR** | ✅ Consent record, data retention date, EUDI Wallet SD-JWT selective disclosure |
+| **ERC-3643 (T-REX)** | ✅ ONCHAINID, eligibility flag, wallet addresses, frozen tokens, accredited investor claim — see [ERC-3643 mapping](docs/mapping-erc3643.md) |
+| **Sovrin / Hyperledger Indy (AnonCreds)** | ✅ `did:sov` / `did:indy` DIDs, AnonCreds CL credentials, CLAIM_DEF, REVOC_REG, Rich Schema — see [Sovrin mapping](docs/mapping-sovrin.md) |
 
 ---
 
@@ -241,10 +255,11 @@ Each `-eudi-wallet.json` example documents a **trust chain** using W3C VC eviden
 ```
 openKYCAML/
 ├── schema/
-│   ├── kyc-aml-hybrid-extended.json     ← Canonical schema (latest — currently v1.1.0)
+│   ├── kyc-aml-hybrid-extended.json     ← Canonical schema (latest — currently v1.2.0)
 │   └── versions/
 │       ├── v1.0.0.json                  ← v1.0.0 snapshot
-│       └── v1.1.0.json                  ← v1.1.0 snapshot (current)
+│       ├── v1.1.0.json                  ← v1.1.0 snapshot
+│       └── v1.2.0.json                  ← v1.2.0 snapshot (current)
 ├── examples/
 │   ├── *-plain.json                     ← Plain IVMS 101 baseline examples
 │   ├── *-wrapped.json                   ← VC-wrapped examples

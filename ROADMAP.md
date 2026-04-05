@@ -22,8 +22,10 @@ This document outlines the planned development of the OpenKYCAML standard.
   - `kycProfile.pepStatus.pepCategory` aligned to AMLA draft PEP taxonomy (AMLR Art. 28–31).
 - PID/LPID converters (Python) for ARF flat-format ↔ OpenKYCAML envelope.
 - Travel Rule implementation guide covering TRISA, OpenVASP, Notabene, TRP, Sygna Bridge.
-- **14 validated example payloads**.
+- **15 validated example payloads** (including SD-JWT selective disclosure and deep UBO chain variants).
 - AMLR 2027 compliance checklist for obliged entities.
+- **ERC-3643 (T-REX) mapping** — full field-level alignment with ONCHAINID (ERC-734/735) and ERC-3643 contract interfaces. New schema fields: `kycProfile.isEligible`, `kycProfile.eligibilityLastConfirmed`, `kycProfile.blockchainAccountIds[]` (address, network, ONCHAINID address, frozen status), `kycProfile.customerClassification.accreditedInvestor`, `kycProfile.customerClassification.investorCategoryJurisdiction`.
+- **Sovrin / Hyperledger Indy (AnonCreds) mapping** — full field-level alignment with `did:sov` / `did:indy` DID Method, Indy NYM/ATTRIB/SCHEMA/CLAIM_DEF/REVOC_REG_DEF ledger transactions, AnonCreds ZKP credential and presentation protocol, and Rich Schema objects. New schema fields: `verifiableCredential.credentialSchema.credDefId`, `credentialSchema.type` extended to include `AnonCredsDefinition`, `credentialStatus.type` extended with `AnonCredsCredentialStatusList2023`, `proof.type` examples extended with `CLSignature2019` and `AnonCredsProof2023`.
 
 ---
 
