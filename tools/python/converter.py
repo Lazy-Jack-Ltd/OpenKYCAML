@@ -733,9 +733,6 @@ def openkycaml_to_lpid(openkycaml_payload: dict[str, Any]) -> dict[str, Any]:
     return lpid_out
 
 
-
-
-
 def extract_vc(openkycaml_payload: dict[str, Any]) -> dict[str, Any]:
     """
     Extract the Verifiable Credential block from an OpenKYCAML envelope.
