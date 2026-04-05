@@ -418,11 +418,11 @@ Analogous to ERC-3643's numeric claim topics (§3.1 in the ERC-3643 mapping), XR
 
 | Credential Use Case | Recommended `CredentialType` string | Hex encoding | OpenKYCAML `verifiableCredential.type[]` | OpenKYCAML `kycProfile` Fields |
 |---|---|---|---|---|
-| KYC identity verified | `KYCCredential` | `4b5943437265 64656e7469616c` | `["VerifiableCredential", "KYCCredential"]` | `kycProfile.kycCompletionDate`, `dueDiligenceRequirements` |
-| AML screening clear | `AMLCredential` | `414d4c437265 64656e7469616c` | `["VerifiableCredential", "AMLCredential"]` | `kycProfile.sanctionsScreening`, `adverseMedia` |
-| Full OpenKYCAML record | `OpenKYCAMLCredential` | `4f70656e4b5943414d4c437265 64656e7469616c` | `["VerifiableCredential", "OpenKYCAMLCredential"]` | All `ivms101.*` + `kycProfile.*` |
-| Travel Rule attestation | `TravelRuleAttestation` | `5472617665 6c52756c6541 74746573746174696f6e` | `["VerifiableCredential", "TravelRuleAttestation"]` | `ivms101.*`, `verifiableCredential.issuer`, `credentialSubject.id` |
-| Accredited investor | `AccreditedInvestorCredential` | `41636372656469746564 496e766573746f72437265 64656e7469616c` | `["VerifiableCredential", "AccreditedInvestorCredential"]` | `kycProfile.customerClassification.accreditedInvestor: true` |
+| KYC identity verified | `KYCCredential` | `4b594343726564656e7469616c` | `["VerifiableCredential", "KYCCredential"]` | `kycProfile.kycCompletionDate`, `dueDiligenceRequirements` |
+| AML screening clear | `AMLCredential` | `414d4c43726564656e7469616c` | `["VerifiableCredential", "AMLCredential"]` | `kycProfile.sanctionsScreening`, `adverseMedia` |
+| Full OpenKYCAML record | `OpenKYCAMLCredential` | `4f70656e4b5943414d4c43726564656e7469616c` | `["VerifiableCredential", "OpenKYCAMLCredential"]` | All `ivms101.*` + `kycProfile.*` |
+| Travel Rule attestation | `TravelRuleAttestation` | `54726176656c52756c654174746573746174696f6e` | `["VerifiableCredential", "TravelRuleAttestation"]` | `ivms101.*`, `verifiableCredential.issuer`, `credentialSubject.id` |
+| Accredited investor | `AccreditedInvestorCredential` | `41636372656469746564496e766573746f7243726564656e7469616c` | `["VerifiableCredential", "AccreditedInvestorCredential"]` | `kycProfile.customerClassification.accreditedInvestor: true` |
 | EDD completed | `EDDCredential` | `45444443726564656e7469616c` | `["VerifiableCredential", "EDDCredential"]` | `kycProfile.dueDiligenceType: "EDD"`, `sourceOfFundsWealthDetail`, `pepStatus` |
 
 ---
