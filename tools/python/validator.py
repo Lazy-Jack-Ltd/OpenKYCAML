@@ -24,6 +24,7 @@ Programmatic usage:
 from __future__ import annotations
 
 import argparse
+import datetime
 import json
 import sys
 from dataclasses import dataclass, field
@@ -178,8 +179,6 @@ class OpenKYCAMLValidator:
             )
 
         # Warn if sanctions screening is older than 30 days.
-        import datetime
-
         screening = kyc.get("sanctionsScreening", {})
         screening_date_str = screening.get("screeningDate")
         if screening_date_str:
