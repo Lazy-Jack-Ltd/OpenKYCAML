@@ -5,7 +5,7 @@
 **The neutral, open hybrid KYC/AML data standard for the compliant digital economy.**
 
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
-[![Schema Version](https://img.shields.io/badge/schema-v1.0.0-brightgreen.svg)](schema/kyc-aml-hybrid-extended.json)
+[![Schema Version](https://img.shields.io/badge/schema-v1.1.0-brightgreen.svg)](schema/kyc-aml-hybrid-extended.json)
 [![IVMS 101](https://img.shields.io/badge/IVMS%20101-compatible-orange.svg)](docs/mapping-ivms101-eidas-amlr.md)
 [![eIDAS 2.0](https://img.shields.io/badge/eIDAS%202.0-VC%20ready-blueviolet.svg)](docs/mapping-ivms101-eidas-amlr.md)
 [![AMLR 2027 Ready](https://img.shields.io/badge/AMLR%202027-ready-red.svg)](docs/compliance-matrix.md)
@@ -14,7 +14,7 @@
 
 ---
 
-*IVMS 101 · eIDAS 2.0 Verifiable Credentials · AMLR 2027 · FATF Recommendation 16 · ISO 20022 · LEI*
+*IVMS 101 · eIDAS 2.0 Verifiable Credentials · EU Digital Identity Wallet · AMLR 2027 · FATF Recommendation 16 · ISO 20022 · LEI*
 
 </div>
 
@@ -26,8 +26,10 @@
 
 It is a **superset of IVMS 101** — the Travel Rule standard — extended with:
 
-- 🔐 An optional **W3C Verifiable Credential (VC) wrapper** for eIDAS 2.0 / EU Digital Identity Wallet (EUDIW) attestation.
+- 🔐 An optional **W3C Verifiable Credential (VC) wrapper** for eIDAS 2.0 / EU Digital Identity Wallet (EUDIW) attestation, including a W3C VC `evidence` block that records the source PID/LPID credential presented from a user's data wallet.
+- 🪪 Native **eIDAS 2.0 LPID** (Legal Person Identification Data) support with QEAA mandate/representative fields — enabling direct EUDI Wallet flows for legal entities.
 - 📊 A full **`kycProfile` section** covering every AML data point required by AMLR 2027, EBA Risk Factor Guidelines, and FATF Recommendations 10, 12, 16, and 24.
+- 🔗 **DID triangulation** — every EUDI Wallet example captures the three-party trust chain: subject wallet DID, national PID/LPID issuer DID, and VASP relying-party DID.
 
 **One schema. Every compliance use case.**
 
@@ -43,6 +45,7 @@ Today, every KYC platform, Travel Rule protocol, and AML system uses a different
 - **Third-party CDD reliance** under AMLR Art. 22(5) is blocked by incompatible data models.
 - **Re-KYC** is performed repeatedly because KYC data can't be ported between institutions.
 - **AMLR 2027** will mandate machine-readable CDD sharing — but no shared format exists yet.
+- **EUDI Wallet** holders have no standard format for presenting PID/LPID data to VASPs and banks.
 
 ### The Solution
 
@@ -55,6 +58,7 @@ OpenKYCAML provides the common language that turns KYC data into an interoperabl
 | Re-KYC on every new relationship | Portable VC attests KYC once |
 | Manual AMLR compliance gap analysis | Machine-readable compliance matrix |
 | Proprietary risk scoring formats | Standardised risk fields for CDD reliance |
+| EUDI Wallet data stranded in national silos | LPID + PID → IVMS 101 mapping built-in |
 
 ### Not adopting this is a competitive disadvantage
 
@@ -67,17 +71,19 @@ OpenKYCAML provides the common language that turns KYC data into an interoperabl
 ```
 OpenKYCAML payload
 ├── ivms101                      ← IVMS 101 Travel Rule payload (backward-compatible)
-│   ├── originator               ← Natural person or legal entity
+│   ├── originator               ← Natural person or legal entity (+ optional LPID block)
 │   ├── beneficiary              ← Natural person or legal entity
-│   ├── originatingVASP
+│   ├── originatingVASP          ← LEI + DID-addressable identifier
 │   ├── beneficiaryVASP
 │   └── transferredAmount        ← Asset type + amount
 │
 ├── verifiableCredential         ← (optional) W3C VC / eIDAS 2.0 wrapper
-│   ├── @context, type, issuer
-│   ├── credentialSubject        ← Subject DID + KYC attestation
-│   ├── credentialStatus         ← Revocation endpoint
-│   └── proof                    ← Ed25519 / JWS signature
+│   ├── @context, type, issuer   ← DID of issuing VASP or KYC utility
+│   ├── credentialSubject        ← Subject DID (EUDI Wallet) + IVMS 101 + kycProfile + lpid
+│   ├── evidence[]               ← Source PID/LPID credential: issuer DID, presentationMethod,
+│   │                                presentationDate — triangulates the identity chain
+│   ├── credentialStatus         ← Revocation endpoint (StatusList2021)
+│   └── proof                    ← Ed25519Signature2020 / JWS
 │
 └── kycProfile                   ← (optional) Full KYC/AML profile
     ├── customerRiskRating        ← Overall risk, score, risk factors
@@ -88,6 +94,7 @@ OpenKYCAML payload
     ├── adverseMedia              ← Adverse news screening
     ├── sourceOfFundsWealth       ← SOF/SOW declarations and verification
     ├── beneficialOwnership[]     ← UBOs (AMLR Art. 26)
+    ├── onboardingChannel         ← IN_PERSON / REMOTE_VIDEO / EUDI_WALLET / ...
     ├── monitoringInfo            ← Monitoring level, alerts, review dates
     └── auditMetadata             ← Record ID, version, change log
 ```
@@ -114,8 +121,8 @@ node validator.js ../../examples/full-kyc-profile.json
 
 ```json
 {
-  "$schema": "https://openkycaml.org/schema/v1.0.0/kyc-aml-hybrid-extended.json",
-  "version": "1.0.0",
+  "$schema": "https://openkycaml.org/schema/v1.1.0/kyc-aml-hybrid-extended.json",
+  "version": "1.1.0",
   "messageId": "550e8400-e29b-41d4-a716-446655440001",
   "messageDateTime": "2024-06-15T09:30:00Z",
   "ivms101": {
@@ -123,7 +130,7 @@ node validator.js ../../examples/full-kyc-profile.json
       "originatorPersons": [{
         "naturalPerson": {
           "name": {
-            "nameIdentifiers": [{
+            "nameIdentifier": [{
               "primaryIdentifier": "Nakamoto",
               "secondaryIdentifier": "Satoshi",
               "nameIdentifierType": "LEGL"
@@ -140,7 +147,34 @@ node validator.js ../../examples/full-kyc-profile.json
       "accountNumber": ["bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh"]
     },
     "beneficiary": { "...": "..." },
+    "originatingVASP": { "name": "Acme Crypto Exchange BV", "lei": "724500VNNHZHYDLFMO70" },
+    "beneficiaryVASP": { "...": "..." },
     "transferredAmount": { "amount": "0.5", "assetType": "BTC" }
+  }
+}
+```
+
+### 4. EUDI Wallet / DID Triangulation — minimal example
+
+```json
+{
+  "$schema": "https://openkycaml.org/schema/v1.1.0/kyc-aml-hybrid-extended.json",
+  "version": "1.1.0",
+  "verifiableCredential": {
+    "issuer": { "id": "did:web:acme-crypto.example.nl", "name": "Acme Crypto Exchange BV" },
+    "credentialSubject": {
+      "id": "did:ebsi:zABkFm2PRPvLxNksMqJdVHK7",
+      "ivms101": { "...": "..." }
+    },
+    "evidence": [{
+      "id": "urn:uuid:pid-nl-satoshi-nakamoto-2025-12-01",
+      "type": ["PIDCredential", "EUDIWalletPresentationEvidence"],
+      "credentialIssuer": "did:web:pid-provider.rvo.example.nl",
+      "verifier": "did:web:acme-crypto.example.nl",
+      "presentationMethod": "OpenID4VP",
+      "presentationDate": "2025-12-01T10:27:00Z"
+    }],
+    "proof": { "type": "Ed25519Signature2020", "...": "..." }
   }
 }
 ```
@@ -149,13 +183,27 @@ node validator.js ../../examples/full-kyc-profile.json
 
 ## Example Payloads
 
-| File | Description |
-|---|---|
-| [`natural-person-plain.json`](examples/natural-person-plain.json) | IVMS 101 Travel Rule — natural person originator |
-| [`legal-entity-plain.json`](examples/legal-entity-plain.json) | IVMS 101 Travel Rule — legal entity originator |
-| [`hybrid-vc-wrapped.json`](examples/hybrid-vc-wrapped.json) | IVMS 101 + eIDAS 2.0 Verifiable Credential wrapper |
-| [`full-kyc-profile.json`](examples/full-kyc-profile.json) | Full KYC profile — EDD, PEP, sanctions, UBOs, monitoring |
-| [`minimal-travel-rule.json`](examples/minimal-travel-rule.json) | Minimum FATF Rec 16 compliant payload |
+Every scenario is available in two forms: a **plain IVMS 101** baseline and an **EUDI Wallet VC-wrapped** companion that demonstrates DID triangulation (subject wallet DID · PID/LPID issuer DID · VASP DID).
+
+| Scenario | Plain baseline | EUDI Wallet / DID version |
+|---|---|---|
+| Natural person Travel Rule | [`natural-person-plain.json`](examples/natural-person-plain.json) | [`natural-person-eudi-wallet.json`](examples/natural-person-eudi-wallet.json) |
+| Legal entity Travel Rule | [`legal-entity-plain.json`](examples/legal-entity-plain.json) | [`legal-entity-eudi-wallet.json`](examples/legal-entity-eudi-wallet.json) |
+| Hybrid VC-wrapped (IVMS 101 + kycProfile) | [`hybrid-vc-wrapped.json`](examples/hybrid-vc-wrapped.json) | [`hybrid-vc-eudi-wallet.json`](examples/hybrid-vc-eudi-wallet.json) |
+| Full KYC profile (EDD, PEP, UBOs) | [`full-kyc-profile.json`](examples/full-kyc-profile.json) | [`full-kyc-profile-eudi-wallet.json`](examples/full-kyc-profile-eudi-wallet.json) |
+| Minimal Travel Rule | [`minimal-travel-rule.json`](examples/minimal-travel-rule.json) | [`minimal-travel-rule-eudi-wallet.json`](examples/minimal-travel-rule-eudi-wallet.json) |
+| Travel Rule VC-wrapped | [`travel-rule-vc-wrapped.json`](examples/travel-rule-vc-wrapped.json) | [`travel-rule-vc-eudi-wallet.json`](examples/travel-rule-vc-eudi-wallet.json) |
+
+### EUDI Wallet examples — DID triangulation
+
+Each `-eudi-wallet.json` example documents a **trust chain** using W3C VC evidence blocks:
+
+| Role | DID example | Purpose |
+|---|---|---|
+| **Subject wallet** | `did:ebsi:z2LSzT7LiUNMxKKyGCnNjNT` | User's EU Digital Identity Wallet |
+| **PID/LPID issuer** | `did:web:pid-provider.bsi.example.de` | National PID Provider (e.g. German BSI) |
+| **VASP / relying party** | `did:web:acme-crypto.example.nl` | Receiving institution |
+| **Beneficiary VASP** | `did:web:fintech-exchange.example.gb` | Travel Rule counterpart |
 
 ---
 
@@ -180,10 +228,11 @@ node validator.js ../../examples/full-kyc-profile.json
 | **FATF Recommendation 16** | ✅ Travel Rule compliant |
 | **FATF Recommendations 10, 12, 24** | ✅ CDD, PEP, UBO fields |
 | **EU AMLR 2024** | ✅ Art. 20–22, 24, 26, 28–31, 56, 83 |
-| **eIDAS 2.0 / ARF** | ✅ W3C VC Data Model v2, DID, proof suites |
+| **eIDAS 2.0 / ARF** | ✅ W3C VC Data Model v2, DID, Ed25519 proof suites, LPID, QEAA mandates |
+| **EU Digital Identity Wallet (EUDIW)** | ✅ PID + LPID credential flows via OpenID4VP; W3C VC evidence block; EUDI_WALLET onboarding channel |
 | **ISO 20022** | 🟡 Key fields mapped (full serialisation planned for v1.2) |
-| **GLEIF / LEI** | ✅ LEIX national identifier type |
-| **GDPR** | ✅ Consent record, data retention date |
+| **GLEIF / LEI** | ✅ LEIX national identifier type; ISO 17442 check digit validation |
+| **GDPR** | ✅ Consent record, data retention date, EUDI Wallet selective disclosure ready |
 
 ---
 
@@ -192,10 +241,14 @@ node validator.js ../../examples/full-kyc-profile.json
 ```
 openKYCAML/
 ├── schema/
-│   ├── kyc-aml-hybrid-extended.json     ← Canonical schema (JSON Schema 2020-12)
+│   ├── kyc-aml-hybrid-extended.json     ← Canonical schema (latest — currently v1.1.0)
 │   └── versions/
-│       └── v1.0.0.json                  ← Versioned snapshots
-├── examples/                            ← Ready-to-use example payloads
+│       ├── v1.0.0.json                  ← v1.0.0 snapshot
+│       └── v1.1.0.json                  ← v1.1.0 snapshot (current)
+├── examples/
+│   ├── *-plain.json                     ← Plain IVMS 101 baseline examples
+│   ├── *-wrapped.json                   ← VC-wrapped examples
+│   └── *-eudi-wallet.json               ← EUDI Wallet / DID triangulation examples
 ├── docs/                                ← Technical and governance documentation
 ├── tools/
 │   ├── python/                          ← Python validator, converter, Pydantic models
@@ -217,6 +270,7 @@ OpenKYCAML is designed to be adopted by:
 - **Virtual Asset Service Providers (VASPs)** — for Travel Rule compliance via any protocol (TRISA, TRP, OpenVASP, Notabene).
 - **Banks and payment institutions** — for third-party CDD reliance under AMLR Art. 22(5).
 - **KYC utilities** — for issuing portable eIDAS 2.0 Verifiable Credentials.
+- **EU Digital Identity Wallet providers** — for PID/LPID → IVMS 101 bridging and CDD attestation.
 - **Regulators and supervisory authorities** — as a reference data model for regulatory reporting.
 
 **To register your organisation as an adopter**, open an issue with the label `governance: adopter`.
@@ -246,3 +300,4 @@ This standard references IVMS 101, eIDAS 2.0 ARF, FATF Recommendations, EU AMLR,
 *Building the common language for compliant digital finance.*
 
 </div>
+
