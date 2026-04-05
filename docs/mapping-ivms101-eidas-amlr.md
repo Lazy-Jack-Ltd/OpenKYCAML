@@ -170,4 +170,46 @@ For EUDI Wallet flows where a full IVMS 101 Travel Rule payload is not required,
 
 ---
 
+## 9. GDPR Sensitivity Metadata — `gdprSensitivityMetadata` (v1.3.0)
+
+The `gdprSensitivityMetadata` block provides a machine-readable sensitivity classification that travels with the OpenKYCAML payload and is enforced by EUDI Wallets, relying parties, and automated processing systems.
+
+### 9.1 Regulatory Mapping
+
+| `gdprSensitivityMetadata` Field | GDPR / AMLR Reference | Description |
+|---|---|---|
+| `classification: "standard"` | GDPR Art. 6 | Ordinary personal data — standard processing basis |
+| `classification: "sensitive_personal"` | GDPR Art. 9 | Special-category data (biometrics, health, racial/ethnic origin) — requires Art. 9(2) safeguards |
+| `classification: "criminal_offence"` | GDPR Art. 10 | Data on criminal convictions or offences — requires official authority or equivalent safeguards |
+| `classification: "sar_restricted"` | AMLR Art. 73 / FATF Rec. 21 | SAR/STR material — tipping-off prohibition applies |
+| `classification: "internal_suspicion"` | AMLR Art. 73 / FATF Rec. 21 | Pre-SAR internal AML suspicion flag — same prohibition applies |
+| `classification: "confidential_aml"` | AMLR Art. 55 | AML/CFT investigation data protected from broader disclosure |
+| `tippingOffProtected: true` | AMLR Art. 73 | Mandatory for `sar_restricted` and `internal_suspicion`; prohibits disclosure to data subject or unauthorised parties |
+| `legalBasis: "GDPR-Art6-1c"` | GDPR Art. 6(1)(c) | Legal obligation (AML/KYC) |
+| `legalBasis: "GDPR-Art9-2g"` | GDPR Art. 9(2)(g) | Substantial public interest |
+| `legalBasis: "GDPR-Art10"` | GDPR Art. 10 | Criminal-offence data under official authority |
+| `legalBasis: "AMLR-Art55"` | AMLR Art. 55 | AML data-sharing obligation |
+| `legalBasis: "AMLR-Art73"` | AMLR Art. 73 | Tipping-off prohibition compliance |
+| `retentionPeriod` | AMLR Art. 56 | ISO 8601 duration — minimum `"P5Y"` per AMLR |
+| `disclosurePolicy.prohibitedRecipients: ["data_subject"]` | AMLR Art. 73 | SAR non-disclosure to subject |
+| `disclosurePolicy.allowedRecipients: ["fiu_only"]` | AMLR Art. 73 | Restricted to Financial Intelligence Unit |
+| `auditReference` | AMLR Art. 56 / GDPR Art. 5(2) accountability | Opaque reference to DPO record or SAR case ID |
+
+### 9.2 OpenKYCAML Field → GDPR / AMLR Cross-Reference
+
+| OpenKYCAML Field | GDPR Article | AMLR Article |
+|---|---|---|
+| `gdprSensitivityMetadata.classification` | Art. 5(1)(f), Art. 9, Art. 10 | Art. 55, Art. 73 |
+| `gdprSensitivityMetadata.tippingOffProtected` | — | Art. 73 |
+| `gdprSensitivityMetadata.legalBasis` | Art. 6, Art. 9(2), Art. 10 | Art. 55 |
+| `gdprSensitivityMetadata.retentionPeriod` | Art. 5(1)(e) storage limitation | Art. 56 (5-year minimum) |
+| `gdprSensitivityMetadata.consentRecord` | Art. 7 | — |
+| `gdprSensitivityMetadata.disclosurePolicy` | Art. 5(1)(b) purpose limitation | Art. 73 |
+| `gdprSensitivityMetadata.auditReference` | Art. 5(2) accountability | Art. 56 |
+| `kycProfile.consentRecord` | Art. 7 | — |
+| `kycProfile.auditMetadata.dataRetentionDate` | Art. 5(1)(e) | Art. 56 |
+| `verifiableCredential.selectiveDisclosure` | Art. 5(1)(c) data minimisation | — |
+
+---
+
 *Maintained by the OpenKYCAML Technical Working Group. For corrections or additions, please open an issue or pull request.*

@@ -56,8 +56,8 @@ def ivms101_to_openkycaml(ivms101_payload: dict[str, Any]) -> dict[str, Any]:
         An OpenKYCAML-compliant envelope.
     """
     return {
-        "$schema": "https://openkycaml.org/schema/v1.0.0/kyc-aml-hybrid-extended.json",
-        "version": "1.0.0",
+        "$schema": "https://openkycaml.org/schema/v1.3.0/kyc-aml-hybrid-extended.json",
+        "version": "1.3.0",
         "messageId": str(uuid.uuid4()),
         "messageDateTime": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "ivms101": ivms101_payload,
@@ -383,8 +383,8 @@ def pid_to_openkycaml(pid_payload: dict[str, Any]) -> dict[str, Any]:
         natural_person["countryOfResidence"] = country
 
     return {
-        "$schema": "https://openkycaml.org/schema/v1.2.0/kyc-aml-hybrid-extended.json",
-        "version": "1.2.0",
+        "$schema": "https://openkycaml.org/schema/v1.3.0/kyc-aml-hybrid-extended.json",
+        "version": "1.3.0",
         "messageId": str(uuid.uuid4()),
         "messageDateTime": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "ivms101": {
@@ -612,8 +612,8 @@ def lpid_to_openkycaml(lpid_payload: dict[str, Any]) -> dict[str, Any]:
             lpid_block[dst] = val
 
     return {
-        "$schema": "https://openkycaml.org/schema/v1.2.0/kyc-aml-hybrid-extended.json",
-        "version": "1.2.0",
+        "$schema": "https://openkycaml.org/schema/v1.3.0/kyc-aml-hybrid-extended.json",
+        "version": "1.3.0",
         "messageId": str(uuid.uuid4()),
         "messageDateTime": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "ivms101": {

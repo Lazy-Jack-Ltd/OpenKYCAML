@@ -122,10 +122,28 @@
 - [ ] ✅ Use SD-JWT selective disclosure (`verifiableCredential.selectiveDisclosure`) to present only the minimum attributes necessary for each use case (GDPR Art. 5(1)(c)).
 - [ ] ✅ Populate `kycProfile.consentRecord` when processing is based on consent (GDPR Art. 6(1)(a) or Art. 7).
 - [ ] ✅ Set `kycProfile.auditMetadata.dataRetentionDate` and implement automated deletion workflows when the date is reached (GDPR Art. 17 right to erasure, balanced against AMLR Art. 56 retention obligations).
+- [ ] ✅ For any payload containing special-category data (Art. 9 — biometrics, criminal suspicion) or criminal-offence data (Art. 10), populate `gdprSensitivityMetadata` with `classification: "sensitive_personal"` or `"criminal_offence"` and set `legalBasis` to `GDPR-Art9-2g` or `GDPR-Art10` as appropriate.
+- [ ] ✅ Set `gdprSensitivityMetadata.retentionPeriod` to at least `"P5Y"` (AMLR Art. 55 / Art. 56 minimum). Use `gdprSensitivityMetadata.retentionPeriod` in preference to `kycProfile.auditMetadata.dataRetentionDate` for sensitive data where different retention rules apply.
+- [ ] ✅ Populate `gdprSensitivityMetadata.disclosurePolicy.allowedRecipients` with the categories of entities permitted to receive sensitive data (e.g. `"regulated_fi"`, `"fiu_only"`).
 
 ---
 
-## 11. AMLA RTS — Items Requiring Re-Review After Publication
+## 11. Tipping-Off Protection and SAR Handling (AMLR Art. 73 / FATF Rec. 21)
+
+> AMLR Art. 73 and FATF Recommendation 21 prohibit disclosing the existence of a SAR/STR or internal suspicion flag to the data subject or unauthorised parties. Violation is a criminal offence in most jurisdictions.
+
+- [ ] ✅ When a Suspicious Activity Report has been filed (or is under consideration) for a customer, set `gdprSensitivityMetadata.classification` to `"sar_restricted"` (post-SAR) or `"internal_suspicion"` (pre-SAR) and `gdprSensitivityMetadata.tippingOffProtected` to `true`.
+- [ ] ✅ Populate `gdprSensitivityMetadata.restrictedFields[]` with the RFC 6901 JSON Pointer paths of all SAR-linked fields (e.g. `/kycProfile/adverseMedia`, `/kycProfile/monitoringInfo/alerts`). This scopes the tipping-off restriction to specific fields rather than the entire payload.
+- [ ] ✅ Set `gdprSensitivityMetadata.disclosurePolicy.prohibitedRecipients` to include `"data_subject"` and `"counterparty_vasp"` at minimum. Set `allowedRecipients` to `"fiu_only"` and/or `"law_enforcement_authority"` as applicable.
+- [ ] ✅ Set `gdprSensitivityMetadata.legalBasis` to `"AMLR-Art73"`.
+- [ ] ✅ Do **not** include any SAR-restricted field in the SD-JWT `decodedDisclosures` array. These fields must appear only as SHA-256 digests in the Issuer-JWT `_sd` array and must never be appended as disclosures in any presentation token. This is the cryptographic enforcement layer for the policy hint above.
+- [ ] ✅ Set `gdprSensitivityMetadata.auditReference` to an opaque case reference (SHA-256 hash or UUID). This MUST NOT contain the SAR narrative, case details, or any information that would itself constitute tipping-off if exposed.
+- [ ] ⬜ Do not include SAR-restricted OpenKYCAML credentials in EUDI Wallet user-visible credential list views. If your wallet integration uses the `gdprSensitivityMetadata.tippingOffProtected` flag, instruct the wallet delivery system to suppress display of the credential's restricted fields in the UI.
+- [ ] ⬜ SAR/STR submission to your national FIU remains an operational obligation outside schema scope. Record post-filing evidence in `transactionMonitoring.reportingObligations[].reportFiled` and `reportReference`.
+
+---
+
+## 12. AMLA RTS — Items Requiring Re-Review After Publication
 
 The following items are captured in the schema with placeholder fields or notes. Review and update them when the referenced AMLA RTS is published:
 
@@ -139,5 +157,5 @@ The following items are captured in the schema with placeholder fields or notes.
 
 ---
 
-*Document version: v1.2.0 — April 2026. Maintained by the OpenKYCAML Technical Working Group.*
+*Document version: v1.3.0 — April 2026. Maintained by the OpenKYCAML Technical Working Group.*
 *For schema field reference, see [mapping-ivms101-eidas-amlr.md](mapping-ivms101-eidas-amlr.md) and the [compliance matrix](compliance-matrix.md).*

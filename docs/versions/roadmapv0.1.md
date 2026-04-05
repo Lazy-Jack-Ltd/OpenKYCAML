@@ -13,6 +13,21 @@
 - Enhanced beneficial ownership depth: `intermediateEntities[]`, `ownershipChainDepth` (deep UBO example: `legal-entity-deep-ubo.json`)
 - Travel Rule implementation guide for TRISA, OpenVASP, Notabene/DAP, TRP, Sygna Bridge
 
+## v1.3.0 — Released Q2 2026 ✅
+- **`gdprSensitivityMetadata` block** — machine-readable GDPR/AML sensitivity classification:
+  - `classification` enum: `standard`, `sensitive_personal`, `criminal_offence`, `sar_restricted`, `internal_suspicion`, `confidential_aml`.
+  - `tippingOffProtected` flag (AMLR Art. 73 / FATF Rec. 21) — cryptographic SAR non-disclosure enforced via SD-JWT `_sd` digests with no disclosure appended.
+  - `legalBasis` enum: GDPR Art. 6/9/10 and AMLR Art. 55/73 codes.
+  - `retentionPeriod`: ISO 8601 duration with regex validation.
+  - `disclosurePolicy`: `allowedRecipients`, `prohibitedRecipients`, `requiresExplicitConsent`.
+  - `auditReference`: opaque DPO/SAR case reference (no SAR narrative).
+- New example: `hybrid-with-sar-restriction.json` — SAR-restricted VC with `tippingOffProtected: true` and SD-JWT field withholding.
+- Updated Pydantic models: `GdprSensitivityMetadata`, `GdprConsentRecord`, `DisclosurePolicy` (model validator enforces `tippingOffProtected is True` for SAR classifications).
+- Compliance matrix updated: GDPR Art. 9/10 (✅), AMLR Art. 73 (new row), FATF Rec. 21 (new row).
+- AMLR 2027 compliance checklist extended with §10 (GDPR sensitivity) and §11 (tipping-off/SAR).
+- New §12 "Handling Restricted Data in EUDIW Presentations" in `eudi-wallet-integration.md`.
+- §9 `gdprSensitivityMetadata` → GDPR/AMLR mapping in `mapping-ivms101-eidas-amlr.md`.
+
 ## v1.2.0 — Released Q2 2026 ✅
 - **AMLA RTS alignment** (post-draft consultation):
   - `kycProfile.thirdPartyCDDReliance` block — structured CDD reliance record per AMLR Art. 48(3): relying/providing party, reliance scope, contract reference, access-to-data confirmation, liability note.

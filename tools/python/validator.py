@@ -2,7 +2,7 @@
 """
 OpenKYCAML Schema Validator
 ===========================
-Validates JSON payloads against the OpenKYCAML schema (v1.0.0).
+Validates JSON payloads against the OpenKYCAML schema (v1.3.0).
 
 Usage:
     python validator.py <path-to-payload.json>
@@ -194,6 +194,18 @@ class OpenKYCAMLValidator:
                     )
             except ValueError:
                 pass
+
+        # Warn if sensitivity metadata indicates tipping-off restriction but
+        # the classification doesn't match a SAR-protected class.
+        gdpr = payload.get("gdprSensitivityMetadata", {})
+        if gdpr:
+            cls = gdpr.get("classification")
+            tipping_off = gdpr.get("tippingOffProtected")
+            if cls in ("sar_restricted", "internal_suspicion") and not tipping_off:
+                warns.append(
+                    "gdprSensitivityMetadata.tippingOffProtected should be true when "
+                    f"classification is '{cls}' (AMLR Art. 73 / FATF Rec. 21)."
+                )
 
         return warns
 

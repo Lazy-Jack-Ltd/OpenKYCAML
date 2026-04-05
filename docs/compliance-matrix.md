@@ -1,6 +1,6 @@
 # OpenKYCAML Compliance Matrix
 
-This matrix documents the alignment of the OpenKYCAML v1.2.0 schema with major regulatory and technical standards.
+This matrix documents the alignment of the OpenKYCAML v1.3.0 schema with major regulatory and technical standards.
 
 **Legend:**
 - ✅ Full alignment — the standard is directly addressed.
@@ -20,7 +20,8 @@ This matrix documents the alignment of the OpenKYCAML v1.2.0 schema with major r
 | **Rec 12** — Politically Exposed Persons | ✅ | `kycProfile.pepStatus`, `kycProfile.sourceOfFundsWealth` |
 | **Rec 15** — New technologies (VASPs) | ✅ | Full IVMS 101 support; `kycProfile.customerClassification` = `VASP` |
 | **Rec 16** — Wire transfers / Travel Rule | ✅ | `ivms101` block (IVMS 101 v1.0 superset), `ivms101.transferredAmount`, originating/beneficiary VASP fields |
-| **Rec 20** — Reporting of suspicious transactions | 🟡 | `kycProfile.monitoringInfo.alerts` (SAR trigger fields) — SAR submission itself is out of scope |
+| **Rec 20** — Reporting of suspicious transactions | 🟡 | `kycProfile.monitoringInfo.alerts` (SAR trigger fields); `gdprSensitivityMetadata.classification` = `sar_restricted` marks SAR-linked data — SAR submission itself is out of scope |
+| **Rec 21** — Tipping-off and confidentiality | ✅ | `gdprSensitivityMetadata.tippingOffProtected` (AMLR Art. 73 / FATF Rec. 21); `disclosurePolicy.prohibitedRecipients` blocks disclosure to data subject; cryptographic withholding via SD-JWT `_sd` digests without appended disclosures (added v1.3.0) |
 | **Rec 24** — Beneficial ownership of legal persons | ✅ | `kycProfile.beneficialOwnership[]` |
 | **Rec 25** — Beneficial ownership of legal arrangements | 🟡 | Covered by `kycProfile.beneficialOwnership` for trusts; specific trust-deed fields planned for v1.1 |
 
@@ -43,6 +44,7 @@ This matrix documents the alignment of the OpenKYCAML v1.2.0 schema with major r
 | **Art. 28–31** — PEP provisions | PEP identification and EDD | ✅ | `kycProfile.pepStatus` |
 | **Art. 29** — EDD measures | Enhanced due diligence | ✅ | `kycProfile.dueDiligenceType` = `EDD`, `kycProfile.sourceOfFundsWealth` |
 | **Art. 56** — Record keeping | 5-year minimum retention | ✅ | `kycProfile.auditMetadata.dataRetentionDate`, `changeLog` |
+| **Art. 73** — Tipping-off prohibition | Prohibition on disclosing SAR/STR existence to data subject or unauthorised parties | ✅ | `gdprSensitivityMetadata.tippingOffProtected`; `gdprSensitivityMetadata.disclosurePolicy.prohibitedRecipients` (includes `"data_subject"`); SD-JWT cryptographic withholding of SAR fields; `gdprSensitivityMetadata.classification` = `sar_restricted` or `internal_suspicion` (added v1.3.0) |
 | **Art. 48** — CDD reliance on third parties | Third-party reliance conditions, written arrangement, access to data | ✅ | `kycProfile.thirdPartyCDDReliance` (`relyingPartyId`, `providingPartyId`, `relianceScope`, `relianceContractRef`, `accessToUnderlyingDataConfirmed`, `providingPartyEligibilityConfirmed`, `liabilityNote`) |
 | **Art. 83** — Transfer of funds (Travel Rule) | VASP Travel Rule obligations | ✅ | `ivms101` block |
 
@@ -93,7 +95,7 @@ This matrix documents the alignment of the OpenKYCAML v1.2.0 schema with major r
 | LPID in VC credentialSubject | ✅ | `verifiableCredential.credentialSubject.lpid` — standalone LPID VC for EUDI Wallet issuance flows |
 | OpenID4VCI (issuance) | ⬜ | Transport protocol — out of schema scope |
 | OpenID4VP (presentation) | ⬜ | Transport protocol — out of schema scope |
-| SD-JWT selective disclosure | ✅ | `verifiableCredential.selectiveDisclosure` block: `_sd_alg`, `disclosableClaimPaths`, `requiredClaimPaths`, `decodedDisclosures` (added v1.2.0) |
+| SD-JWT selective disclosure | ✅ | `verifiableCredential.selectiveDisclosure` block: `_sd_alg`, `disclosableClaimPaths`, `requiredClaimPaths`, `decodedDisclosures` (added v1.2.0); SAR-restricted fields withheld via `_sd` digests only — no disclosures appended (v1.3.0 tipping-off pattern) |
 
 ---
 
@@ -123,11 +125,13 @@ This matrix documents the alignment of the OpenKYCAML v1.2.0 schema with major r
 
 | GDPR Requirement | Coverage | Notes |
 |---|---|---|
-| Lawful basis for processing (Art. 6) | 🟡 | `kycProfile.consentRecord.consentPurpose` for consent-based processing; other legal bases (Art. 6(1)(c) legal obligation) implicit |
-| Consent record (Art. 7) | ✅ | `kycProfile.consentRecord` |
+| Lawful basis for processing (Art. 6) | ✅ | `kycProfile.consentRecord.consentPurpose` for consent; `gdprSensitivityMetadata.legalBasis` enumerates the applicable Art. 6/9/10 or AMLR legal basis per payload (added v1.3.0) |
+| Consent record (Art. 7) | ✅ | `kycProfile.consentRecord`; `gdprSensitivityMetadata.consentRecord` for sensitivity-specific consent |
 | Right to erasure (Art. 17) | 🟡 | `kycProfile.auditMetadata.dataRetentionDate` supports scheduled deletion; erasure workflow is operational |
 | Data minimisation (Art. 5(1)(c)) | ✅ | All fields optional except those required for compliance; schema supports minimal payloads |
-| Special categories (Art. 9) | ⬜ | Biometric and health data not collected in schema |
+| Special categories (Art. 9) — biometrics, criminal suspicion | ✅ | `gdprSensitivityMetadata.classification` = `sensitive_personal` or `sar_restricted`; `legalBasis` = `GDPR-Art9-2g` (substantial public interest); machine-readable classification enables automated enforcement in EUDI Wallet flows (added v1.3.0) |
+| Criminal convictions and offences (Art. 10) | ✅ | `gdprSensitivityMetadata.classification` = `criminal_offence`; `legalBasis` = `GDPR-Art10`; `tippingOffProtected` flag prevents disclosure of pending allegations (added v1.3.0) |
+| Sensitivity / SAR classification | ✅ | `gdprSensitivityMetadata` block — `classification`, `restrictedFields`, `tippingOffProtected`, `disclosurePolicy`, `retentionPeriod`, `auditReference`; ISO 8601 retention periods with pattern validation (added v1.3.0) |
 
 ---
 
@@ -206,4 +210,4 @@ _✅ = full field mapping. 🔄 = conceptual equivalent (see [mapping-sovrin.md]
 
 ---
 
-*Last updated: v1.2.0 — April 2026. Maintained by the OpenKYCAML Technical Working Group.*
+*Last updated: v1.3.0 — April 2026. Maintained by the OpenKYCAML Technical Working Group.*

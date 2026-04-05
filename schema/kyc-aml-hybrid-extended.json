@@ -1,9 +1,9 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://openkycaml.org/schema/v1.2.0/kyc-aml-hybrid-extended.json",
+  "$id": "https://openkycaml.org/schema/v1.3.0/kyc-aml-hybrid-extended.json",
   "title": "OpenKYCAML Hybrid KYC/AML Schema",
   "description": "Root OpenKYCAML document. At least one of 'ivms101' or 'verifiableCredential' MUST be present.",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "$defs": {
     "NaturalPersonNameIdentifier": {
       "title": "NaturalPersonNameIdentifier",
@@ -2361,6 +2361,220 @@
           }
         }
       }
+    },
+    "TrustedIssuer": {
+      "title": "TrustedIssuer",
+      "description": "An entry in the issuer allowlist used for eIDAS-qualified TSP validation. Relying parties check that the OpenKYCAML credential issuer DID appears in this list and (where trustFramework is eIDAS_2.0) on the applicable EU Trusted List (TSL) before accepting a credential for CDD reliance.",
+      "type": "object",
+      "required": [
+        "issuerId",
+        "trustFramework"
+      ],
+      "properties": {
+        "issuerId": {
+          "type": "string",
+          "description": "DID or URI uniquely identifying the issuer. Must match verifiableCredential.issuer.id exactly. Examples: 'did:web:pid-provider.bsi.example.de', 'did:ebsi:znHeZWvhAK2FK2Dk1jXNe2G'.",
+          "maxLength": 256
+        },
+        "issuerName": {
+          "type": "string",
+          "description": "Human-readable name of the issuer organisation (e.g. 'Bundesamt für Sicherheit in der Informationstechnik — PID Provider').",
+          "maxLength": 256
+        },
+        "countryCode": {
+          "type": "string",
+          "description": "ISO 3166-1 alpha-2 country code of the Member State or jurisdiction responsible for this issuer.",
+          "pattern": "^[A-Z]{2}$"
+        },
+        "trustFramework": {
+          "type": "string",
+          "description": "Trust framework under which the issuer is accredited.",
+          "enum": [
+            "eIDAS_2.0",
+            "eIDAS_1.0",
+            "FATF_VASP",
+            "ISO_29003",
+            "NIST_800-63",
+            "OTHER"
+          ]
+        },
+        "eIDASAssuranceLevel": {
+          "type": "string",
+          "description": "eIDAS assurance level at which this issuer is accredited to issue credentials. Required when trustFramework is eIDAS_2.0.",
+          "enum": [
+            "low",
+            "substantial",
+            "high"
+          ]
+        },
+        "qtspServiceType": {
+          "type": "string",
+          "description": "ETSI TS 119 612 TSP Service Type identifier for the qualified trust service provided by this issuer. Used to validate the issuer against the EU Trusted List (TSL). Common values: 'QCertESig' (qualified certificate for electronic signatures), 'QCertESeal' (qualified certificate for electronic seals), 'PIDSQ' (PID issuer qualified).",
+          "examples": [
+            "QCertESig",
+            "QCertESeal",
+            "PIDSQ",
+            "QTimestamp"
+          ]
+        },
+        "tspServiceUri": {
+          "type": "string",
+          "format": "uri",
+          "description": "URI of the Trusted List (TSL) XML document where this issuer's service entry can be validated. Relying parties SHOULD fetch this TSL and verify that the issuer's service has ServiceStatus 'http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/granted'. For EU issuers, this will be a Member State TSL linked from the EU LOTL at https://ec.europa.eu/tools/lotl/eu-lotl.xml."
+        },
+        "validFrom": {
+          "type": "string",
+          "format": "date",
+          "description": "ISO 8601 date from which this trust list entry is valid. Credentials issued before this date by the listed issuer are not covered."
+        },
+        "validUntil": {
+          "type": "string",
+          "format": "date",
+          "description": "ISO 8601 date until which this trust list entry is valid. Credentials issued after this date by the listed issuer require a renewed entry."
+        },
+        "credentialTypes": {
+          "type": "array",
+          "description": "Credential types (vct URIs or W3C VC type strings) that this issuer is trusted to issue. If omitted, the issuer is trusted for all OpenKYCAML credential types.",
+          "items": {
+            "type": "string",
+            "maxLength": 256
+          }
+        },
+        "additionalChecks": {
+          "type": "object",
+          "description": "Relying-party-specific validation rules extending the base trust framework check.",
+          "properties": {
+            "requireKeyBinding": {
+              "type": "boolean",
+              "description": "When true, the relying party MUST verify the holder key binding JWT (SD-JWT `kb-JWT`) proving the credential was presented by its legitimate holder."
+            },
+            "requireStatusCheck": {
+              "type": "boolean",
+              "description": "When true, the relying party MUST verify the credential status (StatusList2021) before accepting it for CDD reliance."
+            },
+            "minimumAssuranceLevel": {
+              "type": "string",
+              "description": "Minimum eIDAS assurance level that the issuer must have achieved for the credential to be accepted by this relying party.",
+              "enum": ["low", "substantial", "high"]
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "GdprSensitivityMetadata": {
+      "title": "GdprSensitivityMetadata",
+      "description": "Machine-readable GDPR/AML sensitivity classification for the OpenKYCAML payload or specific fields. Enables automated enforcement of tipping-off protection (AMLR Art. 73 / FATF Rec. 21), GDPR Art. 9/10 criminal-data safeguards, and disclosure-policy rules in EUDI Wallet presentation flows. When present at payload level the classification applies to the entire document; use restrictedFields to narrow scope to specific JSON Pointer paths.",
+      "type": "object",
+      "required": [
+        "classification"
+      ],
+      "properties": {
+        "classification": {
+          "type": "string",
+          "description": "Primary sensitivity class. 'standard' — ordinary personal data (GDPR Art. 6). 'sensitive_personal' — special-category data requiring Art. 9 safeguards (e.g. biometrics, health). 'criminal_offence' — data relating to criminal convictions or offences under GDPR Art. 10. 'sar_restricted' — Suspicious Activity Report or STR material; subject to tipping-off prohibition (AMLR Art. 73 / FATF Rec. 21). 'internal_suspicion' — internal AML suspicion flag not yet escalated to a formal SAR. 'confidential_aml' — AML/CFT investigation data protected from broader disclosure.",
+          "enum": [
+            "standard",
+            "sensitive_personal",
+            "criminal_offence",
+            "sar_restricted",
+            "internal_suspicion",
+            "confidential_aml"
+          ]
+        },
+        "restrictedFields": {
+          "type": "array",
+          "description": "JSON Pointer (RFC 6901) paths to individual fields or sub-objects within this payload that carry the stated classification. When absent the classification applies to the entire payload. Example: [\"/kycProfile/sanctionsScreening\", \"/ivms101/originator\"].",
+          "items": {
+            "type": "string",
+            "description": "A valid RFC 6901 JSON Pointer such as '/kycProfile/sanctionsScreening'."
+          }
+        },
+        "tippingOffProtected": {
+          "type": "boolean",
+          "description": "When true, any disclosure of this payload (or the referenced restrictedFields) MUST NOT reveal the existence of a SAR, STR, or internal suspicion to the data subject or any unauthorised party. Mandatory for classification 'sar_restricted' or 'internal_suspicion'. Wallets and relying parties that receive a VC with this flag set MUST NOT render or share the affected claims without explicit supervisory authority approval."
+        },
+        "legalBasis": {
+          "type": "string",
+          "description": "Primary legal basis for processing this data. 'GDPR-Art6-1c' — legal obligation. 'GDPR-Art6-1e' — public task. 'GDPR-Art9-2g' — substantial public interest. 'GDPR-Art10' — criminal-offence data under official authority. 'AMLR-Art55' — AML data-sharing obligation. 'AMLR-Art73' — tipping-off prohibition compliance. 'national_AML_law' — national transposition of AML directives.",
+          "enum": [
+            "GDPR-Art6-1c",
+            "GDPR-Art6-1e",
+            "GDPR-Art9-2g",
+            "GDPR-Art10",
+            "AMLR-Art55",
+            "AMLR-Art73",
+            "national_AML_law"
+          ]
+        },
+        "retentionPeriod": {
+          "type": "string",
+          "description": "ISO 8601 duration specifying how long this data must be retained. Overrides any retention hint in kycProfile.auditMetadata.dataRetentionDate. AMLR Art. 55 requires a minimum of 5 years ('P5Y'). SAR-related records may require longer retention per national law.",
+          "pattern": "^P(?:\\d+Y)?(?:\\d+M)?(?:\\d+W)?(?:\\d+D)?(?:T(?:\\d+H)?(?:\\d+M)?(?:\\d+S)?)?$",
+          "examples": [
+            "P5Y",
+            "P7Y",
+            "P10Y"
+          ]
+        },
+        "consentRecord": {
+          "type": "object",
+          "description": "Explicit consent record for processing this sensitive data. Required when legalBasis is GDPR-Art6-1a (consent) or where national law requires documented consent for Art. 9/10 data.",
+          "required": [
+            "consentGiven"
+          ],
+          "properties": {
+            "consentGiven": {
+              "type": "boolean",
+              "description": "Whether the data subject has given explicit consent to process this sensitive data."
+            },
+            "consentDate": {
+              "type": "string",
+              "format": "date-time",
+              "description": "ISO 8601 date-time when consent was obtained."
+            },
+            "withdrawalPossible": {
+              "type": "boolean",
+              "description": "Whether the data subject may withdraw consent. For AML/SAR data this is typically false (legal obligation overrides consent withdrawal)."
+            }
+          },
+          "additionalProperties": false
+        },
+        "disclosurePolicy": {
+          "type": "object",
+          "description": "Machine-readable policy governing which parties may receive this data. Wallets and relying-party systems SHOULD enforce these rules automatically before presenting or forwarding a credential.",
+          "properties": {
+            "allowedRecipients": {
+              "type": "array",
+              "description": "Identifiers of permitted recipient categories or specific entities. Examples: 'regulated_fi' (any regulated financial institution), 'fiu_only' (Financial Intelligence Unit only), 'did:web:counterparty.example.com' (a specific VASP).",
+              "items": {
+                "type": "string",
+                "maxLength": 256
+              }
+            },
+            "prohibitedRecipients": {
+              "type": "array",
+              "description": "Categories or entities explicitly prohibited from receiving this data. 'data_subject' MUST be set when tippingOffProtected is true to prevent self-disclosure of SAR existence.",
+              "items": {
+                "type": "string",
+                "maxLength": 256
+              }
+            },
+            "requiresExplicitConsent": {
+              "type": "boolean",
+              "description": "When true, the recipient must obtain explicit consent from the data subject (or supervisory authority approval for SAR data) before accessing the affected fields."
+            }
+          },
+          "additionalProperties": false
+        },
+        "auditReference": {
+          "type": "string",
+          "description": "Opaque reference to the DPO record, internal audit log entry, or SAR case identifier that governs this classification. MUST NOT contain the SAR narrative or case content (tipping-off risk). Recommended format: an opaque UUID or hash. Example: 'sar-case-ref:sha256:e3b0c44298fc1c149afb...'. Maximum 256 characters.",
+          "maxLength": 256
+        }
+      },
+      "additionalProperties": false
     }
   },
   "type": "object",
@@ -2402,6 +2616,18 @@
     "transactionMonitoring": {
       "$ref": "#/$defs/TransactionMonitoring",
       "description": "Optional transaction-level AML monitoring results, rule evaluations, travel-rule compliance status, and reporting obligations for this specific transaction."
+    },
+    "trustedIssuers": {
+      "type": "array",
+      "description": "Optional allowlist of trusted credential issuers with eIDAS qualified TSP validation rules. Relying parties use this list to validate that the verifiableCredential.issuer appears on the applicable EU Trusted List (TSL) before accepting a credential for CDD reliance under AMLR Art. 22 and eIDAS 2.0.",
+      "items": {
+        "$ref": "#/$defs/TrustedIssuer"
+      },
+      "minItems": 1
+    },
+    "gdprSensitivityMetadata": {
+      "$ref": "#/$defs/GdprSensitivityMetadata",
+      "description": "Optional GDPR/AML sensitivity classification block. Provides machine-readable tipping-off protection flags (AMLR Art. 73 / FATF Rec. 21), legal-basis references (GDPR Art. 9/10), retention rules, and disclosure policies. When present, wallets and relying parties MUST apply the stated classification before rendering or forwarding any credential fields."
     }
   },
   "anyOf": [

@@ -63,7 +63,7 @@ See [`examples/minimal-travel-rule.json`](../examples/minimal-travel-rule.json).
 ### Integration Checklist
 - [ ] Generate a unique `messageId` (UUID v4) per message.
 - [ ] Set `messageDateTime` to the current UTC timestamp.
-- [ ] Set `version` to `"1.2.0"` (or the current schema version).
+- [ ] Set `version` to `"1.3.0"` (or the current schema version).
 - [ ] Validate the payload against the OpenKYCAML schema before sending.
 - [ ] Ensure your Travel Rule protocol (OpenVASP, TRP, TRISA, Notabene) transmits the `ivms101` block in its data payload.
 
@@ -229,6 +229,12 @@ Never for Travel Rule messages alone. It is required when sharing CDD data under
 
 **Q: How do I handle encryption for PII?**
 Use your existing message encryption layer (e.g., JWE, TLS 1.3). OpenKYCAML defines the data structure, not the transport security. For VC-wrapped payloads, selective disclosure using SD-JWT or BBS+ is recommended.
+
+**Q: How do I flag SAR-related data to prevent tipping-off?**
+Use the `gdprSensitivityMetadata` block (added v1.3.0). Set `classification: "sar_restricted"`, `tippingOffProtected: true`, and populate `restrictedFields[]` with the JSON Pointer paths of SAR-linked fields. Set `disclosurePolicy.prohibitedRecipients` to include `"data_subject"`. Critically, do **not** include SAR-restricted fields in the SD-JWT `decodedDisclosures` array — they should appear only as `_sd` digests in the Issuer-JWT. See [`examples/hybrid-with-sar-restriction.json`](../examples/hybrid-with-sar-restriction.json) for a complete example, and §12 of the [EUDI Wallet Integration Guide](eudi-wallet-integration.md) for full guidance.
+
+**Q: What is the difference between `sar_restricted` and `internal_suspicion`?**
+`sar_restricted` is for data linked to a SAR/STR that has been (or is being) filed. `internal_suspicion` is for earlier-stage AML flags before a formal SAR decision. Both require `tippingOffProtected: true` — the Pydantic model enforces this at construction time.
 
 ---
 

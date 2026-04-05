@@ -5,7 +5,7 @@
 **The neutral, open hybrid KYC/AML data standard for the compliant digital economy.**
 
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
-[![Schema Version](https://img.shields.io/badge/schema-v1.2.0-brightgreen.svg)](schema/kyc-aml-hybrid-extended.json)
+[![Schema Version](https://img.shields.io/badge/schema-v1.3.0-brightgreen.svg)](schema/kyc-aml-hybrid-extended.json)
 [![IVMS 101](https://img.shields.io/badge/IVMS%20101-compatible-orange.svg)](docs/mapping-ivms101-eidas-amlr.md)
 [![eIDAS 2.0](https://img.shields.io/badge/eIDAS%202.0-VC%20ready-blueviolet.svg)](docs/mapping-ivms101-eidas-amlr.md)
 [![AMLR 2027 Ready](https://img.shields.io/badge/AMLR%202027-ready-red.svg)](docs/compliance-matrix.md)
@@ -87,21 +87,32 @@ OpenKYCAML payload
 │   ├── selectiveDisclosure      ← SD-JWT selective disclosure metadata (EUDI Wallet / GDPR minimisation)
 │   └── proof                    ← Ed25519Signature2020 / JWS / CLSignature2019 / AnonCredsProof2023
 │
-└── kycProfile                   ← (optional) Full KYC/AML profile
-    ├── customerRiskRating        ← Overall risk, score, risk factors
-    ├── customerClassification    ← RETAIL / CORPORATE / VASP / HNW / ... + accreditedInvestor
-    ├── dueDiligenceType          ← SDD / CDD / EDD
-    ├── pepStatus                 ← PEP flag, category, role
-    ├── sanctionsScreening        ← OFAC, UN, EU, HMT results
-    ├── adverseMedia              ← Adverse news screening
-    ├── sourceOfFundsWealth       ← SOF/SOW declarations and verification
-    ├── beneficialOwnership[]     ← UBOs (AMLR Art. 26) + deep intermediate entity chain
-    ├── onboardingChannel         ← IN_PERSON / REMOTE_VIDEO / EUDI_WALLET / ...
-    ├── isEligible                ← ERC-3643 eligibility flag (IIdentityRegistry.isVerified)
-    ├── eligibilityLastConfirmed  ← Date eligibility was last confirmed on-chain
-    ├── blockchainAccountIds[]    ← On-chain wallet addresses (ONCHAINID, network, frozen status)
-    ├── monitoringInfo            ← Monitoring level, alerts, review dates
-    └── auditMetadata             ← Record ID, version, change log
+├── kycProfile                   ← (optional) Full KYC/AML profile
+│   ├── customerRiskRating        ← Overall risk, score, risk factors
+│   ├── customerClassification    ← RETAIL / CORPORATE / VASP / HNW / ... + accreditedInvestor
+│   ├── dueDiligenceType          ← SDD / CDD / EDD
+│   ├── pepStatus                 ← PEP flag, category, role
+│   ├── sanctionsScreening        ← OFAC, UN, EU, HMT results
+│   ├── adverseMedia              ← Adverse news screening
+│   ├── sourceOfFundsWealth       ← SOF/SOW declarations and verification
+│   ├── beneficialOwnership[]     ← UBOs (AMLR Art. 26) + deep intermediate entity chain
+│   ├── onboardingChannel         ← IN_PERSON / REMOTE_VIDEO / EUDI_WALLET / ...
+│   ├── isEligible                ← ERC-3643 eligibility flag (IIdentityRegistry.isVerified)
+│   ├── eligibilityLastConfirmed  ← Date eligibility was last confirmed on-chain
+│   ├── blockchainAccountIds[]    ← On-chain wallet addresses (ONCHAINID, network, frozen status)
+│   ├── monitoringInfo            ← Monitoring level, alerts, review dates
+│   └── auditMetadata             ← Record ID, version, change log
+│
+└── gdprSensitivityMetadata      ← (optional, v1.3.0+) GDPR/AML sensitivity classification
+    ├── classification            ← standard / sensitive_personal / criminal_offence /
+    │                                sar_restricted / internal_suspicion / confidential_aml
+    ├── restrictedFields[]        ← JSON Pointers to individual restricted fields
+    ├── tippingOffProtected       ← AMLR Art. 73 / FATF Rec. 21 SAR non-disclosure flag
+    ├── legalBasis                ← GDPR Art. 6/9/10 or AMLR Art. 55/73 code
+    ├── retentionPeriod           ← ISO 8601 duration (e.g. "P5Y")
+    ├── consentRecord             ← Consent given/withdrawn (for consent-based processing)
+    ├── disclosurePolicy          ← allowedRecipients / prohibitedRecipients
+    └── auditReference            ← Opaque DPO/SAR case reference (hash only, no content)
 ```
 
 ---
@@ -126,8 +137,8 @@ node validator.js ../../examples/full-kyc-profile.json
 
 ```json
 {
-  "$schema": "https://openkycaml.org/schema/v1.2.0/kyc-aml-hybrid-extended.json",
-  "version": "1.2.0",
+  "$schema": "https://openkycaml.org/schema/v1.3.0/kyc-aml-hybrid-extended.json",
+  "version": "1.3.0",
   "messageId": "550e8400-e29b-41d4-a716-446655440001",
   "messageDateTime": "2024-06-15T09:30:00Z",
   "ivms101": {
@@ -163,8 +174,8 @@ node validator.js ../../examples/full-kyc-profile.json
 
 ```json
 {
-  "$schema": "https://openkycaml.org/schema/v1.2.0/kyc-aml-hybrid-extended.json",
-  "version": "1.2.0",
+  "$schema": "https://openkycaml.org/schema/v1.3.0/kyc-aml-hybrid-extended.json",
+  "version": "1.3.0",
   "verifiableCredential": {
     "issuer": { "id": "did:web:acme-crypto.example.nl", "name": "Acme Crypto Exchange BV" },
     "credentialSubject": {
@@ -201,6 +212,7 @@ Every scenario is available in two forms: a **plain IVMS 101** baseline and an *
 | Full KYC profile (EDD, PEP, UBOs) | [`full-kyc-profile.json`](examples/full-kyc-profile.json) | [`full-kyc-profile-eudi-wallet.json`](examples/full-kyc-profile-eudi-wallet.json) |
 | Minimal Travel Rule | [`minimal-travel-rule.json`](examples/minimal-travel-rule.json) | [`minimal-travel-rule-eudi-wallet.json`](examples/minimal-travel-rule-eudi-wallet.json) |
 | Travel Rule VC-wrapped | [`travel-rule-vc-wrapped.json`](examples/travel-rule-vc-wrapped.json) | [`travel-rule-vc-eudi-wallet.json`](examples/travel-rule-vc-eudi-wallet.json) |
+| SAR-restricted VC — tipping-off protection (v1.3.0) | [`hybrid-with-sar-restriction.json`](examples/hybrid-with-sar-restriction.json) | — |
 
 ### EUDI Wallet examples — DID triangulation
 
@@ -241,10 +253,10 @@ Each `-eudi-wallet.json` example documents a **trust chain** using W3C VC eviden
 | **FATF Recommendations 10, 12, 24** | ✅ CDD, PEP, UBO fields |
 | **EU AMLR 2024** | ✅ Art. 20–22, 24, 26, 28–31, 56, 83 |
 | **eIDAS 2.0 / ARF** | ✅ W3C VC Data Model v2, DID, Ed25519 proof suites, LPID, QEAA mandates |
-| **EU Digital Identity Wallet (EUDIW)** | ✅ PID + LPID credential flows via OpenID4VP; W3C VC evidence block; EUDI_WALLET onboarding channel |
-| **ISO 20022** | 🟡 Key fields mapped; full pain.001 serialiser planned for v1.3 |
+| **EU Digital Identity Wallet (EUDIW)** | ✅ PID + LPID credential flows via OpenID4VP; W3C VC evidence block; EUDI_WALLET onboarding channel; `gdprSensitivityMetadata` for tipping-off-safe EUDIW presentations (v1.3.0) |
+| **ISO 20022** | 🟡 Key fields mapped; full pain.001 serialiser planned for v1.4 |
 | **GLEIF / LEI** | ✅ LEIX national identifier type; ISO 17442 check digit validation |
-| **GDPR** | ✅ Consent record, data retention date, EUDI Wallet SD-JWT selective disclosure |
+| **GDPR** | ✅ Consent record, data retention date, EUDI Wallet SD-JWT selective disclosure; `gdprSensitivityMetadata` block for SAR/tipping-off protection (Art. 9/10 special categories and criminal-offence data, AMLR Art. 73) — added v1.3.0 |
 | **ERC-3643 (T-REX)** | ✅ ONCHAINID, eligibility flag, wallet addresses, frozen tokens, accredited investor claim — see [ERC-3643 mapping](docs/mapping-erc3643.md) |
 | **Sovrin / Hyperledger Indy (AnonCreds)** | ✅ `did:sov` / `did:indy` DIDs, AnonCreds CL credentials, CLAIM_DEF, REVOC_REG, Rich Schema — see [Sovrin mapping](docs/mapping-sovrin.md) |
 
@@ -255,11 +267,12 @@ Each `-eudi-wallet.json` example documents a **trust chain** using W3C VC eviden
 ```
 openKYCAML/
 ├── schema/
-│   ├── kyc-aml-hybrid-extended.json     ← Canonical schema (latest — currently v1.2.0)
+│   ├── kyc-aml-hybrid-extended.json     ← Canonical schema (latest — currently v1.3.0)
 │   └── versions/
 │       ├── v1.0.0.json                  ← v1.0.0 snapshot
 │       ├── v1.1.0.json                  ← v1.1.0 snapshot
-│       └── v1.2.0.json                  ← v1.2.0 snapshot (current)
+│       ├── v1.2.0.json                  ← v1.2.0 snapshot
+│       └── v1.3.0.json                  ← v1.3.0 snapshot (current)
 ├── examples/
 │   ├── *-plain.json                     ← Plain IVMS 101 baseline examples
 │   ├── *-wrapped.json                   ← VC-wrapped examples
