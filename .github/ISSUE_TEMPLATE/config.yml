@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Question or general discussion
+    url: https://github.com/Lazy-Jack-Ltd/OpenKYCAML/discussions
+    about: Ask questions, share ideas, or discuss the standard in GitHub Discussions.
+  - name: Register as an adopter
+    url: https://github.com/Lazy-Jack-Ltd/OpenKYCAML/issues/new?labels=governance%3A+adopter&title=Adopter+registration%3A+%3Corganisation+name%3E
+    about: Register your organisation as an OpenKYCAML adopter.

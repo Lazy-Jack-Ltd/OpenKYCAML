@@ -1,0 +1,61 @@
+name: Feature request / enhancement
+description: Suggest a new field, example, tool improvement, or other enhancement.
+labels: ["type: enhancement", "status: needs-review"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Before opening a feature request, please check [open issues](https://github.com/Lazy-Jack-Ltd/OpenKYCAML/issues) and [discussions](https://github.com/Lazy-Jack-Ltd/OpenKYCAML/discussions) to avoid duplicates.
+        
+        > **Breaking schema changes** (removing / renaming fields, changing optionality or types) require a formal RFC. Please use the **RFC** issue template instead.
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Affected area
+      options:
+        - Schema — new optional field or section
+        - Schema — new enum value
+        - Example payloads — new example
+        - Python validator / tools
+        - JavaScript validator / tools
+        - New language tool (Go, Java, etc.)
+        - Documentation / compliance matrix
+        - CI / workflows
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or motivation
+      description: What problem does this solve? Which compliance requirement or integration need drives this?
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: Describe what you would like to see added or changed. For schema fields, include a draft definition if possible.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Are there alternative approaches you have thought about?
+
+  - type: textarea
+    id: standards
+    attributes:
+      label: Standards reference
+      description: If this relates to a specific standard (FATF, AMLR, IVMS 101, eIDAS 2.0, ISO 20022, etc.), please cite the relevant article or section.
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Any other information, links, or examples that would help.
