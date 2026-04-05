@@ -274,7 +274,7 @@ class GdprSensitivityMetadata(BaseModel):
     @model_validator(mode="after")
     def _tipping_off_required_for_sar(self) -> "GdprSensitivityMetadata":
         if self.classification in ("sar_restricted", "internal_suspicion"):
-            if not self.tipping_off_protected:
+            if self.tipping_off_protected is not True:
                 raise ValueError(
                     f"tippingOffProtected must be True when classification is '{self.classification}'."
                 )

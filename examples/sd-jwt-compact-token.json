@@ -3,8 +3,8 @@
 
   "_comment_scenario": "Anna Müller presents her OpenKYCAML KYC Attestation at Beneficiary VASP (NL). She selectively discloses her legal name and residential address (FATF Travel Rule minimum) and withholds her date of birth, national identifier, and nationality under GDPR data-minimisation. The relying party requests only the mandatory Travel Rule claims via an OpenID4VP Presentation Definition.",
 
-  "$schema": "https://openkycaml.org/schema/v1.2.0/kyc-aml-hybrid-extended.json",
-  "version": "1.2.0",
+  "$schema": "https://openkycaml.org/schema/v1.3.0/kyc-aml-hybrid-extended.json",
+  "version": "1.3.0",
   "messageId": "f1a5b964-7c8d-6e9f-0a1b-2c3d4e5f6a7b",
   "messageDateTime": "2025-10-01T10:00:00Z",
 
