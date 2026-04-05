@@ -497,10 +497,17 @@
           "type": "boolean",
           "description": "Whether the subject is classified as a PEP."
         },
+        "isPep": {
+          "type": "boolean",
+          "description": "Alias for isPEP (IVMS 101 / reference schema interoperability)."
+        },
         "pepCategory": {
           "type": "string",
           "description": "PEP classification category.",
-          "enum": ["DOMESTIC_PEP", "FOREIGN_PEP", "INTERNATIONAL_ORG_PEP", "RCA", "FORMER_PEP", "NOT_PEP"]
+          "enum": [
+            "DOMESTIC_PEP", "FOREIGN_PEP", "INTERNATIONAL_ORG_PEP", "RCA", "FORMER_PEP", "NOT_PEP",
+            "DOMESTIC", "FOREIGN", "INTERNATIONAL_ORG", "FAMILY", "CLOSE_ASSOCIATE", "NONE"
+          ]
         },
         "pepRole": {
           "type": "string",
@@ -511,6 +518,11 @@
           "type": "string",
           "format": "date",
           "description": "Date of the most recent PEP screening."
+        },
+        "lastPepCheckDate": {
+          "type": "string",
+          "format": "date",
+          "description": "Alias for screeningDate (reference schema interoperability)."
         },
         "screeningProvider": {
           "type": "string",
@@ -528,12 +540,22 @@
         "screeningStatus": {
           "type": "string",
           "description": "Outcome of the sanctions screening.",
-          "enum": ["CLEAR", "HIT", "POTENTIAL_MATCH", "FALSE_POSITIVE", "PENDING"]
+          "enum": ["CLEAR", "HIT", "POTENTIAL_MATCH", "FALSE_POSITIVE", "PENDING", "ESCALATED"]
+        },
+        "status": {
+          "type": "string",
+          "description": "Alias for screeningStatus (reference schema interoperability).",
+          "enum": ["CLEAR", "HIT", "PENDING", "ESCALATED"]
         },
         "screeningDate": {
           "type": "string",
           "format": "date-time",
           "description": "ISO 8601 datetime of the screening."
+        },
+        "lastScreenedDate": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Alias for screeningDate (reference schema interoperability)."
         },
         "screeningProvider": {
           "type": "string",
@@ -545,6 +567,11 @@
           "items": { "type": "string" },
           "description": "Sanctions lists checked (e.g., OFAC SDN, EU Consolidated, UN Consolidated, HMT).",
           "examples": [["OFAC_SDN", "EU_CONSOLIDATED", "UN_CONSOLIDATED", "HMT"]]
+        },
+        "hits": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Names or identifiers of matched sanctions entries."
         },
         "matchDetails": {
           "type": "array",
@@ -572,6 +599,10 @@
       "type": "object",
       "required": ["screeningStatus", "screeningDate"],
       "properties": {
+        "hasHits": {
+          "type": "boolean",
+          "description": "Whether any adverse media hits were found."
+        },
         "screeningStatus": {
           "type": "string",
           "enum": ["CLEAR", "ADVERSE_FOUND", "UNDER_REVIEW", "FALSE_POSITIVE", "PENDING"]
@@ -579,6 +610,11 @@
         "screeningDate": {
           "type": "string",
           "format": "date-time"
+        },
+        "lastCheckedDate": {
+          "type": "string",
+          "format": "date",
+          "description": "Date of the most recent adverse media check (reference schema interoperability)."
         },
         "screeningProvider": { "type": "string", "maxLength": 100 },
         "categories": {
@@ -663,9 +699,24 @@
       "title": "BeneficialOwner",
       "description": "Ultimate Beneficial Owner (UBO) record.",
       "type": "object",
-      "required": ["naturalPerson", "ownershipPercentage"],
+      "required": ["ownershipPercentage"],
       "properties": {
-        "naturalPerson": { "$ref": "#/$defs/NaturalPerson" },
+        "person": {
+          "type": "object",
+          "description": "The beneficial owner as a natural or legal person (reference schema interoperability).",
+          "properties": {
+            "naturalPerson": { "$ref": "#/$defs/NaturalPerson" },
+            "legalPerson": { "$ref": "#/$defs/LegalPerson" }
+          },
+          "oneOf": [
+            { "required": ["naturalPerson"] },
+            { "required": ["legalPerson"] }
+          ]
+        },
+        "naturalPerson": {
+          "$ref": "#/$defs/NaturalPerson",
+          "description": "The beneficial owner as a natural person. Use 'person' for natural or legal person support."
+        },
         "ownershipPercentage": {
           "type": "number",
           "minimum": 0,
@@ -709,6 +760,11 @@
           "type": "string",
           "format": "date",
           "description": "Date of the last periodic review."
+        },
+        "lastKycReviewDate": {
+          "type": "string",
+          "format": "date",
+          "description": "Alias for lastReviewDate (reference schema interoperability)."
         },
         "nextReviewDate": {
           "type": "string",
@@ -801,6 +857,11 @@
           "type": "string",
           "format": "date",
           "description": "Date after which this record may be deleted per data retention policy."
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 datetime of this audit record (reference schema interoperability; see also recordCreatedAt)."
         },
         "changeLog": {
           "type": "array",
@@ -1060,17 +1121,17 @@
       "title": "KYCProfile",
       "description": "Full KYC/AML profile extending IVMS 101 with risk classification, screening, and monitoring data. Aligns with FATF Rec 10/16, EU AMLR Articles 22 and 26, and EBA Risk Factor Guidelines.",
       "type": "object",
+      "required": ["customerRiskRating"],
       "properties": {
         "customerRiskRating": {
+          "type": "string",
+          "description": "Overall customer risk rating. Required for FATF Rec 10 CDD and AMLR Article 22 risk-based approach.",
+          "enum": ["LOW", "MEDIUM", "HIGH", "VERY_HIGH", "UNACCEPTABLE", "PROHIBITED"]
+        },
+        "riskRatingDetail": {
           "type": "object",
-          "description": "Customer risk rating and scoring.",
-          "required": ["overallRiskRating"],
+          "description": "Detailed risk scoring breakdown. Use customerRiskRating for the top-level rating.",
           "properties": {
-            "overallRiskRating": {
-              "type": "string",
-              "enum": ["LOW", "MEDIUM", "HIGH", "VERY_HIGH", "UNACCEPTABLE"],
-              "description": "Overall composite customer risk rating."
-            },
             "riskScore": {
               "type": "integer",
               "minimum": 0,
@@ -1086,26 +1147,11 @@
               "type": "object",
               "description": "Breakdown of individual risk factor scores.",
               "properties": {
-                "geographicRisk": {
-                  "type": "string",
-                  "enum": ["LOW", "MEDIUM", "HIGH", "VERY_HIGH"]
-                },
-                "productRisk": {
-                  "type": "string",
-                  "enum": ["LOW", "MEDIUM", "HIGH", "VERY_HIGH"]
-                },
-                "channelRisk": {
-                  "type": "string",
-                  "enum": ["LOW", "MEDIUM", "HIGH", "VERY_HIGH"]
-                },
-                "customerTypeRisk": {
-                  "type": "string",
-                  "enum": ["LOW", "MEDIUM", "HIGH", "VERY_HIGH"]
-                },
-                "transactionRisk": {
-                  "type": "string",
-                  "enum": ["LOW", "MEDIUM", "HIGH", "VERY_HIGH"]
-                }
+                "geographicRisk": { "type": "string", "enum": ["LOW", "MEDIUM", "HIGH", "VERY_HIGH"] },
+                "productRisk": { "type": "string", "enum": ["LOW", "MEDIUM", "HIGH", "VERY_HIGH"] },
+                "channelRisk": { "type": "string", "enum": ["LOW", "MEDIUM", "HIGH", "VERY_HIGH"] },
+                "customerTypeRisk": { "type": "string", "enum": ["LOW", "MEDIUM", "HIGH", "VERY_HIGH"] },
+                "transactionRisk": { "type": "string", "enum": ["LOW", "MEDIUM", "HIGH", "VERY_HIGH"] }
               }
             },
             "ratingMethodology": {
@@ -1116,27 +1162,34 @@
           }
         },
         "customerClassification": {
-          "type": "string",
-          "description": "Regulatory or internal customer classification.",
-          "enum": [
-            "RETAIL", "CORPORATE", "FINANCIAL_INSTITUTION", "VASP",
-            "TRUST", "CHARITY_NGO", "PEP", "HIGH_NET_WORTH", "CORRESPONDENT_BANK", "OTHER"
-          ]
-        },
-        "industrySector": {
-          "type": "string",
-          "description": "Industry or sector of the customer's primary business activity (e.g., REAL_ESTATE, CRYPTO_ASSETS, FINANCIAL_SERVICES). Used for sector-based risk assessment under AMLR Article 22.",
-          "maxLength": 100
-        },
-        "occupationOrPurpose": {
-          "type": "string",
-          "description": "Occupation (natural persons) or business purpose (legal entities) as declared by the customer. Required for CDD under FATF Rec 10 and AMLR Article 22.",
-          "maxLength": 200
-        },
-        "relationshipPurpose": {
-          "type": "string",
-          "description": "Nature and intended purpose of the business relationship (e.g., INVESTMENT, TRADE_FINANCE, PAYMENTS). Required field under AMLR Article 22(2)(b).",
-          "maxLength": 200
+          "type": "object",
+          "description": "Customer classification containing type, industry, and relationship purpose.",
+          "properties": {
+            "customerType": {
+              "type": "string",
+              "description": "Regulatory or internal customer type classification.",
+              "enum": [
+                "NATURAL_PERSON", "LEGAL_ENTITY", "TRUST", "OTHER",
+                "RETAIL", "CORPORATE", "FINANCIAL_INSTITUTION", "VASP",
+                "CHARITY_NGO", "PEP", "HIGH_NET_WORTH", "CORRESPONDENT_BANK"
+              ]
+            },
+            "industrySector": {
+              "type": "string",
+              "description": "Industry or sector of the customer's primary business activity (e.g., REAL_ESTATE, CRYPTO_ASSETS, FINANCIAL_SERVICES).",
+              "maxLength": 100
+            },
+            "occupationOrPurpose": {
+              "type": "string",
+              "description": "Occupation (natural persons) or business purpose (legal entities) as declared by the customer.",
+              "maxLength": 200
+            },
+            "relationshipPurpose": {
+              "type": "string",
+              "description": "Nature and intended purpose of the business relationship (e.g., INVESTMENT, TRADE_FINANCE, PAYMENTS).",
+              "maxLength": 200
+            }
+          }
         },
         "dueDiligenceType": {
           "type": "string",
@@ -1146,7 +1199,15 @@
         "pepStatus": { "$ref": "#/$defs/PEPStatus" },
         "sanctionsScreening": { "$ref": "#/$defs/SanctionsScreening" },
         "adverseMedia": { "$ref": "#/$defs/AdverseMedia" },
-        "sourceOfFundsWealth": { "$ref": "#/$defs/SourceOfFundsWealth" },
+        "sourceOfFundsWealth": {
+          "type": "array",
+          "items": { "type": "string", "maxLength": 100 },
+          "description": "Declared source(s) of funds or wealth as free-text or coded values (e.g., EMPLOYMENT_INCOME, INHERITANCE)."
+        },
+        "sourceOfFundsWealthDetail": {
+          "$ref": "#/$defs/SourceOfFundsWealth",
+          "description": "Detailed and verified source of funds and wealth record including supporting documents."
+        },
         "beneficialOwnership": {
           "type": "array",
           "items": { "$ref": "#/$defs/BeneficialOwner" },

@@ -199,8 +199,8 @@
         }
       },
       "kycProfile": {
-        "customerRiskRating": {
-          "overallRiskRating": "MEDIUM",
+        "customerRiskRating": "MEDIUM",
+        "riskRatingDetail": {
           "riskScore": 450,
           "riskRatingDate": "2024-01-10",
           "riskFactors": {
@@ -212,7 +212,9 @@
           },
           "ratingMethodology": "EBA Risk Factor Guidelines 2024 + Internal Risk Model v3.2"
         },
-        "customerClassification": "RETAIL",
+        "customerClassification": {
+          "customerType": "RETAIL"
+        },
         "dueDiligenceType": "CDD",
         "pepStatus": {
           "isPEP": false,

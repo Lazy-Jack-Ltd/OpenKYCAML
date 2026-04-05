@@ -85,8 +85,8 @@
     }
   },
   "kycProfile": {
-    "customerRiskRating": {
-      "overallRiskRating": "HIGH",
+    "customerRiskRating": "HIGH",
+    "riskRatingDetail": {
       "riskScore": 720,
       "riskRatingDate": "2024-05-01",
       "riskFactors": {
@@ -98,10 +98,12 @@
       },
       "ratingMethodology": "EBA Risk Factor Guidelines 2024 + Internal Risk Model v3.2"
     },
-    "customerClassification": "HIGH_NET_WORTH",
-    "industrySector": "PRIVATE_INVESTMENT_HOLDING",
-    "occupationOrPurpose": "Former senior government official; current private sector advisor and investor in GCC region.",
-    "relationshipPurpose": "Investment management and diversification of personal and corporate assets across regional equities, real estate, and digital assets.",
+    "customerClassification": {
+      "customerType": "HIGH_NET_WORTH",
+      "industrySector": "PRIVATE_INVESTMENT_HOLDING",
+      "occupationOrPurpose": "Former senior government official; current private sector advisor and investor in GCC region.",
+      "relationshipPurpose": "Investment management and diversification of personal and corporate assets across regional equities, real estate, and digital assets."
+    },
     "dueDiligenceType": "EDD",
     "pepStatus": {
       "isPEP": true,
@@ -131,7 +133,11 @@
       "categories": [],
       "summary": "No adverse media found after comprehensive search across 100,000+ global news sources."
     },
-    "sourceOfFundsWealth": {
+    "sourceOfFundsWealth": [
+      "INVESTMENT_RETURNS",
+      "BUSINESS_INCOME"
+    ],
+    "sourceOfFundsWealthDetail": {
       "sourceOfFunds": [
         "INVESTMENT_RETURNS",
         "BUSINESS_INCOME"
