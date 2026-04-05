@@ -119,6 +119,9 @@
       "ratingMethodology": "EBA Risk Factor Guidelines 2024 + Internal Risk Model v3.2"
     },
     "customerClassification": "HIGH_NET_WORTH",
+    "industrySector": "PRIVATE_INVESTMENT_HOLDING",
+    "occupationOrPurpose": "Former senior government official; current private sector advisor and investor in GCC region.",
+    "relationshipPurpose": "Investment management and diversification of personal and corporate assets across regional equities, real estate, and digital assets.",
     "dueDiligenceType": "EDD",
     "pepStatus": {
       "isPEP": true,
@@ -166,6 +169,8 @@
     "beneficialOwnership": [],
     "monitoringInfo": {
       "monitoringLevel": "ENHANCED",
+      "monitoringStatus": "ACTIVE",
+      "eddRequired": true,
       "lastReviewDate": "2024-06-01",
       "nextReviewDate": "2024-12-01",
       "reviewFrequency": "SEMI_ANNUAL",
@@ -188,6 +193,8 @@
       "createdBy": "onboarding-system@difc-exchange.ae",
       "updatedBy": "compliance.officer@difc-exchange.ae",
       "dataSourceSystem": "FinStar KYC Platform v4.1",
+      "dataProvider": "DIFC Digital Asset Exchange LLC",
+      "sharingConsentReference": "RELIANCE-AGREE-2024-DIFC-GCM-001",
       "dataRetentionDate": "2029-06-15",
       "changeLog": [
         {

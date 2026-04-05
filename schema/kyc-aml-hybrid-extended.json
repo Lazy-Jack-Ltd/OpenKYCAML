@@ -638,6 +638,15 @@
           "enum": ["STANDARD", "ENHANCED", "SIMPLIFIED", "CONTINUOUS"],
           "description": "Intensity of the ongoing monitoring regime."
         },
+        "monitoringStatus": {
+          "type": "string",
+          "enum": ["ACTIVE", "SUSPENDED", "TERMINATED"],
+          "description": "Current operational status of the business relationship. ACTIVE = relationship ongoing; SUSPENDED = temporarily restricted pending review; TERMINATED = relationship closed."
+        },
+        "eddRequired": {
+          "type": "boolean",
+          "description": "Whether Enhanced Due Diligence (EDD) has been triggered for this customer. True when the customer is a PEP, is from a high-risk third country, or other EDD triggers under AMLR Article 22 apply."
+        },
         "lastReviewDate": {
           "type": "string",
           "format": "date",
@@ -719,6 +728,16 @@
           "type": "string",
           "description": "Source system identifier (e.g., core banking system, CRM, KYC platform).",
           "maxLength": 100
+        },
+        "dataProvider": {
+          "type": "string",
+          "description": "Name or DID of the institution that originally collected and verified the KYC data. Populated when this record is shared under AMLR Article 48 third-party reliance or a KYC utility arrangement.",
+          "maxLength": 200
+        },
+        "sharingConsentReference": {
+          "type": "string",
+          "description": "Reference to the consent or data-sharing agreement under which this record is being disclosed to a third party (e.g., reliance agreement ID, data-sharing framework reference). Required for AMLR Article 48 reliance and GDPR Article 6 lawful basis documentation.",
+          "maxLength": 200
         },
         "dataRetentionDate": {
           "type": "string",
@@ -1045,6 +1064,21 @@
             "RETAIL", "CORPORATE", "FINANCIAL_INSTITUTION", "VASP",
             "TRUST", "CHARITY_NGO", "PEP", "HIGH_NET_WORTH", "CORRESPONDENT_BANK", "OTHER"
           ]
+        },
+        "industrySector": {
+          "type": "string",
+          "description": "Industry or sector of the customer's primary business activity (e.g., REAL_ESTATE, CRYPTO_ASSETS, FINANCIAL_SERVICES). Used for sector-based risk assessment under AMLR Article 22.",
+          "maxLength": 100
+        },
+        "occupationOrPurpose": {
+          "type": "string",
+          "description": "Occupation (natural persons) or business purpose (legal entities) as declared by the customer. Required for CDD under FATF Rec 10 and AMLR Article 22.",
+          "maxLength": 200
+        },
+        "relationshipPurpose": {
+          "type": "string",
+          "description": "Nature and intended purpose of the business relationship (e.g., INVESTMENT, TRADE_FINANCE, PAYMENTS). Required field under AMLR Article 22(2)(b).",
+          "maxLength": 200
         },
         "dueDiligenceType": {
           "type": "string",
