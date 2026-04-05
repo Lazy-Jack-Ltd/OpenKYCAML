@@ -2,7 +2,7 @@
 /**
  * OpenKYCAML Schema Validator (JavaScript / Node.js)
  * ====================================================
- * Validates JSON payloads against the OpenKYCAML v1.0.0 schema.
+ * Validates JSON payloads against the OpenKYCAML v1.3.0 schema.
  *
  * Usage (CLI):
  *   node validator.js <path-to-payload.json>
@@ -165,6 +165,17 @@ class OpenKYCAMLValidator {
         warns.push(
           `kycProfile.sanctionsScreening.screeningDate is ${ageDays} days old — ` +
           'consider re-screening (recommended: every 30 days for high-risk customers).'
+        );
+      }
+    }
+
+    // Tipping-off protection check.
+    const gdpr = payload.gdprSensitivityMetadata || {};
+    if (gdpr.classification === 'sar_restricted' || gdpr.classification === 'internal_suspicion') {
+      if (gdpr.tippingOffProtected !== true) {
+        warns.push(
+          `gdprSensitivityMetadata.tippingOffProtected should be true when classification is '${gdpr.classification}' ` +
+          '(AMLR Art. 73 / FATF Rec. 21).'
         );
       }
     }
