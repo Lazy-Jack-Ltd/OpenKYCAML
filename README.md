@@ -247,6 +247,7 @@ Each `-eudi-wallet.json` example documents a **trust chain** using W3C VC eviden
 | [Travel Rule Implementation Guide](docs/travel-rule-implementation-guide.md) | Protocol-specific integration guide (TRISA, OpenVASP, Notabene, TRP, Sygna Bridge) |
 | [ERC-3643 (T-REX) Mapping](docs/mapping-erc3643.md) | Field-level mapping from OpenKYCAML to ERC-3643 on-chain permissioned token standard |
 | [Sovrin / Hyperledger Indy (AnonCreds) Mapping](docs/mapping-sovrin.md) | Field-level mapping from OpenKYCAML to Sovrin DID Method, Indy ledger transactions, and AnonCreds ZKP credentials |
+| [XRPL Credentials, DIDs, and MPTs Mapping](docs/mapping-xrpl-credentials-mpt.md) | Field-level mapping from OpenKYCAML to XRPL Credentials (XLS-40d), `did:xrpl` DID method, and Multi-Purpose Tokens (XLS-33d) for on-ledger KYC/AML gating and regulated asset compliance |
 | [Roadmap](ROADMAP.md) | Planned features and upcoming versions |
 | [Contributing](CONTRIBUTING.md) | How to contribute to the standard |
 | [Governance](GOVERNANCE.md) | Steering committee model, RFC process |
@@ -268,6 +269,7 @@ Each `-eudi-wallet.json` example documents a **trust chain** using W3C VC eviden
 | **GDPR** | ✅ Consent record, data retention date, EUDI Wallet SD-JWT selective disclosure; `gdprSensitivityMetadata` block for SAR/tipping-off protection (Art. 9/10 special categories and criminal-offence data, AMLR Art. 73) — added v1.3.0 |
 | **ERC-3643 (T-REX)** | ✅ ONCHAINID, eligibility flag, wallet addresses, frozen tokens, accredited investor claim — see [ERC-3643 mapping](docs/mapping-erc3643.md) |
 | **Sovrin / Hyperledger Indy (AnonCreds)** | ✅ `did:sov` / `did:indy` DIDs, AnonCreds CL credentials, CLAIM_DEF, REVOC_REG, Rich Schema — see [Sovrin mapping](docs/mapping-sovrin.md) |
+| **XRPL Credentials (XLS-40d), DIDs (`did:xrpl`), and MPTs (XLS-33d)** | ✅ On-ledger `Credential` object anchoring W3C VCs, `did:xrpl` DID method, MPT permissioned tokens with `lsfMPTRequireAuth` / `lsfMPTAuthorized` KYC/AML gating, `DepositPreauth` credential gates — see [XRPL mapping](docs/mapping-xrpl-credentials-mpt.md) |
 
 ---
 

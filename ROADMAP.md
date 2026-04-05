@@ -48,6 +48,7 @@ This document outlines the planned development of the OpenKYCAML standard.
 | Multi-jurisdiction risk model fields | Planned | — |
 | FATCA / CRS tax residency extension | Planned | — |
 | ISO 20022 pain.001 full serialiser (Python) | ✅ Completed in v1.3.0 | — |
+| XRPL schema fields: `blockchainAccountIds[].xrplCredentialType` (hex CredentialType) and `blockchainAccountIds[].mptIssuanceId` (MPTokenIssuanceID) | Planned | — |
 
 ---
 
@@ -89,7 +90,7 @@ Planned breaking changes (subject to TWG consensus):
 | v1.0.0 | June 2024 | Initial release — IVMS 101 superset, kycProfile, VC wrapper, CI tooling |
 | v1.1.0 | April 2025 | EUDI Wallet evidence block, LPID + QEAA mandates, DID triangulation examples, `EUDI_WALLET` onboarding channel, ISO 17442 LEI fixes |
 | v1.2.0 | April 2026 | SD-JWT selective disclosure, deep UBO chain, PID/LPID converters, Travel Rule guide, AMLA RTS alignment (`thirdPartyCDDReliance`, `dueDiligenceRequirements`, AMLA PEP taxonomy), AMLR 2027 compliance checklist |
-| v1.3.0 | April 2026 | `gdprSensitivityMetadata` block — SAR/STR tipping-off protection (AMLR Art. 73 / FATF Rec. 21), GDPR Art. 9/10 classification, EUDI Wallet restricted-data handling, SAR-restriction example, updated compliance docs. **ISO 20022 integration** — complete `<SplmtryData>` KYCAMLEnvelope, pacs.008/pain.001/camt.053 profiles, Python + TypeScript bidirectional converters, XML examples, 70-test test suite |
+| v1.3.0 | April 2026 | `gdprSensitivityMetadata` block — SAR/STR tipping-off protection (AMLR Art. 73 / FATF Rec. 21), GDPR Art. 9/10 classification, EUDI Wallet restricted-data handling, SAR-restriction example, updated compliance docs. **ISO 20022 integration** — complete `<SplmtryData>` KYCAMLEnvelope, pacs.008/pain.001/camt.053 profiles, Python + TypeScript bidirectional converters, XML examples, 70-test test suite. **XRPL Credentials, DIDs, and MPTs mapping** — full field-level mapping to XLS-40d `Credential` and `DID` objects, `did:xrpl` DID method, and XLS-33d Multi-Purpose Tokens; see [mapping-xrpl-credentials-mpt.md](docs/mapping-xrpl-credentials-mpt.md) |
 
 ---
 
