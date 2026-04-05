@@ -2361,6 +2361,107 @@
           }
         }
       }
+    },
+    "TrustedIssuer": {
+      "title": "TrustedIssuer",
+      "description": "An entry in the issuer allowlist used for eIDAS-qualified TSP validation. Relying parties check that the OpenKYCAML credential issuer DID appears in this list and (where trustFramework is eIDAS_2.0) on the applicable EU Trusted List (TSL) before accepting a credential for CDD reliance.",
+      "type": "object",
+      "required": [
+        "issuerId",
+        "trustFramework"
+      ],
+      "properties": {
+        "issuerId": {
+          "type": "string",
+          "description": "DID or URI uniquely identifying the issuer. Must match verifiableCredential.issuer.id exactly. Examples: 'did:web:pid-provider.bsi.example.de', 'did:ebsi:znHeZWvhAK2FK2Dk1jXNe2G'.",
+          "maxLength": 256
+        },
+        "issuerName": {
+          "type": "string",
+          "description": "Human-readable name of the issuer organisation (e.g. 'Bundesamt für Sicherheit in der Informationstechnik — PID Provider').",
+          "maxLength": 256
+        },
+        "countryCode": {
+          "type": "string",
+          "description": "ISO 3166-1 alpha-2 country code of the Member State or jurisdiction responsible for this issuer.",
+          "pattern": "^[A-Z]{2}$"
+        },
+        "trustFramework": {
+          "type": "string",
+          "description": "Trust framework under which the issuer is accredited.",
+          "enum": [
+            "eIDAS_2.0",
+            "eIDAS_1.0",
+            "FATF_VASP",
+            "ISO_29003",
+            "NIST_800-63",
+            "OTHER"
+          ]
+        },
+        "eIDASAssuranceLevel": {
+          "type": "string",
+          "description": "eIDAS assurance level at which this issuer is accredited to issue credentials. Required when trustFramework is eIDAS_2.0.",
+          "enum": [
+            "low",
+            "substantial",
+            "high"
+          ]
+        },
+        "qtspServiceType": {
+          "type": "string",
+          "description": "ETSI TS 119 612 TSP Service Type identifier for the qualified trust service provided by this issuer. Used to validate the issuer against the EU Trusted List (TSL). Common values: 'QCertESig' (qualified certificate for electronic signatures), 'QCertESeal' (qualified certificate for electronic seals), 'PIDSQ' (PID issuer qualified).",
+          "examples": [
+            "QCertESig",
+            "QCertESeal",
+            "PIDSQ",
+            "QTimestamp"
+          ]
+        },
+        "tspServiceUri": {
+          "type": "string",
+          "format": "uri",
+          "description": "URI of the Trusted List (TSL) XML document where this issuer's service entry can be validated. Relying parties SHOULD fetch this TSL and verify that the issuer's service has ServiceStatus 'http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/granted'. For EU issuers, this will be a Member State TSL linked from the EU LOTL at https://ec.europa.eu/tools/lotl/eu-lotl.xml."
+        },
+        "validFrom": {
+          "type": "string",
+          "format": "date",
+          "description": "ISO 8601 date from which this trust list entry is valid. Credentials issued before this date by the listed issuer are not covered."
+        },
+        "validUntil": {
+          "type": "string",
+          "format": "date",
+          "description": "ISO 8601 date until which this trust list entry is valid. Credentials issued after this date by the listed issuer require a renewed entry."
+        },
+        "credentialTypes": {
+          "type": "array",
+          "description": "Credential types (vct URIs or W3C VC type strings) that this issuer is trusted to issue. If omitted, the issuer is trusted for all OpenKYCAML credential types.",
+          "items": {
+            "type": "string",
+            "maxLength": 256
+          }
+        },
+        "additionalChecks": {
+          "type": "object",
+          "description": "Relying-party-specific validation rules extending the base trust framework check.",
+          "properties": {
+            "requireKeyBinding": {
+              "type": "boolean",
+              "description": "When true, the relying party MUST verify the holder key binding JWT (SD-JWT `kb-JWT`) proving the credential was presented by its legitimate holder."
+            },
+            "requireStatusCheck": {
+              "type": "boolean",
+              "description": "When true, the relying party MUST verify the credential status (StatusList2021) before accepting it for CDD reliance."
+            },
+            "minimumAssuranceLevel": {
+              "type": "string",
+              "description": "Minimum eIDAS assurance level that the issuer must have achieved for the credential to be accepted by this relying party.",
+              "enum": ["low", "substantial", "high"]
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
     }
   },
   "type": "object",
@@ -2402,6 +2503,14 @@
     "transactionMonitoring": {
       "$ref": "#/$defs/TransactionMonitoring",
       "description": "Optional transaction-level AML monitoring results, rule evaluations, travel-rule compliance status, and reporting obligations for this specific transaction."
+    },
+    "trustedIssuers": {
+      "type": "array",
+      "description": "Optional allowlist of trusted credential issuers with eIDAS qualified TSP validation rules. Relying parties use this list to validate that the verifiableCredential.issuer appears on the applicable EU Trusted List (TSL) before accepting a credential for CDD reliance under AMLR Art. 22 and eIDAS 2.0.",
+      "items": {
+        "$ref": "#/$defs/TrustedIssuer"
+      },
+      "minItems": 1
     }
   },
   "anyOf": [

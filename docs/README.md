@@ -6,6 +6,7 @@ Welcome to the OpenKYCAML documentation. This directory contains detailed techni
 
 | Document | Description |
 |---|---|
+| [EUDI Wallet Integration](eudi-wallet-integration.md) | EUDIW storage profile (VC-JWT vs SD-JWT vs JSON-LD), OpenID4VCI/VP wallet API mapping, selective disclosure, and trusted issuer validation |
 | [Mapping: IVMS 101 / eIDAS 2.0 / AMLR](mapping-ivms101-eidas-amlr.md) | Field-level mapping across IVMS 101, eIDAS 2.0 ARF, and EU AMLR |
 | [Adoption Guide](adoption-guide.md) | Step-by-step guide for VASPs, banks, and KYC utilities |
 | [Compliance Matrix](compliance-matrix.md) | Alignment with FATF, AMLR, ISO 20022, LEI, eIDAS ARF |
