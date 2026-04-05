@@ -1,0 +1,242 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://example.com/kyc-aml-data-standard.json",
+  "title": "KYC/AML Data Standard (IVMS 101 Compliant + FATF/ISO 20022/LEI)",
+  "description": "Standardized data model for secure KYC/AML sharing between systems. Covers Natural Persons and Legal Entities. Compliant with IVMS 101, FATF Rec 16 (Travel Rule), ISO 20022 harmonized AML data, and LEI usage.",
+  "type": "object",
+  "properties": {
+    "ivms101": {
+      "type": "object",
+      "properties": {
+        "originator": { "$ref": "#/definitions/Originator" },
+        "beneficiary": { "$ref": "#/definitions/Beneficiary" },
+        "originatingVASP": { "$ref": "#/definitions/VASP" },
+        "beneficiaryVASP": { "$ref": "#/definitions/VASP" },
+        "transferPath": { "$ref": "#/definitions/TransferPath" },
+        "payloadMetadata": { "$ref": "#/definitions/PayloadMetadata" }
+      },
+      "required": ["originator", "beneficiary", "originatingVASP", "beneficiaryVASP"]
+    }
+  },
+  "required": ["ivms101"],
+  "definitions": {
+    "Originator": {
+      "type": "object",
+      "properties": {
+        "originatorPersons": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/Person" },
+          "minItems": 1
+        },
+        "accountNumber": {
+          "type": "array",
+          "items": { "type": "string", "pattern": "^.{1,100}$" }
+        }
+      },
+      "required": ["originatorPersons"]
+    },
+    "Beneficiary": {
+      "type": "object",
+      "properties": {
+        "beneficiaryPersons": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/Person" },
+          "minItems": 1
+        },
+        "accountNumber": {
+          "type": "array",
+          "items": { "type": "string", "pattern": "^.{1,100}$" }
+        }
+      },
+      "required": ["beneficiaryPersons"]
+    },
+    "Person": {
+      "type": "object",
+      "properties": {
+        "naturalPerson": { "$ref": "#/definitions/NaturalPerson" },
+        "legalPerson": { "$ref": "#/definitions/LegalPerson" }
+      },
+      "oneOf": [
+        { "required": ["naturalPerson"] },
+        { "required": ["legalPerson"] }
+      ]
+    },
+    "NaturalPerson": {
+      "type": "object",
+      "properties": {
+        "name": { "$ref": "#/definitions/NaturalPersonName" },
+        "geographicAddress": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/Address" },
+          "minItems": 1
+        },
+        "nationalIdentification": { "$ref": "#/definitions/NationalIdentification" },
+        "customerIdentification": { "type": "string", "pattern": "^.{1,50}$" },
+        "dateAndPlaceOfBirth": { "$ref": "#/definitions/DateAndPlaceOfBirth" },
+        "countryOfResidence": { "type": "string", "pattern": "^[A-Z]{2}$" }
+      },
+      "required": ["name"]
+    },
+    "NaturalPersonName": {
+      "type": "object",
+      "properties": {
+        "nameIdentifier": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/NaturalPersonNameId" },
+          "minItems": 1
+        },
+        "localNameIdentifier": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/LocalNaturalPersonNameId" }
+        },
+        "phoneticNameIdentifier": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/LocalNaturalPersonNameId" }
+        }
+      },
+      "required": ["nameIdentifier"]
+    },
+    "NaturalPersonNameId": {
+      "type": "object",
+      "properties": {
+        "primaryIdentifier": { "type": "string", "pattern": "^.{1,100}$" },
+        "secondaryIdentifier": { "type": "string", "pattern": "^.{0,100}$" },
+        "nameIdentifierType": {
+          "type": "string",
+          "enum": ["ALIA", "BIRT", "MAID", "LEGL", "MISC"]
+        }
+      },
+      "required": ["primaryIdentifier", "nameIdentifierType"]
+    },
+    "LocalNaturalPersonNameId": {
+      "type": "object",
+      "properties": {
+        "primaryIdentifier": { "type": "string", "pattern": "^.{1,100}$" },
+        "secondaryIdentifier": { "type": "string", "pattern": "^.{0,100}$" },
+        "nameIdentifierType": {
+          "type": "string",
+          "enum": ["ALIA", "BIRT", "MAID", "LEGL", "MISC"]
+        }
+      }
+    },
+    "LegalPerson": {
+      "type": "object",
+      "properties": {
+        "name": { "$ref": "#/definitions/LegalPersonName" },
+        "geographicAddress": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/Address" },
+          "minItems": 1
+        },
+        "nationalIdentification": { "$ref": "#/definitions/NationalIdentification" },
+        "customerNumber": { "type": "string", "pattern": "^.{1,50}$" },
+        "countryOfRegistration": { "type": "string", "pattern": "^[A-Z]{2}$" }
+      },
+      "required": ["name"]
+    },
+    "LegalPersonName": {
+      "type": "object",
+      "properties": {
+        "nameIdentifier": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/LegalPersonNameId" },
+          "minItems": 1
+        },
+        "localNameIdentifier": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/LocalLegalPersonNameId" }
+        }
+      },
+      "required": ["nameIdentifier"]
+    },
+    "LegalPersonNameId": {
+      "type": "object",
+      "properties": {
+        "legalPersonName": { "type": "string", "pattern": "^.{1,100}$" },
+        "legalPersonNameIdentifierType": {
+          "type": "string",
+          "enum": ["LEGL", "SHRT", "TRAD"]
+        }
+      },
+      "required": ["legalPersonName", "legalPersonNameIdentifierType"]
+    },
+    "LocalLegalPersonNameId": {
+      "type": "object",
+      "properties": {
+        "legalPersonName": { "type": "string", "pattern": "^.{1,100}$" },
+        "legalPersonNameIdentifierType": {
+          "type": "string",
+          "enum": ["LEGL", "SHRT", "TRAD"]
+        }
+      }
+    },
+    "Address": {
+      "type": "object",
+      "properties": {
+        "addressType": {
+          "type": "string",
+          "enum": ["HOME", "BIZZ", "GEOG"]
+        },
+        "department": { "type": "string", "pattern": "^.{1,50}$" },
+        "subDepartment": { "type": "string", "pattern": "^.{1,70}$" },
+        "streetName": { "type": "string", "pattern": "^.{1,70}$" },
+        "buildingNumber": { "type": "string" },
+        "buildingName": { "type": "string", "pattern": "^.{1,16}$" },
+        "floor": { "type": "string", "pattern": "^.{1,70}$" },
+        "postBox": { "type": "string", "pattern": "^.{1,16}$" },
+        "room": { "type": "string" },
+        "postCode": { "type": "string", "pattern": "^.{1,16}$" },
+        "townName": { "type": "string", "pattern": "^.{1,35}$" },
+        "townLocationName": { "type": "string", "pattern": "^.{1,35}$" },
+        "districtName": { "type": "string", "pattern": "^.{1,35}$" },
+        "countrySubDivision": { "type": "string", "pattern": "^.{1,35}$" },
+        "addressLine": {
+          "type": "array",
+          "items": { "type": "string", "pattern": "^.{1,70}$" }
+        },
+        "country": { "type": "string", "pattern": "^[A-Z]{2}$" }
+      },
+      "required": ["country"]
+    },
+    "NationalIdentification": {
+      "type": "object",
+      "properties": {
+        "nationalIdentifier": { "type": "string", "pattern": "^.{1,35}$" },
+        "nationalIdentifierType": {
+          "type": "string",
+          "enum": ["ARNU", "CCPT", "RAID", "DRLC", "FIIN", "TXID", "SOCS", "IDCD", "LEIX", "MISC"]
+        },
+        "countryOfIssue": { "type": "string", "pattern": "^[A-Z]{2}$" },
+        "registrationAuthority": { "type": "string", "pattern": "^RA([0-9]{6})$" }
+      },
+      "required": ["nationalIdentifier", "nationalIdentifierType"]
+    },
+    "DateAndPlaceOfBirth": {
+      "type": "object",
+      "properties": {
+        "dateOfBirth": { "type": "string", "pattern": "^([0-9]{4})-([0-9]{2})-([0-9]{2})$" },
+        "placeOfBirth": { "type": "string", "pattern": "^.{1,70}$" }
+      }
+    },
+    "VASP": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "vaspIdentifier": { "type": "string" },
+        "lei": { "type": "string", "pattern": "^[A-Z0-9]{20}$" }
+      }
+    },
+    "TransferPath": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/VASP" }
+    },
+    "PayloadMetadata": {
+      "type": "object",
+      "properties": {
+        "transactionIdentifier": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" },
+        "version": { "type": "string", "const": "IVMS101.2023" }
+      }
+    }
+  }
+}
