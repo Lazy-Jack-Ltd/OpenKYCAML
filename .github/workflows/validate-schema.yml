@@ -1,0 +1,185 @@
+name: Validate Schema & Examples
+
+on:
+  push:
+    branches: ["main", "develop"]
+    paths:
+      - "schema/**"
+      - "examples/**"
+      - "tools/**"
+      - ".github/workflows/validate-schema.yml"
+  pull_request:
+    branches: ["main"]
+    paths:
+      - "schema/**"
+      - "examples/**"
+      - "tools/**"
+      - ".github/workflows/validate-schema.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  validate-python:
+    name: Validate examples (Python)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+          cache-dependency-path: tools/python/requirements.txt
+
+      - name: Install dependencies
+        run: pip install -r tools/python/requirements.txt
+
+      - name: Validate schema is valid JSON Schema (draft 2020-12)
+        run: |
+          python - <<'EOF'
+          import json, sys
+          from jsonschema import Draft202012Validator
+          with open("schema/kyc-aml-hybrid-extended.json") as f:
+              schema = json.load(f)
+          try:
+              Draft202012Validator.check_schema(schema)
+              print("Schema meta-validation: PASSED")
+          except Exception as e:
+              print(f"Schema meta-validation: FAILED — {e}")
+              sys.exit(1)
+          EOF
+
+      - name: Validate all example payloads
+        run: |
+          python - <<'EOF'
+          import json, sys, pathlib
+          from jsonschema import Draft202012Validator
+
+          schema_path = pathlib.Path("schema/kyc-aml-hybrid-extended.json")
+          examples_dir = pathlib.Path("examples")
+
+          with open(schema_path) as f:
+              schema = json.load(f)
+
+          validator = Draft202012Validator(schema)
+          failed = 0
+
+          for example in sorted(examples_dir.glob("*.json")):
+              with open(example) as f:
+                  payload = json.load(f)
+              errors = list(validator.iter_errors(payload))
+              if errors:
+                  print(f"FAIL: {example.name}")
+                  for e in errors:
+                      path = ".".join(str(p) for p in e.absolute_path)
+                      print(f"      [{path or 'root'}] {e.message}")
+                  failed += 1
+              else:
+                  print(f"PASS: {example.name}")
+
+          if failed:
+              print(f"\n{failed} example(s) failed validation.")
+              sys.exit(1)
+          else:
+              print(f"\nAll {len(list(examples_dir.glob('*.json')))} examples passed.")
+          EOF
+
+      - name: Validate versioned schema copy matches canonical schema
+        run: |
+          python - <<'EOF'
+          import json, sys
+
+          with open("schema/kyc-aml-hybrid-extended.json") as f:
+              canonical = json.load(f)
+
+          import pathlib
+          for versioned in pathlib.Path("schema/versions").glob("*.json"):
+              with open(versioned) as f:
+                  version_copy = json.load(f)
+              if canonical != version_copy:
+                  print(f"WARN: {versioned} differs from canonical schema. This may be intentional for older versions.")
+              else:
+                  print(f"PASS: {versioned.name} matches canonical schema.")
+          EOF
+
+  validate-node:
+    name: Validate examples (Node.js)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: tools/javascript/package.json
+
+      - name: Install dependencies
+        working-directory: tools/javascript
+        run: npm install
+
+      - name: Validate all example payloads
+        working-directory: tools/javascript
+        run: |
+          node - <<'EOF'
+          const fs = require('fs');
+          const path = require('path');
+          const { OpenKYCAMLValidator } = require('./validator');
+
+          const examplesDir = path.resolve(__dirname, '../../examples');
+          const validator = new OpenKYCAMLValidator();
+
+          const files = fs.readdirSync(examplesDir).filter(f => f.endsWith('.json'));
+          let failed = 0;
+
+          for (const file of files.sort()) {
+            const result = validator.validateFile(path.join(examplesDir, file));
+            if (result.isValid) {
+              console.log(`PASS: ${file}`);
+            } else {
+              console.error(`FAIL: ${file}`);
+              for (const err of result.errors) {
+                console.error(`      [${err.instancePath}] ${err.message}`);
+              }
+              failed++;
+            }
+          }
+
+          if (failed > 0) {
+            console.error(`\n${failed} example(s) failed.`);
+            process.exit(1);
+          } else {
+            console.log(`\nAll ${files.length} examples passed.`);
+          }
+          EOF
+
+  lint-json:
+    name: Lint JSON formatting
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Check JSON files are well-formed
+        run: |
+          find schema examples -name "*.json" | while read f; do
+            if python3 -c "import json; json.load(open('$f'))" 2>/dev/null; then
+              echo "PASS: $f"
+            else
+              echo "FAIL: $f — not valid JSON"
+              exit 1
+            fi
+          done
