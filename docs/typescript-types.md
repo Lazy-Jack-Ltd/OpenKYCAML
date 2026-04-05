@@ -1,0 +1,645 @@
+# TypeScript Type Definitions
+
+This document provides TypeScript type definitions for the OpenKYCAML v1.3.0 schema. These types mirror the JSON Schema `$defs` and can be used to build strongly-typed OpenKYCAML payloads in TypeScript / Node.js projects.
+
+> **Installation tip:** Copy the types below into a `types/openkycaml.d.ts` file in your project, or use them alongside the JavaScript validator at [`tools/javascript/validator.js`](../../tools/javascript/validator.js).
+
+---
+
+## Table of Contents
+
+1. [Root Document](#1-root-document)
+2. [IVMS 101 Types](#2-ivms-101-types)
+3. [Person Types](#3-person-types)
+4. [KYC Profile Types](#4-kyc-profile-types)
+5. [Verifiable Credential Types](#5-verifiable-credential-types)
+6. [GDPR Sensitivity Types](#6-gdpr-sensitivity-types)
+7. [Validator API](#7-validator-api)
+8. [Usage Examples](#8-usage-examples)
+
+---
+
+## 1. Root Document
+
+```typescript
+/**
+ * Root OpenKYCAML document envelope (schema v1.3.0).
+ * At least one of `ivms101` or `verifiableCredential` must be present.
+ */
+export interface OpenKYCAMLDocument {
+  /** JSON Schema identifier */
+  $schema?: string;
+  /** OpenKYCAML schema version (e.g. "1.3.0") */
+  version?: string;
+  /** UUID v4 message identifier — unique per exchange */
+  messageId: string;
+  /** ISO 8601 UTC timestamp of message creation */
+  messageDateTime: string;
+  /** Message type descriptor */
+  messageType?: string;
+  /** IVMS 101 Travel Rule payload */
+  ivms101?: IVMS101Payload;
+  /** KYC/AML profile (top-level, outside VC) */
+  kycProfile?: KYCProfile;
+  /** W3C Verifiable Credential envelope */
+  verifiableCredential?: VerifiableCredentialWrapper;
+}
+```
+
+---
+
+## 2. IVMS 101 Types
+
+```typescript
+/** Root IVMS 101 Travel Rule message payload. */
+export interface IVMS101Payload {
+  originator: Originator;
+  beneficiary: Beneficiary;
+  originatingVASP: VASP;
+  beneficiaryVASP: VASP;
+  /** Ordered list of intermediate VASPs in multi-hop transfers */
+  transferPath?: VASP[];
+  payloadMetadata?: {
+    transactionIdentifier?: string;
+    timestamp?: string;
+    /** Always "IVMS101.2023" */
+    version?: string;
+  };
+  transferredAmount?: {
+    /** Decimal string, e.g. "0.5" */
+    amount: string;
+    /** Asset code, e.g. "BTC", "ETH", "EUR" */
+    assetType: string;
+  };
+}
+
+/** IVMS 101 originator — sending party in a virtual asset transfer. */
+export interface Originator {
+  originatorPersons: PersonWrapper[];
+  accountNumber?: string[];
+}
+
+/** IVMS 101 beneficiary — receiving party in a virtual asset transfer. */
+export interface Beneficiary {
+  beneficiaryPersons: PersonWrapper[];
+  accountNumber?: string[];
+}
+
+/** A person wrapper — exactly one of naturalPerson or legalPerson must be present. */
+export type PersonWrapper =
+  | { naturalPerson: NaturalPerson; legalPerson?: never }
+  | { legalPerson: LegalPerson; naturalPerson?: never };
+
+/** Virtual Asset Service Provider identifier. */
+export interface VASP {
+  name?: string;
+  vaspIdentifier?: string;
+  /** ISO 17442 LEI (20 uppercase alphanumeric characters) */
+  lei?: string;
+}
+```
+
+---
+
+## 3. Person Types
+
+```typescript
+/** IVMS 101 NaturalPerson entity. */
+export interface NaturalPerson {
+  name: NaturalPersonName;
+  geographicAddress?: Address[];
+  nationalIdentification?: NationalIdentification;
+  customerIdentification?: string;
+  dateAndPlaceOfBirth?: DateAndPlaceOfBirth;
+  /** ISO 3166-1 alpha-2 country code */
+  countryOfResidence?: string;
+  /** ISO 3166-1 alpha-2 nationality */
+  nationality?: string;
+}
+
+export interface NaturalPersonName {
+  nameIdentifier: NaturalPersonNameIdentifier[];
+  localNameIdentifier?: NaturalPersonNameIdentifier[];
+  phoneticNameIdentifier?: NaturalPersonNameIdentifier[];
+}
+
+export interface NaturalPersonNameIdentifier {
+  /** Family name / surname */
+  primaryIdentifier: string;
+  /** Given name(s) */
+  secondaryIdentifier?: string;
+  nameIdentifierType: 'ALIA' | 'BIRT' | 'MAID' | 'LEGL' | 'MISC';
+}
+
+/** IVMS 101 LegalPerson entity. */
+export interface LegalPerson {
+  name: LegalPersonName;
+  geographicAddress?: Address[];
+  customerNumber?: string;
+  /** ISO 17442 LEI */
+  lei?: string;
+  nationalIdentification?: NationalIdentification;
+  /** ISO 3166-1 alpha-2 country of registration */
+  countryOfRegistration?: string;
+  /** eIDAS 2.0 LPID block (optional — omit for pure IVMS 101 usage) */
+  lpid?: LegalPersonIdentificationData;
+}
+
+export interface LegalPersonName {
+  nameIdentifier: LegalPersonNameIdentifier[];
+  localNameIdentifier?: LegalPersonNameIdentifier[];
+  phoneticNameIdentifier?: LegalPersonNameIdentifier[];
+}
+
+export interface LegalPersonNameIdentifier {
+  legalPersonName: string;
+  legalPersonNameIdentifierType: 'LEGL' | 'SHRT' | 'TRAD';
+}
+
+/** Structured postal address (IVMS 101 §3.5). */
+export interface Address {
+  country: string;
+  addressType?: 'HOME' | 'BIZZ' | 'GEOG';
+  department?: string;
+  subDepartment?: string;
+  streetName?: string;
+  buildingNumber?: string;
+  buildingName?: string;
+  floor?: string;
+  postBox?: string;
+  room?: string;
+  postCode?: string;
+  townName?: string;
+  townLocationName?: string;
+  districtName?: string;
+  countrySubDivision?: string;
+  /** Unstructured address lines (up to 7) */
+  addressLine?: string[];
+}
+
+/** National identification document (IVMS 101 §3.6). */
+export interface NationalIdentification {
+  nationalIdentifier: string;
+  nationalIdentifierType:
+    | 'ARNU' | 'CCPT' | 'RAID' | 'DRLC' | 'FIIN'
+    | 'TXID' | 'SOCS' | 'IDCD' | 'LEIX' | 'MISC';
+  countryOfIssue?: string;
+  registrationAuthority?: string;
+}
+
+/** Birth information for a natural person (IVMS 101 §3.3). */
+export interface DateAndPlaceOfBirth {
+  /** ISO 8601 date, e.g. "1985-07-14" */
+  dateOfBirth: string;
+  placeOfBirth: string;
+}
+
+/** eIDAS 2.0 Legal Person Identification Data (LPID). */
+export interface LegalPersonIdentificationData {
+  currentLegalName: string;
+  uniqueIdentifier: string;
+  currentAddress?: Address;
+  vatRegistrationNumber?: string;
+  taxReferenceNumber?: string;
+  europeanUniqueIdentifier?: string;
+  /** ISO 17442 LEI */
+  lei?: string;
+  eoriNumber?: string;
+  mandates?: Mandate[];
+}
+
+export interface Mandate {
+  naturalPerson: NaturalPerson;
+  roleOrPower: string;
+  validFrom?: string;
+  validUntil?: string;
+}
+```
+
+---
+
+## 4. KYC Profile Types
+
+```typescript
+/** KYC/AML profile — risk rating, screening results, UBO chain, monitoring. */
+export interface KYCProfile {
+  customerRiskRating: 'LOW' | 'MEDIUM' | 'HIGH' | 'VERY_HIGH';
+  dueDiligenceType: 'SDD' | 'CDD' | 'EDD';
+  pepStatus?: PEPStatus;
+  sanctionsScreening?: SanctionsScreening;
+  adverseMedia?: AdverseMedia;
+  sourceOfFundsWealth?: SourceOfFundsWealth;
+  beneficialOwners?: BeneficialOwner[];
+  monitoringInfo?: MonitoringInfo;
+  auditMetadata?: AuditMetadata;
+  gdprSensitivityMetadata?: GdprSensitivityMetadata;
+  onboardingChannel?: string;
+  kycCompletionDate?: string;
+  jurisdictionOfService?: string;
+}
+
+/** Politically Exposed Person screening result. */
+export interface PEPStatus {
+  isPEP: boolean;
+  pepCategory?:
+    | 'DOMESTIC_PEP' | 'FOREIGN_PEP' | 'INTERNATIONAL_ORGANISATION'
+    | 'FAMILY_MEMBER_OF_PEP' | 'CLOSE_ASSOCIATE_OF_PEP'
+    | 'FORMER_PEP' | 'NOT_PEP';
+  pepRole?: string;
+  screeningDate?: string;
+  screeningProvider?: string;
+}
+
+/** Sanctions list screening result. */
+export interface SanctionsScreening {
+  screeningStatus: 'CLEAR' | 'HIT' | 'POTENTIAL_MATCH' | 'FALSE_POSITIVE' | 'PENDING' | 'ESCALATED';
+  screeningDate: string;
+  screeningProvider?: string;
+  listsChecked?: string[];
+  matchDetails?: SanctionsMatchDetail[];
+}
+
+export interface SanctionsMatchDetail {
+  listName: string;
+  matchScore: number;
+  matchedName?: string;
+  disposition?: 'CONFIRMED_HIT' | 'FALSE_POSITIVE' | 'UNDER_REVIEW';
+  reviewedBy?: string;
+  reviewDate?: string;
+}
+
+/** Adverse media / negative news screening result. */
+export interface AdverseMedia {
+  hasHits?: boolean;
+  screeningStatus: 'CLEAR' | 'ADVERSE_FOUND' | 'UNDER_REVIEW' | 'FALSE_POSITIVE' | 'PENDING';
+  screeningDate: string;
+  screeningProvider?: string;
+  categories?: AdverseMediaCategory[];
+  summary?: string;
+  articles?: AdverseMediaArticle[];
+}
+
+export type AdverseMediaCategory =
+  | 'FINANCIAL_CRIME' | 'FRAUD' | 'CORRUPTION' | 'MONEY_LAUNDERING'
+  | 'TERRORISM_FINANCING' | 'DRUG_TRAFFICKING' | 'HUMAN_TRAFFICKING'
+  | 'CYBERCRIME' | 'TAX_EVASION' | 'OTHER';
+
+export interface AdverseMediaArticle {
+  url?: string;
+  headline?: string;
+  publicationDate?: string;
+  source?: string;
+}
+
+/** Declared and verified source of funds and source of wealth. */
+export interface SourceOfFundsWealth {
+  sourceOfFunds?: SourceOfFundsCode[];
+  sourceOfWealthNarrative?: string;
+  verificationStatus?: 'DECLARED_ONLY' | 'PARTIALLY_VERIFIED' | 'FULLY_VERIFIED' | 'INCONSISTENT';
+  supportingDocuments?: SupportingDocument[];
+}
+
+export type SourceOfFundsCode =
+  | 'EMPLOYMENT_INCOME' | 'BUSINESS_INCOME' | 'INVESTMENT_RETURNS'
+  | 'INHERITANCE' | 'GIFT' | 'SALE_OF_PROPERTY' | 'SALE_OF_ASSETS'
+  | 'LOAN' | 'PENSION' | 'RENTAL_INCOME' | 'CRYPTOCURRENCY_GAINS' | 'OTHER';
+
+export interface SupportingDocument {
+  documentType:
+    | 'TAX_RETURN' | 'BANK_STATEMENT' | 'PAYSLIP' | 'AUDITED_ACCOUNTS'
+    | 'COMPANY_ACCOUNTS' | 'INHERITANCE_DOCUMENTS' | 'SALE_AGREEMENT' | 'OTHER';
+  documentReference?: string;
+  verifiedDate?: string;
+}
+
+/** Ultimate Beneficial Owner (UBO) record. */
+export interface BeneficialOwner {
+  person?:
+    | { naturalPerson: NaturalPerson; legalPerson?: never }
+    | { legalPerson: LegalPerson; naturalPerson?: never };
+  ownershipPercentage: number;
+  ownershipType?: 'DIRECT' | 'INDIRECT' | 'BOTH';
+  controlMechanism?: 'SHAREHOLDING' | 'VOTING_RIGHTS' | 'CONTRACTUAL' | 'DE_FACTO_CONTROL' | 'OTHER';
+  verificationDate?: string;
+  isPEP?: boolean;
+  ownershipChainDepth?: number;
+  intermediateEntities?: IntermediateEntity[];
+}
+
+export interface IntermediateEntity {
+  legalPerson: LegalPerson;
+  ownershipPercentage?: number;
+  ownershipType?: 'DIRECT' | 'INDIRECT';
+  controlMechanism?: 'SHAREHOLDING' | 'VOTING_RIGHTS' | 'CONTRACTUAL' | 'DE_FACTO_CONTROL' | 'OTHER';
+  /** ISO 3166-1 alpha-2 country of incorporation */
+  jurisdiction?: string;
+}
+
+/** Ongoing AML monitoring metadata. */
+export interface MonitoringInfo {
+  monitoringLevel?: 'STANDARD' | 'ENHANCED' | 'SIMPLIFIED' | 'CONTINUOUS';
+  monitoringStatus?: 'ACTIVE' | 'SUSPENDED' | 'TERMINATED';
+  eddRequired?: boolean;
+  lastReviewDate?: string;
+  nextReviewDate?: string;
+  reviewFrequency?: 'MONTHLY' | 'QUARTERLY' | 'SEMI_ANNUAL' | 'ANNUAL' | 'BIENNIAL' | 'RISK_TRIGGERED';
+  alerts?: MonitoringAlert[];
+}
+
+export interface MonitoringAlert {
+  alertId: string;
+  alertDate: string;
+  alertType:
+    | 'UNUSUAL_TRANSACTION' | 'VELOCITY_BREACH' | 'PATTERN_CHANGE'
+    | 'SANCTIONS_HIT' | 'PEP_CHANGE' | 'ADVERSE_MEDIA' | 'SAR_TRIGGER' | 'OTHER';
+  alertStatus: 'OPEN' | 'UNDER_REVIEW' | 'CLOSED_NO_ACTION' | 'SAR_FILED' | 'ESCALATED';
+  description?: string;
+  assignedTo?: string;
+}
+
+/** Audit trail and provenance metadata. */
+export interface AuditMetadata {
+  recordId?: string;
+  recordCreatedAt: string;
+  recordUpdatedAt?: string;
+  recordVersion: number;
+  createdBy?: string;
+  dataSourceSystem?: string;
+  dataProvider?: string;
+  dataRetentionDate?: string;
+}
+```
+
+---
+
+## 5. Verifiable Credential Types
+
+```typescript
+/** W3C Verifiable Credential envelope (VC Data Model v2 / eIDAS 2.0 ARF). */
+export interface VerifiableCredentialWrapper {
+  '@context': string[];
+  id?: string;
+  type: string[];
+  issuer: string | { id: string; name?: string };
+  issuanceDate: string;
+  expirationDate?: string;
+  credentialSubject: CredentialSubject;
+  credentialStatus?: CredentialStatus;
+  credentialSchema?: CredentialSchema;
+  evidence?: CredentialEvidence[];
+  proof?: VerifiableCredentialProof;
+  selectiveDisclosure?: SelectiveDisclosure;
+}
+
+export interface CredentialSubject {
+  id?: string;
+  ivms101?: IVMS101Payload;
+  kycProfile?: KYCProfile;
+  lpid?: LegalPersonIdentificationData;
+}
+
+export interface CredentialStatus {
+  id: string;
+  type: 'StatusList2021Entry' | 'RevocationList2020Status' | 'AnonCredsCredentialStatusList2023';
+  [key: string]: unknown;
+}
+
+export interface CredentialSchema {
+  id: string;
+  type: 'JsonSchemaValidator2018' | 'AnonCredsDefinition' | 'JsonSchema';
+  credDefId?: string;
+}
+
+/** W3C VC evidence block — records the source credential used during KYC. */
+export interface CredentialEvidence {
+  id: string;
+  type: string[];
+  verifier?: string;
+  credentialIssuer?: string;
+  evidenceDocument?: string;
+  subjectPresence?: 'Physical' | 'Digital';
+  documentPresence?: 'Physical' | 'Digital';
+  presentationMethod?: string;
+  presentationDate?: string;
+}
+
+/** Cryptographic proof (Ed25519Signature2020, JsonWebSignature2020, etc.). */
+export interface VerifiableCredentialProof {
+  type: string;
+  created: string;
+  verificationMethod: string;
+  proofPurpose:
+    | 'assertionMethod' | 'authentication' | 'keyAgreement'
+    | 'capabilityInvocation' | 'capabilityDelegation';
+  proofValue?: string;
+  jws?: string;
+}
+
+/** SD-JWT VC selective disclosure metadata. */
+export interface SelectiveDisclosure {
+  _sd_alg?: 'sha-256' | 'sha-384';
+  disclosableClaimPaths?: string[];
+  requiredClaimPaths?: string[];
+  decodedDisclosures?: DecodedDisclosure[];
+  sdJwtNote?: string;
+}
+
+export interface DecodedDisclosure {
+  salt: string;
+  claimName: string;
+  claimValue?: unknown;
+}
+```
+
+---
+
+## 6. GDPR Sensitivity Types
+
+```typescript
+/** GDPR/AML sensitivity classification for tipping-off protection (AMLR Art. 73). */
+export interface GdprSensitivityMetadata {
+  classification:
+    | 'standard' | 'sensitive_personal' | 'criminal_offence'
+    | 'sar_restricted' | 'internal_suspicion' | 'confidential_aml';
+  /** RFC 6901 JSON Pointer paths to restricted fields */
+  restrictedFields?: string[];
+  /**
+   * Must be `true` when classification is `sar_restricted` or `internal_suspicion`.
+   * Wallets and relying parties MUST NOT reveal the existence of a SAR to the data subject.
+   */
+  tippingOffProtected?: boolean;
+  legalBasis?:
+    | 'GDPR-Art6-1c' | 'GDPR-Art6-1e' | 'GDPR-Art9-2g' | 'GDPR-Art10'
+    | 'AMLR-Art55' | 'AMLR-Art73' | 'national_AML_law';
+  /** ISO 8601 duration, e.g. "P5Y" */
+  retentionPeriod?: string;
+  consentRecord?: GdprConsentRecord;
+  disclosurePolicy?: DisclosurePolicy;
+  /** Opaque DPO record or SAR case reference — MUST NOT contain SAR narrative */
+  auditReference?: string;
+}
+
+export interface GdprConsentRecord {
+  consentGiven: boolean;
+  consentDate?: string;
+  withdrawalPossible?: boolean;
+}
+
+export interface DisclosurePolicy {
+  allowedRecipients?: string[];
+  prohibitedRecipients?: string[];
+  requiresExplicitConsent?: boolean;
+}
+```
+
+---
+
+## 7. Validator API
+
+The JavaScript validator at [`tools/javascript/validator.js`](../../tools/javascript/validator.js) exposes the following TypeScript-compatible interface:
+
+```typescript
+/** Field-level validation error. */
+export interface FieldError {
+  /** JSON Pointer to the failing field (e.g. "/ivms101/originator") */
+  instancePath: string;
+  /** Human-readable error description */
+  message: string;
+  /** JSON Pointer into the schema */
+  schemaPath: string;
+}
+
+/** Result returned by OpenKYCAMLValidator.validate(). */
+export interface ValidationResult {
+  /** true if the payload passes JSON Schema validation */
+  isValid: boolean;
+  /** Array of field-level errors (empty when isValid is true) */
+  errors: FieldError[];
+  /** Advisory warnings — schema-valid but non-compliant patterns */
+  warnings: string[];
+  /** The `version` field extracted from the payload */
+  payloadVersion: string | null;
+}
+
+declare class OpenKYCAMLValidator {
+  constructor(schemaPath?: string);
+  validate(payload: OpenKYCAMLDocument): ValidationResult;
+  validateFile(filePath: string): ValidationResult;
+}
+
+export { OpenKYCAMLValidator };
+```
+
+---
+
+## 8. Usage Examples
+
+### Validate a payload
+
+```typescript
+import { OpenKYCAMLValidator, OpenKYCAMLDocument } from './types/openkycaml';
+
+const validator = new OpenKYCAMLValidator();
+
+const payload: OpenKYCAMLDocument = {
+  messageId: '550e8400-e29b-41d4-a716-446655440000',
+  messageDateTime: '2025-09-10T10:57:00Z',
+  ivms101: {
+    originator: {
+      originatorPersons: [
+        {
+          naturalPerson: {
+            name: {
+              nameIdentifier: [
+                {
+                  primaryIdentifier: 'Müller',
+                  secondaryIdentifier: 'Hans',
+                  nameIdentifierType: 'LEGL',
+                },
+              ],
+            },
+            dateAndPlaceOfBirth: {
+              dateOfBirth: '1985-07-14',
+              placeOfBirth: 'Berlin',
+            },
+          },
+        },
+      ],
+      accountNumber: ['0x71C7656EC7ab88b098defB751B7401B5f6d8976F'],
+    },
+    beneficiary: {
+      beneficiaryPersons: [
+        {
+          naturalPerson: {
+            name: {
+              nameIdentifier: [
+                { primaryIdentifier: 'Smith', nameIdentifierType: 'LEGL' },
+              ],
+            },
+          },
+        },
+      ],
+      accountNumber: ['0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045'],
+    },
+    originatingVASP: { name: 'Acme Crypto GmbH', lei: 'ACMECRYPTOGMB0000001' },
+    beneficiaryVASP: { name: 'Beta Exchange Ltd', lei: 'BETAEXCHANGELTD00001' },
+    transferredAmount: { amount: '0.5', assetType: 'ETH' },
+  },
+};
+
+const result = validator.validate(payload);
+console.log(result.isValid);   // true
+console.log(result.warnings);  // advisory warnings
+```
+
+### Build a KYC profile with PEP status
+
+```typescript
+import { KYCProfile } from './types/openkycaml';
+
+const profile: KYCProfile = {
+  customerRiskRating: 'HIGH',
+  dueDiligenceType: 'EDD',
+  pepStatus: {
+    isPEP: true,
+    pepCategory: 'DOMESTIC_PEP',
+    pepRole: 'Member of Parliament',
+    screeningDate: '2025-09-01',
+    screeningProvider: 'Refinitiv World-Check',
+  },
+  sanctionsScreening: {
+    screeningStatus: 'CLEAR',
+    screeningDate: '2025-09-01T09:00:00Z',
+    listsChecked: ['OFAC_SDN', 'EU_CONSOLIDATED', 'UN_CONSOLIDATED'],
+  },
+  onboardingChannel: 'EUDI_WALLET',
+  kycCompletionDate: '2025-09-10',
+  auditMetadata: {
+    recordCreatedAt: '2025-09-10T10:00:00Z',
+    recordVersion: 1,
+    dataSourceSystem: 'KYC-Platform-v3',
+  },
+};
+```
+
+### Mark a payload as SAR-restricted (tipping-off protection)
+
+```typescript
+import { GdprSensitivityMetadata } from './types/openkycaml';
+
+const sensitivity: GdprSensitivityMetadata = {
+  classification: 'sar_restricted',
+  tippingOffProtected: true,   // required when classification is sar_restricted
+  legalBasis: 'AMLR-Art73',
+  retentionPeriod: 'P5Y',
+  disclosurePolicy: {
+    allowedRecipients: ['fiu_only'],
+    prohibitedRecipients: ['data_subject'],
+  },
+  auditReference: 'SAR-REF-2025-00142',   // opaque — no SAR content
+};
+```
+
+---
+
+*Type definitions derived from OpenKYCAML JSON Schema v1.3.0. Last updated: v1.3.0.*
