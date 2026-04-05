@@ -7,11 +7,11 @@ This page tracks documentation-specific improvements planned for upcoming releas
 ## Documentation Backlog
 
 ### v1.1
-- [ ] Add TypeScript type definitions documentation.
-- [ ] Add Pydantic model documentation (auto-generated from schema).
-- [ ] Add sequence diagrams for Travel Rule message flows.
-- [ ] Add sequence diagrams for eIDAS 2.0 VC issuance and presentation flows.
-- [ ] Add Mermaid entity-relationship diagram for the full schema.
+- [x] Add TypeScript type definitions documentation (`typescript-types.md`).
+- [x] Add Pydantic model documentation (auto-generated from schema) (`pydantic-models.md`).
+- [x] Add sequence diagrams for Travel Rule message flows (`diagrams/travel-rule-sequence-diagrams.md`).
+- [x] Add sequence diagrams for eIDAS 2.0 VC issuance and presentation flows (`diagrams/eidas-sequence-diagrams.md`).
+- [x] Add Mermaid entity-relationship diagram for the full schema (`diagrams/schema-er-diagram.md`).
 
 ### v1.2
 - [x] Add AMLR 2027 compliance checklist (`amlr-2027-compliance-checklist.md`).
