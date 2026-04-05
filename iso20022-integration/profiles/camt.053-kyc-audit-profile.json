@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://openkycaml.org/schema/iso20022/v1.0.0/profiles/camt.053-kyc-audit-profile.json",
+  "title": "OpenKYCAML camt.053 KYC Audit Profile",
+  "description": "Profile for embedding OpenKYCAML audit trail and data-retention evidence inside an ISO 20022 camt.053 BkToCstmrStmt (Bank-to-Customer Statement) message. Supports AMLR Article 56 five-year record-keeping and FATF Recommendation 11.",
+  "version": "1.0.0",
+  "openKycAmlVersion": "1.3.0",
+  "iso20022Message": "camt.053.001.11",
+  "regulatoryBasis": ["AMLR Art. 56", "FATF Rec. 11", "GDPR Art. 5(1)(e)"],
+  "profile": {
+    "description": "A bank issues a periodic statement to a corporate customer. The statement includes the KYC/AML audit trail for transactions in the statement period, embedded in the KYCAMLEnvelope inside <SplmtryData>. Receiving institutions and auditors can extract the envelope to verify CDD data provenance and retention compliance.",
+    "supplementaryDataPlcAndNm": "OpenKYCAML/KYCAMLEnvelope/1.0",
+    "requiredIso20022Fields": [
+      {
+        "xpath": "Document/BkToCstmrStmt/GrpHdr/MsgId",
+        "source": "messageId",
+        "cardinality": "1..1",
+        "notes": "Statement message identifier"
+      },
+      {
+        "xpath": "Document/BkToCstmrStmt/GrpHdr/CreDtTm",
+        "source": "messageDateTime",
+        "cardinality": "1..1",
+        "notes": "Statement creation timestamp (ISO 8601 datetime)"
+      },
+      {
+        "xpath": "Document/BkToCstmrStmt/Stmt/Id",
+        "source": "kycProfile.auditMetadata.recordId",
+        "cardinality": "1..1",
+        "notes": "Statement identifier — map from KYC record ID"
+      },
+      {
+        "xpath": "Document/BkToCstmrStmt/Stmt/Acct/Id/IBAN",
+        "source": "ivms101.originator.accountNumber[0]",
+        "cardinality": "0..1",
+        "notes": "Account identifier for the statement. IBAN preferred."
+      },
+      {
+        "xpath": "Document/BkToCstmrStmt/Stmt/Acct/Ownr/Nm",
+        "source": "ivms101.originator.originatorPersons[0].{naturalPerson|legalPerson}.name",
+        "cardinality": "0..1",
+        "notes": "Account owner name"
+      }
+    ],
+    "requiredKycAmlEnvelopeFields": [
+      "envelopeVersion",
+      "messageRef",
+      "kycProfile.auditMetadata.recordId",
+      "kycProfile.auditMetadata.dataRetentionDate",
+      "kycProfile.auditMetadata.dataProvider"
+    ],
+    "auditTrailFields": {
+      "description": "The changeLog array in kycProfile.auditMetadata is the primary audit trail source. Each entry documents a material change to the KYC record with timestamp, actor, and description.",
+      "requiredFields": [
+        "kycProfile.auditMetadata.changeLog[].timestamp",
+        "kycProfile.auditMetadata.changeLog[].actor",
+        "kycProfile.auditMetadata.changeLog[].description"
+      ],
+      "minimumEntries": 1
+    },
+    "retentionCompliance": {
+      "regulatoryMinimum": "P5Y",
+      "regulatoryBasis": "AMLR Art. 56 — 5-year minimum retention from end of business relationship",
+      "field": "kycProfile.auditMetadata.dataRetentionDate",
+      "validation": "dataRetentionDate must be >= (kycProfile.kycCompletionDate + P5Y)"
+    },
+    "screeningCurrency": {
+      "description": "The statement should include the most recent screening results to demonstrate ongoing monitoring compliance (AMLR Art. 21 / FATF Rec. 10).",
+      "fields": [
+        "screeningResults.sanctionsScreening.result",
+        "screeningResults.sanctionsScreening.screeningDate",
+        "screeningResults.pepScreening.isPEP"
+      ]
+    },
+    "gdprNotes": {
+      "description": "Statements carrying SAR-linked data must include the gdprSensitivityMetadata block with tippingOffProtected=true. The statement MUST NOT be issued to the account holder in that case.",
+      "tippingOffBasis": "AMLR Art. 73 / FATF Rec. 21"
+    }
+  },
+  "example": "Not provided — camt.053 statements are institution-specific. Use the envelope schema and this profile to construct compliant statements.",
+  "relatedProfiles": [
+    "travel-rule-pacs.008-profile.json",
+    "pain.001-kyc-envelope-profile.json"
+  ]
+}

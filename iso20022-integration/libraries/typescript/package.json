@@ -1,0 +1,40 @@
+{
+  "name": "@openkycaml/iso20022-converter",
+  "version": "1.0.0",
+  "description": "OpenKYCAML ↔ ISO 20022 bidirectional converter (pacs.008, pain.001)",
+  "type": "module",
+  "main": "./converter.js",
+  "types": "./converter.d.ts",
+  "exports": {
+    ".": {
+      "import": "./converter.js",
+      "types": "./converter.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "iso20022",
+    "openkycaml",
+    "kyc",
+    "aml",
+    "travel-rule",
+    "pacs008",
+    "pain001",
+    "swift",
+    "cbpr"
+  ],
+  "license": "Apache-2.0",
+  "dependencies": {
+    "fast-xml-parser": "^4.4.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.4.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

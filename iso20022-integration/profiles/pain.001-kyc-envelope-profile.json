@@ -1,0 +1,112 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://openkycaml.org/schema/iso20022/v1.0.0/profiles/pain.001-kyc-envelope-profile.json",
+  "title": "OpenKYCAML pain.001 KYC Envelope Profile",
+  "description": "Profile for embedding OpenKYCAML third-party CDD reliance data inside an ISO 20022 pain.001 CstmrCdtTrfInitn message. Supports AMLR Article 48 structured reliance records and FATF Recommendation 10 CDD data sharing.",
+  "version": "1.0.0",
+  "openKycAmlVersion": "1.3.0",
+  "iso20022Message": "pain.001.001.11",
+  "regulatoryBasis": ["AMLR Art. 48", "FATF Rec. 10", "FATF Rec. 16"],
+  "profile": {
+    "description": "A corporate customer initiates a credit transfer. The initiating institution embeds the full KYC/AML profile — including third-party CDD reliance data — in the KYCAMLEnvelope inside <SplmtryData>. The receiving institution can extract the envelope and credit it as a third-party CDD reliance record under AMLR Art. 48.",
+    "supplementaryDataPlcAndNm": "OpenKYCAML/KYCAMLEnvelope/1.0",
+    "requiredIso20022Fields": [
+      {
+        "xpath": "Document/CstmrCdtTrfInitn/GrpHdr/MsgId",
+        "source": "messageId",
+        "cardinality": "1..1",
+        "notes": "UUIDv4 from OpenKYCAML messageId"
+      },
+      {
+        "xpath": "Document/CstmrCdtTrfInitn/GrpHdr/CreDtTm",
+        "source": "messageDateTime",
+        "cardinality": "1..1",
+        "notes": "ISO 8601 datetime"
+      },
+      {
+        "xpath": "Document/CstmrCdtTrfInitn/GrpHdr/NbOfTxs",
+        "source": "constant:1",
+        "cardinality": "1..1",
+        "notes": "Always 1"
+      },
+      {
+        "xpath": "Document/CstmrCdtTrfInitn/GrpHdr/CtrlSum",
+        "source": "ivms101.transferredAmount.amount",
+        "cardinality": "1..1",
+        "notes": "Numeric decimal sum of instructed amounts"
+      },
+      {
+        "xpath": "Document/CstmrCdtTrfInitn/PmtInf/PmtInfId",
+        "source": "messageId",
+        "cardinality": "1..1",
+        "notes": "Payment information block identifier — reuse messageId"
+      },
+      {
+        "xpath": "Document/CstmrCdtTrfInitn/PmtInf/PmtMtd",
+        "source": "constant:TRF",
+        "cardinality": "1..1",
+        "notes": "Payment method: TRF (credit transfer)"
+      },
+      {
+        "xpath": "Document/CstmrCdtTrfInitn/PmtInf/Dbtr/Nm",
+        "source": "ivms101.originator.originatorPersons[0].legalPerson.name",
+        "cardinality": "0..1",
+        "notes": "Initiating corporate customer name (LEGL)"
+      },
+      {
+        "xpath": "Document/CstmrCdtTrfInitn/PmtInf/Dbtr/Id/OrgId/LEI",
+        "source": "ivms101.originator.originatorPersons[0].legalPerson.nationalIdentification.nationalIdentifier",
+        "cardinality": "0..1",
+        "notes": "Required when nationalIdentifierType = LEIX. Omit otherwise."
+      },
+      {
+        "xpath": "Document/CstmrCdtTrfInitn/PmtInf/DbtrAcct/Id/IBAN",
+        "source": "ivms101.originator.accountNumber[0]",
+        "cardinality": "0..1",
+        "notes": "IBAN of the debtor account. Use Othr/Id for non-IBAN accounts."
+      },
+      {
+        "xpath": "Document/CstmrCdtTrfInitn/PmtInf/CdtTrfTxInf/Cdtr/Nm",
+        "source": "ivms101.beneficiary.beneficiaryPersons[0].{naturalPerson|legalPerson}.name",
+        "cardinality": "0..1",
+        "notes": "Beneficiary name"
+      },
+      {
+        "xpath": "Document/CstmrCdtTrfInitn/PmtInf/CdtTrfTxInf/CdtrAcct/Id/IBAN",
+        "source": "ivms101.beneficiary.accountNumber[0]",
+        "cardinality": "0..1",
+        "notes": "Beneficiary IBAN. Use Othr/Id if non-IBAN."
+      }
+    ],
+    "requiredKycAmlEnvelopeFields": [
+      "envelopeVersion",
+      "messageRef",
+      "kycProfile.dueDiligenceType",
+      "kycProfile.customerRiskRating.overallRiskRating",
+      "screeningResults.sanctionsScreening.result",
+      "screeningResults.sanctionsScreening.screeningDate"
+    ],
+    "thirdPartyCddRelianceFields": {
+      "description": "When the initiating institution relies on CDD performed by a third party (AMLR Art. 48), the following fields MUST be populated in kycProfile.thirdPartyCDDReliance inside the KYCAMLEnvelope.",
+      "requiredWhen": "kycProfile.thirdPartyCDDReliance is present",
+      "fields": [
+        "kycProfile.thirdPartyCDDReliance.relyingPartyId",
+        "kycProfile.thirdPartyCDDReliance.providingPartyId",
+        "kycProfile.thirdPartyCDDReliance.relianceScope",
+        "kycProfile.thirdPartyCDDReliance.relianceDate",
+        "kycProfile.thirdPartyCDDReliance.accessToUnderlyingDataConfirmed",
+        "kycProfile.thirdPartyCDDReliance.providingPartyEligibilityConfirmed"
+      ]
+    },
+    "retentionRequirement": {
+      "minimumRetentionPeriod": "P5Y",
+      "regulatoryBasis": "AMLR Art. 56",
+      "notes": "kycProfile.auditMetadata.dataRetentionDate must be set to at least 5 years from kycProfile.kycCompletionDate."
+    }
+  },
+  "example": "See iso20022-integration/examples/pain.001-with-kyc-envelope.xml",
+  "relatedProfiles": [
+    "travel-rule-pacs.008-profile.json",
+    "camt.053-kyc-audit-profile.json"
+  ]
+}

@@ -1,0 +1,334 @@
+# OpenKYCAML → ISO 20022 Field Mapping
+#
+# This file provides the canonical field-by-field mapping from OpenKYCAML v1.3.0
+# to ISO 20022 data elements. Each entry covers:
+#   openkycaml_path   : dot-notation path in the OpenKYCAML JSON payload
+#   iso20022_element  : ISO 20022 XML element (XPath from message root)
+#   iso20022_type     : ISO 20022 data type from the data dictionary
+#   cardinality       : [min..max] — ISO 20022 cardinality
+#   transformation    : any required format conversion or code-list mapping
+#   notes             : additional context
+
+version: "1.0.0"
+source_schema: "https://openkycaml.org/schema/v1.3.0/kyc-aml-hybrid-extended.json"
+target_standard: "ISO 20022"
+primary_messages:
+  - pacs.008 (FIToFICstmrCdtTrf)
+  - pain.001 (CstmrCdtTrfInitn)
+  - camt.053 (BkToCstmrStmt)
+
+# ---------------------------------------------------------------------------
+# ENVELOPE METADATA
+# ---------------------------------------------------------------------------
+envelope:
+  - openkycaml_path: messageId
+    iso20022_element: "Document/FIToFICstmrCdtTrf/GrpHdr/MsgId"
+    iso20022_type: Max35Text
+    cardinality: "[1..1]"
+    transformation: "Use as-is (UUIDv4 satisfies Max35Text)"
+    notes: "Unique message identifier — map directly."
+
+  - openkycaml_path: messageDateTime
+    iso20022_element: "Document/FIToFICstmrCdtTrf/GrpHdr/CreDtTm"
+    iso20022_type: ISODateTime
+    cardinality: "[1..1]"
+    transformation: "ISO 8601 datetime string — compatible as-is"
+    notes: "Both formats are ISO 8601. No conversion required."
+
+  - openkycaml_path: version
+    iso20022_element: "Document/SplmtryData/PlcAndNm"
+    iso20022_type: Max350Text
+    cardinality: "[0..1]"
+    transformation: "Embed as OpenKYCAML/KYCAMLEnvelope/<version>"
+    notes: "Carried in the supplementary data namespace discriminator."
+
+# ---------------------------------------------------------------------------
+# ORIGINATOR (NATURAL PERSON)
+# ---------------------------------------------------------------------------
+originator_natural_person:
+  - openkycaml_path: "ivms101.originator.originatorPersons[0].naturalPerson.name.nameIdentifier[0].primaryIdentifier"
+    iso20022_element: "CdtTrfTxInf/Dbtr/Nm"
+    iso20022_type: Max140Text
+    cardinality: "[0..1]"
+    transformation: "Concatenate secondaryIdentifier + primaryIdentifier with a space"
+    notes: "ISO 20022 Nm is a single string. nameIdentifierType LEGL preferred."
+
+  - openkycaml_path: "ivms101.originator.originatorPersons[0].naturalPerson.name.nameIdentifier[0].secondaryIdentifier"
+    iso20022_element: "CdtTrfTxInf/Dbtr/Nm"
+    iso20022_type: Max140Text
+    cardinality: "[0..1]"
+    transformation: "Combined with primaryIdentifier (see above)"
+    notes: "Given name — combined into Nm."
+
+  - openkycaml_path: "ivms101.originator.originatorPersons[0].naturalPerson.geographicAddresses[0].streetName"
+    iso20022_element: "CdtTrfTxInf/Dbtr/PstlAdr/StrtNm"
+    iso20022_type: Max70Text
+    cardinality: "[0..1]"
+    transformation: "Direct mapping"
+    notes: "Use structured address when available; fall back to addressLine[]."
+
+  - openkycaml_path: "ivms101.originator.originatorPersons[0].naturalPerson.geographicAddresses[0].buildingNumber"
+    iso20022_element: "CdtTrfTxInf/Dbtr/PstlAdr/BldgNb"
+    iso20022_type: Max16Text
+    cardinality: "[0..1]"
+    transformation: "Direct mapping"
+    notes: ""
+
+  - openkycaml_path: "ivms101.originator.originatorPersons[0].naturalPerson.geographicAddresses[0].postCode"
+    iso20022_element: "CdtTrfTxInf/Dbtr/PstlAdr/PstCd"
+    iso20022_type: Max16Text
+    cardinality: "[0..1]"
+    transformation: "Direct mapping"
+    notes: ""
+
+  - openkycaml_path: "ivms101.originator.originatorPersons[0].naturalPerson.geographicAddresses[0].townName"
+    iso20022_element: "CdtTrfTxInf/Dbtr/PstlAdr/TwnNm"
+    iso20022_type: Max35Text
+    cardinality: "[0..1]"
+    transformation: "Direct mapping"
+    notes: ""
+
+  - openkycaml_path: "ivms101.originator.originatorPersons[0].naturalPerson.geographicAddresses[0].country"
+    iso20022_element: "CdtTrfTxInf/Dbtr/PstlAdr/Ctry"
+    iso20022_type: CountryCode
+    cardinality: "[0..1]"
+    transformation: "ISO 3166-1 alpha-2 — compatible as-is"
+    notes: "Both OpenKYCAML and ISO 20022 use ISO 3166-1 alpha-2."
+
+  - openkycaml_path: "ivms101.originator.originatorPersons[0].naturalPerson.geographicAddresses[0].addressLine"
+    iso20022_element: "CdtTrfTxInf/Dbtr/PstlAdr/AdrLine"
+    iso20022_type: Max70Text
+    cardinality: "[0..7]"
+    transformation: "Split array elements into separate AdrLine elements"
+    notes: "Used when structured address fields are absent."
+
+  - openkycaml_path: "ivms101.originator.originatorPersons[0].naturalPerson.nationalIdentification.nationalIdentifier"
+    iso20022_element: "CdtTrfTxInf/Dbtr/Id/PrvtId/Othr/Id"
+    iso20022_type: Max35Text
+    cardinality: "[1..1]"
+    transformation: "Direct mapping"
+    notes: "Non-LEI identifier. Scheme name derived from nationalIdentifierType."
+
+  - openkycaml_path: "ivms101.originator.originatorPersons[0].naturalPerson.nationalIdentification.nationalIdentifierType"
+    iso20022_element: "CdtTrfTxInf/Dbtr/Id/PrvtId/Othr/SchmeNm/Prtry"
+    iso20022_type: Max35Text
+    cardinality: "[0..1]"
+    transformation: |
+      Map IVMS 101 code to ISO 20022 equivalent:
+        CCPT → CCPT (passport)
+        TXID → TXID (tax ID)
+        DRLC → DRLC (driver's licence)
+        ARNU → ARNU (alien registration)
+        SOCS → SOCS (social security)
+        IDCD → IDCD (identity card)
+        MISC → MISC
+    notes: "IVMS 101 and ISO 20022 share most type codes."
+
+  - openkycaml_path: "ivms101.originator.originatorPersons[0].naturalPerson.dateAndPlaceOfBirth.dateOfBirth"
+    iso20022_element: "CdtTrfTxInf/Dbtr/Id/PrvtId/DtAndPlcOfBirth/BirthDt"
+    iso20022_type: ISODate
+    cardinality: "[1..1]"
+    transformation: "ISO 8601 date (YYYY-MM-DD) — compatible as-is"
+    notes: ""
+
+  - openkycaml_path: "ivms101.originator.originatorPersons[0].naturalPerson.dateAndPlaceOfBirth.placeOfBirth"
+    iso20022_element: "CdtTrfTxInf/Dbtr/Id/PrvtId/DtAndPlcOfBirth/CityOfBirth"
+    iso20022_type: Max35Text
+    cardinality: "[1..1]"
+    transformation: "Direct mapping"
+    notes: ""
+
+  - openkycaml_path: "ivms101.originator.originatorPersons[0].naturalPerson.dateAndPlaceOfBirth.countryOfBirth"
+    iso20022_element: "CdtTrfTxInf/Dbtr/Id/PrvtId/DtAndPlcOfBirth/CtryOfBirth"
+    iso20022_type: CountryCode
+    cardinality: "[1..1]"
+    transformation: "ISO 3166-1 alpha-2 — compatible as-is"
+    notes: ""
+
+  - openkycaml_path: "ivms101.originator.accountNumber[0]"
+    iso20022_element: "CdtTrfTxInf/DbtrAcct/Id/Othr/Id"
+    iso20022_type: Max34Text
+    cardinality: "[1..1]"
+    transformation: "Use IBAN element (DbtrAcct/Id/IBAN) if value matches IBAN pattern [A-Z]{2}[0-9]{2}[A-Z0-9]{1,30}"
+    notes: "Crypto addresses go into Othr/Id. IBANs go into the dedicated IBAN element."
+
+# ---------------------------------------------------------------------------
+# ORIGINATOR (LEGAL PERSON)
+# ---------------------------------------------------------------------------
+originator_legal_person:
+  - openkycaml_path: "ivms101.originator.originatorPersons[0].legalPerson.name.nameIdentifier[0].legalPersonName"
+    iso20022_element: "CdtTrfTxInf/Dbtr/Nm"
+    iso20022_type: Max140Text
+    cardinality: "[0..1]"
+    transformation: "Use LEGL nameIdentifierType entry"
+    notes: ""
+
+  - openkycaml_path: "ivms101.originator.originatorPersons[0].legalPerson.nationalIdentification.nationalIdentifier"
+    iso20022_element: "CdtTrfTxInf/Dbtr/Id/OrgId/LEI"
+    iso20022_type: LEIIdentifier
+    cardinality: "[0..1]"
+    transformation: "Use only when nationalIdentifierType = LEIX"
+    notes: "ISO 17442 LEI — maps directly to OrgId/LEI."
+
+  - openkycaml_path: "ivms101.originator.originatorPersons[0].legalPerson.nationalIdentification.nationalIdentifier"
+    iso20022_element: "CdtTrfTxInf/Dbtr/Id/OrgId/Othr/Id"
+    iso20022_type: Max35Text
+    cardinality: "[0..1]"
+    transformation: "Use when nationalIdentifierType ≠ LEIX"
+    notes: "Registration number, tax ID, etc."
+
+  - openkycaml_path: "ivms101.originator.originatorPersons[0].legalPerson.countryOfRegistration"
+    iso20022_element: "CdtTrfTxInf/Dbtr/CtryOfRes"
+    iso20022_type: CountryCode
+    cardinality: "[0..1]"
+    transformation: "ISO 3166-1 alpha-2 — compatible as-is"
+    notes: ""
+
+# ---------------------------------------------------------------------------
+# BENEFICIARY (NATURAL PERSON)
+# ---------------------------------------------------------------------------
+beneficiary_natural_person:
+  - openkycaml_path: "ivms101.beneficiary.beneficiaryPersons[0].naturalPerson.name.nameIdentifier[0].primaryIdentifier"
+    iso20022_element: "CdtTrfTxInf/Cdtr/Nm"
+    iso20022_type: Max140Text
+    cardinality: "[0..1]"
+    transformation: "Concatenate secondaryIdentifier + primaryIdentifier with a space"
+    notes: ""
+
+  - openkycaml_path: "ivms101.beneficiary.beneficiaryPersons[0].naturalPerson.geographicAddresses[0].country"
+    iso20022_element: "CdtTrfTxInf/Cdtr/PstlAdr/Ctry"
+    iso20022_type: CountryCode
+    cardinality: "[0..1]"
+    transformation: "Direct mapping"
+    notes: ""
+
+  - openkycaml_path: "ivms101.beneficiary.accountNumber[0]"
+    iso20022_element: "CdtTrfTxInf/CdtrAcct/Id/Othr/Id"
+    iso20022_type: Max34Text
+    cardinality: "[0..1]"
+    transformation: "Same IBAN detection logic as originator account"
+    notes: ""
+
+# ---------------------------------------------------------------------------
+# BENEFICIARY (LEGAL PERSON)
+# ---------------------------------------------------------------------------
+beneficiary_legal_person:
+  - openkycaml_path: "ivms101.beneficiary.beneficiaryPersons[0].legalPerson.name.nameIdentifier[0].legalPersonName"
+    iso20022_element: "CdtTrfTxInf/Cdtr/Nm"
+    iso20022_type: Max140Text
+    cardinality: "[0..1]"
+    transformation: "Direct mapping (LEGL type)"
+    notes: ""
+
+  - openkycaml_path: "ivms101.beneficiary.beneficiaryPersons[0].legalPerson.nationalIdentification.nationalIdentifier"
+    iso20022_element: "CdtTrfTxInf/Cdtr/Id/OrgId/LEI"
+    iso20022_type: LEIIdentifier
+    cardinality: "[0..1]"
+    transformation: "Use only when nationalIdentifierType = LEIX"
+    notes: ""
+
+# ---------------------------------------------------------------------------
+# VASP IDENTIFIERS
+# ---------------------------------------------------------------------------
+vasp:
+  - openkycaml_path: "ivms101.originatingVASP.lei"
+    iso20022_element: "CdtTrfTxInf/InstgAgt/FinInstnId/LEI"
+    iso20022_type: LEIIdentifier
+    cardinality: "[0..1]"
+    transformation: "Direct mapping"
+    notes: "Originating VASP LEI → Instructing Agent LEI."
+
+  - openkycaml_path: "ivms101.beneficiaryVASP.lei"
+    iso20022_element: "CdtTrfTxInf/InstdAgt/FinInstnId/LEI"
+    iso20022_type: LEIIdentifier
+    cardinality: "[0..1]"
+    transformation: "Direct mapping"
+    notes: "Beneficiary VASP LEI → Instructed Agent LEI."
+
+  - openkycaml_path: "ivms101.originatingVASP.name"
+    iso20022_element: "CdtTrfTxInf/InstgAgt/FinInstnId/Nm"
+    iso20022_type: Max140Text
+    cardinality: "[0..1]"
+    transformation: "Direct mapping"
+    notes: ""
+
+  - openkycaml_path: "ivms101.beneficiaryVASP.name"
+    iso20022_element: "CdtTrfTxInf/InstdAgt/FinInstnId/Nm"
+    iso20022_type: Max140Text
+    cardinality: "[0..1]"
+    transformation: "Direct mapping"
+    notes: ""
+
+# ---------------------------------------------------------------------------
+# TRANSFER AMOUNT
+# ---------------------------------------------------------------------------
+transfer_amount:
+  - openkycaml_path: "ivms101.transferredAmount.amount"
+    iso20022_element: "CdtTrfTxInf/Amt/InstdAmt"
+    iso20022_type: ActiveOrHistoricCurrencyAndAmount
+    cardinality: "[0..1]"
+    transformation: "Numeric string → decimal value in Ccy attribute element"
+    notes: "Currency derived from assetType (ISO 4217 fiat). Crypto amounts go to SplmtryData."
+
+  - openkycaml_path: "ivms101.transferredAmount.assetType"
+    iso20022_element: "CdtTrfTxInf/Amt/InstdAmt/@Ccy"
+    iso20022_type: ActiveOrHistoricCurrencyCode
+    cardinality: "[1..1]"
+    transformation: "Map ISO 4217 currency codes directly. Non-ISO codes (BTC, ETH) → carry in SplmtryData."
+    notes: "Cryptocurrency asset types are not valid ISO 4217 codes."
+
+# ---------------------------------------------------------------------------
+# KYC PROFILE → SUPPLEMENTARY DATA
+# (all kycProfile and gdprSensitivityMetadata fields are carried in SplmtryData)
+# ---------------------------------------------------------------------------
+kyc_profile_to_supplementary_data:
+  - openkycaml_path: "kycProfile"
+    iso20022_element: "Document/SplmtryData/Envlp"
+    iso20022_type: SupplementaryDataEnvelope1
+    cardinality: "[0..unbounded]"
+    transformation: |
+      Serialise the KYCAMLEnvelope JSON object (see supplementary-data/kyc-aml-envelope-schema.json)
+      and embed in <Envlp> using one of:
+        a) JSON string (UTF-8, no whitespace) as text content
+        b) CDATA section: <![CDATA[{...}]]>
+        c) Base64-encoded string
+      The <PlcAndNm> element MUST be "OpenKYCAML/KYCAMLEnvelope/1.0".
+    notes: "This is the canonical mechanism for all dynamic KYC/AML data."
+
+  - openkycaml_path: "kycProfile.customerRiskRating.overallRiskRating"
+    iso20022_element: "Document/SplmtryData/Envlp → KYCAMLEnvelope.kycProfile.customerRiskRating.overallRiskRating"
+    iso20022_type: "(SplmtryData — see envelope schema)"
+    cardinality: "[0..1]"
+    transformation: "Embedded in KYCAMLEnvelope JSON"
+    notes: "No direct ISO 20022 risk-rating field exists. Always in SplmtryData."
+
+  - openkycaml_path: "kycProfile.sanctionsScreening"
+    iso20022_element: "Document/SplmtryData/Envlp → KYCAMLEnvelope.screeningResults"
+    iso20022_type: "(SplmtryData)"
+    cardinality: "[0..1]"
+    transformation: "Mapped to KYCAMLEnvelope.screeningResults block"
+    notes: ""
+
+  - openkycaml_path: "kycProfile.consentRecord"
+    iso20022_element: "Document/SplmtryData/Envlp → KYCAMLEnvelope.consentRecord"
+    iso20022_type: "(SplmtryData)"
+    cardinality: "[0..1]"
+    transformation: "Mapped to KYCAMLEnvelope.consentRecord block"
+    notes: ""
+
+  - openkycaml_path: "gdprSensitivityMetadata"
+    iso20022_element: "Document/SplmtryData/Envlp → KYCAMLEnvelope.gdprSensitivityMetadata"
+    iso20022_type: "(SplmtryData)"
+    cardinality: "[0..1]"
+    transformation: "Embedded verbatim in KYCAMLEnvelope JSON"
+    notes: "Tipping-off protection flags MUST be preserved and not logged by intermediaries."
+
+  - openkycaml_path: "verifiableCredential"
+    iso20022_element: "Document/SplmtryData/Envlp → KYCAMLEnvelope.vcProofs"
+    iso20022_type: "(SplmtryData)"
+    cardinality: "[0..unbounded]"
+    transformation: |
+      Extract proof references (credentialIssuer DID, verifier DID, proofValue,
+      verificationMethod) into KYCAMLEnvelope.vcProofs[] array.
+      Full VC payload not embedded — reference by URI (credentialSubject.id).
+    notes: "eIDAS 2.0 VC proofs are non-native to ISO 20022 — SplmtryData is the only viable path."

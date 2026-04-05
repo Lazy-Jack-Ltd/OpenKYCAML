@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  OpenKYCAML × ISO 20022 — Minimal Travel Rule pacs.008 Snippet
+  ==============================================================
+  This snippet shows ONLY the <SplmtryData> block required to embed
+  an OpenKYCAML KYCAMLEnvelope into any ISO 20022 pacs.008 message.
+
+  Copy this block into your existing pacs.008 template. Place it as the
+  last child element of <CdtTrfTxInf>.
+
+  PlcAndNm discriminator: "OpenKYCAML/KYCAMLEnvelope/1.0"
+  
+  All receiving parsers MUST check PlcAndNm before attempting to parse
+  the Envlp content as a KYCAMLEnvelope.
+
+  ENCODING OPTIONS for the Envlp element:
+    1. CDATA (shown below)         — easiest for human readability
+    2. Escaped JSON string          — <Envlp>{&quot;envelopeVersion&quot;:...}</Envlp>
+    3. Base64-encoded UTF-8 string  — for strict XML processors
+
+  MINIMUM REQUIRED ENVELOPE FIELDS (Travel Rule):
+    - envelopeVersion
+    - messageRef
+    - screeningResults.sanctionsScreening.result
+    - screeningResults.sanctionsScreening.screeningDate
+    - screeningResults.pepScreening.isPEP
+-->
+
+<!-- Paste the block below as the last child of <CdtTrfTxInf> -->
+
+<SplmtryData xmlns="urn:iso:std:iso:20022:tech:xsd:pacs.008.001.10">
+  <!-- Namespace discriminator — MUST equal this exact string -->
+  <PlcAndNm>OpenKYCAML/KYCAMLEnvelope/1.0</PlcAndNm>
+  <Envlp><![CDATA[
+{
+  "envelopeVersion": "1.0.0",
+  "messageRef": "YOUR-PACS008-MSG-ID-HERE",
+  "openKycAmlVersion": "1.3.0",
+  "kycProfile": {
+    "customerRiskRating": {
+      "overallRiskRating": "LOW",
+      "ratingDate": "2026-04-05"
+    },
+    "dueDiligenceType": "CDD",
+    "kycCompletionDate": "2026-01-01"
+  },
+  "screeningResults": {
+    "sanctionsScreening": {
+      "result": "CLEAR",
+      "screeningDate": "2026-04-05",
+      "listsScreened": ["OFAC_SDN", "EU_CONSOLIDATED", "UN_CONSOLIDATED"],
+      "hitDetails": null
+    },
+    "pepScreening": {
+      "isPEP": false,
+      "pepCategory": "NOT_PEP",
+      "pepRole": null,
+      "screeningDate": "2026-04-05"
+    },
+    "adverseMediaScreening": {
+      "result": "CLEAR",
+      "screeningDate": "2026-04-05",
+      "hitSummary": null
+    }
+  },
+  "consentRecord": {
+    "consentGiven": true,
+    "consentTimestamp": "2026-01-01T00:00:00Z",
+    "consentPurpose": "AML_TRAVEL_RULE",
+    "consentVersion": "v1.0",
+    "legalBasis": "GDPR-Art6-1c",
+    "withdrawalTimestamp": null
+  },
+  "vcProofs": [],
+  "gdprSensitivityMetadata": {
+    "classification": "standard",
+    "restrictedFields": [],
+    "tippingOffProtected": false,
+    "legalBasis": "GDPR-Art6-1c",
+    "retentionPeriod": "P5Y",
+    "disclosurePolicy": {
+      "allowedRecipients": ["beneficiary_vasp"],
+      "prohibitedRecipients": []
+    },
+    "auditReference": null
+  }
+}
+  ]]></Envlp>
+</SplmtryData>
+
+<!--
+  CHECKLIST for integrators:
+    [ ] Replace "YOUR-PACS008-MSG-ID-HERE" with the actual GrpHdr/MsgId value
+    [ ] Update screeningResults with today's screening results
+    [ ] Set kycProfile.customerRiskRating.overallRiskRating from your AML system
+    [ ] Set kycProfile.kycCompletionDate from your customer master
+    [ ] If originator was onboarded via EUDI Wallet, add a vcProofs entry
+    [ ] If SAR-linked data is present, set gdprSensitivityMetadata.classification
+        to "sar_restricted" and tippingOffProtected to true
+    [ ] Validate the KYCAMLEnvelope JSON against:
+        iso20022-integration/supplementary-data/kyc-aml-envelope-schema.json
+-->

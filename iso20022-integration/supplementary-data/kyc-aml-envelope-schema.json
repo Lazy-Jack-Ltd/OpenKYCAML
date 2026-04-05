@@ -1,0 +1,342 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://openkycaml.org/schema/iso20022/v1.0.0/kyc-aml-envelope-schema.json",
+  "title": "KYCAMLEnvelope",
+  "description": "JSON Schema for the OpenKYCAML KYC/AML Envelope carried inside the ISO 20022 <SplmtryData><Envlp> element. PlcAndNm discriminator: 'OpenKYCAML/KYCAMLEnvelope/1.0'.",
+  "version": "1.0.0",
+  "type": "object",
+  "required": ["envelopeVersion", "messageRef"],
+  "properties": {
+    "envelopeVersion": {
+      "type": "string",
+      "const": "1.0.0",
+      "description": "Version of the KYCAMLEnvelope schema. Used by parsers to select the correct deserialiser."
+    },
+    "messageRef": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 35,
+      "description": "The ISO 20022 GrpHdr/MsgId value of the enclosing message. Links the envelope back to the payment message for audit purposes."
+    },
+    "openKycAmlVersion": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "The version of the OpenKYCAML core schema used to construct this envelope (e.g. '1.3.0').",
+      "examples": ["1.3.0"]
+    },
+    "kycProfile": {
+      "type": "object",
+      "description": "The full or partial kycProfile block from the originator's OpenKYCAML payload. May be omitted for minimal Travel Rule messages; required for CDD reliance payloads.",
+      "properties": {
+        "customerRiskRating": {
+          "type": "object",
+          "properties": {
+            "overallRiskRating": {
+              "type": "string",
+              "enum": ["LOW", "MEDIUM", "HIGH", "VERY_HIGH", "UNRATED"],
+              "description": "Overall AML risk classification assigned by the sending institution."
+            },
+            "riskScore": {
+              "type": ["number", "null"],
+              "description": "Numeric risk score (institution-defined scale)."
+            },
+            "ratingDate": {
+              "type": "string",
+              "format": "date",
+              "description": "Date the risk rating was last assessed (ISO 8601 date)."
+            }
+          }
+        },
+        "dueDiligenceType": {
+          "type": "string",
+          "enum": ["SDD", "CDD", "EDD"],
+          "description": "Level of due diligence performed (Simplified / Standard / Enhanced)."
+        },
+        "customerClassification": {
+          "type": ["string", "null"],
+          "description": "Customer classification used for AML risk profiling (e.g. RETAIL, CORPORATE, VASP, HNW)."
+        },
+        "kycCompletionDate": {
+          "type": "string",
+          "format": "date",
+          "description": "Date the KYC process was completed (ISO 8601 date)."
+        },
+        "onboardingChannel": {
+          "type": "string",
+          "description": "Channel through which the customer was onboarded (e.g. IN_PERSON, REMOTE_VIDEO, EUDI_WALLET)."
+        },
+        "thirdPartyCDDReliance": {
+          "type": ["object", "null"],
+          "description": "Third-party CDD reliance record (AMLR Art. 48). Populated when the sending institution relies on CDD performed by a third party.",
+          "properties": {
+            "relyingPartyId": { "type": "string" },
+            "providingPartyId": { "type": "string" },
+            "relianceScope": { "type": "string" },
+            "relianceContractRef": { "type": "string" },
+            "relianceDate": { "type": "string", "format": "date" },
+            "accessToUnderlyingDataConfirmed": { "type": "boolean" },
+            "providingPartyEligibilityConfirmed": { "type": "boolean" },
+            "liabilityNote": { "type": "string" }
+          }
+        },
+        "beneficialOwnership": {
+          "type": "array",
+          "description": "Ultimate Beneficial Owners (AMLR Art. 26). Array of UBO records.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "ownerName": { "type": "string" },
+              "ownershipPercentage": { "type": "number" },
+              "controlType": { "type": "string" },
+              "nationalIdentifier": { "type": "string" },
+              "countryOfResidence": { "type": "string" }
+            }
+          }
+        },
+        "auditMetadata": {
+          "type": "object",
+          "properties": {
+            "recordId": { "type": "string" },
+            "dataRetentionDate": { "type": "string", "format": "date" },
+            "dataProvider": { "type": "string" },
+            "changeLog": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "timestamp": { "type": "string", "format": "date-time" },
+                  "actor": { "type": "string" },
+                  "description": { "type": "string" }
+                }
+              }
+            }
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "screeningResults": {
+      "type": "object",
+      "description": "Consolidated screening results: sanctions, PEP, and adverse media checks performed on the originating party at the time of the payment.",
+      "properties": {
+        "sanctionsScreening": {
+          "type": "object",
+          "properties": {
+            "result": {
+              "type": "string",
+              "enum": ["CLEAR", "HIT", "POTENTIAL_HIT", "NOT_SCREENED"],
+              "description": "Overall sanctions screening result."
+            },
+            "screeningDate": {
+              "type": "string",
+              "format": "date",
+              "description": "Date the sanctions screening was last performed."
+            },
+            "listsScreened": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "List identifiers screened (e.g. OFAC_SDN, EU_CONSOLIDATED, UN_CONSOLIDATED, HMT_CONSOLIDATED)."
+            },
+            "hitDetails": {
+              "type": ["string", "null"],
+              "description": "Human-readable description of any screening hit. Null when result is CLEAR."
+            }
+          }
+        },
+        "pepScreening": {
+          "type": "object",
+          "properties": {
+            "isPEP": {
+              "type": "boolean",
+              "description": "True if the originator is identified as a Politically Exposed Person."
+            },
+            "pepCategory": {
+              "type": ["string", "null"],
+              "enum": ["DOMESTIC_PEP", "FOREIGN_PEP", "INTERNATIONAL_ORGANISATION", "FAMILY_MEMBER_OF_PEP", "CLOSE_ASSOCIATE_OF_PEP", "FORMER_PEP", "NOT_PEP", null],
+              "description": "AMLA draft PEP taxonomy category."
+            },
+            "pepRole": {
+              "type": ["string", "null"],
+              "description": "Public role or position if isPEP is true."
+            },
+            "screeningDate": {
+              "type": "string",
+              "format": "date"
+            }
+          }
+        },
+        "adverseMediaScreening": {
+          "type": "object",
+          "properties": {
+            "result": {
+              "type": "string",
+              "enum": ["CLEAR", "HIT", "POTENTIAL_HIT", "NOT_SCREENED"]
+            },
+            "screeningDate": {
+              "type": "string",
+              "format": "date"
+            },
+            "hitSummary": {
+              "type": ["string", "null"],
+              "description": "Brief summary of adverse media findings. Null when CLEAR."
+            }
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "consentRecord": {
+      "type": "object",
+      "description": "GDPR Art. 6/7 consent record for the processing of personal data in this payment message.",
+      "properties": {
+        "consentGiven": {
+          "type": "boolean",
+          "description": "True if the data subject has given explicit consent for processing."
+        },
+        "consentTimestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "UTC timestamp when consent was recorded (ISO 8601)."
+        },
+        "consentPurpose": {
+          "type": "string",
+          "description": "Purpose for which consent was obtained (e.g. 'AML_TRAVEL_RULE', 'THIRD_PARTY_CDD', 'ONGOING_MONITORING')."
+        },
+        "consentVersion": {
+          "type": "string",
+          "description": "Version of the privacy notice / consent form presented to the data subject."
+        },
+        "legalBasis": {
+          "type": "string",
+          "description": "GDPR lawful basis code (e.g. 'GDPR-Art6-1c' for legal obligation, 'GDPR-Art6-1a' for consent)."
+        },
+        "withdrawalTimestamp": {
+          "type": ["string", "null"],
+          "format": "date-time",
+          "description": "UTC timestamp if the data subject subsequently withdrew consent. Null if consent is still active."
+        }
+      },
+      "additionalProperties": false
+    },
+    "vcProofs": {
+      "type": "array",
+      "description": "Array of eIDAS 2.0 Verifiable Credential proof references. Each entry anchors the identity assertion to a DID-addressed credential.",
+      "items": {
+        "type": "object",
+        "required": ["issuerDid", "subjectDid"],
+        "properties": {
+          "issuerDid": {
+            "type": "string",
+            "pattern": "^did:[a-z]+:.+",
+            "description": "DID of the credential issuer (e.g. national PID provider, KYC utility)."
+          },
+          "subjectDid": {
+            "type": "string",
+            "pattern": "^did:[a-z]+:.+",
+            "description": "DID of the credential subject (user's EUDI Wallet)."
+          },
+          "verifierDid": {
+            "type": "string",
+            "pattern": "^did:[a-z]+:.+",
+            "description": "DID of the relying party that verified the credential."
+          },
+          "credentialType": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "W3C VC type array (e.g. ['PIDCredential', 'EUDIWalletPresentationEvidence'])."
+          },
+          "presentationMethod": {
+            "type": "string",
+            "description": "Presentation protocol (e.g. 'OpenID4VP', 'DIDComm')."
+          },
+          "presentationDate": {
+            "type": "string",
+            "format": "date-time",
+            "description": "UTC timestamp when the credential was presented."
+          },
+          "proofType": {
+            "type": "string",
+            "description": "Cryptographic proof suite used (e.g. 'Ed25519Signature2020', 'JsonWebSignature2020')."
+          },
+          "verificationMethod": {
+            "type": "string",
+            "description": "DID URL of the verification key used to sign the credential."
+          },
+          "proofValue": {
+            "type": ["string", "null"],
+            "description": "Base58- or Base64url-encoded proof value. Null for ZKP / selective disclosure credentials."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "gdprSensitivityMetadata": {
+      "type": "object",
+      "description": "GDPR/AML sensitivity classification block (mirrors OpenKYCAML v1.3.0 gdprSensitivityMetadata). MUST be preserved by all intermediaries. tippingOffProtected=true means the payload MUST NOT be logged or disclosed to the data subject.",
+      "properties": {
+        "classification": {
+          "type": "string",
+          "enum": [
+            "standard",
+            "sensitive_personal",
+            "criminal_offence",
+            "sar_restricted",
+            "internal_suspicion",
+            "confidential_aml"
+          ],
+          "description": "AML/GDPR sensitivity classification."
+        },
+        "restrictedFields": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "JSON Pointer paths (RFC 6901) to individual fields with elevated sensitivity."
+        },
+        "tippingOffProtected": {
+          "type": "boolean",
+          "description": "AMLR Art. 73 / FATF Rec. 21 flag. When true, this payload relates to a SAR/STR and MUST NOT be disclosed to the data subject or unauthorised parties."
+        },
+        "legalBasis": {
+          "type": "string",
+          "description": "Applicable legal basis for processing this payload (e.g. 'GDPR-Art6-1c', 'AMLR-Art73', 'GDPR-Art9-2g')."
+        },
+        "retentionPeriod": {
+          "type": "string",
+          "pattern": "^P(?:\\d+Y)?(?:\\d+M)?(?:\\d+D)?(?:T(?:\\d+H)?(?:\\d+M)?(?:\\d+S)?)?$",
+          "description": "ISO 8601 duration for the mandatory retention period (e.g. 'P5Y' for 5 years per AMLR Art. 56)."
+        },
+        "disclosurePolicy": {
+          "type": "object",
+          "properties": {
+            "allowedRecipients": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "prohibitedRecipients": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "Include 'data_subject' when tippingOffProtected is true."
+            }
+          }
+        },
+        "auditReference": {
+          "type": ["string", "null"],
+          "description": "Opaque DPO/SAR case reference (hash or opaque ID — no case content)."
+        }
+      },
+      "if": {
+        "properties": {
+          "classification": { "enum": ["sar_restricted", "internal_suspicion"] }
+        },
+        "required": ["classification"]
+      },
+      "then": {
+        "properties": {
+          "tippingOffProtected": { "const": true }
+        },
+        "required": ["tippingOffProtected"]
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
