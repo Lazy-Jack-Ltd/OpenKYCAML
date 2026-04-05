@@ -276,7 +276,7 @@
                             ]
                           },
                           "nationalIdentification": {
-                            "nationalIdentifier": "X1234567",
+                            "nationalIdentifier": "C12345678",
                             "nationalIdentifierType": "CCPT",
                             "countryOfIssue": "CH"
                           },
@@ -301,7 +301,7 @@
                             ]
                           },
                           "nationalIdentification": {
-                            "nationalIdentifier": "Y9876543",
+                            "nationalIdentifier": "C98765432",
                             "nationalIdentifierType": "CCPT",
                             "countryOfIssue": "CH"
                           },
@@ -380,7 +380,7 @@
                             ]
                           },
                           "nationalIdentification": {
-                            "nationalIdentifier": "X1234567",
+                            "nationalIdentifier": "C12345678",
                             "nationalIdentifierType": "CCPT",
                             "countryOfIssue": "CH"
                           },
