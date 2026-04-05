@@ -2184,6 +2184,15 @@
               "type": "string",
               "description": "Nature and intended purpose of the business relationship (e.g., INVESTMENT, TRADE_FINANCE, PAYMENTS).",
               "maxLength": 200
+            },
+            "accreditedInvestor": {
+              "type": "boolean",
+              "description": "Whether the investor has been assessed as an accredited, professional, or otherwise eligible investor under the applicable securities regulation. Maps to ERC-3643 claim topic 101 (Accredited / Eligible Investor). True = eligible to hold regulated/security tokens; False = retail investor, subject to stricter distribution rules."
+            },
+            "investorCategoryJurisdiction": {
+              "type": "string",
+              "description": "ISO 3166-1 alpha-2 jurisdiction code under which the investor category or accredited-investor determination was made (e.g. 'US' for SEC Rule 501, 'GB' for FCA Professional Client, 'EU' for MiFID II Professional Client).",
+              "pattern": "^[A-Z]{2}$"
             }
           }
         },
@@ -2284,6 +2293,57 @@
         "thirdPartyCDDReliance": {
           "$ref": "#/$defs/ThirdPartyCDDReliance",
           "description": "CDD reliance record when due diligence was performed by a third party. Required when onboardingChannel is THIRD_PARTY_CDD. Aligns with AMLR Article 48(3)."
+        },
+        "isEligible": {
+          "type": "boolean",
+          "description": "Whether the investor was found eligible / whitelisted at the time of `eligibilityLastConfirmed`. This is the off-chain equivalent of the ERC-3643 `isVerified(address)` call in the Identity Registry: true = verified, KYC/AML checks passed, investor may hold the security token; false = not eligible or de-listed."
+        },
+        "eligibilityLastConfirmed": {
+          "type": "string",
+          "format": "date",
+          "description": "Date on which the `isEligible` determination was last confirmed. Should be refreshed on each periodic review or re-KYC. Maps to the timestamp of the last `isVerified()` check in an ERC-3643 Identity Registry."
+        },
+        "blockchainAccountIds": {
+          "type": "array",
+          "description": "Blockchain wallet addresses associated with this investor. In ERC-3643, the `investorAddress` (Ethereum address) is the primary identifier in the Identity Registry; each address maps 1:1 to an ONCHAINID contract. This array enables multi-wallet and multi-chain registrations to be documented in a single KYC record.",
+          "items": {
+            "type": "object",
+            "required": [
+              "address",
+              "network"
+            ],
+            "properties": {
+              "address": {
+                "type": "string",
+                "description": "The blockchain wallet address (e.g. Ethereum checksummed hex address '0x...' or Solana base58 address).",
+                "maxLength": 200
+              },
+              "network": {
+                "type": "string",
+                "description": "Network or chain identifier (e.g. 'ethereum', 'polygon', 'avalanche'). Use CAIP-2 chain IDs where available (e.g. 'eip155:1' for Ethereum mainnet, 'eip155:137' for Polygon).",
+                "maxLength": 100
+              },
+              "onchainIDAddress": {
+                "type": "string",
+                "description": "Address of the ONCHAINID smart contract (ERC-734/735) linked to this wallet in an ERC-3643 Identity Registry. This is the `identity` parameter in `IIdentityRegistry.registerIdentity(investorAddress, identity, country)`.",
+                "maxLength": 200
+              },
+              "registeredAt": {
+                "type": "string",
+                "format": "date",
+                "description": "Date on which this wallet was registered in the Identity Registry."
+              },
+              "isFrozen": {
+                "type": "boolean",
+                "description": "Whether this wallet address is currently frozen in the associated ERC-3643 Identity Registry or token contract. Mirrors the `isFrozen(address)` state of the IERC3643 token."
+              },
+              "frozenTokenAmount": {
+                "type": "string",
+                "description": "Amount of tokens frozen on this wallet, as a decimal string. Mirrors `getFrozenTokens(address)` in IERC3643.",
+                "pattern": "^[0-9]+(\\.[0-9]+)?$"
+              }
+            }
+          }
         }
       }
     }

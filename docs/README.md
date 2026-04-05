@@ -10,6 +10,7 @@ Welcome to the OpenKYCAML documentation. This directory contains detailed techni
 | [Adoption Guide](adoption-guide.md) | Step-by-step guide for VASPs, banks, and KYC utilities |
 | [Compliance Matrix](compliance-matrix.md) | Alignment with FATF, AMLR, ISO 20022, LEI, eIDAS ARF |
 | [AMLR 2027 Compliance Checklist](amlr-2027-compliance-checklist.md) | Operational checklist for obliged entities — schema configuration and process obligations |
+| [ERC-3643 (T-REX) Mapping](mapping-erc3643.md) | Field-level mapping from OpenKYCAML to ERC-3643 on-chain identity and security token standard |
 | [Roadmap](roadmap.md) | Planned features, community milestones, and version history |
 
 ## Schema
