@@ -301,7 +301,7 @@
         },
         "retentionPeriod": {
           "type": "string",
-          "pattern": "^P(?:\\d+Y)?(?:\\d+M)?(?:\\d+D)?(?:T(?:\\d+H)?(?:\\d+M)?(?:\\d+S)?)?$",
+          "pattern": "^P(?!$)(?:\\d+Y)?(?:\\d+M)?(?:\\d+D)?(?:T(?!$)(?:\\d+H)?(?:\\d+M)?(?:\\d+S)?)?$",
           "description": "ISO 8601 duration for the mandatory retention period (e.g. 'P5Y' for 5 years per AMLR Art. 56)."
         },
         "disclosurePolicy": {

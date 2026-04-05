@@ -175,7 +175,7 @@ def _add_party_id(parent: Element, person_block: dict[str, Any]) -> None:
             dob_el = SubElement(prv, "DtAndPlcOfBirth")
             SubElement(dob_el, "BirthDt").text = dob["dateOfBirth"]
             SubElement(dob_el, "CityOfBirth").text = dob.get("placeOfBirth") or "UNKNOWN"
-            SubElement(dob_el, "CtryOfBirth").text = dob.get("countryOfBirth") or "XX"
+            SubElement(dob_el, "CtryOfBirth").text = dob.get("countryOfBirth") or "ZZ"
         if nat_id_value and nat_id_type:
             othr = SubElement(prv, "Othr")
             SubElement(othr, "Id").text = nat_id_value

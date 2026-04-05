@@ -21,6 +21,9 @@ import pytest
 # Add the library directory to sys.path
 # ---------------------------------------------------------------------------
 REPO_ROOT = Path(__file__).parents[3]
+# Verify we found the right directory (has a schema/ folder)
+while REPO_ROOT.parent != REPO_ROOT and not (REPO_ROOT / "schema").exists():
+    REPO_ROOT = REPO_ROOT.parent
 sys.path.insert(0, str(REPO_ROOT / "iso20022-integration" / "libraries" / "python"))
 
 from converter import (  # noqa: E402
@@ -311,7 +314,7 @@ class TestIso20022ToOpenkycaml:
         xml = self._get_xml()
         result = iso20022_to_openkycaml(xml)
         assert "$schema" in result
-        assert "openkycaml.org" in result["$schema"]
+        assert result["$schema"].startswith("https://openkycaml.org/schema/")
 
     def test_originator_name_recovered(self):
         xml = self._get_xml()

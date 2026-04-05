@@ -22,6 +22,7 @@
  */
 
 import { XMLBuilder, XMLParser } from "fast-xml-parser";
+import { randomUUID } from "crypto";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -424,7 +425,7 @@ export async function openkycamlToPacs008(
   const ivms = payload.ivms101;
   if (!ivms) throw new Error("No 'ivms101' block found. Cannot produce pacs.008.");
 
-  const msgId = (payload.messageId ?? crypto.randomUUID()).slice(0, 35);
+  const msgId = (payload.messageId ?? randomUUID()).slice(0, 35);
   const msgDt = payload.messageDateTime ?? nowIso();
   const assetType = ivms.transferredAmount?.assetType ?? "XXX";
   const ccy = isIso4217(assetType) ? assetType : "XXX";
@@ -521,7 +522,7 @@ export async function openkycamlToPain001(
   const ivms = payload.ivms101;
   if (!ivms) throw new Error("No 'ivms101' block found. Cannot produce pain.001.");
 
-  const msgId = (payload.messageId ?? crypto.randomUUID()).slice(0, 35);
+  const msgId = (payload.messageId ?? randomUUID()).slice(0, 35);
   const msgDt = payload.messageDateTime ?? nowIso();
   const assetType = ivms.transferredAmount?.assetType ?? "XXX";
   const ccy = isIso4217(assetType) ? assetType : "XXX";
@@ -741,7 +742,7 @@ export function iso20022ToOpenkycaml(xmlString: string): OpenKYCAMLPayload {
   const result: OpenKYCAMLPayload = {
     $schema: "https://openkycaml.org/schema/v1.3.0/kyc-aml-hybrid-extended.json",
     version: envelope?.openKycAmlVersion ?? "1.3.0",
-    messageId: msgId || crypto.randomUUID(),
+    messageId: msgId || randomUUID(),
     messageDateTime: msgDt || nowIso(),
   };
 
