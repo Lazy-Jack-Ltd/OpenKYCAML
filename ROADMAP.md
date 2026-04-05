@@ -31,6 +31,70 @@ This document outlines the planned development of the OpenKYCAML standard.
 
 ---
 
+## Issues & Technical Debt — Found in April 2026 Repository Review
+
+The following issues were identified during a critical review of the full repository in April 2026. They are grouped by priority and type. All are candidates for the v1.3.x patch stream or v1.4.0 depending on severity.
+
+---
+
+### 🔴 Bugs / Documentation Inaccuracies (Fix in v1.3.x)
+
+| # | Issue | Location | Notes |
+|---|---|---|---|
+| 1 | **`nameIdentifier` vs `nameIdentifiers` field-name inconsistency** | `docs/mapping-ivms101-eidas-amlr.md`, `docs/adoption-guide.md` | The schema and all examples use `nameIdentifier` (no trailing 's'); several documentation files use `nameIdentifiers` with an 's'. Adopters implementing from docs will generate invalid payloads. |
+| 2 | **Double-nested `originatingVASP.originatingVASP.*` field path** | `docs/adoption-guide.md` line 58 | The minimum-required-fields table writes `originatingVASP.originatingVASP.name.nameIdentifiers[0].legalPersonName` — the doubled `originatingVASP` prefix is wrong and will confuse integrators. |
+| 3 | **Stale example count** | `ROADMAP.md` (v1.3.0 Highlights) | States "17 validated example payloads" but there are now 21 example JSON files in `examples/`. Needs updating everywhere it is cited. |
+| 4 | **README example table incomplete** | `README.md` | The example table does not list the four complex-ownership examples added later: `complex-group-multi-tier.json`, `foundation-complex-ubo.json`, `llp-complex-ubo.json`, `trust-complex-ubo.json`. |
+| 5 | **FATF Rec. 25 compliance matrix status outdated** | `docs/compliance-matrix.md` | Still shows `🟡 Partial` and "specific trust-deed fields planned for v1.1" — but `trust-complex-ubo.json`, `foundation-complex-ubo.json`, and `llp-complex-ubo.json` already demonstrate full trust/foundation/LLP beneficial-ownership coverage. Matrix should be updated to `✅` with a note on what is and isn't covered by `kycProfile.beneficialOwnership`. |
+| 6 | **SWIFT MT→MX migration deadline is now past** | `iso20022-integration/README.md` line 128 | States "Mandatory for SWIFT MT→MX migration (November 2025)" — this deadline has passed (current date: April 2026). Reword to past tense or remove the deadline. |
+| 7 | **W3C VC `@context` hard-coded to v1 URL despite v2 alignment claims** | `schema/versions/v1.3.0.json` line 692 | Schema's `verifiableCredential.@context[0]` has `const: "https://www.w3.org/2018/credentials/v1"` (W3C VC DM **v1** context), but the README, schema description, and docs all claim alignment with **W3C VC Data Model v2** (`https://www.w3.org/ns/credentials/v2`). Either migrate examples and schema to the v2 context URL, or explicitly document which version of the VC DM is supported and why v1 context is retained. |
+| 8 | **MiCA Art. 83 cited as the Travel Rule provision** | `docs/compliance-matrix.md`, `iso20022-integration/README.md` | The EU Travel Rule for crypto-asset transfers is primarily in the **EU Funds Transfer Regulation (TFR) 2023/1113** (Art. 14), not directly in MiCA. MiCA cross-references TFR but TFR is the operative instrument. The compliance matrix should reference TFR 2023/1113 Art. 14 alongside MiCA to be accurate. |
+| 9 | **`docs/AMLR-requirements.md` is a 23-line stub** | `docs/AMLR-requirements.md` | Contains only an introductory table without the full content expected of a requirements document. Should be expanded or clearly marked as a summary/pointer to the compliance checklist. |
+
+---
+
+### 🟠 CI / Infrastructure Gaps (Fix in v1.3.x / v1.4.0)
+
+| # | Issue | Location | Notes |
+|---|---|---|---|
+| 10 | **ISO 20022 pytest tests never run in CI** | `.github/workflows/validate-schema.yml` | The 70-test suite in `iso20022-integration/test-suite/` is never invoked by CI. A new workflow step (or separate workflow) should run `pytest iso20022-integration/test-suite/` on every push that changes `iso20022-integration/**`. |
+| 11 | **CI path triggers exclude `iso20022-integration/`** | `.github/workflows/validate-schema.yml` `on.push.paths` | The workflow only triggers on `schema/**`, `examples/**`, `tools/**` — changes to `iso20022-integration/**` or `docs/**` never trigger validation. |
+| 12 | **`tools/javascript/package.json` test script references non-existent `tests/` directory** | `tools/javascript/package.json` | `"test": "node --test tests/"` will fail with "directory not found". Either create `tests/` with Node.js test files, or update the script to point to the correct location. |
+| 13 | **`package-lock.json` excluded from git** | `.gitignore` | `package-lock.json` is gitignored, making Node.js CI builds non-reproducible (each run may get different transitive dependency versions). For a security-sensitive standard, reproducible builds matter. Consider removing the gitignore exclusion and committing it for the `tools/javascript/` package. |
+| 14 | **ISO 20022 test suite has no `requirements.txt`** | `iso20022-integration/test-suite/` | Test files import `pytest` and `jsonschema` but there is no `requirements.txt` in the test-suite directory. A contributor or CI runner following the test docstring (`pip install pytest jsonschema`) may get wrong versions. Add a pinned `requirements.txt` here. |
+
+---
+
+### 🟡 Missing Assets & Governance Gaps (v1.4.0)
+
+| # | Issue | Location | Notes |
+|---|---|---|---|
+| 15 | **No `SECURITY.md` file** | Repository root | GitHub security policy file is absent. For a standard handling sensitive financial and identity data, a responsible-disclosure policy and contact for security reports is important. Add `SECURITY.md`. |
+| 16 | **No `CHANGELOG.md`** | Repository root | Version history is embedded only in `ROADMAP.md`. A dedicated `CHANGELOG.md` following [Keep a Changelog](https://keepachangelog.com/) conventions is standard practice and makes it easier for adopters to audit what changed between versions. |
+| 17 | **NOTICE file missing OpenID Foundation attribution** | `NOTICE` | The standard relies heavily on OpenID4VP and OpenID4VCI for EUDI Wallet flows, but the NOTICE file does not acknowledge the OpenID Foundation. Add an attribution for OpenID4VP (draft specification, OpenID Foundation). |
+| 18 | **Legacy `v0.1*` schema files with uppercase `.JSON` extension** | `schema/versions/` | `v0.1.1.hybrid.JSON`, `v0.1.a.JSON`, `v0.1.hybrid.JSON` use uppercase `.JSON` extensions, inconsistent with all other `.json` files in the repo. These pre-release drafts should either be normalised to `.json` or moved to an `archive/` folder to avoid confusion. |
+| 19 | **Two roadmap files with overlapping scope** | `ROADMAP.md` (root), `docs/roadmap.md` | The root `ROADMAP.md` covers features; `docs/roadmap.md` covers documentation tasks. The relationship is not clearly stated in either file. Add a header/cross-reference clarifying that `docs/roadmap.md` is a documentation-only backlog and `ROADMAP.md` is the authoritative project roadmap. |
+| 20 | **`sd-jwt-compact-token.json` contains placeholder/stub signature values** | `examples/sd-jwt-compact-token.json` | The example sets `"encodedToken": "******"` and explicitly notes that signature values are placeholder stubs that "CANNOT be cryptographically verified." This is valuable as a reference document but should be clearly excluded from automated schema validation or moved to `docs/` to avoid false assurance. |
+| 21 | **No published npm package or Python package** | — | `tools/javascript/package.json` uses `@openkycaml/tools` as the package name, implying npm publication intent. Similarly, there is no `pyproject.toml` / `setup.py` for a `pip install openkycaml` workflow. Publishing to npm and PyPI would significantly lower the barrier to adoption. |
+
+---
+
+### 🔵 Technical Standards Considerations (v1.4.0 / v2.0.0)
+
+| # | Issue | Location | Notes |
+|---|---|---|---|
+| 22 | **Schema `$id` and `$schema` URLs reference `openkycaml.org` — domain status unconfirmed** | `schema/kyc-aml-hybrid-extended.json`, all examples | The schema `$id` is `https://openkycaml.org/schema/v1.3.0/kyc-aml-hybrid-extended.json` and all example `$schema` fields reference this URL. If `openkycaml.org` is not actively registered and serving the schema, this creates both a usability problem (remote $id resolution fails) and a potential security risk (domain squatting). Verify the domain is registered and serving the schema, or migrate to the GitHub Pages URL `https://lazy-jack-ltd.github.io/openKYCAML/...` as a fallback. |
+| 23 | **EUDI Wallet `@context` URL is a placeholder** | All `-eudi-wallet.json` examples | Examples use `"https://europa.eu/2018/credentials/eudi/v1"` as the EUDI context URL. The EU Commission has not published an official EUDI Wallet VC JSON-LD context URL. This should be documented as a placeholder pending the final ARF VC context publication, and examples/schema should be updated when the official URL is released. |
+| 24 | **No formal W3C VC Data Model v2 migration path documented** | `docs/`, `schema/` | The v2 DM introduces breaking changes to `@context`, `type`, and `credentialStatus`. Given the roadmap target of "aligning with final W3C VC Data Model v2" in v2.0.0, a documented migration guide between v1 and v2 VC context URLs would help adopters plan integrations today. |
+| 25 | **`kycProfile.beneficialOwnership` trust/foundation fields are generic** | Schema | The existing `beneficialOwnership` array covers trusts and foundations only via the generic `naturalPerson`/`legalPerson` person wrapper. Fields specific to trusts (settlor, trustee, protector, letter of wishes reference), foundations (founder, council, statutory powers), and LLPs (GP/LP distinction, management rights) are not captured in schema. This limits FATF R.25 compliance to narrative-only. Add typed sub-objects for trust deeds, foundation statutes, and partnership agreements. |
+| 26 | **No machine-readable OpenID4VP Presentation Definition for Travel Rule minimum** | `docs/`, `examples/` | The EUDI Wallet integration guide describes the presentation flow but does not include a reference `presentation_definition` JSON object that a VASP relying party can use to request exactly the Travel Rule-minimum claims from a wallet. Including a canonical `presentation_definition` example (and optionally registering it in a trust registry) would accelerate interoperability. |
+| 27 | **Go validator not started despite TRISA ecosystem using Go natively** | `tools/` | TRISA, the most widely deployed Travel Rule protocol, is Go-native. The absence of a Go validator means TRISA node operators face a friction point in validating OpenKYCAML payloads. Prioritise the Go validator in v1.4.0. |
+| 28 | **SWIFT MT to OpenKYCAML converter not started** | `tools/converters/` | `swift-mt-to-openkycaml.py` is listed as planned but not started. The SWIFT MT→MX migration deadline (November 2025) has passed; CBPR+ is now mandatory, making the MT converter less urgent, but many institutions still operate legacy MT rails in parallel. Reassess priority. |
+| 29 | **No `openvasp-to-openkycaml.js` converter** | `tools/converters/` | Listed as planned for v1.4 but not started. |
+| 30 | **No formal test suite for core Python tools (`validator.py`, `converter.py`, `models.py`)** | `tools/python/` | There are no unit or integration tests for the primary Python tooling in `tools/python/`. Only the ISO 20022 converter has a test suite. The core validator and converter should have tests, especially for the business-logic warning paths. |
+
+---
+
 ## v1.4.0 — Planned Q3 2026
 
 **Theme: Institutional and Cross-Border Interoperability**
@@ -49,6 +113,14 @@ This document outlines the planned development of the OpenKYCAML standard.
 | FATCA / CRS tax residency extension | Planned | — |
 | ISO 20022 pain.001 full serialiser (Python) | ✅ Completed in v1.3.0 | — |
 | XRPL schema fields: `blockchainAccountIds[].xrplCredentialType` (hex CredentialType) and `blockchainAccountIds[].mptIssuanceId` (MPTokenIssuanceID) | ✅ Completed in v1.3.0 | — |
+| Add CI step for ISO 20022 pytest suite + widen path triggers | Planned | Technical Debt #10, #11 |
+| Fix `nameIdentifier` field-name inconsistency in docs | Planned | Bug #1 |
+| Fix `originatingVASP.originatingVASP` double-nesting in adoption guide | Planned | Bug #2 |
+| Add `SECURITY.md` and `CHANGELOG.md` | Planned | Gap #15, #16 |
+| Publish `@openkycaml/tools` to npm and `openkycaml` to PyPI | Planned | Gap #21 |
+| Fix JS `tests/` directory referenced in `package.json` | Planned | CI #12 |
+| Typed trust/foundation/LLP sub-objects in `beneficialOwnership` | Planned | Standards #25 |
+| Canonical OpenID4VP Presentation Definition for Travel Rule minimum | Planned | Standards #26 |
 
 ---
 
