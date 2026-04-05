@@ -1,0 +1,110 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://openkycaml.org/schema/iso20022/v1.0.0/profiles/travel-rule-pacs.008-profile.json",
+  "title": "OpenKYCAML Travel Rule pacs.008 Profile",
+  "description": "CBPR+-compliant profile for embedding OpenKYCAML Travel Rule data inside an ISO 20022 pacs.008 FIToFICstmrCdtTrf message. Defines the minimum required fields for FATF Recommendation 16 and MiCA Article 83 compliance.",
+  "version": "1.0.0",
+  "openKycAmlVersion": "1.3.0",
+  "iso20022Message": "pacs.008.001.10",
+  "regulatoryBasis": ["FATF Rec 16", "MiCA Art. 83", "EU TFR 2023"],
+  "profile": {
+    "description": "Maps IVMS 101 originator and beneficiary data to pacs.008 Dbtr/Cdtr blocks. Dynamic KYC/AML data (risk rating, screening results, VC proofs) is carried in the KYCAMLEnvelope inside <SplmtryData>.",
+    "supplementaryDataPlcAndNm": "OpenKYCAML/KYCAMLEnvelope/1.0",
+    "requiredIso20022Fields": [
+      {
+        "xpath": "Document/FIToFICstmrCdtTrf/GrpHdr/MsgId",
+        "source": "messageId",
+        "cardinality": "1..1",
+        "notes": "UUIDv4 message identifier from OpenKYCAML envelope"
+      },
+      {
+        "xpath": "Document/FIToFICstmrCdtTrf/GrpHdr/CreDtTm",
+        "source": "messageDateTime",
+        "cardinality": "1..1",
+        "notes": "ISO 8601 datetime"
+      },
+      {
+        "xpath": "Document/FIToFICstmrCdtTrf/GrpHdr/NbOfTxs",
+        "source": "constant:1",
+        "cardinality": "1..1",
+        "notes": "Always 1 — OpenKYCAML is a single-transaction record"
+      },
+      {
+        "xpath": "Document/FIToFICstmrCdtTrf/GrpHdr/SttlmInf/SttlmMtd",
+        "source": "constant:CLRG",
+        "cardinality": "1..1",
+        "notes": "Default settlement method. Override for SWIFT gpi (INGA) or bilateral (INDA)."
+      },
+      {
+        "xpath": "Document/FIToFICstmrCdtTrf/CdtTrfTxInf/PmtId/EndToEndId",
+        "source": "messageId",
+        "cardinality": "1..1",
+        "notes": "Reuse messageId as end-to-end identifier"
+      },
+      {
+        "xpath": "Document/FIToFICstmrCdtTrf/CdtTrfTxInf/IntrBkSttlmAmt/@Ccy",
+        "source": "ivms101.transferredAmount.assetType",
+        "cardinality": "1..1",
+        "notes": "ISO 4217 fiat currency code. Use XXX for non-ISO crypto assets."
+      },
+      {
+        "xpath": "Document/FIToFICstmrCdtTrf/CdtTrfTxInf/Dbtr/Nm",
+        "source": "ivms101.originator.originatorPersons[0].{naturalPerson|legalPerson}.name",
+        "cardinality": "0..1",
+        "notes": "Natural person: concat secondaryIdentifier + primaryIdentifier. Legal entity: LEGL legalPersonName."
+      },
+      {
+        "xpath": "Document/FIToFICstmrCdtTrf/CdtTrfTxInf/Cdtr/Nm",
+        "source": "ivms101.beneficiary.beneficiaryPersons[0].{naturalPerson|legalPerson}.name",
+        "cardinality": "0..1",
+        "notes": "Same name mapping logic as Dbtr/Nm."
+      },
+      {
+        "xpath": "Document/FIToFICstmrCdtTrf/CdtTrfTxInf/InstgAgt/FinInstnId/LEI",
+        "source": "ivms101.originatingVASP.lei",
+        "cardinality": "0..1",
+        "notes": "Originating VASP ISO 17442 LEI"
+      },
+      {
+        "xpath": "Document/FIToFICstmrCdtTrf/CdtTrfTxInf/InstdAgt/FinInstnId/LEI",
+        "source": "ivms101.beneficiaryVASP.lei",
+        "cardinality": "0..1",
+        "notes": "Beneficiary VASP ISO 17442 LEI"
+      }
+    ],
+    "requiredKycAmlEnvelopeFields": [
+      "envelopeVersion",
+      "messageRef",
+      "screeningResults.sanctionsScreening.result",
+      "screeningResults.sanctionsScreening.screeningDate",
+      "screeningResults.pepScreening.isPEP"
+    ],
+    "conditionalKycAmlEnvelopeFields": [
+      {
+        "field": "kycProfile.customerRiskRating.overallRiskRating",
+        "condition": "Required when dueDiligenceType is CDD or EDD"
+      },
+      {
+        "field": "vcProofs",
+        "condition": "Required when originator was onboarded via EUDI Wallet (onboardingChannel = EUDI_WALLET)"
+      },
+      {
+        "field": "gdprSensitivityMetadata",
+        "condition": "Required when kycProfile.monitoringInfo.alerts contains SAR-linked entries"
+      }
+    ],
+    "addressRequirements": {
+      "cbprPlus": "Structured address (StrtNm + TwnNm + Ctry) required for SWIFT CBPR+ processing. Unstructured AdrLine accepted only when structured fields are unavailable.",
+      "target2": "Structured address mandatory for TARGET2-compliant messages."
+    },
+    "cryptoAssetHandling": {
+      "accountNumber": "Carry crypto wallet address in DbtrAcct/Id/Othr/Id. Set SchmeNm/Prtry to the asset ticker (e.g. BTC, ETH).",
+      "currency": "Set IntrBkSttlmAmt/@Ccy = 'XXX'. Carry full transferredAmount (amount + assetType) in KYCAMLEnvelope.kycProfile."
+    }
+  },
+  "example": "See iso20022-integration/examples/pacs.008-with-openkycaml-supplementarydata.xml",
+  "relatedProfiles": [
+    "pain.001-kyc-envelope-profile.json",
+    "camt.053-kyc-audit-profile.json"
+  ]
+}

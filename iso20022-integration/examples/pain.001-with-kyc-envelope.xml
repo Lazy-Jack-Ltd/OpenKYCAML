@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  OpenKYCAML × ISO 20022 Example: pain.001 CstmrCdtTrfInitn
+  ===========================================================
+  Message type : pain.001.001.11
+  Profile      : pain.001-kyc-envelope-profile.json
+  Scenario     : Corporate credit transfer with third-party CDD reliance (AMLR Art. 48)
+                 Originator: Acme Blockchain Holdings B.V. (legal entity, NL)
+                 Beneficiary: Baltic Digital Finance AS (legal entity, EE)
+                 Amount: EUR 250,000.00
+
+  The <SplmtryData> block carries the full OpenKYCAML KYCAMLEnvelope JSON,
+  including the thirdPartyCDDReliance record and eIDAS 2.0 LPID VC proof.
+  PlcAndNm discriminator: "OpenKYCAML/KYCAMLEnvelope/1.0"
+-->
+<Document
+  xmlns="urn:iso:std:iso:20022:tech:xsd:pain.001.001.11"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="urn:iso:std:iso:20022:tech:xsd:pain.001.001.11 pain.001.001.11.xsd">
+
+  <CstmrCdtTrfInitn>
+
+    <!-- ================================================================
+         GROUP HEADER
+         ================================================================ -->
+    <GrpHdr>
+      <MsgId>PAIN001-2026-04-05-ABCORP-0099</MsgId>
+      <CreDtTm>2026-04-05T13:30:00Z</CreDtTm>
+      <NbOfTxs>1</NbOfTxs>
+      <!-- CtrlSum = sum of all instructed amounts -->
+      <CtrlSum>250000.00</CtrlSum>
+      <!-- InitgPty = initiating party (the customer's bank or the customer itself) -->
+      <InitgPty>
+        <Nm>Acme Blockchain Holdings B.V.</Nm>
+        <Id>
+          <OrgId>
+            <!-- LEI of the initiating legal entity -->
+            <LEI>724500VNNHZHYDLFMO70</LEI>
+          </OrgId>
+        </Id>
+      </InitgPty>
+    </GrpHdr>
+
+    <!-- ================================================================
+         PAYMENT INFORMATION
+         ================================================================ -->
+    <PmtInf>
+      <PmtInfId>PAIN001-2026-04-05-ABCORP-0099</PmtInfId>
+      <!-- TRF = credit transfer -->
+      <PmtMtd>TRF</PmtMtd>
+      <NbOfTxs>1</NbOfTxs>
+      <CtrlSum>250000.00</CtrlSum>
+
+      <PmtTpInf>
+        <SvcLvl>
+          <!-- SEPA Credit Transfer Service Level -->
+          <Cd>SEPA</Cd>
+        </SvcLvl>
+      </PmtTpInf>
+
+      <!-- Requested execution date -->
+      <ReqdExctnDt>
+        <Dt>2026-04-07</Dt>
+      </ReqdExctnDt>
+
+      <!-- ============================================================
+           DEBTOR (ORIGINATOR — LEGAL ENTITY)
+           Maps from ivms101.originator.originatorPersons[0].legalPerson
+           ============================================================ -->
+      <Dbtr>
+        <!-- Legal entity name (LEGL type) -->
+        <Nm>Acme Blockchain Holdings B.V.</Nm>
+        <Id>
+          <OrgId>
+            <!-- LEI maps from nationalIdentification (nationalIdentifierType = LEIX) -->
+            <LEI>724500VNNHZHYDLFMO70</LEI>
+          </OrgId>
+        </Id>
+        <PstlAdr>
+          <StrtNm>Herengracht</StrtNm>
+          <BldgNb>420</BldgNb>
+          <PstCd>1017 BZ</PstCd>
+          <TwnNm>Amsterdam</TwnNm>
+          <Ctry>NL</Ctry>
+        </PstlAdr>
+        <CtryOfRes>NL</CtryOfRes>
+      </Dbtr>
+
+      <!-- ============================================================
+           DEBTOR ACCOUNT (IBAN)
+           maps from ivms101.originator.accountNumber[0]
+           ============================================================ -->
+      <DbtrAcct>
+        <Id>
+          <!-- IBAN — matches IBAN pattern, use dedicated element -->
+          <IBAN>NL91ABNA0417164300</IBAN>
+        </Id>
+        <Ccy>EUR</Ccy>
+      </DbtrAcct>
+
+      <!-- Debtor's bank -->
+      <DbtrAgt>
+        <FinInstnId>
+          <!-- BIC of debtor's bank -->
+          <BICFI>ABNANL2A</BICFI>
+        </FinInstnId>
+      </DbtrAgt>
+
+      <!-- ============================================================
+           CREDIT TRANSFER TRANSACTION INFORMATION
+           ============================================================ -->
+      <CdtTrfTxInf>
+
+        <PmtId>
+          <EndToEndId>PAIN001-2026-04-05-ABCORP-0099</EndToEndId>
+        </PmtId>
+
+        <!-- Amount: EUR fiat — use dedicated Ccy attribute -->
+        <Amt>
+          <InstdAmt Ccy="EUR">250000.00</InstdAmt>
+        </Amt>
+
+        <!-- Creditor's bank -->
+        <CdtrAgt>
+          <FinInstnId>
+            <!-- BIC of beneficiary bank in Estonia -->
+            <BICFI>EEUHEE2X</BICFI>
+            <LEI>724500YRI6OZO6ELB439</LEI>
+          </FinInstnId>
+        </CdtrAgt>
+
+        <!-- ============================================================
+             CREDITOR (BENEFICIARY — LEGAL ENTITY)
+             Maps from ivms101.beneficiary.beneficiaryPersons[0].legalPerson
+             ============================================================ -->
+        <Cdtr>
+          <Nm>Baltic Digital Finance AS</Nm>
+          <Id>
+            <OrgId>
+              <LEI>724500EEBALDIG2026AS</LEI>
+            </OrgId>
+          </Id>
+          <PstlAdr>
+            <StrtNm>Tornimäe</StrtNm>
+            <BldgNb>2</BldgNb>
+            <PstCd>10145</PstCd>
+            <TwnNm>Tallinn</TwnNm>
+            <Ctry>EE</Ctry>
+          </PstlAdr>
+          <CtryOfRes>EE</CtryOfRes>
+        </Cdtr>
+
+        <!-- ============================================================
+             CREDITOR ACCOUNT (IBAN)
+             ============================================================ -->
+        <CdtrAcct>
+          <Id>
+            <IBAN>EE382200221020145685</IBAN>
+          </Id>
+        </CdtrAcct>
+
+        <!-- Remittance information (commercial — not KYC) -->
+        <RmtInf>
+          <Ustrd>INV-2026-0099 Settlement</Ustrd>
+        </RmtInf>
+
+        <!-- ============================================================
+             SUPPLEMENTARY DATA — OpenKYCAML KYCAMLEnvelope
+             Includes: full kycProfile, thirdPartyCDDReliance,
+             screening results, LPID VC proof, GDPR metadata
+             ============================================================ -->
+        <SplmtryData>
+          <PlcAndNm>OpenKYCAML/KYCAMLEnvelope/1.0</PlcAndNm>
+          <Envlp><![CDATA[
+{
+  "envelopeVersion": "1.0.0",
+  "messageRef": "PAIN001-2026-04-05-ABCORP-0099",
+  "openKycAmlVersion": "1.3.0",
+  "kycProfile": {
+    "customerRiskRating": {
+      "overallRiskRating": "LOW",
+      "riskScore": 18,
+      "ratingDate": "2026-02-01"
+    },
+    "dueDiligenceType": "CDD",
+    "customerClassification": "CORPORATE",
+    "kycCompletionDate": "2025-11-10",
+    "onboardingChannel": "IN_PERSON",
+    "thirdPartyCDDReliance": {
+      "relyingPartyId": "did:web:abnamro.example.nl",
+      "providingPartyId": "did:web:kyc-utility.example.eu",
+      "relianceScope": "FULL_CDD",
+      "relianceContractRef": "CONTRACT-AMLA-NL-2025-007",
+      "relianceDate": "2025-11-10",
+      "accessToUnderlyingDataConfirmed": true,
+      "providingPartyEligibilityConfirmed": true,
+      "liabilityNote": "ABN AMRO N.V. retains liability as required by AMLR Art. 48(4)."
+    },
+    "beneficialOwnership": [
+      {
+        "ownerName": "Jan Hendrik de Vries",
+        "ownershipPercentage": 65,
+        "controlType": "DIRECT_OWNERSHIP",
+        "nationalIdentifier": "NL-BSN-123456789",
+        "countryOfResidence": "NL"
+      }
+    ],
+    "auditMetadata": {
+      "recordId": "KYC-CORP-2025-004421",
+      "dataRetentionDate": "2030-11-10",
+      "dataProvider": "did:web:kyc-utility.example.eu",
+      "changeLog": [
+        {
+          "timestamp": "2025-11-10T14:00:00Z",
+          "actor": "analyst@kyc-utility.example.eu",
+          "description": "Full CDD completed. LOW risk. LPID VC verified via OpenID4VP."
+        },
+        {
+          "timestamp": "2026-02-01T10:30:00Z",
+          "actor": "monitoring@abnamro.example.nl",
+          "description": "Periodic review. Risk maintained at LOW. No adverse events."
+        }
+      ]
+    }
+  },
+  "screeningResults": {
+    "sanctionsScreening": {
+      "result": "CLEAR",
+      "screeningDate": "2026-04-05",
+      "listsScreened": ["OFAC_SDN", "EU_CONSOLIDATED", "UN_CONSOLIDATED", "HMT_CONSOLIDATED"],
+      "hitDetails": null
+    },
+    "pepScreening": {
+      "isPEP": false,
+      "pepCategory": "NOT_PEP",
+      "pepRole": null,
+      "screeningDate": "2026-04-05"
+    },
+    "adverseMediaScreening": {
+      "result": "CLEAR",
+      "screeningDate": "2026-04-05",
+      "hitSummary": null
+    }
+  },
+  "consentRecord": {
+    "consentGiven": true,
+    "consentTimestamp": "2025-11-10T13:50:00Z",
+    "consentPurpose": "THIRD_PARTY_CDD",
+    "consentVersion": "v3.0",
+    "legalBasis": "GDPR-Art6-1c",
+    "withdrawalTimestamp": null
+  },
+  "vcProofs": [
+    {
+      "issuerDid": "did:web:lpid-provider.rvo.example.nl",
+      "subjectDid": "did:ebsi:z3FmsPHzh9UE6LvsTcXKSHf2",
+      "verifierDid": "did:web:kyc-utility.example.eu",
+      "credentialType": ["LPIDCredential", "EUDIWalletPresentationEvidence"],
+      "presentationMethod": "OpenID4VP",
+      "presentationDate": "2025-11-10T13:45:00Z",
+      "proofType": "Ed25519Signature2020",
+      "verificationMethod": "did:web:lpid-provider.rvo.example.nl#key-1",
+      "proofValue": "z4TqhwJANvxLpFqCrmKoP8uSyeGhTkd2Wm7r9XzBnQsE1YtVpDcKlZ"
+    }
+  ],
+  "gdprSensitivityMetadata": {
+    "classification": "standard",
+    "restrictedFields": [],
+    "tippingOffProtected": false,
+    "legalBasis": "GDPR-Art6-1c",
+    "retentionPeriod": "P5Y",
+    "disclosurePolicy": {
+      "allowedRecipients": ["beneficiary_vasp", "regulator_upon_request", "correspondent_bank"],
+      "prohibitedRecipients": []
+    },
+    "auditReference": null
+  }
+}
+          ]]></Envlp>
+        </SplmtryData>
+
+      </CdtTrfTxInf>
+    </PmtInf>
+
+  </CstmrCdtTrfInitn>
+
+</Document>

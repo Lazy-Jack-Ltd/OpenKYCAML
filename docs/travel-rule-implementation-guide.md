@@ -314,12 +314,28 @@ trp_body = {
 
 **ISO 20022 output (for SWIFT-connected entities):**
 
-For financial institutions transmitting via the SWIFT network, use the ISO 20022 converter to produce a pain.001-compatible structure alongside the ivmsData:
+For financial institutions transmitting via the SWIFT network, use the ISO 20022 integration library to produce a standards-compliant pacs.008 XML message with the full KYC/AML envelope embedded in `<SplmtryData>`:
 
 ```python
-from tools.python.converter import openkycaml_to_iso20022
-iso = openkycaml_to_iso20022(payload)
+import sys
+sys.path.insert(0, "iso20022-integration/libraries/python")
+from converter import openkycaml_to_pacs008
+
+with open("my-payload.json") as f:
+    payload = json.load(f)
+
+# Returns a complete pacs.008 XML string with KYCAMLEnvelope in <SplmtryData>
+pacs008_xml = openkycaml_to_pacs008(payload)
 ```
+
+For pain.001 (customer credit transfer initiation):
+
+```python
+from converter import openkycaml_to_pain001
+pain001_xml = openkycaml_to_pain001(payload)
+```
+
+See [`iso20022-integration/`](../iso20022-integration/) for the full library, XML examples, and pre-validated profiles.
 
 ### Key References
 - TRP GitHub: https://github.com/travelruleprotocol

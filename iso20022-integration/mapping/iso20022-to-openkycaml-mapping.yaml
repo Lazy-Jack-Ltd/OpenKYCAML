@@ -1,0 +1,332 @@
+# ISO 20022 → OpenKYCAML Field Mapping
+#
+# This file provides the canonical field-by-field mapping from ISO 20022
+# data elements back to the OpenKYCAML v1.3.0 schema.
+# Gap entries (fields with no OpenKYCAML counterpart) are marked with:
+#   gap: true
+#   gap_disposition: one of [no_equivalent | carry_in_extension | out_of_scope]
+
+version: "1.0.0"
+source_standard: "ISO 20022"
+target_schema: "https://openkycaml.org/schema/v1.3.0/kyc-aml-hybrid-extended.json"
+primary_messages:
+  - pacs.008 (FIToFICstmrCdtTrf)
+  - pain.001 (CstmrCdtTrfInitn)
+  - camt.053 (BkToCstmrStmt)
+
+# ---------------------------------------------------------------------------
+# GROUP HEADER
+# ---------------------------------------------------------------------------
+group_header:
+  - iso20022_element: "GrpHdr/MsgId"
+    iso20022_type: Max35Text
+    openkycaml_path: messageId
+    transformation: "Direct mapping"
+    gap: false
+
+  - iso20022_element: "GrpHdr/CreDtTm"
+    iso20022_type: ISODateTime
+    openkycaml_path: messageDateTime
+    transformation: "Direct mapping — ISO 8601 compatible"
+    gap: false
+
+  - iso20022_element: "GrpHdr/NbOfTxs"
+    iso20022_type: Max15NumericText
+    openkycaml_path: null
+    gap: true
+    gap_disposition: no_equivalent
+    notes: "OpenKYCAML is a single-transaction record. Batch count has no counterpart."
+
+  - iso20022_element: "GrpHdr/CtrlSum"
+    iso20022_type: DecimalNumber
+    openkycaml_path: null
+    gap: true
+    gap_disposition: no_equivalent
+    notes: "Batch control sum — no OpenKYCAML equivalent."
+
+  - iso20022_element: "GrpHdr/TtlIntrBkSttlmAmt"
+    iso20022_type: ActiveCurrencyAndAmount
+    openkycaml_path: null
+    gap: true
+    gap_disposition: no_equivalent
+    notes: "Interbank settlement amount — operational/clearing data, not KYC."
+
+  - iso20022_element: "GrpHdr/IntrBkSttlmDt"
+    iso20022_type: ISODate
+    openkycaml_path: null
+    gap: true
+    gap_disposition: no_equivalent
+    notes: "Settlement date — not a KYC field."
+
+# ---------------------------------------------------------------------------
+# DEBTOR (ORIGINATOR)
+# ---------------------------------------------------------------------------
+debtor:
+  - iso20022_element: "CdtTrfTxInf/Dbtr/Nm"
+    iso20022_type: Max140Text
+    openkycaml_path: "ivms101.originator.originatorPersons[0].naturalPerson.name.nameIdentifier[0]"
+    transformation: |
+      Split full name at last space boundary:
+        primaryIdentifier   ← last token (family name)
+        secondaryIdentifier ← remaining prefix (given name(s))
+        nameIdentifierType  ← LEGL
+    gap: false
+
+  - iso20022_element: "CdtTrfTxInf/Dbtr/PstlAdr/StrtNm"
+    iso20022_type: Max70Text
+    openkycaml_path: "ivms101.originator.originatorPersons[0].naturalPerson.geographicAddresses[0].streetName"
+    transformation: "Direct mapping"
+    gap: false
+
+  - iso20022_element: "CdtTrfTxInf/Dbtr/PstlAdr/BldgNb"
+    iso20022_type: Max16Text
+    openkycaml_path: "ivms101.originator.originatorPersons[0].naturalPerson.geographicAddresses[0].buildingNumber"
+    transformation: "Direct mapping"
+    gap: false
+
+  - iso20022_element: "CdtTrfTxInf/Dbtr/PstlAdr/PstCd"
+    iso20022_type: Max16Text
+    openkycaml_path: "ivms101.originator.originatorPersons[0].naturalPerson.geographicAddresses[0].postCode"
+    transformation: "Direct mapping"
+    gap: false
+
+  - iso20022_element: "CdtTrfTxInf/Dbtr/PstlAdr/TwnNm"
+    iso20022_type: Max35Text
+    openkycaml_path: "ivms101.originator.originatorPersons[0].naturalPerson.geographicAddresses[0].townName"
+    transformation: "Direct mapping"
+    gap: false
+
+  - iso20022_element: "CdtTrfTxInf/Dbtr/PstlAdr/Ctry"
+    iso20022_type: CountryCode
+    openkycaml_path: "ivms101.originator.originatorPersons[0].naturalPerson.geographicAddresses[0].country"
+    transformation: "ISO 3166-1 alpha-2 — compatible as-is"
+    gap: false
+
+  - iso20022_element: "CdtTrfTxInf/Dbtr/PstlAdr/AdrLine"
+    iso20022_type: Max70Text
+    openkycaml_path: "ivms101.originator.originatorPersons[0].naturalPerson.geographicAddresses[0].addressLine"
+    transformation: "Collect all AdrLine elements into an array"
+    gap: false
+
+  - iso20022_element: "CdtTrfTxInf/Dbtr/Id/OrgId/LEI"
+    iso20022_type: LEIIdentifier
+    openkycaml_path: "ivms101.originator.originatorPersons[0].legalPerson.nationalIdentification.nationalIdentifier"
+    transformation: "Set nationalIdentifierType = LEIX"
+    gap: false
+
+  - iso20022_element: "CdtTrfTxInf/Dbtr/Id/PrvtId/DtAndPlcOfBirth/BirthDt"
+    iso20022_type: ISODate
+    openkycaml_path: "ivms101.originator.originatorPersons[0].naturalPerson.dateAndPlaceOfBirth.dateOfBirth"
+    transformation: "Direct mapping"
+    gap: false
+
+  - iso20022_element: "CdtTrfTxInf/Dbtr/Id/PrvtId/DtAndPlcOfBirth/CityOfBirth"
+    iso20022_type: Max35Text
+    openkycaml_path: "ivms101.originator.originatorPersons[0].naturalPerson.dateAndPlaceOfBirth.placeOfBirth"
+    transformation: "Direct mapping"
+    gap: false
+
+  - iso20022_element: "CdtTrfTxInf/Dbtr/Id/PrvtId/DtAndPlcOfBirth/CtryOfBirth"
+    iso20022_type: CountryCode
+    openkycaml_path: "ivms101.originator.originatorPersons[0].naturalPerson.dateAndPlaceOfBirth.countryOfBirth"
+    transformation: "Direct mapping"
+    gap: false
+
+  - iso20022_element: "CdtTrfTxInf/Dbtr/CtryOfRes"
+    iso20022_type: CountryCode
+    openkycaml_path: "ivms101.originator.originatorPersons[0].naturalPerson.countryOfResidence"
+    transformation: "Direct mapping"
+    gap: false
+
+  - iso20022_element: "CdtTrfTxInf/Dbtr/Id/PrvtId/Othr/Id"
+    iso20022_type: Max35Text
+    openkycaml_path: "ivms101.originator.originatorPersons[0].naturalPerson.nationalIdentification.nationalIdentifier"
+    transformation: "Direct mapping. Scheme name in Othr/SchmeNm/Prtry maps back to nationalIdentifierType."
+    gap: false
+
+# ---------------------------------------------------------------------------
+# DEBTOR ACCOUNT
+# ---------------------------------------------------------------------------
+debtor_account:
+  - iso20022_element: "CdtTrfTxInf/DbtrAcct/Id/IBAN"
+    iso20022_type: IBAN2007Identifier
+    openkycaml_path: "ivms101.originator.accountNumber[0]"
+    transformation: "Direct mapping (IBAN format)"
+    gap: false
+
+  - iso20022_element: "CdtTrfTxInf/DbtrAcct/Id/Othr/Id"
+    iso20022_type: Max34Text
+    openkycaml_path: "ivms101.originator.accountNumber[0]"
+    transformation: "Non-IBAN account identifier (crypto address, BBAN, etc.)"
+    gap: false
+
+# ---------------------------------------------------------------------------
+# CREDITOR (BENEFICIARY)
+# ---------------------------------------------------------------------------
+creditor:
+  - iso20022_element: "CdtTrfTxInf/Cdtr/Nm"
+    iso20022_type: Max140Text
+    openkycaml_path: "ivms101.beneficiary.beneficiaryPersons[0].naturalPerson.name.nameIdentifier[0]"
+    transformation: "Same name-split logic as debtor"
+    gap: false
+
+  - iso20022_element: "CdtTrfTxInf/Cdtr/Id/OrgId/LEI"
+    iso20022_type: LEIIdentifier
+    openkycaml_path: "ivms101.beneficiary.beneficiaryPersons[0].legalPerson.nationalIdentification.nationalIdentifier"
+    transformation: "Set nationalIdentifierType = LEIX"
+    gap: false
+
+  - iso20022_element: "CdtTrfTxInf/CdtrAcct/Id/IBAN"
+    iso20022_type: IBAN2007Identifier
+    openkycaml_path: "ivms101.beneficiary.accountNumber[0]"
+    transformation: "Direct mapping (IBAN format)"
+    gap: false
+
+  - iso20022_element: "CdtTrfTxInf/CdtrAcct/Id/Othr/Id"
+    iso20022_type: Max34Text
+    openkycaml_path: "ivms101.beneficiary.accountNumber[0]"
+    transformation: "Non-IBAN identifier"
+    gap: false
+
+# ---------------------------------------------------------------------------
+# FINANCIAL INSTITUTION AGENTS (VASP identifiers)
+# ---------------------------------------------------------------------------
+agents:
+  - iso20022_element: "CdtTrfTxInf/InstgAgt/FinInstnId/LEI"
+    iso20022_type: LEIIdentifier
+    openkycaml_path: "ivms101.originatingVASP.lei"
+    transformation: "Direct mapping"
+    gap: false
+
+  - iso20022_element: "CdtTrfTxInf/InstdAgt/FinInstnId/LEI"
+    iso20022_type: LEIIdentifier
+    openkycaml_path: "ivms101.beneficiaryVASP.lei"
+    transformation: "Direct mapping"
+    gap: false
+
+  - iso20022_element: "CdtTrfTxInf/InstgAgt/FinInstnId/BICFI"
+    iso20022_type: BICFIDec2014Identifier
+    openkycaml_path: "ivms101.originatingVASP.nationalIdentification.nationalIdentifier"
+    transformation: "Set nationalIdentifierType = RAID"
+    gap: false
+
+  - iso20022_element: "CdtTrfTxInf/InstdAgt/FinInstnId/BICFI"
+    iso20022_type: BICFIDec2014Identifier
+    openkycaml_path: "ivms101.beneficiaryVASP.nationalIdentification.nationalIdentifier"
+    transformation: "Set nationalIdentifierType = RAID"
+    gap: false
+
+# ---------------------------------------------------------------------------
+# AMOUNT
+# ---------------------------------------------------------------------------
+amount:
+  - iso20022_element: "CdtTrfTxInf/Amt/InstdAmt"
+    iso20022_type: ActiveOrHistoricCurrencyAndAmount
+    openkycaml_path: "ivms101.transferredAmount.amount"
+    transformation: "Numeric string from @value attribute"
+    gap: false
+
+  - iso20022_element: "CdtTrfTxInf/Amt/InstdAmt/@Ccy"
+    iso20022_type: ActiveOrHistoricCurrencyCode
+    openkycaml_path: "ivms101.transferredAmount.assetType"
+    transformation: "Direct mapping for ISO 4217 codes. Non-ISO codes recovered from SplmtryData."
+    gap: false
+
+# ---------------------------------------------------------------------------
+# FIELDS WITH NO OPENKYCAML COUNTERPART (GAPS)
+# ---------------------------------------------------------------------------
+gaps:
+  - iso20022_element: "GrpHdr/SttlmInf/SttlmMtd"
+    iso20022_type: SettlementMethod1Code
+    openkycaml_path: null
+    gap: true
+    gap_disposition: no_equivalent
+    notes: "Settlement method (CLRG, COVE, INDA, INGA) — clearing/settlement infrastructure, not KYC."
+
+  - iso20022_element: "CdtTrfTxInf/ChrgBr"
+    iso20022_type: ChargeBearerType1Code
+    openkycaml_path: null
+    gap: true
+    gap_disposition: no_equivalent
+    notes: "Charge bearer (DEBT, CRED, SHAR, SLEV) — fee allocation, not KYC."
+
+  - iso20022_element: "CdtTrfTxInf/IntrBkSttlmDt"
+    iso20022_type: ISODate
+    openkycaml_path: null
+    gap: true
+    gap_disposition: no_equivalent
+    notes: "Value date — not a KYC field."
+
+  - iso20022_element: "CdtTrfTxInf/PmtId/EndToEndId"
+    iso20022_type: Max35Text
+    openkycaml_path: null
+    gap: true
+    gap_disposition: carry_in_extension
+    notes: |
+      End-to-end transaction reference. Consider storing in
+      kycProfile.auditMetadata.changeLog[].description or
+      as the KYCAMLEnvelope.messageRef value.
+
+  - iso20022_element: "CdtTrfTxInf/PmtId/TxId"
+    iso20022_type: Max35Text
+    openkycaml_path: null
+    gap: true
+    gap_disposition: carry_in_extension
+    notes: "Transaction ID — carry in KYCAMLEnvelope.messageRef."
+
+  - iso20022_element: "CdtTrfTxInf/RmtInf/Ustrd"
+    iso20022_type: Max140Text
+    openkycaml_path: null
+    gap: true
+    gap_disposition: no_equivalent
+    notes: "Unstructured remittance information — commercial/operational, not KYC data."
+
+  - iso20022_element: "CdtTrfTxInf/Purp/Cd"
+    iso20022_type: ExternalPurpose1Code
+    openkycaml_path: null
+    gap: true
+    gap_disposition: carry_in_extension
+    notes: |
+      Payment purpose code — may be relevant for AML (e.g. trade finance vs retail).
+      Consider mapping to kycProfile.customerClassification or a future extension field.
+
+  - iso20022_element: "CdtTrfTxInf/DbtrAgt/FinInstnId/ClrSysMmbId"
+    iso20022_type: ClearingSystemMemberIdentification2
+    openkycaml_path: null
+    gap: true
+    gap_disposition: no_equivalent
+    notes: "Clearing system membership ID (ABA, CHAPS, etc.) — infrastructure, not KYC."
+
+  - iso20022_element: "CdtTrfTxInf/CdtrAgt/FinInstnId/ClrSysMmbId"
+    iso20022_type: ClearingSystemMemberIdentification2
+    openkycaml_path: null
+    gap: true
+    gap_disposition: no_equivalent
+    notes: "Same as above for creditor agent."
+
+# ---------------------------------------------------------------------------
+# SUPPLEMENTARY DATA → OPENKYCAML
+# ---------------------------------------------------------------------------
+supplementary_data:
+  - iso20022_element: "Document/SplmtryData/PlcAndNm"
+    iso20022_type: Max350Text
+    openkycaml_path: null
+    transformation: |
+      Check value equals "OpenKYCAML/KYCAMLEnvelope/1.0".
+      If yes, parse Envlp content as KYCAMLEnvelope JSON.
+      If no, ignore (not an OpenKYCAML envelope).
+    gap: false
+    notes: "Namespace discriminator used to identify OpenKYCAML envelopes."
+
+  - iso20022_element: "Document/SplmtryData/Envlp"
+    iso20022_type: SupplementaryDataEnvelope1
+    openkycaml_path: "(full KYCAMLEnvelope object)"
+    transformation: |
+      Parse JSON content. Extract:
+        - kycProfile → payload root kycProfile key
+        - screeningResults → kycProfile.sanctionsScreening / kycProfile.adverseMedia
+        - consentRecord → kycProfile.consentRecord
+        - gdprSensitivityMetadata → payload root gdprSensitivityMetadata key
+        - vcProofs → verifiableCredential.proof (array)
+    gap: false
+    notes: "Reverse of the KYCAMLEnvelope serialisation."

@@ -1,0 +1,90 @@
+{
+  "envelopeVersion": "1.0.0",
+  "messageRef": "PACS008-2026-04-05-0001",
+  "openKycAmlVersion": "1.3.0",
+  "kycProfile": {
+    "customerRiskRating": {
+      "overallRiskRating": "MEDIUM",
+      "riskScore": 42,
+      "ratingDate": "2026-03-15"
+    },
+    "dueDiligenceType": "CDD",
+    "customerClassification": "RETAIL",
+    "kycCompletionDate": "2026-01-20",
+    "onboardingChannel": "REMOTE_VIDEO",
+    "thirdPartyCDDReliance": null,
+    "beneficialOwnership": [],
+    "auditMetadata": {
+      "recordId": "KYC-ORIG-2026-001234",
+      "dataRetentionDate": "2031-01-20",
+      "dataProvider": "did:web:acme-crypto.example.nl",
+      "changeLog": [
+        {
+          "timestamp": "2026-01-20T11:45:00Z",
+          "actor": "compliance-officer@acme-crypto.example.nl",
+          "description": "Initial CDD completed. Risk rated MEDIUM."
+        }
+      ]
+    }
+  },
+  "screeningResults": {
+    "sanctionsScreening": {
+      "result": "CLEAR",
+      "screeningDate": "2026-04-05",
+      "listsScreened": [
+        "OFAC_SDN",
+        "EU_CONSOLIDATED",
+        "UN_CONSOLIDATED",
+        "HMT_CONSOLIDATED"
+      ],
+      "hitDetails": null
+    },
+    "pepScreening": {
+      "isPEP": false,
+      "pepCategory": "NOT_PEP",
+      "pepRole": null,
+      "screeningDate": "2026-04-05"
+    },
+    "adverseMediaScreening": {
+      "result": "CLEAR",
+      "screeningDate": "2026-04-05",
+      "hitSummary": null
+    }
+  },
+  "consentRecord": {
+    "consentGiven": true,
+    "consentTimestamp": "2026-01-20T11:30:00Z",
+    "consentPurpose": "AML_TRAVEL_RULE",
+    "consentVersion": "v2.1",
+    "legalBasis": "GDPR-Art6-1c",
+    "withdrawalTimestamp": null
+  },
+  "vcProofs": [
+    {
+      "issuerDid": "did:web:pid-provider.rvo.example.nl",
+      "subjectDid": "did:ebsi:zABkFm2PRPvLxNksMqJdVHK7",
+      "verifierDid": "did:web:acme-crypto.example.nl",
+      "credentialType": ["PIDCredential", "EUDIWalletPresentationEvidence"],
+      "presentationMethod": "OpenID4VP",
+      "presentationDate": "2026-01-20T11:28:00Z",
+      "proofType": "Ed25519Signature2020",
+      "verificationMethod": "did:web:pid-provider.rvo.example.nl#key-1",
+      "proofValue": "z5xHmb5kAhk7ReVhvL3kFnZJqGarNKTdv2SzxpDqoFQS9XbGcYhLzPe4"
+    }
+  ],
+  "gdprSensitivityMetadata": {
+    "classification": "standard",
+    "restrictedFields": [],
+    "tippingOffProtected": false,
+    "legalBasis": "GDPR-Art6-1c",
+    "retentionPeriod": "P5Y",
+    "disclosurePolicy": {
+      "allowedRecipients": [
+        "beneficiary_vasp",
+        "regulator_upon_request"
+      ],
+      "prohibitedRecipients": []
+    },
+    "auditReference": null
+  }
+}

@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  OpenKYCAML × ISO 20022 Example: pacs.008 FIToFICstmrCdtTrf
+  ============================================================
+  Message type : pacs.008.001.10 (CBPR+)
+  Profile      : travel-rule-pacs.008-profile.json
+  Scenario     : VASP-to-VASP Travel Rule (FATF Rec 16 / MiCA Art. 83)
+                 Originator: Hiroshi Tanaka (natural person, JP)
+                 Beneficiary: Ji-Yeon Kim (natural person, KR)
+                 Amount: 1.00 BTC (crypto → currency code XXX, full amount in SplmtryData)
+
+  The <SplmtryData> block carries the full OpenKYCAML KYCAMLEnvelope JSON.
+  PlcAndNm discriminator: "OpenKYCAML/KYCAMLEnvelope/1.0"
+
+  NOTE: This example demonstrates the structure. XML namespace URIs and XSD
+  locations are illustrative. In production, use the namespaces published at
+  https://www.iso20022.org/catalogue-messages/iso-20022-messages-archive
+-->
+<Document
+  xmlns="urn:iso:std:iso:20022:tech:xsd:pacs.008.001.10"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="urn:iso:std:iso:20022:tech:xsd:pacs.008.001.10 pacs.008.001.10.xsd">
+
+  <FIToFICstmrCdtTrf>
+
+    <!-- ================================================================
+         GROUP HEADER
+         ================================================================ -->
+    <GrpHdr>
+      <!-- MsgId maps from OpenKYCAML messageId -->
+      <MsgId>PACS008-2026-04-05-0001</MsgId>
+      <!-- CreDtTm maps from OpenKYCAML messageDateTime -->
+      <CreDtTm>2026-04-05T10:00:00Z</CreDtTm>
+      <NbOfTxs>1</NbOfTxs>
+      <SttlmInf>
+        <!-- CLRG = clearing system. Use INGA for SWIFT gpi, INDA for bilateral. -->
+        <SttlmMtd>CLRG</SttlmMtd>
+      </SttlmInf>
+      <!-- InstgAgt: Originating VASP (Tokyo Digital Assets Co., Ltd.) -->
+      <InstgAgt>
+        <FinInstnId>
+          <!-- Originating VASP LEI maps from ivms101.originatingVASP.lei -->
+          <LEI>3538003FPHWP7EM5C773</LEI>
+          <Nm>Tokyo Digital Assets Co., Ltd.</Nm>
+        </FinInstnId>
+      </InstgAgt>
+      <!-- InstdAgt: Beneficiary VASP (Seoul Blockchain Exchange Inc.) -->
+      <InstdAgt>
+        <FinInstnId>
+          <!-- Beneficiary VASP LEI maps from ivms101.beneficiaryVASP.lei -->
+          <LEI>724500YRI6OZO6ELB439</LEI>
+          <Nm>Seoul Blockchain Exchange Inc.</Nm>
+        </FinInstnId>
+      </InstdAgt>
+    </GrpHdr>
+
+    <!-- ================================================================
+         CREDIT TRANSFER TRANSACTION INFORMATION
+         ================================================================ -->
+    <CdtTrfTxInf>
+
+      <!-- Payment identification -->
+      <PmtId>
+        <!-- EndToEndId reuses OpenKYCAML messageId -->
+        <EndToEndId>PACS008-2026-04-05-0001</EndToEndId>
+        <TxId>TDAC-20260405-BTC-0001</TxId>
+      </PmtId>
+
+      <!-- Amount: BTC is not an ISO 4217 currency → use XXX (undefined).
+           Full transferredAmount carried in KYCAMLEnvelope SplmtryData. -->
+      <IntrBkSttlmAmt Ccy="XXX">1.00</IntrBkSttlmAmt>
+      <IntrBkSttlmDt>2026-04-05</IntrBkSttlmDt>
+
+      <!-- Charge bearer -->
+      <ChrgBr>SHAR</ChrgBr>
+
+      <!-- ============================================================
+           DEBTOR (ORIGINATOR)
+           Maps from ivms101.originator.originatorPersons[0].naturalPerson
+           ============================================================ -->
+      <Dbtr>
+        <!-- Nm = secondaryIdentifier + " " + primaryIdentifier -->
+        <Nm>Hiroshi Tanaka</Nm>
+        <!-- Private individual identification -->
+        <Id>
+          <PrvtId>
+            <!-- Date and place of birth — maps from dateAndPlaceOfBirth -->
+            <DtAndPlcOfBirth>
+              <BirthDt>1985-03-22</BirthDt>
+              <CityOfBirth>Tokyo</CityOfBirth>
+              <CtryOfBirth>JP</CtryOfBirth>
+            </DtAndPlcOfBirth>
+            <!-- National identifier — maps from nationalIdentification -->
+            <Othr>
+              <Id>JP-MYNUMBER-1234-5678-9012</Id>
+              <SchmeNm>
+                <!-- TXID = tax identification — maps from nationalIdentifierType TXID -->
+                <Prtry>TXID</Prtry>
+              </SchmeNm>
+            </Othr>
+          </PrvtId>
+        </Id>
+        <!-- Postal address — maps from geographicAddresses[0] -->
+        <PstlAdr>
+          <StrtNm>Roppongi Hills Mori Tower</StrtNm>
+          <BldgNb>6-10-1</BldgNb>
+          <PstCd>106-6108</PstCd>
+          <TwnNm>Tokyo</TwnNm>
+          <Ctry>JP</Ctry>
+        </PstlAdr>
+        <!-- Country of residence -->
+        <CtryOfRes>JP</CtryOfRes>
+      </Dbtr>
+
+      <!-- ============================================================
+           DEBTOR ACCOUNT
+           Crypto wallet address → Othr/Id (not IBAN)
+           SchmeNm/Prtry = asset type ticker
+           ============================================================ -->
+      <DbtrAcct>
+        <Id>
+          <Othr>
+            <!-- maps from ivms101.originator.accountNumber[0] -->
+            <Id>bc1qar0srrr7xfkvy5l643lydnw9re59gtzzwf5mdq</Id>
+            <SchmeNm>
+              <!-- BTC = Bitcoin wallet address -->
+              <Prtry>BTC</Prtry>
+            </SchmeNm>
+          </Othr>
+        </Id>
+      </DbtrAcct>
+
+      <!-- Debtor agent = originating VASP (repeated here for CBPR+ compliance) -->
+      <DbtrAgt>
+        <FinInstnId>
+          <LEI>3538003FPHWP7EM5C773</LEI>
+        </FinInstnId>
+      </DbtrAgt>
+
+      <!-- ============================================================
+           CREDITOR (BENEFICIARY)
+           Maps from ivms101.beneficiary.beneficiaryPersons[0].naturalPerson
+           ============================================================ -->
+      <Cdtr>
+        <!-- Nm = secondaryIdentifier + " " + primaryIdentifier -->
+        <Nm>Ji-Yeon Kim</Nm>
+        <Id>
+          <PrvtId>
+            <Othr>
+              <Id>KR-RRN-900101-2234567</Id>
+              <SchmeNm>
+                <!-- IDCD = identity card — maps from nationalIdentifierType IDCD -->
+                <Prtry>IDCD</Prtry>
+              </SchmeNm>
+            </Othr>
+          </PrvtId>
+        </Id>
+        <PstlAdr>
+          <Ctry>KR</Ctry>
+        </PstlAdr>
+        <CtryOfRes>KR</CtryOfRes>
+      </Cdtr>
+
+      <!-- ============================================================
+           CREDITOR ACCOUNT
+           ============================================================ -->
+      <CdtrAcct>
+        <Id>
+          <Othr>
+            <!-- maps from ivms101.beneficiary.accountNumber[0] -->
+            <Id>bc1p0xlxvlhemja6c4dqv22uapctqupfhlxm9h8z3k2e72q4k9hcz7vqzk5jj0</Id>
+            <SchmeNm>
+              <Prtry>BTC</Prtry>
+            </SchmeNm>
+          </Othr>
+        </Id>
+      </CdtrAcct>
+
+      <!-- Creditor agent = beneficiary VASP -->
+      <CdtrAgt>
+        <FinInstnId>
+          <LEI>724500YRI6OZO6ELB439</LEI>
+        </FinInstnId>
+      </CdtrAgt>
+
+      <!-- ============================================================
+           SUPPLEMENTARY DATA — OpenKYCAML KYCAMLEnvelope
+           PlcAndNm discriminator: "OpenKYCAML/KYCAMLEnvelope/1.0"
+           The Envlp element contains the JSON-encoded KYCAMLEnvelope.
+           In production, encode as UTF-8 JSON or use CDATA.
+           ============================================================ -->
+      <SplmtryData>
+        <PlcAndNm>OpenKYCAML/KYCAMLEnvelope/1.0</PlcAndNm>
+        <Envlp><![CDATA[
+{
+  "envelopeVersion": "1.0.0",
+  "messageRef": "PACS008-2026-04-05-0001",
+  "openKycAmlVersion": "1.3.0",
+  "kycProfile": {
+    "customerRiskRating": {
+      "overallRiskRating": "MEDIUM",
+      "riskScore": 38,
+      "ratingDate": "2026-03-10"
+    },
+    "dueDiligenceType": "CDD",
+    "customerClassification": "RETAIL",
+    "kycCompletionDate": "2026-01-15",
+    "onboardingChannel": "REMOTE_VIDEO",
+    "auditMetadata": {
+      "recordId": "KYC-ORIG-2026-007891",
+      "dataRetentionDate": "2031-01-15",
+      "dataProvider": "did:web:acme-crypto.example.jp",
+      "changeLog": [
+        {
+          "timestamp": "2026-01-15T09:00:00Z",
+          "actor": "compliance@tdac.example.jp",
+          "description": "Initial CDD completed. MEDIUM risk. Sanctions: CLEAR."
+        }
+      ]
+    }
+  },
+  "screeningResults": {
+    "sanctionsScreening": {
+      "result": "CLEAR",
+      "screeningDate": "2026-04-05",
+      "listsScreened": ["OFAC_SDN", "EU_CONSOLIDATED", "UN_CONSOLIDATED"],
+      "hitDetails": null
+    },
+    "pepScreening": {
+      "isPEP": false,
+      "pepCategory": "NOT_PEP",
+      "pepRole": null,
+      "screeningDate": "2026-04-05"
+    },
+    "adverseMediaScreening": {
+      "result": "CLEAR",
+      "screeningDate": "2026-04-05",
+      "hitSummary": null
+    }
+  },
+  "consentRecord": {
+    "consentGiven": true,
+    "consentTimestamp": "2026-01-15T08:55:00Z",
+    "consentPurpose": "AML_TRAVEL_RULE",
+    "consentVersion": "v2.1",
+    "legalBasis": "GDPR-Art6-1c",
+    "withdrawalTimestamp": null
+  },
+  "vcProofs": [],
+  "gdprSensitivityMetadata": {
+    "classification": "standard",
+    "restrictedFields": [],
+    "tippingOffProtected": false,
+    "legalBasis": "GDPR-Art6-1c",
+    "retentionPeriod": "P5Y",
+    "disclosurePolicy": {
+      "allowedRecipients": ["beneficiary_vasp", "regulator_upon_request"],
+      "prohibitedRecipients": []
+    },
+    "auditReference": null
+  }
+}
+        ]]></Envlp>
+      </SplmtryData>
+
+    </CdtTrfTxInf>
+  </FIToFICstmrCdtTrf>
+
+</Document>

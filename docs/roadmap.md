@@ -28,3 +28,15 @@ This page tracks documentation-specific improvements planned for upcoming releas
 - [x] Update adoption guide: FAQ entries for SAR/tipping-off and `sar_restricted` vs `internal_suspicion`.
 - [x] Add `hybrid-with-sar-restriction.json` example to all example tables.
 - [x] Update all document version footers to v1.3.0.
+- [x] Add `iso20022-integration/README.md` — purpose statement, supported message types, folder guide, quick-start examples, standards references.
+- [x] Add `iso20022-integration/mapping/` — bidirectional field mapping YAML (OpenKYCAML ↔ ISO 20022) and narrative gap analysis.
+- [x] Add `iso20022-integration/supplementary-data/` — KYCAMLEnvelope JSON Schema + canonical reference instance.
+- [x] Add `iso20022-integration/profiles/` — pacs.008 CBPR+ Travel Rule, pain.001 CDD reliance, camt.053 audit trail profiles.
+- [x] Add `iso20022-integration/examples/` — three fully-structured XML examples (pacs.008, pain.001, minimal snippet).
+- [x] Add `iso20022-integration/libraries/` — Python and TypeScript bidirectional converters (`openkycaml_to_pacs008`, `openkycaml_to_pain001`, `iso20022_to_openkycaml`).
+- [x] Add `iso20022-integration/test-suite/` — pytest round-trip and schema validation tests (70 tests passing).
+- [x] Expand compliance matrix §6 ISO 20022 to cover all new integration artefacts.
+- [x] Update `docs/README.md` to link to ISO 20022 integration module.
+- [x] Expand `mapping-ivms101-eidas-amlr.md` §7 ISO 20022 Cross-Reference with full table and `<SplmtryData>` fields.
+- [x] Update `travel-rule-implementation-guide.md` TRP section to use new full XML converters.
+- [x] Update `tools/converters/README.md` to mark ISO 20022 converters as available.
