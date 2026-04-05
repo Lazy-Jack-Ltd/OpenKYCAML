@@ -1,9 +1,9 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://openkycaml.org/schema/v1.0.0/kyc-aml-hybrid-extended.json",
+  "$id": "https://openkycaml.org/schema/v1.1.0/kyc-aml-hybrid-extended.json",
   "title": "OpenKYCAML Hybrid KYC/AML Schema",
-  "description": "A neutral, open hybrid KYC/AML data standard that combines IVMS 101 natural-person and legal-entity payloads with optional eIDAS 2.0 Verifiable Credential wrapping and a full kycProfile section covering risk classification, screening results, beneficial ownership, and monitoring metadata. Fully backward-compatible with the IVMS 101 specification.",
-  "version": "1.0.0",
+  "description": "A neutral, open hybrid KYC/AML data standard that combines IVMS 101 natural-person and legal-entity payloads with optional eIDAS 2.0 Verifiable Credential wrapping, a full kycProfile section covering risk classification, screening results, beneficial ownership, and monitoring metadata, and a transactionMonitoring section for transaction-level AML rule evaluation and reporting obligations. Fully backward-compatible with the IVMS 101 specification.",
+  "version": "1.1.0",
   "$defs": {
     "NaturalPersonNameIdentifier": {
       "title": "NaturalPersonNameIdentifier",
@@ -392,12 +392,20 @@
         },
         "credentialSubject": {
           "type": "object",
-          "description": "The subject of this credential. Contains the OpenKYCAML payload.",
+          "description": "The subject of this credential. Embeds the IVMS 101 Travel Rule payload and/or the KYC profile directly so that a single signed VC carries all required AML identity data for eIDAS 2.0 / EUDIW wallet flows. Maps to W3C VC Data Model v2 credentialSubject.",
           "properties": {
             "id": {
               "type": "string",
               "format": "uri",
-              "description": "DID of the credential subject (the customer)."
+              "description": "DID of the credential subject (the customer or legal entity)."
+            },
+            "ivms101": {
+              "$ref": "#/$defs/IVMS101Payload",
+              "description": "Full IVMS 101 Travel Rule payload embedded inside the VC for hybrid Travel-Rule / eIDAS 2.0 use. Enables mapping to eIDAS PID / LPID attributes without losing FATF Rec 16 compliance."
+            },
+            "kycProfile": {
+              "$ref": "#/$defs/KYCProfile",
+              "description": "Optional KYC/AML profile embedded inside the VC, enabling CDD reliance and risk-data portability across institutions via a signed attestation."
             }
           }
         },
@@ -739,6 +747,238 @@
         }
       }
     },
+    "TransactionMonitoring": {
+      "title": "TransactionMonitoring",
+      "description": "Transaction-level AML monitoring data. Captures the outcome of automated rule evaluation, rule-triggered alerts, travel-rule compliance status, and any resulting regulatory reporting obligations (CTR, SAR/STR). Aligns with FATF Rec 16, EU AMLR Article 59, and national CTR/STR thresholds.",
+      "type": "object",
+      "properties": {
+        "transactionReference": {
+          "type": "string",
+          "description": "Internal or network-level transaction reference number.",
+          "maxLength": 100
+        },
+        "monitoringDate": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 datetime when the transaction was evaluated by the monitoring engine."
+        },
+        "monitoringEngine": {
+          "type": "string",
+          "description": "Name and version of the transaction monitoring system that produced this result.",
+          "maxLength": 100
+        },
+        "overallOutcome": {
+          "type": "string",
+          "description": "Aggregate outcome of all rules evaluated against this transaction.",
+          "enum": ["CLEAR", "FLAGGED", "BLOCKED", "PENDING_REVIEW"]
+        },
+        "rulesEvaluated": {
+          "type": "array",
+          "description": "Results for each individual AML monitoring rule evaluated.",
+          "items": {
+            "type": "object",
+            "required": ["ruleId", "ruleResult"],
+            "properties": {
+              "ruleId": {
+                "type": "string",
+                "description": "Unique identifier of the monitoring rule.",
+                "maxLength": 50
+              },
+              "ruleName": {
+                "type": "string",
+                "description": "Human-readable name of the rule (e.g., 'Velocity – 7-day rolling window').",
+                "maxLength": 200
+              },
+              "ruleCategory": {
+                "type": "string",
+                "description": "Functional category of the rule.",
+                "enum": [
+                  "VELOCITY", "THRESHOLD", "STRUCTURING", "GEOGRAPHY",
+                  "COUNTERPARTY_RISK", "BEHAVIOUR_CHANGE", "PEP_SANCTIONS",
+                  "TRAVEL_RULE", "CTF", "OTHER"
+                ]
+              },
+              "ruleResult": {
+                "type": "string",
+                "description": "Outcome for this individual rule.",
+                "enum": ["PASS", "FAIL", "MANUAL_REVIEW", "NOT_APPLICABLE"]
+              },
+              "threshold": {
+                "type": "string",
+                "description": "Configured threshold or parameter value for this rule (e.g., '10000 USD', '3 transactions / 7 days').",
+                "maxLength": 100
+              },
+              "actualValue": {
+                "type": "string",
+                "description": "Actual value observed for this transaction against the threshold.",
+                "maxLength": 100
+              },
+              "notes": {
+                "type": "string",
+                "description": "Analyst notes or system commentary on this rule result.",
+                "maxLength": 500
+              }
+            }
+          }
+        },
+        "alerts": {
+          "type": "array",
+          "description": "Transaction-level alerts generated by the monitoring engine.",
+          "items": {
+            "type": "object",
+            "required": ["alertId", "alertDate", "alertType", "alertStatus"],
+            "properties": {
+              "alertId": {
+                "type": "string",
+                "description": "Unique identifier of the alert.",
+                "maxLength": 50
+              },
+              "alertDate": {
+                "type": "string",
+                "format": "date-time",
+                "description": "ISO 8601 datetime when the alert was generated."
+              },
+              "alertType": {
+                "type": "string",
+                "description": "Classification of the alert trigger.",
+                "enum": [
+                  "UNUSUAL_TRANSACTION", "VELOCITY_BREACH", "STRUCTURING_SUSPICION",
+                  "SANCTIONS_HIT", "HIGH_RISK_JURISDICTION", "COUNTERPARTY_RISK",
+                  "PATTERN_CHANGE", "PEP_INVOLVEMENT", "ADVERSE_MEDIA", "SAR_TRIGGER", "OTHER"
+                ]
+              },
+              "alertStatus": {
+                "type": "string",
+                "description": "Current disposition of the alert.",
+                "enum": ["OPEN", "UNDER_REVIEW", "CLOSED_NO_ACTION", "SAR_FILED", "ESCALATED", "FALSE_POSITIVE"]
+              },
+              "riskScore": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 1000,
+                "description": "Numeric risk score assigned to this specific alert."
+              },
+              "description": {
+                "type": "string",
+                "description": "Narrative description of the alert and supporting rationale.",
+                "maxLength": 1000
+              },
+              "assignedTo": {
+                "type": "string",
+                "description": "Analyst or team responsible for reviewing this alert.",
+                "maxLength": 100
+              },
+              "reviewDate": {
+                "type": "string",
+                "format": "date-time",
+                "description": "ISO 8601 datetime when the alert review was completed."
+              },
+              "reviewOutcome": {
+                "type": "string",
+                "description": "Final decision after review.",
+                "enum": ["NO_ACTION", "SAR_FILED", "ACCOUNT_BLOCKED", "ENHANCED_MONITORING", "REFERRED_TO_FIU"]
+              }
+            }
+          }
+        },
+        "travelRuleCompliance": {
+          "type": "object",
+          "description": "Travel Rule (FATF Rec 16 / IVMS 101) compliance status for this transaction.",
+          "properties": {
+            "travelRuleApplicable": {
+              "type": "boolean",
+              "description": "Whether the Travel Rule threshold is met and IVMS 101 data must be transmitted."
+            },
+            "jurisdictionThreshold": {
+              "type": "object",
+              "description": "Jurisdiction-specific Travel Rule threshold applied.",
+              "properties": {
+                "amount": {
+                  "type": "string",
+                  "description": "Threshold value as a decimal string.",
+                  "pattern": "^[0-9]+(\\.[0-9]+)?$"
+                },
+                "currency": {
+                  "type": "string",
+                  "description": "ISO 4217 currency code or virtual asset code.",
+                  "maxLength": 10
+                },
+                "jurisdiction": {
+                  "type": "string",
+                  "description": "ISO 3166-1 alpha-2 jurisdiction code.",
+                  "pattern": "^[A-Z]{2}$"
+                }
+              }
+            },
+            "complianceStatus": {
+              "type": "string",
+              "description": "Travel Rule compliance outcome.",
+              "enum": ["COMPLIANT", "NON_COMPLIANT", "PENDING_COUNTERPARTY_DATA", "EXEMPT", "SUNRISE_PERIOD"]
+            },
+            "ivms101MessageId": {
+              "type": "string",
+              "format": "uuid",
+              "description": "UUID reference to the IVMS 101 message transmitted for this transaction."
+            },
+            "beneficiaryVaspVerified": {
+              "type": "boolean",
+              "description": "Whether the beneficiary VASP identity has been verified (e.g., via GLEIF, OpenVASP, or TRP)."
+            },
+            "notes": {
+              "type": "string",
+              "maxLength": 500
+            }
+          }
+        },
+        "reportingObligations": {
+          "type": "array",
+          "description": "Regulatory reporting obligations triggered by this transaction (CTR, SAR/STR, etc.).",
+          "items": {
+            "type": "object",
+            "required": ["reportType", "reportingJurisdiction"],
+            "properties": {
+              "reportType": {
+                "type": "string",
+                "description": "Type of regulatory report.",
+                "enum": ["CTR", "SAR", "STR", "FATF_REPORT", "DATR", "CMIR", "OTHER"]
+              },
+              "reportingJurisdiction": {
+                "type": "string",
+                "description": "ISO 3166-1 alpha-2 jurisdiction where the report is filed.",
+                "pattern": "^[A-Z]{2}$"
+              },
+              "reportingThreshold": {
+                "type": "object",
+                "description": "Threshold that triggered the reporting obligation.",
+                "properties": {
+                  "amount": { "type": "string", "pattern": "^[0-9]+(\\.[0-9]+)?$" },
+                  "currency": { "type": "string", "maxLength": 10 }
+                }
+              },
+              "reportFiled": {
+                "type": "boolean",
+                "description": "Whether the report has been filed with the relevant authority."
+              },
+              "reportReference": {
+                "type": "string",
+                "description": "Reference number assigned by the reporting institution or authority.",
+                "maxLength": 100
+              },
+              "filingDate": {
+                "type": "string",
+                "format": "date-time",
+                "description": "ISO 8601 datetime when the report was filed."
+              },
+              "filingAuthority": {
+                "type": "string",
+                "description": "Name of the Financial Intelligence Unit (FIU) or authority receiving the report.",
+                "maxLength": 100
+              }
+            }
+          }
+        }
+      }
+    },
     "KYCProfile": {
       "title": "KYCProfile",
       "description": "Full KYC/AML profile extending IVMS 101 with risk classification, screening, and monitoring data. Aligns with FATF Rec 10/16, EU AMLR Articles 22 and 26, and EBA Risk Factor Guidelines.",
@@ -883,6 +1123,10 @@
     "kycProfile": {
       "$ref": "#/$defs/KYCProfile",
       "description": "Optional KYC/AML profile providing full customer risk data for CDD reliance, EDD, and cross-system interoperability under AMLR 2027."
+    },
+    "transactionMonitoring": {
+      "$ref": "#/$defs/TransactionMonitoring",
+      "description": "Optional transaction-level AML monitoring results, rule evaluations, travel-rule compliance status, and reporting obligations for this specific transaction."
     }
   },
   "anyOf": [
