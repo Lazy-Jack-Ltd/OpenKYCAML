@@ -1,0 +1,97 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://example.com/kyc-aml-data-standard-hybrid-extended.json",
+  "title": "KYC/AML Data Standard (IVMS 101 + eIDAS 2.0 VC + KYC Monitoring & Classifications)",
+  "description": "Extended hybrid schema: identity (IVMS 101), verifiable credentials, PLUS optional KYC monitoring, risk classifications, and screening results for full inter-system sharing and AMLR compliance.",
+  "type": "object",
+  "oneOf": [
+    { "required": ["ivms101"] },
+    { "required": ["verifiableCredential"] }
+  ],
+  "properties": {
+    "ivms101": { "$ref": "#/definitions/Ivms101Payload" },
+    "verifiableCredential": { "$ref": "#/definitions/VerifiableCredential" },
+    "kycProfile": { "$ref": "#/definitions/KycProfile" }
+  },
+  "definitions": {
+    "Ivms101Payload": { /* unchanged from previous hybrid schema – identity data only */ },
+    "VerifiableCredential": { /* unchanged – now can also embed kycProfile inside credentialSubject if desired */ },
+    "KycProfile": {
+      "type": "object",
+      "properties": {
+        "customerRiskRating": {
+          "type": "string",
+          "enum": ["LOW", "MEDIUM", "HIGH", "PROHIBITED"]
+        },
+        "customerClassification": {
+          "type": "object",
+          "properties": {
+            "customerType": { "type": "string", "enum": ["NATURAL_PERSON", "LEGAL_ENTITY", "TRUST", "OTHER"] },
+            "industrySector": { "type": "string", "pattern": "^.{1,100}$" },
+            "occupationOrPurpose": { "type": "string", "pattern": "^.{1,200}$" },
+            "relationshipPurpose": { "type": "string", "pattern": "^.{1,200}$" }
+          }
+        },
+        "pepStatus": {
+          "type": "object",
+          "properties": {
+            "isPep": { "type": "boolean" },
+            "pepCategory": { "type": "string", "enum": ["FOREIGN", "DOMESTIC", "INTERNATIONAL_ORG", "FAMILY", "CLOSE_ASSOCIATE", "NONE"] },
+            "lastPepCheckDate": { "type": "string", "format": "date" }
+          }
+        },
+        "sanctionsScreening": {
+          "type": "object",
+          "properties": {
+            "status": { "type": "string", "enum": ["CLEAR", "HIT", "PENDING", "ESCALATED"] },
+            "lastScreenedDate": { "type": "string", "format": "date-time" },
+            "listsChecked": { "type": "array", "items": { "type": "string" } },
+            "hits": { "type": "array", "items": { "type": "string" } }
+          }
+        },
+        "adverseMedia": {
+          "type": "object",
+          "properties": {
+            "hasHits": { "type": "boolean" },
+            "lastCheckedDate": { "type": "string", "format": "date" },
+            "summary": { "type": "string" }
+          }
+        },
+        "sourceOfFundsWealth": {
+          "type": "array",
+          "items": { "type": "string", "pattern": "^.{1,100}$" }
+        },
+        "beneficialOwnership": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "person": { "$ref": "#/definitions/Person" },
+              "ownershipPercentage": { "type": "number", "minimum": 0, "maximum": 100 }
+            }
+          }
+        },
+        "monitoringInfo": {
+          "type": "object",
+          "properties": {
+            "lastKycReviewDate": { "type": "string", "format": "date" },
+            "nextReviewDate": { "type": "string", "format": "date" },
+            "eddRequired": { "type": "boolean" },
+            "monitoringStatus": { "type": "string", "enum": ["ACTIVE", "SUSPENDED", "TERMINATED"] }
+          }
+        },
+        "auditMetadata": {
+          "type": "object",
+          "properties": {
+            "dataProvider": { "type": "string" },
+            "sharingConsentReference": { "type": "string" },
+            "timestamp": { "type": "string", "format": "date-time" }
+          }
+        }
+      },
+      "required": ["customerRiskRating"]
+    },
+    /* All original IVMS 101 sub-definitions (Person, NaturalPerson, LegalPerson, Address, etc.) remain unchanged here */
+    "Person": { /* ... unchanged ... */ }
+  }
+}
