@@ -27,6 +27,7 @@ This document outlines the planned development of the OpenKYCAML standard.
 - **ERC-3643 (T-REX) mapping** — full field-level alignment with ONCHAINID (ERC-734/735) and ERC-3643 contract interfaces. New schema fields: `kycProfile.isEligible`, `kycProfile.eligibilityLastConfirmed`, `kycProfile.blockchainAccountIds[]` (address, network, ONCHAINID address, frozen status), `kycProfile.customerClassification.accreditedInvestor`, `kycProfile.customerClassification.investorCategoryJurisdiction`.
 - **Sovrin / Hyperledger Indy (AnonCreds) mapping** — full field-level alignment with `did:sov` / `did:indy` DID Method, Indy NYM/ATTRIB/SCHEMA/CLAIM_DEF/REVOC_REG_DEF ledger transactions, AnonCreds ZKP credential and presentation protocol, and Rich Schema objects. New schema fields: `verifiableCredential.credentialSchema.credDefId`, `credentialSchema.type` extended to include `AnonCredsDefinition`, `credentialStatus.type` extended with `AnonCredsCredentialStatusList2023`, `proof.type` examples extended with `CLSignature2019` and `AnonCredsProof2023`.
 - **`gdprSensitivityMetadata` block (v1.3.0)**: machine-readable GDPR/AML sensitivity classification for SAR/STR tipping-off protection (AMLR Art. 73 / FATF Rec. 21), GDPR Art. 9/10 special-category and criminal-offence data, retention rules, and disclosure policies for EUDI Wallet presentation flows. Enforces non-disclosure of SAR material at both policy and cryptographic (SD-JWT) layers.
+- **ISO 20022 integration module** — complete bridge layer in [`iso20022-integration/`](iso20022-integration/): `<SplmtryData>` KYCAMLEnvelope JSON Schema, pacs.008 CBPR+ Travel Rule profile, pain.001 CDD reliance profile, camt.053 audit trail profile, Python + TypeScript bidirectional converters, XML examples, and 70-test pytest suite. Zero breaking changes to the core schema.
 
 ---
 
@@ -46,11 +47,11 @@ This document outlines the planned development of the OpenKYCAML standard.
 | Correspondent banking extension fields | Planned | — |
 | Multi-jurisdiction risk model fields | Planned | — |
 | FATCA / CRS tax residency extension | Planned | — |
-| ISO 20022 pain.001 full serialiser (Python) | Moved to v1.3.0 | — |
+| ISO 20022 pain.001 full serialiser (Python) | ✅ Completed in v1.3.0 | — |
 
 ---
 
-## v1.3.0 — In Progress (ISO 20022 Integration)
+## v1.3.0 — ISO 20022 Integration (Complete)
 
 | Feature | Status |
 |---|---|
@@ -88,7 +89,7 @@ Planned breaking changes (subject to TWG consensus):
 | v1.0.0 | June 2024 | Initial release — IVMS 101 superset, kycProfile, VC wrapper, CI tooling |
 | v1.1.0 | April 2025 | EUDI Wallet evidence block, LPID + QEAA mandates, DID triangulation examples, `EUDI_WALLET` onboarding channel, ISO 17442 LEI fixes |
 | v1.2.0 | April 2026 | SD-JWT selective disclosure, deep UBO chain, PID/LPID converters, Travel Rule guide, AMLA RTS alignment (`thirdPartyCDDReliance`, `dueDiligenceRequirements`, AMLA PEP taxonomy), AMLR 2027 compliance checklist |
-| v1.3.0 | April 2026 | `gdprSensitivityMetadata` block — SAR/STR tipping-off protection (AMLR Art. 73 / FATF Rec. 21), GDPR Art. 9/10 classification, EUDI Wallet restricted-data handling, SAR-restriction example, updated compliance docs |
+| v1.3.0 | April 2026 | `gdprSensitivityMetadata` block — SAR/STR tipping-off protection (AMLR Art. 73 / FATF Rec. 21), GDPR Art. 9/10 classification, EUDI Wallet restricted-data handling, SAR-restriction example, updated compliance docs. **ISO 20022 integration** — complete `<SplmtryData>` KYCAMLEnvelope, pacs.008/pain.001/camt.053 profiles, Python + TypeScript bidirectional converters, XML examples, 70-test test suite |
 
 ---
 

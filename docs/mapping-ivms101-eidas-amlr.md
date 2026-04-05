@@ -94,13 +94,50 @@ All IVMS 101 fields map 1:1 into the `ivms101` block. No IVMS 101 fields are ren
 
 ## 7. ISO 20022 Cross-Reference
 
+OpenKYCAML v1.3.0 ships a complete ISO 20022 bridge layer in [`iso20022-integration/`](../iso20022-integration/). The table below maps key OpenKYCAML fields to their ISO 20022 counterparts; for the full bidirectional mapping and gap analysis see [`iso20022-integration/mapping/`](../iso20022-integration/mapping/).
+
+### 7.1 Standard Field Mapping (ISO 20022 native elements)
+
 | OpenKYCAML Field | ISO 20022 Message / Element | Notes |
 |---|---|---|
-| `ivms101.originator.originatorPersons[].naturalPerson.name` | `pain.001` `Dbtr/Nm` | Natural person name |
-| `ivms101.originator.originatorPersons[].legalPerson.nationalIdentification` (LEIX) | `pain.001` `Dbtr/Id/OrgId/LEI` | Legal Entity Identifier |
-| `ivms101.originator.accountNumber[]` | `pain.001` `DbtrAcct/Id/IBAN` or `VirtualAccountNo` | Account or wallet |
-| `ivms101.transferredAmount.amount` | `pain.001` `Amt/InstdAmt` | Transfer amount |
-| `ivms101.transferredAmount.assetType` | `pain.001` `Amt/InstdAmt@Ccy` | Asset/currency |
+| `ivms101.originator.originatorPersons[].naturalPerson.name` | `pacs.008`/`pain.001` `Dbtr/Nm` | Natural person display name |
+| `ivms101.originator.originatorPersons[].legalPerson.nationalIdentification` (LEIX) | `pacs.008`/`pain.001` `Dbtr/Id/OrgId/LEI` | Legal Entity Identifier |
+| `ivms101.originator.originatorPersons[].naturalPerson.dateAndPlaceOfBirth` | `pain.001` `Dbtr/Id/PrvtId/DtAndPlcOfBirth` | Debtor date/place of birth |
+| `ivms101.originator.originatorPersons[].naturalPerson.geographicAddresses[]` | `pacs.008`/`pain.001` `Dbtr/PstlAdr` | Postal address (structured or unstructured lines) |
+| `ivms101.originator.accountNumber[]` | `pacs.008`/`pain.001` `DbtrAcct/Id/IBAN` (or `Othr/Id`) | IBAN detected automatically; non-IBAN → `<Othr>` |
+| `ivms101.transferredAmount.amount` | `pacs.008` `IntrBkSttlmAmt` / `pain.001` `Amt/InstdAmt` | Transfer amount |
+| `ivms101.transferredAmount.assetType` | `@Ccy` attribute (ISO 4217); non-fiat → `XXX` | Fiat mapped directly; crypto assets use `XXX` |
+| `ivms101.originatingVASP.lei` | `pacs.008` `GrpHdr/InstgAgt/FinInstnId/LEI` | Originating VASP identified by LEI |
+| `ivms101.beneficiaryVASP.lei` | `pacs.008` `GrpHdr/InstdAgt/FinInstnId/LEI` | Beneficiary VASP identified by LEI |
+| `ivms101.originator.originatorPersons[].naturalPerson.nationalIdentification` | `Dbtr/Id/PrvtId/Othr` with `SchmeNm/Prtry` | National ID type preserved in proprietary scheme name |
+| `ivms101.beneficiary.beneficiaryPersons[].naturalPerson.name` | `Cdtr/Nm` | Beneficiary display name |
+| `ivms101.beneficiary.accountNumber[]` | `CdtrAcct/Id/IBAN` (or `Othr/Id`) | Same IBAN/non-IBAN logic as debtor |
+
+### 7.2 Fields Carried in `<SplmtryData>` (KYCAMLEnvelope)
+
+The following OpenKYCAML fields have no ISO 20022 native counterpart and are embedded in the `<SplmtryData><Envlp>` extension using the `OpenKYCAML/KYCAMLEnvelope/1.0` discriminator:
+
+| OpenKYCAML Field | Reason No Native ISO 20022 Equivalent | KYCAMLEnvelope Key |
+|---|---|---|
+| `kycProfile.customerRiskRating` | ISO 20022 carries no risk ratings | `kycProfile.customerRiskRating` |
+| `kycProfile.sanctionsScreening` | Screening results are out of scope for ISO 20022 payment messages | `screeningResults.sanctionsScreening` |
+| `kycProfile.pepStatus` | No PEP flag in ISO 20022 | `screeningResults.pepScreening` |
+| `kycProfile.adverseMedia` | No adverse media field in ISO 20022 | `screeningResults.adverseMediaScreening` |
+| `kycProfile.thirdPartyCDDReliance` | CDD reliance is application-layer data | `kycProfile.thirdPartyCDDReliance` |
+| `kycProfile.auditMetadata` | Audit trail not carried in ISO 20022 | `kycProfile.auditMetadata` |
+| `gdprSensitivityMetadata` | GDPR sensitivity data outside ISO 20022 scope | `gdprSensitivityMetadata` |
+| `verifiableCredential.proof` | VC proofs are not ISO 20022 native | `vcProofs[]` |
+| `gdprSensitivityMetadata.consentRecord` | Consent records outside ISO 20022 scope | `consentRecord` |
+
+### 7.3 ISO 20022 Integration Module
+
+For the complete Python and TypeScript converters, XML examples, and pre-validated profiles, see:
+
+- **Full integration module**: [`iso20022-integration/`](../iso20022-integration/)
+- **Bidirectional field mapping**: [`iso20022-integration/mapping/openkycaml-to-iso20022-mapping.yaml`](../iso20022-integration/mapping/openkycaml-to-iso20022-mapping.yaml)
+- **Gap analysis**: [`iso20022-integration/mapping/field-level-gap-analysis.md`](../iso20022-integration/mapping/field-level-gap-analysis.md)
+- **KYCAMLEnvelope JSON Schema**: [`iso20022-integration/supplementary-data/kyc-aml-envelope-schema.json`](../iso20022-integration/supplementary-data/kyc-aml-envelope-schema.json)
+- **Profiles**: pacs.008 CBPR+ Travel Rule, pain.001 CDD reliance, camt.053 audit trail
 
 ---
 

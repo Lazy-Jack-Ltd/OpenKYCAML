@@ -240,6 +240,7 @@ Each `-eudi-wallet.json` example documents a **trust chain** using W3C VC eviden
 | Document | Description |
 |---|---|
 | [Adoption Guide](docs/adoption-guide.md) | Step-by-step integration for VASPs, banks, KYC utilities |
+| [ISO 20022 Integration](iso20022-integration/README.md) | Complete ISO 20022 bridge — pacs.008/pain.001/camt.053 profiles, Python & TypeScript converters, XML examples, KYCAMLEnvelope schema |
 | [Mapping: IVMS 101 / eIDAS / AMLR](docs/mapping-ivms101-eidas-amlr.md) | Field-level mapping across all referenced standards |
 | [Compliance Matrix](docs/compliance-matrix.md) | Exact alignment with FATF, AMLR, ISO 20022, LEI, eIDAS, ERC-3643, Sovrin |
 | [AMLR 2027 Compliance Checklist](docs/amlr-2027-compliance-checklist.md) | Operational checklist for obliged entities — schema configuration and process obligations |
@@ -285,6 +286,14 @@ openKYCAML/
 │   ├── *-plain.json                     ← Plain IVMS 101 baseline examples
 │   ├── *-wrapped.json                   ← VC-wrapped examples
 │   └── *-eudi-wallet.json               ← EUDI Wallet / DID triangulation examples
+├── iso20022-integration/                ← ISO 20022 bridge module (v1.3.0)
+│   ├── mapping/                         ← Bidirectional field mapping YAML + gap analysis
+│   ├── supplementary-data/              ← KYCAMLEnvelope JSON Schema + reference instance
+│   ├── profiles/                        ← pacs.008 / pain.001 / camt.053 profiles
+│   ├── examples/                        ← pacs.008 / pain.001 XML examples
+│   ├── libraries/python/                ← Python converter (3 functions)
+│   ├── libraries/typescript/            ← TypeScript ESM converter
+│   └── test-suite/                      ← pytest round-trip + schema validation tests
 ├── docs/                                ← Technical and governance documentation
 ├── tools/
 │   ├── python/                          ← Python validator, converter, Pydantic models
