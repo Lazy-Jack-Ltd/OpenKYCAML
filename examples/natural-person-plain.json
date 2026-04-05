@@ -1,0 +1,119 @@
+{
+  "$schema": "https://openkycaml.org/schema/v1.0.0/kyc-aml-hybrid-extended.json",
+  "version": "1.0.0",
+  "messageId": "550e8400-e29b-41d4-a716-446655440001",
+  "messageDateTime": "2024-06-15T09:30:00Z",
+  "ivms101": {
+    "originator": {
+      "originatorPersons": [
+        {
+          "naturalPerson": {
+            "name": {
+              "nameIdentifiers": [
+                {
+                  "primaryIdentifier": "Nakamoto",
+                  "secondaryIdentifier": "Satoshi",
+                  "nameIdentifierType": "LEGL"
+                }
+              ]
+            },
+            "geographicAddresses": [
+              {
+                "addressType": "HOME",
+                "streetName": "Blockchain Avenue",
+                "buildingNumber": "21",
+                "townName": "Amsterdam",
+                "postCode": "1012AB",
+                "country": "NL"
+              }
+            ],
+            "nationalIdentification": {
+              "nationalIdentifier": "NL-PASSPORT-AB123456",
+              "nationalIdentifierType": "CCPT",
+              "countryOfIssue": "NL"
+            },
+            "customerIdentification": "CUST-NL-0000042",
+            "dateAndPlaceOfBirth": {
+              "dateOfBirth": "1985-04-05",
+              "placeOfBirth": "Amsterdam"
+            },
+            "countryOfResidence": "NL"
+          }
+        }
+      ],
+      "accountNumber": ["bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh"]
+    },
+    "beneficiary": {
+      "beneficiaryPersons": [
+        {
+          "naturalPerson": {
+            "name": {
+              "nameIdentifiers": [
+                {
+                  "primaryIdentifier": "Finney",
+                  "secondaryIdentifier": "Harold Thomas",
+                  "nameIdentifierType": "LEGL"
+                }
+              ]
+            },
+            "geographicAddresses": [
+              {
+                "addressType": "HOME",
+                "streetName": "Satoshi Street",
+                "buildingNumber": "10",
+                "townName": "London",
+                "postCode": "EC2V 8RF",
+                "country": "GB"
+              }
+            ],
+            "nationalIdentification": {
+              "nationalIdentifier": "GB-PASSPORT-HF987654",
+              "nationalIdentifierType": "CCPT",
+              "countryOfIssue": "GB"
+            },
+            "countryOfResidence": "GB"
+          }
+        }
+      ],
+      "accountNumber": ["3J98t1WpEZ73CNmQviecrnyiWrnqRhWNLy"]
+    },
+    "originatingVASP": {
+      "originatingVASP": {
+        "name": {
+          "nameIdentifiers": [
+            {
+              "legalPersonName": "Acme Crypto Exchange BV",
+              "legalPersonNameIdentifierType": "LEGL"
+            }
+          ]
+        },
+        "nationalIdentification": {
+          "nationalIdentifier": "724500VNNHZHYDLFMOU25",
+          "nationalIdentifierType": "LEIX"
+        },
+        "countryOfRegistration": "NL"
+      }
+    },
+    "beneficiaryVASP": {
+      "beneficiaryVASP": {
+        "name": {
+          "nameIdentifiers": [
+            {
+              "legalPersonName": "FinTech Exchange Ltd",
+              "legalPersonNameIdentifierType": "LEGL"
+            }
+          ]
+        },
+        "nationalIdentification": {
+          "nationalIdentifier": "213800WSGIIZCXF1P572",
+          "nationalIdentifierType": "LEIX"
+        },
+        "countryOfRegistration": "GB"
+      }
+    },
+    "transferredAmount": {
+      "amount": "0.5",
+      "assetType": "BTC"
+    }
+  }
+}

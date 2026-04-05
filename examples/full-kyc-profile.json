@@ -1,0 +1,217 @@
+{
+  "$schema": "https://openkycaml.org/schema/v1.0.0/kyc-aml-hybrid-extended.json",
+  "version": "1.0.0",
+  "messageId": "550e8400-e29b-41d4-a716-446655440004",
+  "messageDateTime": "2024-06-15T16:00:00Z",
+  "ivms101": {
+    "originator": {
+      "originatorPersons": [
+        {
+          "naturalPerson": {
+            "name": {
+              "nameIdentifiers": [
+                {
+                  "primaryIdentifier": "Al-Rashidi",
+                  "secondaryIdentifier": "Fatima Noor",
+                  "nameIdentifierType": "LEGL"
+                }
+              ]
+            },
+            "geographicAddresses": [
+              {
+                "addressType": "HOME",
+                "streetName": "Sheikh Zayed Road",
+                "buildingNumber": "15A",
+                "townName": "Dubai",
+                "postCode": "00000",
+                "country": "AE"
+              }
+            ],
+            "nationalIdentification": {
+              "nationalIdentifier": "AE-EMIRATESID-784-1990-1234567-8",
+              "nationalIdentifierType": "IDCD",
+              "countryOfIssue": "AE"
+            },
+            "customerIdentification": "CUST-AE-HNW-00042",
+            "dateAndPlaceOfBirth": {
+              "dateOfBirth": "1978-03-12",
+              "placeOfBirth": "Abu Dhabi"
+            },
+            "countryOfResidence": "AE"
+          }
+        }
+      ],
+      "accountNumber": ["0x3fC91A3afd70395Cd496C647d5a6CC9D4B2b7FAD"]
+    },
+    "beneficiary": {
+      "beneficiaryPersons": [
+        {
+          "legalPerson": {
+            "name": {
+              "nameIdentifiers": [
+                {
+                  "legalPersonName": "Geneva Capital Management SA",
+                  "legalPersonNameIdentifierType": "LEGL"
+                }
+              ]
+            },
+            "nationalIdentification": {
+              "nationalIdentifier": "54930084UKLVMY22DS16",
+              "nationalIdentifierType": "LEIX"
+            },
+            "countryOfRegistration": "CH"
+          }
+        }
+      ],
+      "accountNumber": ["CH5604835012345678009"]
+    },
+    "originatingVASP": {
+      "originatingVASP": {
+        "name": {
+          "nameIdentifiers": [
+            {
+              "legalPersonName": "DIFC Digital Asset Exchange LLC",
+              "legalPersonNameIdentifierType": "LEGL"
+            }
+          ]
+        },
+        "nationalIdentification": {
+          "nationalIdentifier": "529900T8BM49AAMSDO55",
+          "nationalIdentifierType": "LEIX"
+        },
+        "countryOfRegistration": "AE"
+      }
+    },
+    "beneficiaryVASP": {
+      "beneficiaryVASP": {
+        "name": {
+          "nameIdentifiers": [
+            {
+              "legalPersonName": "Swiss Digital Finance AG",
+              "legalPersonNameIdentifierType": "LEGL"
+            }
+          ]
+        },
+        "nationalIdentification": {
+          "nationalIdentifier": "549300FJPOIUJ7U9LV82",
+          "nationalIdentifierType": "LEIX"
+        },
+        "countryOfRegistration": "CH"
+      }
+    },
+    "transferredAmount": {
+      "amount": "125000.00",
+      "assetType": "USDC"
+    }
+  },
+  "kycProfile": {
+    "customerRiskRating": {
+      "overallRiskRating": "HIGH",
+      "riskScore": 720,
+      "riskRatingDate": "2024-05-01",
+      "riskFactors": {
+        "geographicRisk": "HIGH",
+        "productRisk": "HIGH",
+        "channelRisk": "MEDIUM",
+        "customerTypeRisk": "HIGH",
+        "transactionRisk": "HIGH"
+      },
+      "ratingMethodology": "EBA Risk Factor Guidelines 2024 + Internal Risk Model v3.2"
+    },
+    "customerClassification": "HIGH_NET_WORTH",
+    "dueDiligenceType": "EDD",
+    "pepStatus": {
+      "isPEP": true,
+      "pepCategory": "FOREIGN_PEP",
+      "pepRole": "Former Minister of Finance, UAE Federal Government (2015–2020)",
+      "screeningDate": "2024-06-01",
+      "screeningProvider": "Dow Jones Risk & Compliance"
+    },
+    "sanctionsScreening": {
+      "screeningStatus": "CLEAR",
+      "screeningDate": "2024-06-15T08:00:00Z",
+      "screeningProvider": "Refinitiv World-Check",
+      "listsChecked": ["OFAC_SDN", "OFAC_NON_SDN", "EU_CONSOLIDATED", "UN_CONSOLIDATED", "HMT", "AUSTRAC"],
+      "matchDetails": []
+    },
+    "adverseMedia": {
+      "screeningStatus": "CLEAR",
+      "screeningDate": "2024-06-15T08:05:00Z",
+      "screeningProvider": "ComplyAdvantage",
+      "categories": [],
+      "summary": "No adverse media found after comprehensive search across 100,000+ global news sources."
+    },
+    "sourceOfFundsWealth": {
+      "sourceOfFunds": ["INVESTMENT_RETURNS", "BUSINESS_INCOME"],
+      "sourceOfWealthNarrative": "Client accumulated wealth through senior government positions (salary, pension, legitimate investments) and subsequent private sector advisory roles in the GCC region. Business income derives from three wholly-owned holding companies registered in the UAE and BVI. Investment returns from a diversified portfolio of regional equities and real estate.",
+      "verificationStatus": "FULLY_VERIFIED",
+      "supportingDocuments": [
+        {
+          "documentType": "TAX_RETURN",
+          "documentReference": "AE-TAX-2023-FAR-001",
+          "verifiedDate": "2024-04-15"
+        },
+        {
+          "documentType": "AUDITED_ACCOUNTS",
+          "documentReference": "AUDIT-2023-GCCHOLDCO",
+          "verifiedDate": "2024-04-20"
+        },
+        {
+          "documentType": "BANK_STATEMENT",
+          "documentReference": "ADIB-STMT-Q12024",
+          "verifiedDate": "2024-05-01"
+        }
+      ]
+    },
+    "beneficialOwnership": [],
+    "monitoringInfo": {
+      "monitoringLevel": "ENHANCED",
+      "lastReviewDate": "2024-06-01",
+      "nextReviewDate": "2024-12-01",
+      "reviewFrequency": "SEMI_ANNUAL",
+      "alerts": [
+        {
+          "alertId": "ALT-2024-003921",
+          "alertDate": "2024-05-28T11:32:00Z",
+          "alertType": "VELOCITY_BREACH",
+          "alertStatus": "CLOSED_NO_ACTION",
+          "description": "Three cross-border transfers exceeding USD 50,000 within 7-day rolling window. Reviewed against customer's transaction profile and expected activity. Consistent with declared investment activity.",
+          "assignedTo": "compliance.officer@difc-exchange.ae"
+        }
+      ]
+    },
+    "auditMetadata": {
+      "recordId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+      "recordCreatedAt": "2024-01-10T10:00:00Z",
+      "recordUpdatedAt": "2024-06-15T08:10:00Z",
+      "recordVersion": 7,
+      "createdBy": "onboarding-system@difc-exchange.ae",
+      "updatedBy": "compliance.officer@difc-exchange.ae",
+      "dataSourceSystem": "FinStar KYC Platform v4.1",
+      "dataRetentionDate": "2029-06-15",
+      "changeLog": [
+        {
+          "timestamp": "2024-01-10T10:00:00Z",
+          "changedBy": "onboarding-system",
+          "changeType": "CREATED",
+          "fieldsChanged": ["all"],
+          "notes": "Initial KYC record created during onboarding."
+        },
+        {
+          "timestamp": "2024-06-01T14:22:00Z",
+          "changedBy": "compliance.officer@difc-exchange.ae",
+          "changeType": "REVIEWED",
+          "fieldsChanged": ["kycProfile.pepStatus", "kycProfile.sanctionsScreening", "kycProfile.monitoringInfo"],
+          "notes": "Annual EDD review completed. Risk rating maintained at HIGH. Monitoring level ENHANCED confirmed."
+        }
+      ]
+    },
+    "onboardingChannel": "IN_PERSON",
+    "kycCompletionDate": "2024-01-15",
+    "consentRecord": {
+      "consentGiven": true,
+      "consentDate": "2024-01-10T09:45:00Z",
+      "consentPurpose": ["AML_SCREENING", "DATA_SHARING_TRAVEL_RULE", "THIRD_PARTY_CDD"]
+    }
+  }
+}

@@ -1,0 +1,18 @@
+# OpenKYCAML Python Tools — Dependencies
+#
+# Install with:
+#   pip install -r requirements.txt
+#
+# Python >= 3.10 required.
+
+# JSON Schema validation (draft 2020-12 support)
+jsonschema[format-nongpl]>=4.21.0
+
+# Pydantic v2 — used for typed model generation (optional but recommended)
+pydantic>=2.6.0
+
+# Requests — used by the optional online validator client
+requests>=2.31.0
+
+# Optional: Rich terminal output — install separately for prettier CLI output
+# rich>=13.7.0
