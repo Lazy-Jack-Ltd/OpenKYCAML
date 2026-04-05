@@ -242,13 +242,13 @@ _✅ = full field mapping. 🔄 = conceptual equivalent (see [mapping-sovrin.md]
 | **`MPTIssuance.lsfMPTRequireAuth`** (gate flag) | 🔄 | `kycProfile.isEligible` — off-chain prerequisite for `MPTokenAuthorize` |
 | **Credential revocation** (`CredentialDelete`) | ✅ | `verifiableCredential.credentialStatus` (StatusList2021Entry) + `kycProfile.isEligible: false` + `changeLog[]` |
 | **KYC type** (`CredentialType = KYCCredential`) | ✅ | `kycProfile.kycCompletionDate` + `kycProfile.dueDiligenceRequirements` |
+| **XRPL `CredentialType` hex** (round-trip reconstruction) | ✅ | `kycProfile.blockchainAccountIds[].xrplCredentialType` ⭐ (hex string, 2–128 chars; added v1.3.0) |
+| **MPT issuance identifier** (`MPTokenIssuanceID`) | ✅ | `kycProfile.blockchainAccountIds[].mptIssuanceId` ⭐ (48-char hex Hash192; added v1.3.0) |
 | **AML type** (`CredentialType = AMLCredential`) | ✅ | `kycProfile.sanctionsScreening` + `kycProfile.adverseMedia` |
 | **Accredited investor type** | ✅ | `kycProfile.customerClassification.accreditedInvestor` + `investorCategoryJurisdiction` |
 | **Travel Rule on XRPL** (FATF Rec 16 / MiCA Art. 83) | ✅ | `ivms101` block; `Credential.URI` anchors the IVMS 101 payload on-ledger |
 
-_✅ = full field mapping. 🔄 = conceptual equivalent (see [mapping-xrpl-credentials-mpt.md](mapping-xrpl-credentials-mpt.md)). ℹ️ = out of scope._
-
-**Schema enhancements planned for v1.4.0:** Two optional fields — `kycProfile.blockchainAccountIds[].xrplCredentialType` (hex `CredentialType`) and `kycProfile.blockchainAccountIds[].mptIssuanceId` (MPT `MPTokenIssuanceID`) — will close the remaining precision gap for XRPL multi-issuance scenarios without breaking changes.
+_✅ = full field mapping. 🔄 = conceptual equivalent (see [mapping-xrpl-credentials-mpt.md](mapping-xrpl-credentials-mpt.md)). ℹ️ = out of scope. ⭐ = schema extended in v1.3.0._
 
 ---
 

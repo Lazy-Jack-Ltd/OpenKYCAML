@@ -12,7 +12,7 @@ This document maps every data point in the **XRP Ledger (XRPL) Credentials** sta
 **Coverage legend:**
 - ✅ Full coverage — field exists in OpenKYCAML schema
 - 🔄 Conceptual mapping — equivalent concept captured differently (see notes)
-- ⭐ Schema extended — field added or noted for v1.4.0 to close the gap
+- ⭐ Schema extended — field added to OpenKYCAML v1.3.0 to close the gap
 - ℹ️ Out of scope — on-ledger / runtime state not applicable to an off-chain KYC record
 
 ---
@@ -80,7 +80,7 @@ XRPL encodes credential types as **hex strings** (1–64 bytes), typically the U
 | `547261766c6552756c65417474657374` | `TravelRuleAttest` | `"TravelRuleAttestation"` |
 | `41636372656469746564496e766573746f72` | `AccreditedInvestor` | `"AccreditedInvestorCredential"` |
 
-**Recommended practice:** set `verifiableCredential.type[]` to include the decoded string equivalent, and record the hex value in `kycProfile.blockchainAccountIds[].xrplCredentialType` (see §7 for schema note) or in `kycProfile.auditMetadata.changeLog[]` for auditability.
+**Recommended practice:** set `verifiableCredential.type[]` to include the decoded string equivalent, and record the hex value in `kycProfile.blockchainAccountIds[].xrplCredentialType` ⭐ (added v1.3.0) for auditability and round-trip XRPL reconstruction.
 
 ### 2.3 W3C DID Core v1.0
 
@@ -217,6 +217,8 @@ These are the per-investor KYC/AML data points that determine on-ledger gating d
 | Credential accepted by holder | `lsfAccepted` flag | Record in `kycProfile.auditMetadata.changeLog[]` | 🔄 |
 | Holder authorised for MPT | `lsfMPTAuthorized` on `MPToken` | `kycProfile.isEligible: true` + `kycProfile.eligibilityLastConfirmed` | ✅ |
 | Holder wallet frozen | `lsfMPTLocked` on `MPToken` | `kycProfile.blockchainAccountIds[].isFrozen: true` | ✅ |
+| XRPL on-ledger credential type (for cross-reference) | `Credential.CredentialType` (hex) | `kycProfile.blockchainAccountIds[].xrplCredentialType` ⭐ | ✅ v1.3.0+ — stores hex CredentialType for round-trip XRPL reconstruction |
+| MPT issuance identifier (multi-issuance) | `MPToken.MPTokenIssuanceID` | `kycProfile.blockchainAccountIds[].mptIssuanceId` ⭐ | ✅ v1.3.0+ — stores Hash192 MPTokenIssuanceID for multi-pool eligibility tracking |
 
 ---
 
@@ -237,6 +239,8 @@ The following XRPL-specific concepts are **fully covered** by existing OpenKYCAM
 | `MPToken.lsfMPTAuthorized` | `kycProfile.isEligible` |
 | `MPToken.lsfMPTLocked` | `kycProfile.blockchainAccountIds[].isFrozen` |
 | Holder XRPL wallet address | `kycProfile.blockchainAccountIds[].address` (`network: "xrpl"`) |
+| XRPL on-ledger credential type | `kycProfile.blockchainAccountIds[].xrplCredentialType` ⭐ (hex CredentialType, added v1.3.0) |
+| MPT issuance identifier | `kycProfile.blockchainAccountIds[].mptIssuanceId` ⭐ (Hash192 MPTokenIssuanceID, added v1.3.0) |
 | Credential proof (ledger-validated) | `verifiableCredential.proof` (off-chain VC proof; ledger validation is additive) |
 | Credential revocation | `verifiableCredential.credentialStatus` (StatusList2021Entry) + on-ledger `CredentialDelete` |
 | Sanctions / AML screening | `kycProfile.sanctionsScreening`, `kycProfile.adverseMedia` |
@@ -245,24 +249,22 @@ The following XRPL-specific concepts are **fully covered** by existing OpenKYCAM
 | Travel Rule (VASP-to-VASP) | `ivms101` block (IVMS 101 superset) |
 | GDPR / SAR tipping-off | `gdprSensitivityMetadata` block |
 
-### 8.2 Minor schema enhancements recommended for v1.4.0
+### 8.2 Schema extensions added in v1.3.0 ⭐
 
-Two optional additions would improve the precision of XRPL-specific integrations, without any breaking changes:
+Two optional fields were added to `kycProfile.blockchainAccountIds[]` items to improve the precision of XRPL-specific integrations without any breaking changes:
 
-| Enhancement | Rationale | Location |
+| Field | Rationale | Pattern |
 |---|---|---|
-| `kycProfile.blockchainAccountIds[].xrplCredentialType` (string, optional) | Stores the hex `CredentialType` value from the XRPL `Credential` object alongside the wallet address entry, enabling round-trip reconstruction of the on-ledger credential without relying on external state. The decoded string equivalent is already captured in `verifiableCredential.type[]`. | `blockchainAccountIds` item object |
-| `kycProfile.blockchainAccountIds[].mptIssuanceId` (string, optional) | Stores the `MPTokenIssuanceID` (hex Hash192) of the specific MPT issuance this wallet is authorised for. Useful for multi-issuance scenarios where a single investor holds authorisation for multiple regulated asset pools. | `blockchainAccountIds` item object |
+| `kycProfile.blockchainAccountIds[].xrplCredentialType` ⭐ (string, optional) | Stores the hex `CredentialType` value from the XRPL `Credential` object alongside the wallet address entry, enabling round-trip reconstruction of the on-ledger credential without relying on external state. The decoded string equivalent is captured in `verifiableCredential.type[]`. Pattern: `^[0-9a-fA-F]{2,128}$` (2–128 hex chars = 1–64 bytes). | `^[0-9a-fA-F]{2,128}$` |
+| `kycProfile.blockchainAccountIds[].mptIssuanceId` ⭐ (string, optional) | Stores the `MPTokenIssuanceID` (hex Hash192) of the specific MPT issuance this wallet is authorised for. Useful for multi-issuance scenarios where a single investor holds authorisation for multiple regulated asset pools via separate `MPTokenAuthorize` transactions. Pattern: exactly 48 hex characters (24 bytes). | `^[0-9a-fA-F]{48}$` |
 
-These are **additive fields** and do not invalidate existing payloads. They are noted as candidate additions for v1.4.0 under "Institutional and Cross-Border Interoperability."
+Both fields are **additive** — existing payloads without these fields remain fully valid.
 
 ### 8.3 Conclusion: Is a mapping document sufficient?
 
-**Yes — with the qualification that two optional schema fields would close the remaining precision gap.** The core assertion is confirmed:
+**Yes.** The core assertion is confirmed:
 
 > The existing OpenKYCAML VC wrapper and DID triangulation are architecturally sufficient to serve as the off-chain credential content anchored by the XRPL `Credential` ledger object. The `did:xrpl` DID method is compatible with OpenKYCAML's DID-agnostic design. The `kycProfile.isEligible` + `blockchainAccountIds[]` fields directly map to MPT holder authorisation. No structural schema redesign is needed.
-
-The two optional fields noted in §8.2 are enhancements, not prerequisites. Implementations can use `kycProfile.auditMetadata.changeLog[]` as an interim store for the hex credential type and MPT issuance ID until v1.4.0 fields are available.
 
 ---
 
@@ -364,7 +366,7 @@ After credential is accepted, submit `MPTokenAuthorize`:
 {
   "TransactionType": "MPTokenAuthorize",
   "Account": "rMPTIssuerAccountAddress",
-  "MPTokenIssuanceID": "00070C44695F6D5468420C16EF71B6F1A27C8B",
+  "MPTokenIssuanceID": "00070c44695f6d5468420c16ef71b6f1a27c8b0042a1ff00",
   "MPTokenHolder": "rCustomerAccountAddress"
 }
 ```
@@ -379,7 +381,9 @@ Update OpenKYCAML:
     "blockchainAccountIds": [{
       "address": "rCustomerAccountAddress",
       "network": "xrpl",
-      "registeredAt": "2026-04-01"
+      "registeredAt": "2026-04-01",
+      "xrplCredentialType": "4f70656e4b5943414d4c43726564656e7469616c",
+      "mptIssuanceId": "00070c44695f6d5468420c16ef71b6f1a27c8b0042a1ff00"
     }]
   }
 }
