@@ -219,7 +219,7 @@
         },
         "customerNumber": {
           "type": "string",
-          "description": "Internal customer or account reference number assigned by the originating VASP/institution to the legal entity. Also used to carry optional eIDAS 2.0 LPID attributes such as VAT number, tax reference, or EORI number when applicable.",
+          "description": "Internal customer or account reference number assigned by the originating VASP/institution to the legal entity. Also used to carry optional eIDAS 2.0 LPID attributes such as VAT number, tax reference, or EORI number when applicable. To distinguish identifier types use a recognised prefix followed by a colon, e.g. 'VAT:GB123456789', 'EORI:GB123456789000', or 'TAX:DE123456789'.",
           "maxLength": 50
         },
         "lei": {
@@ -712,6 +712,11 @@
       "description": "Ultimate Beneficial Owner (UBO) record.",
       "type": "object",
       "required": ["ownershipPercentage"],
+      "if": { "required": ["person"] },
+      "then": {
+        "not": { "required": ["naturalPerson"] },
+        "description": "When 'person' is present, the legacy 'naturalPerson' field must not be used to avoid ambiguity."
+      },
       "properties": {
         "person": {
           "type": "object",
@@ -727,7 +732,7 @@
         },
         "naturalPerson": {
           "$ref": "#/$defs/NaturalPerson",
-          "description": "The beneficial owner as a natural person. Legacy field — use 'person' when natural or legal person support is needed. When both 'person' and 'naturalPerson' are present, 'person' takes precedence."
+          "description": "The beneficial owner as a natural person. Legacy field — use 'person' when natural or legal person support is needed. Do not use alongside 'person'."
         },
         "ownershipPercentage": {
           "type": "number",
