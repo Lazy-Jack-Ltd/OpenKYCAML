@@ -1,0 +1,70 @@
+name: Bug report
+description: Report a bug in the schema, example payloads, or validator tools.
+labels: ["type: bug", "status: needs-review"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for taking the time to report a bug. Please fill in as much detail as possible.
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Affected area
+      options:
+        - Schema (JSON Schema)
+        - Example payloads
+        - Python validator / tools
+        - JavaScript validator / tools
+        - CI / workflows
+        - Documentation
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Describe the bug
+      description: A clear and concise description of the problem.
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      description: How can we reproduce the issue?
+      placeholder: |
+        1. Run `python tools/python/validator.py examples/full-kyc-profile.json`
+        2. Observe error …
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behaviour
+      description: What did you expect to happen?
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behaviour
+      description: What actually happened? Paste any error output here.
+    validations:
+      required: true
+
+  - type: input
+    id: schema-version
+    attributes:
+      label: Schema version
+      description: Which version of the schema are you using?
+      placeholder: "e.g. v1.1.0"
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Any other information that may be relevant (OS, Python/Node version, payload snippet, etc.).

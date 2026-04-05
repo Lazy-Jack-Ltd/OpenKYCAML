@@ -1,0 +1,66 @@
+name: "[RFC] Schema change proposal"
+description: Propose a breaking schema change (remove/rename fields, change type or optionality). Requires a 14-day comment period and TWG consensus before implementation.
+labels: ["type: rfc", "status: needs-review"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Request for Comments (RFC)
+        
+        This template is for **breaking schema changes** only:
+        - Removing or renaming existing fields
+        - Changing a field from optional to required
+        - Changing a field's type or format
+        - Removing enum values from existing required fields
+        
+        Non-breaking changes (new optional fields, new enum values, description fixes) do **not** need an RFC — open a regular feature request instead.
+        
+        RFC process:
+        1. Open this issue with title `[RFC] <description>`.
+        2. A **14-day** community comment period begins.
+        3. The Technical Working Group reviews and reaches consensus.
+        4. If approved, open a PR referencing this issue.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem statement
+      description: What problem or limitation in the current schema motivates this change?
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed change
+      description: Describe the exact change — field name, type, optionality, etc. Include a draft JSON Schema snippet if possible.
+    validations:
+      required: true
+
+  - type: textarea
+    id: migration
+    attributes:
+      label: Migration path
+      description: How should existing users migrate? Are there backward-compatible workarounds?
+    validations:
+      required: true
+
+  - type: textarea
+    id: standards
+    attributes:
+      label: Standards or regulatory driver
+      description: Which standard, regulation, or real-world requirement necessitates this change? Cite the specific article or section.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: What non-breaking alternatives were evaluated and why were they ruled out?
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Links, prior art, related issues, or any other relevant information.
