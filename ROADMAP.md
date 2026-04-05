@@ -4,9 +4,9 @@ This document outlines the planned development of the OpenKYCAML standard.
 
 ---
 
-## Current Version: v1.1.0
+## Current Version: v1.2.0
 
-**Released:** April 2025
+**Released:** April 2026
 
 **Highlights:**
 - Full IVMS 101 v1.0 payload support (backward-compatible superset).
@@ -14,18 +14,22 @@ This document outlines the planned development of the OpenKYCAML standard.
 - Native **eIDAS 2.0 LPID** (Legal Person Identification Data) support with QEAA mandate/representative fields.
 - `EUDI_WALLET` onboarding channel (AMLR Art. 22(5) high-assurance remote CDD).
 - Full `kycProfile` section: risk rating, PEP, sanctions, adverse media, UBOs, monitoring, audit trail.
-- **12 validated example payloads** — every scenario covered in both a plain IVMS 101 baseline and an EUDI Wallet / DID-triangulated VC-wrapped version.
-- Python and JavaScript validator tools.
-- IVMS 101 ↔ OpenKYCAML converter (Python).
-- Compliance matrix for FATF, AMLR, IVMS 101, ISO 20022, GLEIF, eIDAS 2.0, GDPR.
-- GitHub Actions CI for schema and example validation.
-- ISO 17442-valid example LEIs throughout all payloads.
+- **SD-JWT selective disclosure** block (`verifiableCredential.selectiveDisclosure`) for EUDI Wallet GDPR-minimised presentations.
+- **Deep UBO chain** support: `beneficialOwnership[].intermediateEntities[]` and `ownershipChainDepth` (AMLR Art. 26 full-chain disclosure).
+- **AMLA RTS alignment (v1.2.0)**:
+  - `kycProfile.thirdPartyCDDReliance` — structured CDD reliance record (AMLR Art. 48(3)).
+  - `kycProfile.dueDiligenceRequirements` — machine-readable attribute verification record per DD tier (AMLR Art. 22, pending AMLA RTS on CDD attribute sets).
+  - `kycProfile.pepStatus.pepCategory` aligned to AMLA draft PEP taxonomy (AMLR Art. 28–31).
+- PID/LPID converters (Python) for ARF flat-format ↔ OpenKYCAML envelope.
+- Travel Rule implementation guide covering TRISA, OpenVASP, Notabene, TRP, Sygna Bridge.
+- **14 validated example payloads**.
+- AMLR 2027 compliance checklist for obliged entities.
 
 ---
 
-## v1.2.0 — Planned Q3 2025
+## v1.3.0 — Planned Q3 2026
 
-**Theme: Tooling, Type Safety & Selective Disclosure**
+**Theme: Institutional and Cross-Border Interoperability**
 
 | Feature | Status | Issue |
 |---|---|---|
@@ -34,25 +38,13 @@ This document outlines the planned development of the OpenKYCAML standard.
 | IBAN / crypto account number format validation | Planned | — |
 | Trust registry endpoint field (`kycProfile.trustRegistryUrl`) | Planned | — |
 | Trust framework field (`verifiableCredential.trustFramework`) | Planned | — |
-| Support for `SD-JWT` selective disclosure notation | Planned | — |
 | Go validator | Planned | — |
 | OpenID4VP presentation request / response cookbook | Planned | — |
-
----
-
-## v1.3.0 — Planned Q4 2025
-
-**Theme: Institutional and Cross-Border Interoperability**
-
-| Feature | Status | Issue |
-|---|---|---|
 | Correspondent banking extension fields | Planned | — |
-| Trust chain / CDD reliance chain tracking (`kycProfile.cddRelianceChain`) | Planned | — |
 | Multi-jurisdiction risk model fields | Planned | — |
 | SAR/STR flag field (`kycProfile.sarFiled`) | Planned | — |
 | FATCA / CRS tax residency extension | Planned | — |
 | ISO 20022 pain.001 full serialiser (Python) | Planned | — |
-| TRISA / OpenVASP protocol integration cookbook | Planned | — |
 
 ---
 
@@ -76,6 +68,7 @@ Planned breaking changes (subject to TWG consensus):
 |---|---|---|
 | v1.0.0 | June 2024 | Initial release — IVMS 101 superset, kycProfile, VC wrapper, CI tooling |
 | v1.1.0 | April 2025 | EUDI Wallet evidence block, LPID + QEAA mandates, DID triangulation examples, `EUDI_WALLET` onboarding channel, ISO 17442 LEI fixes |
+| v1.2.0 | April 2026 | SD-JWT selective disclosure, deep UBO chain, PID/LPID converters, Travel Rule guide, AMLA RTS alignment (`thirdPartyCDDReliance`, `dueDiligenceRequirements`, AMLA PEP taxonomy), AMLR 2027 compliance checklist |
 
 ---
 

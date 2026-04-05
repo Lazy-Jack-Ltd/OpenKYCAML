@@ -14,7 +14,5 @@ This page tracks documentation-specific improvements planned for upcoming releas
 - [ ] Add Mermaid entity-relationship diagram for the full schema.
 
 ### v1.2
-- [ ] Add AMLR 2027 compliance checklist.
-- [ ] Add multi-language translations (FR, DE, ES, JP).
-- [ ] Add worked examples for correspondent banking.
-- [ ] Add integration cookbook for TRISA, OpenVASP, TRP, Notabene.
+- [x] Add AMLR 2027 compliance checklist (`amlr-2027-compliance-checklist.md`).
+- [x] Update compliance matrix to v1.2.0 (SD-JWT, deep UBO, PID/LPID, AMLA RTS alignment section).

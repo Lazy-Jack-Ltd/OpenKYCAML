@@ -1,6 +1,6 @@
 # OpenKYCAML Compliance Matrix
 
-This matrix documents the alignment of the OpenKYCAML v1.0.0 schema with major regulatory and technical standards.
+This matrix documents the alignment of the OpenKYCAML v1.2.0 schema with major regulatory and technical standards.
 
 **Legend:**
 - ✅ Full alignment — the standard is directly addressed.
@@ -43,6 +43,7 @@ This matrix documents the alignment of the OpenKYCAML v1.0.0 schema with major r
 | **Art. 28–31** — PEP provisions | PEP identification and EDD | ✅ | `kycProfile.pepStatus` |
 | **Art. 29** — EDD measures | Enhanced due diligence | ✅ | `kycProfile.dueDiligenceType` = `EDD`, `kycProfile.sourceOfFundsWealth` |
 | **Art. 56** — Record keeping | 5-year minimum retention | ✅ | `kycProfile.auditMetadata.dataRetentionDate`, `changeLog` |
+| **Art. 48** — CDD reliance on third parties | Third-party reliance conditions, written arrangement, access to data | ✅ | `kycProfile.thirdPartyCDDReliance` (`relyingPartyId`, `providingPartyId`, `relianceScope`, `relianceContractRef`, `accessToUnderlyingDataConfirmed`, `providingPartyEligibilityConfirmed`, `liabilityNote`) |
 | **Art. 83** — Transfer of funds (Travel Rule) | VASP Travel Rule obligations | ✅ | `ivms101` block |
 
 ---
@@ -92,7 +93,7 @@ This matrix documents the alignment of the OpenKYCAML v1.0.0 schema with major r
 | LPID in VC credentialSubject | ✅ | `verifiableCredential.credentialSubject.lpid` — standalone LPID VC for EUDI Wallet issuance flows |
 | OpenID4VCI (issuance) | ⬜ | Transport protocol — out of schema scope |
 | OpenID4VP (presentation) | ⬜ | Transport protocol — out of schema scope |
-| SD-JWT selective disclosure | 🟡 | Schema is compatible; SD-JWT framing not part of schema definition |
+| SD-JWT selective disclosure | ✅ | `verifiableCredential.selectiveDisclosure` block: `_sd_alg`, `disclosableClaimPaths`, `requiredClaimPaths`, `decodedDisclosures` (added v1.2.0) |
 
 ---
 
@@ -130,4 +131,20 @@ This matrix documents the alignment of the OpenKYCAML v1.0.0 schema with major r
 
 ---
 
-*Last updated: v1.0.0 — June 2024. Maintained by the OpenKYCAML Technical Working Group.*
+*Last updated: v1.2.0 — April 2026. Maintained by the OpenKYCAML Technical Working Group.*
+
+---
+
+## 9. AMLA RTS Alignment Status (v1.2.0)
+
+> _AMLA (Anti-Money Laundering Authority, established under Regulation (EU) 2024/1620) is mandated to issue Regulatory Technical Standards (RTS) and Guidelines under the AMLR. Several RTS are anticipated but not yet published as of April 2026. This section tracks alignment with draft and final RTS._
+
+| AMLA RTS Topic | Expected Legal Basis | Status | OpenKYCAML Coverage |
+|---|---|---|---|
+| **RTS on CDD attribute sets** — mandatory attribute sets for SDD, CDD, and EDD tiers | AMLR Art. 22(4) | 🟡 Pending AMLA RTS publication | `kycProfile.dueDiligenceRequirements` captures applied tier and verified attributes; `dueDiligenceType` enum (SDD / CDD / EDD). Field designed to be updated once the binding RTS attribute lists are published. |
+| **RTS on EDD for high-risk third countries** — specific EDD measures | AMLR Art. 29(4) | 🟡 Pending AMLA RTS publication | `kycProfile.riskRatingDetail.riskFactors.geographicRisk`; `kycProfile.dueDiligenceType` = `EDD`; `kycProfile.monitoringInfo.eddRequired`. |
+| **RTS on CDD reliance conditions** — conditions, form of written arrangement, access to underlying data | AMLR Art. 48(5) | ✅ Schema ready | `kycProfile.thirdPartyCDDReliance` block: `relyingPartyId`, `providingPartyId`, `relianceScope`, `relianceContractRef`, `relianceDate`, `accessToUnderlyingDataConfirmed`, `providingPartyEligibilityConfirmed`, `liabilityNote` (Art. 48(3)–(4)). |
+| **RTS on PEP lists and harmonised category taxonomy** | AMLR Art. 28(3) / Art. 31 | 🟡 Pending AMLA RTS publication | `kycProfile.pepStatus.pepCategory` updated to AMLA draft taxonomy: `DOMESTIC_PEP`, `FOREIGN_PEP`, `INTERNATIONAL_ORGANISATION`, `FAMILY_MEMBER_OF_PEP`, `CLOSE_ASSOCIATE_OF_PEP`, `FORMER_PEP`, `NOT_PEP`. Enum will be finalised once RTS is adopted. |
+| **RTS on remote CDD and electronic identification** — minimum assurance levels and accepted eID means | AMLR Art. 22(4) | ✅ Schema ready | `kycProfile.dueDiligenceRequirements.verificationMethods[].method` supports `EIDAS_HIGH`, `EIDAS_SUBSTANTIAL`, `EUDI_WALLET_PID`; `assuranceLevel` field (LOW / SUBSTANTIAL / HIGH). |
+| **RTS on group-wide AML/CFT policies and data sharing** | AMLR Art. 15(5) | 🟡 Pending AMLA RTS publication | `kycProfile.auditMetadata.sharingConsentReference`; `dataProvider`; `thirdPartyCDDReliance`. |
+| **Guidelines on risk factors** (successor to EBA Joint Guidelines) | AMLR Art. 20(6) | ✅ Schema ready | `kycProfile.riskRatingDetail.riskFactors` (geographic, product, channel, customer-type risk); `kycProfile.customerRiskRating`. |
