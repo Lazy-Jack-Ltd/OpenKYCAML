@@ -187,6 +187,82 @@
         }
       }
     },
+    "LegalPersonIdentificationData": {
+      "title": "LegalPersonIdentificationData",
+      "description": "eIDAS 2.0 Legal Person Identification Data (LPID) as defined in the EU Digital Identity Architecture and Reference Framework (ARF). Issued by Member State-appointed PID Providers for legal entities and accepted under AMLR Articles 22 and 26 as high-assurance electronic identification.",
+      "type": "object",
+      "required": ["currentLegalName", "uniqueIdentifier"],
+      "properties": {
+        "currentLegalName": {
+          "type": "string",
+          "description": "Current legal name of the entity as registered. Mandatory LPID attribute. Maps to legalPerson.name.nameIdentifier[0].legalPersonName (LEGL).",
+          "maxLength": 100
+        },
+        "uniqueIdentifier": {
+          "type": "string",
+          "description": "Member State-issued unique identifier for the legal entity, constructed for cross-border compatibility per eIDAS 2.0 ARF. Mandatory LPID attribute. Maps to legalPerson.nationalIdentification.nationalIdentifier.",
+          "maxLength": 50
+        },
+        "currentAddress": {
+          "$ref": "#/$defs/Address",
+          "description": "Current registered address of the legal entity. Optional LPID attribute. Maps to legalPerson.geographicAddress[]."
+        },
+        "vatRegistrationNumber": {
+          "type": "string",
+          "description": "VAT registration number of the legal entity. Optional LPID attribute.",
+          "maxLength": 50
+        },
+        "taxReferenceNumber": {
+          "type": "string",
+          "description": "Tax reference number of the legal entity. Optional LPID attribute.",
+          "maxLength": 50
+        },
+        "europeanUniqueIdentifier": {
+          "type": "string",
+          "description": "European Unique Identifier (EUID) per Directive (EU) 2017/1132 (company register cross-border identifier). Optional LPID attribute.",
+          "maxLength": 50
+        },
+        "lei": {
+          "type": "string",
+          "description": "Legal Entity Identifier (LEI) per ISO 17442. Optional LPID attribute. Maps to legalPerson.lei and/or legalPerson.nationalIdentification with nationalIdentifierType LEIX.",
+          "pattern": "^[A-Z0-9]{20}$"
+        },
+        "eoriNumber": {
+          "type": "string",
+          "description": "Economic Operators Registration and Identification (EORI) number. Optional LPID attribute used for customs and trade identification.",
+          "maxLength": 50
+        },
+        "mandates": {
+          "type": "array",
+          "description": "Representation and mandate records — natural persons authorised to act on behalf of the legal entity. Supports AMLR authorised representative and beneficial owner verification. May be conveyed as QEAAs in EUDI Wallet flows.",
+          "items": {
+            "type": "object",
+            "required": ["naturalPerson", "roleOrPower"],
+            "properties": {
+              "naturalPerson": {
+                "$ref": "#/$defs/NaturalPerson",
+                "description": "The natural person holding the mandate or representation power."
+              },
+              "roleOrPower": {
+                "type": "string",
+                "description": "Description of the role or power of representation (e.g. 'Director', 'Authorised Signatory', 'Power of Attorney').",
+                "maxLength": 200
+              },
+              "validFrom": {
+                "type": "string",
+                "format": "date",
+                "description": "Date from which the mandate is effective (ISO 8601)."
+              },
+              "validUntil": {
+                "type": "string",
+                "format": "date",
+                "description": "Date on which the mandate expires (ISO 8601). Omit if open-ended."
+              }
+            }
+          }
+        }
+      }
+    },
     "LegalPerson": {
       "title": "LegalPerson",
       "description": "IVMS 101 LegalPerson entity.",
@@ -235,6 +311,10 @@
           "type": "string",
           "description": "ISO 3166-1 alpha-2 country of registration. Derivable from the LEI or unique_identifier in eIDAS 2.0 LPID.",
           "pattern": "^[A-Z]{2}$"
+        },
+        "lpid": {
+          "$ref": "#/$defs/LegalPersonIdentificationData",
+          "description": "Optional eIDAS 2.0 Legal Person Identification Data (LPID) block. Carries LPID-specific attributes (current legal name, unique identifier, VAT, EORI, LEI, mandates) for EUDI Wallet and AMLR high-assurance CDD flows. Backward-compatible — omit for pure IVMS 101 usage."
         }
       }
     },
@@ -476,6 +556,10 @@
             "kycProfile": {
               "$ref": "#/$defs/KYCProfile",
               "description": "Optional KYC/AML profile embedded inside the VC, enabling CDD reliance and risk-data portability across institutions via a signed attestation."
+            },
+            "lpid": {
+              "$ref": "#/$defs/LegalPersonIdentificationData",
+              "description": "Optional eIDAS 2.0 LPID block at the VC credentialSubject level. Enables a standalone LPID Verifiable Credential for legal entity identification in EUDI Wallet flows without requiring a full IVMS 101 payload."
             }
           }
         },

@@ -104,4 +104,70 @@ All IVMS 101 fields map 1:1 into the `ivms101` block. No IVMS 101 fields are ren
 
 ---
 
+## 8. eIDAS 2.0 LPID (Legal Person Identification Data) Mapping
+
+The `legalPerson.lpid` block provides a native mapping to the **Legal Person Identification Data (LPID)** credential defined in the eIDAS 2.0 Architecture and Reference Framework (ARF). LPID is issued by Member State-appointed PID Providers and accepted under AMLR Articles 22 and 26 as high-assurance electronic identification for legal entities.
+
+### 8.1 IVMS 101 → LPID Attribute Mapping
+
+| IVMS 101 Field (Legal Person) | eIDAS 2.0 LPID Attribute | Mandatory / Optional | OpenKYCAML Field |
+|---|---|---|---|
+| `legalPerson.name.nameIdentifier[0].legalPersonName` (LEGL) | `current_legal_name` | **M** | `legalPerson.lpid.currentLegalName` |
+| `legalPerson.nationalIdentification.nationalIdentifier` | `unique_identifier` | **M** | `legalPerson.lpid.uniqueIdentifier` |
+| `legalPerson.geographicAddress[]` | `current_address` | O | `legalPerson.lpid.currentAddress` (`Address`) |
+| `legalPerson.customerNumber` (VAT prefix) | `vat_registration_number` | O | `legalPerson.lpid.vatRegistrationNumber` |
+| `legalPerson.customerNumber` (TAX prefix) | `tax_reference_number` | O | `legalPerson.lpid.taxReferenceNumber` |
+| _(EUID — no IVMS 101 equivalent)_ | `european_unique_identifier` | O | `legalPerson.lpid.europeanUniqueIdentifier` |
+| `legalPerson.nationalIdentification.nationalIdentifier` (LEIX) / `legalPerson.lei` | `lei` | O | `legalPerson.lpid.lei` |
+| `legalPerson.customerNumber` (EORI prefix) | `eori_number` | O | `legalPerson.lpid.eoriNumber` |
+| `legalPerson.countryOfRegistration` | Registration country (derived from `unique_identifier`) | O | `legalPerson.countryOfRegistration` |
+
+### 8.2 Representation & Mandates (QEAA)
+
+Under eIDAS 2.0 and AMLR, authorised representatives and beneficial owners of legal entities may present Qualified Electronic Attestations of Attributes (QEAAs) for their powers of representation. The `legalPerson.lpid.mandates[]` array supports this:
+
+| OpenKYCAML Field | Description | AMLR Reference |
+|---|---|---|
+| `legalPerson.lpid.mandates[].naturalPerson` | Natural person holding the mandate (full `NaturalPerson` block, including PID-mapped name, DOB, address) | Art. 26 — beneficial owner / authorised representative |
+| `legalPerson.lpid.mandates[].roleOrPower` | Description of authority (e.g. `"Director"`, `"Authorised Signatory"`, `"Power of Attorney"`) | Art. 26(1) |
+| `legalPerson.lpid.mandates[].validFrom` | Effective date of the mandate (ISO 8601) | — |
+| `legalPerson.lpid.mandates[].validUntil` | Expiry date of the mandate (ISO 8601); omit if open-ended | — |
+
+### 8.3 Standalone LPID Verifiable Credential
+
+For EUDI Wallet flows where a full IVMS 101 Travel Rule payload is not required, the `verifiableCredential.credentialSubject.lpid` field allows a standalone LPID VC to be issued and verified:
+
+```json
+{
+  "@context": ["https://www.w3.org/2018/credentials/v1"],
+  "type": ["VerifiableCredential", "LegalPersonIdentificationCredential"],
+  "issuer": "did:example:pidprovider",
+  "issuanceDate": "2025-01-15T00:00:00Z",
+  "credentialSubject": {
+    "id": "did:example:acmecorp",
+    "lpid": {
+      "currentLegalName": "Acme Corporation S.A.",
+      "uniqueIdentifier": "BE-BCE-0123456789",
+      "lei": "ABCDEFGHIJKLMNOPQRST",
+      "vatRegistrationNumber": "BE0123456789",
+      "mandates": [
+        {
+          "naturalPerson": {
+            "name": {
+              "nameIdentifier": [
+                { "primaryIdentifier": "Smith", "secondaryIdentifier": "Jane", "nameIdentifierType": "LEGL" }
+              ]
+            }
+          },
+          "roleOrPower": "Director",
+          "validFrom": "2024-01-01"
+        }
+      ]
+    }
+  }
+}
+```
+
+---
+
 *Maintained by the OpenKYCAML Technical Working Group. For corrections or additions, please open an issue or pull request.*

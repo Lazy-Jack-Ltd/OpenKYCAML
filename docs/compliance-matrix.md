@@ -86,6 +86,10 @@ This matrix documents the alignment of the OpenKYCAML v1.0.0 schema with major r
 | VC Subject (User DID) | ✅ | `verifiableCredential.credentialSubject.id` |
 | Credential Status / Revocation | ✅ | `verifiableCredential.credentialStatus` (StatusList2021) |
 | Proof suites (Ed25519, JWS, DataIntegrity) | ✅ | `verifiableCredential.proof.type` |
+| PID (Person Identification Data) — natural persons | ✅ | `NaturalPerson.*` fields with eIDAS attribute annotations (`family_name`, `given_name`, `birth_date`, `resident_address`, etc.) |
+| **LPID (Legal Person Identification Data)** — legal entities | ✅ | `legalPerson.lpid` — `LegalPersonIdentificationData` definition; covers mandatory (`currentLegalName`, `uniqueIdentifier`) and optional attributes (`lei`, `vatRegistrationNumber`, `taxReferenceNumber`, `eoriNumber`, `europeanUniqueIdentifier`, `currentAddress`) |
+| **QEAA / Representation & Mandates** | ✅ | `legalPerson.lpid.mandates[]` — natural person representatives with `roleOrPower`, `validFrom`/`validUntil`; supports AMLR authorised representative and UBO verification |
+| LPID in VC credentialSubject | ✅ | `verifiableCredential.credentialSubject.lpid` — standalone LPID VC for EUDI Wallet issuance flows |
 | OpenID4VCI (issuance) | ⬜ | Transport protocol — out of schema scope |
 | OpenID4VP (presentation) | ⬜ | Transport protocol — out of schema scope |
 | SD-JWT selective disclosure | 🟡 | Schema is compatible; SD-JWT framing not part of schema definition |
