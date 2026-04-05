@@ -46,9 +46,26 @@ This document outlines the planned development of the OpenKYCAML standard.
 | Correspondent banking extension fields | Planned | — |
 | Multi-jurisdiction risk model fields | Planned | — |
 | FATCA / CRS tax residency extension | Planned | — |
-| ISO 20022 pain.001 full serialiser (Python) | Planned | — |
+| ISO 20022 pain.001 full serialiser (Python) | Moved to v1.3.0 | — |
 
 ---
+
+## v1.3.0 — In Progress (ISO 20022 Integration)
+
+| Feature | Status |
+|---|---|
+| ISO 20022 `<SplmtryData>` KYCAMLEnvelope schema | ✅ Complete |
+| pacs.008 CBPR+ Travel Rule profile | ✅ Complete |
+| pain.001 third-party CDD reliance profile | ✅ Complete |
+| camt.053 audit trail / data-retention profile | ✅ Complete |
+| Python converter (`openkycaml_to_pacs008`, `openkycaml_to_pain001`, `iso20022_to_openkycaml`) | ✅ Complete |
+| TypeScript ESM converter (same three functions) | ✅ Complete |
+| XML examples (pacs.008, pain.001, minimal snippet) | ✅ Complete |
+| Bidirectional field mapping YAML (OpenKYCAML ↔ ISO 20022) | ✅ Complete |
+| Field-level gap analysis (narrative + tables) | ✅ Complete |
+| pytest test suite — round-trip + schema validation (70 tests) | ✅ Complete |
+
+See [`iso20022-integration/`](iso20022-integration/) for all artefacts.
 
 ## v2.0.0 — Planned 2027
 

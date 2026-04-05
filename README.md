@@ -117,6 +117,14 @@ OpenKYCAML payload
 
 ---
 
+## ISO 20022 Integration
+
+OpenKYCAML v1.3.0 ships a complete ISO 20022 bridge layer, enabling any adopter to embed the full KYC/AML dataset inside standard `pacs.008`, `pain.001`, and `camt.053` messages using the ISO-approved `<SplmtryData>` extension point — no schema modifications, no breaking changes.
+
+See [`iso20022-integration/`](iso20022-integration/) for the full module: bidirectional field mapping, JSON Schema envelope, three pre-validated profiles, XML examples, and Python + TypeScript converters.
+
+---
+
 ## Quick Start
 
 ### 1. Validate a payload (Python)
@@ -254,7 +262,7 @@ Each `-eudi-wallet.json` example documents a **trust chain** using W3C VC eviden
 | **EU AMLR 2024** | ✅ Art. 20–22, 24, 26, 28–31, 56, 83 |
 | **eIDAS 2.0 / ARF** | ✅ W3C VC Data Model v2, DID, Ed25519 proof suites, LPID, QEAA mandates |
 | **EU Digital Identity Wallet (EUDIW)** | ✅ PID + LPID credential flows via OpenID4VP; W3C VC evidence block; EUDI_WALLET onboarding channel; `gdprSensitivityMetadata` for tipping-off-safe EUDIW presentations (v1.3.0) |
-| **ISO 20022** | 🟡 Key fields mapped; full pain.001 serialiser planned for v1.4 |
+| **ISO 20022** | ✅ v1.3.0 — SupplementaryData envelope, pacs.008/pain.001/camt.053 profiles, Python & TypeScript converters (bidirectional) — see [`iso20022-integration/`](iso20022-integration/) |
 | **GLEIF / LEI** | ✅ LEIX national identifier type; ISO 17442 check digit validation |
 | **GDPR** | ✅ Consent record, data retention date, EUDI Wallet SD-JWT selective disclosure; `gdprSensitivityMetadata` block for SAR/tipping-off protection (Art. 9/10 special categories and criminal-offence data, AMLR Art. 73) — added v1.3.0 |
 | **ERC-3643 (T-REX)** | ✅ ONCHAINID, eligibility flag, wallet addresses, frozen tokens, accredited investor claim — see [ERC-3643 mapping](docs/mapping-erc3643.md) |

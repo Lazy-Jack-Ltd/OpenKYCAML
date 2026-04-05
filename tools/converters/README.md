@@ -6,9 +6,13 @@ This directory contains mapping scripts for converting between OpenKYCAML and ot
 
 | Script | Language | Description |
 |---|---|---|
-| [`../python/converter.py`](../python/converter.py) | Python | IVMS 101 ↔ OpenKYCAML, eIDAS 2.0 PID ↔ OpenKYCAML, eIDAS 2.0 LPID ↔ OpenKYCAML, OpenKYCAML → ISO 20022, VC extraction |
+| [`../python/converter.py`](../python/converter.py) | Python | IVMS 101 ↔ OpenKYCAML, eIDAS 2.0 PID ↔ OpenKYCAML, eIDAS 2.0 LPID ↔ OpenKYCAML, OpenKYCAML → ISO 20022 (simplified dict), VC extraction |
+| [`../../iso20022-integration/libraries/python/converter.py`](../../iso20022-integration/libraries/python/converter.py) | Python | **Full ISO 20022 XML** — `openkycaml_to_pacs008()`, `openkycaml_to_pain001()`, `iso20022_to_openkycaml()` |
+| [`../../iso20022-integration/libraries/typescript/converter.ts`](../../iso20022-integration/libraries/typescript/converter.ts) | TypeScript | Same three ISO 20022 functions as ESM module |
 
 ## Supported Conversion Commands
+
+### `tools/python/converter.py` (general converters)
 
 | Command | Direction | Description |
 |---|---|---|
@@ -18,8 +22,16 @@ This directory contains mapping scripts for converting between OpenKYCAML and ot
 | `openkycaml-to-pid` | OpenKYCAML → eIDAS 2.0 PID | Extract the natural person originator and return ARF-compliant PID attributes |
 | `lpid-to-openkycaml` | eIDAS 2.0 LPID → OpenKYCAML | Convert a flat eIDAS 2.0 LPID attribute map to an OpenKYCAML envelope (legal person originator) |
 | `openkycaml-to-lpid` | OpenKYCAML → eIDAS 2.0 LPID | Extract the legal person originator and LPID block, returning ARF-compliant LPID attributes |
-| `openkycaml-to-iso20022` | OpenKYCAML → ISO 20022 | Convert originator/beneficiary fields to a simplified ISO 20022 pain.001 dict |
+| `openkycaml-to-iso20022` | OpenKYCAML → ISO 20022 | Simplified ISO 20022 pain.001 dict (for legacy integrations — use the full XML library below for production) |
 | `extract-vc` | OpenKYCAML → W3C VC | Extract the `verifiableCredential` block from an OpenKYCAML envelope |
+
+### `iso20022-integration/libraries/python/converter.py` (full ISO 20022 XML)
+
+| Command | Direction | Description |
+|---|---|---|
+| `openkycaml-to-pacs008` | OpenKYCAML → pacs.008 XML | Full CBPR+ pacs.008 message with KYCAMLEnvelope in `<SplmtryData>` |
+| `openkycaml-to-pain001` | OpenKYCAML → pain.001 XML | Full pain.001 message with KYCAMLEnvelope in `<SplmtryData>` |
+| `iso20022-to-openkycaml` | pacs.008/pain.001 XML → OpenKYCAML | Parse XML and reconstruct OpenKYCAML payload including KYCAMLEnvelope |
 
 ## PID / LPID Flat Attribute Maps
 
@@ -75,16 +87,24 @@ python tools/python/converter.py openkycaml-to-lpid examples/legal-entity-plain.
 
 # IVMS 101 → OpenKYCAML
 python tools/python/converter.py ivms101-to-openkycaml ivms101.json --out openkycaml.json
+
+# OpenKYCAML → pacs.008 XML (full ISO 20022)
+python iso20022-integration/libraries/python/converter.py openkycaml-to-pacs008 examples/minimal-travel-rule.json
+
+# OpenKYCAML → pain.001 XML (full ISO 20022)
+python iso20022-integration/libraries/python/converter.py openkycaml-to-pain001 examples/full-kyc-profile.json
+
+# pacs.008 XML → OpenKYCAML
+python iso20022-integration/libraries/python/converter.py iso20022-to-openkycaml message.xml
 ```
 
 ## Planned Converters
 
 | Script | Language | Status |
 |---|---|---|
-| `iso20022-to-openkycaml.py` | Python | Planned for v1.3 |
-| `swift-mt-to-openkycaml.py` | Python | Planned for v1.3 |
-| `openvasp-to-openkycaml.js` | JavaScript | Planned for v1.3 |
+| `swift-mt-to-openkycaml.py` | Python | Planned for v1.4 |
+| `openvasp-to-openkycaml.js` | JavaScript | Planned for v1.4 |
 
 ## Usage
 
-See the [Adoption Guide](../../docs/adoption-guide.md) for detailed conversion examples.
+See the [Adoption Guide](../../docs/adoption-guide.md) for detailed conversion examples, including the [ISO 20022 integration section](../../docs/adoption-guide.md#6-use-case-5-integrating-with-legacy-payment-rails-via-iso-20022).

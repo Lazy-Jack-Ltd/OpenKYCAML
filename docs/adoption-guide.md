@@ -15,9 +15,10 @@ This guide walks you through integrating OpenKYCAML into your product or infrast
 3. [Use Case 2: Third-Party CDD Reliance (Bank)](#3-use-case-2-third-party-cdd-reliance-bank)
 4. [Use Case 3: Portable KYC with eIDAS 2.0 VC](#4-use-case-3-portable-kyc-with-eidas-20-vc)
 5. [Use Case 4: Full KYC Profile Sharing](#5-use-case-4-full-kyc-profile-sharing)
-6. [Validation](#6-validation)
-7. [Versioning and Upgrades](#7-versioning-and-upgrades)
-8. [FAQ](#8-faq)
+6. [Use Case 5: Integrating with Legacy Payment Rails via ISO 20022](#6-use-case-5-integrating-with-legacy-payment-rails-via-iso-20022)
+7. [Validation](#7-validation)
+8. [Versioning and Upgrades](#8-versioning-and-upgrades)
+9. [FAQ](#9-faq)
 
 ---
 
@@ -158,7 +159,57 @@ See [`examples/legal-entity-plain.json`](../examples/legal-entity-plain.json) an
 
 ---
 
-## 6. Validation
+## 6. Use Case 5: Integrating with Legacy Payment Rails via ISO 20022
+
+### Goal
+Embed a full OpenKYCAML KYC/AML payload inside an ISO 20022 `pacs.008` (interbank credit transfer) or `pain.001` (customer credit transfer initiation) message for Travel Rule, CDD reliance, or audit-trail purposes — without modifying the ISO 20022 schema or breaking existing parsers.
+
+### The `<SplmtryData>` Mechanism
+
+ISO 20022 provides a standards-approved extension point called `<SplmtryData>`. OpenKYCAML uses this to embed the full KYC/AML dataset — risk scores, screening results, eIDAS 2.0 VC proofs, consent records, GDPR metadata — alongside the standard payment fields.
+
+The `<PlcAndNm>` discriminator `OpenKYCAML/KYCAMLEnvelope/1.0` identifies the envelope. All conforming parsers check this value before attempting to decode the `<Envlp>` content.
+
+### Supported Profiles
+
+| Profile | File | Use Case |
+|---|---|---|
+| Travel Rule (CBPR+) | [`travel-rule-pacs.008-profile.json`](../iso20022-integration/profiles/travel-rule-pacs.008-profile.json) | FATF Rec 16 / MiCA Art. 83 VASP-to-VASP transfer |
+| CDD Reliance | [`pain.001-kyc-envelope-profile.json`](../iso20022-integration/profiles/pain.001-kyc-envelope-profile.json) | AMLR Art. 48 third-party CDD reliance |
+| Audit Trail | [`camt.053-kyc-audit-profile.json`](../iso20022-integration/profiles/camt.053-kyc-audit-profile.json) | AMLR Art. 56 five-year record-keeping |
+
+### Quick Start (Python)
+
+```python
+import json
+import sys
+
+sys.path.insert(0, "iso20022-integration/libraries/python")
+from converter import openkycaml_to_pacs008, iso20022_to_openkycaml
+
+# Convert OpenKYCAML payload → pacs.008 XML
+with open("examples/minimal-travel-rule.json") as f:
+    payload = json.load(f)
+
+xml = openkycaml_to_pacs008(payload)
+print(xml)          # Full pacs.008 with <SplmtryData> KYCAMLEnvelope
+
+# Parse pacs.008 XML back → OpenKYCAML dict
+recovered = iso20022_to_openkycaml(xml)
+print(recovered["ivms101"]["originator"])
+```
+
+### XML Examples
+
+- [`pacs.008-with-openkycaml-supplementarydata.xml`](../iso20022-integration/examples/pacs.008-with-openkycaml-supplementarydata.xml) — Full CBPR+ Travel Rule message
+- [`pain.001-with-kyc-envelope.xml`](../iso20022-integration/examples/pain.001-with-kyc-envelope.xml) — Corporate CDD reliance message
+- [`minimal-travel-rule-pacs008-snippet.xml`](../iso20022-integration/examples/minimal-travel-rule-pacs008-snippet.xml) — Copy-paste `<SplmtryData>` block
+
+See [`iso20022-integration/`](../iso20022-integration/) for the complete module, including TypeScript support, bidirectional field mapping, and the `KYCAMLEnvelope` JSON Schema.
+
+---
+
+## 7. Validation
 
 ### Online Validator
 Use the online validator at [https://openkycaml.org/validate](https://openkycaml.org/validate) to check any payload instantly.
@@ -194,7 +245,7 @@ else:
 
 ---
 
-## 7. Versioning and Upgrades
+## 8. Versioning and Upgrades
 
 OpenKYCAML follows **semantic versioning** (MAJOR.MINOR.PATCH):
 
@@ -213,7 +264,7 @@ When upgrading:
 
 ---
 
-## 8. FAQ
+## 9. FAQ
 
 **Q: Do I need to use the `verifiableCredential` wrapper?**
 No. It is entirely optional. Use it only if you need eIDAS 2.0 / EUDIW-compatible attestations.
