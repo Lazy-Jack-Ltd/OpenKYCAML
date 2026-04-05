@@ -175,4 +175,35 @@ _✅ = full field mapping. 🔄 = conceptual equivalent (see [mapping-erc3643.md
 
 ---
 
+## 11. Sovrin / Hyperledger Indy (AnonCreds) — Decentralised Identity Network
+
+> Sovrin is a public permissioned blockchain for self-sovereign identity built on Hyperledger Indy, using AnonCreds (Camenisch-Lysyanskaya) zero-knowledge proof credentials. The full field-level mapping is in [mapping-sovrin.md](mapping-sovrin.md).
+
+| Sovrin / Indy Data Point | Coverage | OpenKYCAML Field(s) |
+|---|---|---|
+| **DID** (`did:sov:<base58>` / `did:indy:<ns>:<base58>`) | ✅ | `verifiableCredential.credentialSubject.id` |
+| **Verification key** (Ed25519 base58 public key) | ✅ | `verifiableCredential.proof.verificationMethod` (DID URL) |
+| **Credential Schema ID** (`<did>:2:<name>:<version>`) | ✅ | `verifiableCredential.credentialSchema.id` |
+| **Credential Definition ID** (`<did>:3:CL:<seqNo>:<tag>`) | ✅ | `verifiableCredential.credentialSchema.credDefId` |
+| **Revocation Registry ID** (CL_ACCUM accumulator) | ✅ | `verifiableCredential.credentialStatus.id` |
+| **Revocation type** (`AnonCredsCredentialStatusList2023`) | ✅ | `verifiableCredential.credentialStatus.type` |
+| **CL Proof type** (`CLSignature2019`, `AnonCredsProof2023`) | ✅ | `verifiableCredential.proof.type` |
+| **Natural person attributes** (first_name, last_name, birth_date, address, document numbers) | ✅ | `ivms101.originator.*.naturalPerson.*` |
+| **Legal entity attributes** (org_name, registration_number, LEI, jurisdiction) | ✅ | `ivms101.originator.*.legalPerson.*` |
+| **KYC status** (`kyc_status`, `kyc_verified`) | ✅ | `kycProfile.isEligible` + `kycProfile.kycCompletionDate` |
+| **Risk level** (`risk_level`) | ✅ | `kycProfile.customerRiskRating.overallRiskRating` |
+| **AML check date** | ✅ | `kycProfile.sanctionsScreening.lastScreenedDate` |
+| **UBO / beneficial owner** | ✅ | `kycProfile.beneficialOwnership[]` |
+| **Selective disclosure / ZKP attributes** | ✅ | `verifiableCredential.selectiveDisclosure` |
+| **Consent / TAA acceptance** (TAA mechanism, time, digest) | 🔄 | `kycProfile.consentRecord` (mechanism, timestamp, version) |
+| **Rich Schema** (JSON_LD_CONTEXT, RICH_SCHEMA) | ✅ | `verifiableCredential.credentialSchema.id` (did:sov URI) + `@context[]` |
+| **Rich Schema Credential Definition** (RICH_SCHEMA_CRED_DEF) | ✅ | `verifiableCredential.credentialSchema.credDefId` |
+| **DID Document service endpoints** | ℹ️ | Out of scope — agent infrastructure, not KYC data |
+| **Ledger transaction metadata** (seqNo, txnTime) | ℹ️ | Out of scope — network infrastructure |
+| **NYM network roles** (TRUSTEE, STEWARD, ENDORSER) | ℹ️ | Out of scope — ledger governance, not investor KYC data |
+
+_✅ = full field mapping. 🔄 = conceptual equivalent (see [mapping-sovrin.md](mapping-sovrin.md)). ℹ️ = out of scope._
+
+---
+
 *Last updated: v1.2.0 — April 2026. Maintained by the OpenKYCAML Technical Working Group.*

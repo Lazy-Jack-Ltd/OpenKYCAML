@@ -633,7 +633,9 @@
           "examples": [
             "Ed25519Signature2020",
             "JsonWebSignature2020",
-            "DataIntegrityProof"
+            "DataIntegrityProof",
+            "CLSignature2019",
+            "AnonCredsProof2023"
           ]
         },
         "created": {
@@ -776,15 +778,18 @@
             },
             "type": {
               "type": "string",
+              "description": "Revocation status type. 'StatusList2021Entry' for W3C Status List 2021; 'RevocationList2020Status' for earlier W3C spec; 'AnonCredsCredentialStatusList2023' for Hyperledger AnonCreds CL_ACCUM accumulator-based revocation (Sovrin/Indy).",
               "examples": [
                 "StatusList2021Entry",
-                "RevocationList2020Status"
+                "RevocationList2020Status",
+                "AnonCredsCredentialStatusList2023"
               ]
             }
           }
         },
         "credentialSchema": {
           "type": "object",
+          "description": "Schema identifier for this credential. For W3C JSON Schema credentials use type 'JsonSchemaValidator2018'. For Hyperledger AnonCreds (Sovrin/Indy) credentials use type 'AnonCredsDefinition' with the Sovrin ledger schema ID in 'id' and the Credential Definition ID in 'credDefId'.",
           "required": [
             "id",
             "type"
@@ -792,11 +797,21 @@
           "properties": {
             "id": {
               "type": "string",
-              "format": "uri"
+              "format": "uri",
+              "description": "URI of the credential schema. For JSON Schema credentials: an HTTPS URI resolving to the JSON Schema. For AnonCreds credentials: the Sovrin/Indy schema ledger identifier in the format '<issuerDID>:2:<schemaName>:<schemaVersion>' (e.g. 'Gs6cQcvrtWoZKsbBhD3dQJ:2:KYCCredential:1.0')."
             },
             "type": {
               "type": "string",
-              "const": "JsonSchemaValidator2018"
+              "description": "Schema validator type. 'JsonSchemaValidator2018' for W3C JSON Schema credentials; 'AnonCredsDefinition' for Hyperledger AnonCreds / Sovrin credentials.",
+              "enum": [
+                "JsonSchemaValidator2018",
+                "AnonCredsDefinition",
+                "JsonSchema"
+              ]
+            },
+            "credDefId": {
+              "type": "string",
+              "description": "Hyperledger AnonCreds / Sovrin Credential Definition ID. Format: '<issuerDID>:3:<signatureType>:<schemaSeqNo>:<tag>' (e.g. 'Gs6cQcvrtWoZKsbBhD3dQJ:3:CL:1234:default'). Only required when type is 'AnonCredsDefinition'. Uniquely identifies the public key and non-revocation parameters used to issue the AnonCreds credential."
             }
           }
         },
