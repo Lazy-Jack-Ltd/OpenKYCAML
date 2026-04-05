@@ -148,6 +148,140 @@ _SD_JWT_DEFAULT_HASH_ALG = "sha-256"
 
 
 # ---------------------------------------------------------------------------
+# GDPR sensitivity metadata models
+# ---------------------------------------------------------------------------
+
+
+class GdprConsentRecord(BaseModel):
+    """Explicit consent record for GDPR-sensitive data processing."""
+
+    consentGiven: bool = Field(
+        ...,
+        description="Whether the data subject has given explicit consent to process this sensitive data.",
+    )
+    consentDate: datetime | None = Field(
+        None,
+        description="ISO 8601 date-time when consent was obtained.",
+    )
+    withdrawalPossible: bool | None = Field(
+        None,
+        description="Whether the data subject may withdraw consent. For AML/SAR data this is typically False (legal obligation overrides consent withdrawal).",
+    )
+
+    model_config = {"extra": "forbid"}
+
+
+class DisclosurePolicy(BaseModel):
+    """Machine-readable policy governing which parties may receive sensitive data."""
+
+    allowedRecipients: list[str] = Field(
+        default_factory=list,
+        description="Permitted recipient categories or DIDs. Examples: 'regulated_fi', 'fiu_only', 'did:web:counterparty.example.com'.",
+    )
+    prohibitedRecipients: list[str] = Field(
+        default_factory=list,
+        description="Categories or entities explicitly prohibited from receiving this data. Set 'data_subject' when tippingOffProtected is True.",
+    )
+    requiresExplicitConsent: bool | None = Field(
+        None,
+        description="When True, the recipient must obtain explicit consent or supervisory authority approval before accessing affected fields.",
+    )
+
+    model_config = {"extra": "forbid"}
+
+
+class GdprSensitivityMetadata(BaseModel):
+    """
+    GDPR/AML sensitivity classification for an OpenKYCAML payload or specific fields.
+
+    Provides machine-readable tipping-off protection flags (AMLR Art. 73 / FATF
+    Rec. 21), GDPR Art. 9/10 criminal-data safeguards, retention rules, and
+    disclosure policies for use in EUDI Wallet presentation flows.
+
+    When ``tippingOffProtected`` is ``True`` and ``classification`` is
+    ``"sar_restricted"`` or ``"internal_suspicion"``, wallets and relying parties
+    MUST NOT render or forward the affected fields to the data subject or any
+    unauthorised party.
+
+    Parameters
+    ----------
+    classification : str
+        Primary sensitivity class.  One of: ``standard``, ``sensitive_personal``,
+        ``criminal_offence``, ``sar_restricted``, ``internal_suspicion``,
+        ``confidential_aml``.
+    restricted_fields : list[str]
+        RFC 6901 JSON Pointer paths to restricted fields within this payload.
+        When empty the classification applies to the entire envelope.
+    tipping_off_protected : bool | None
+        Must be ``True`` when ``classification`` is ``"sar_restricted"`` or
+        ``"internal_suspicion"``.
+    legal_basis : str | None
+        Legal basis for processing.  One of the enumerated GDPR/AMLR codes.
+    retention_period : str | None
+        ISO 8601 duration (e.g. ``"P5Y"``).
+    consent_record : GdprConsentRecord | None
+        Explicit consent record (required when legal basis is consent).
+    disclosure_policy : DisclosurePolicy | None
+        Recipient allowlist and blocklist.
+    audit_reference : str | None
+        Opaque reference to the DPO record or SAR case identifier.
+        MUST NOT contain SAR narrative content.
+    """
+
+    classification: Literal[
+        "standard",
+        "sensitive_personal",
+        "criminal_offence",
+        "sar_restricted",
+        "internal_suspicion",
+        "confidential_aml",
+    ]
+    restricted_fields: list[str] = Field(
+        default_factory=list,
+        alias="restrictedFields",
+        description="RFC 6901 JSON Pointer paths to individual restricted fields.",
+    )
+    tipping_off_protected: bool | None = Field(
+        None,
+        alias="tippingOffProtected",
+        description="When True, SAR/STR existence must not be revealed to the data subject.",
+    )
+    legal_basis: Literal[
+        "GDPR-Art6-1c",
+        "GDPR-Art6-1e",
+        "GDPR-Art9-2g",
+        "GDPR-Art10",
+        "AMLR-Art55",
+        "AMLR-Art73",
+        "national_AML_law",
+    ] | None = Field(None, alias="legalBasis")
+    retention_period: str | None = Field(
+        None,
+        alias="retentionPeriod",
+        description="ISO 8601 duration, e.g. 'P5Y'. Overrides kycProfile.auditMetadata.dataRetentionDate.",
+    )
+    consent_record: GdprConsentRecord | None = Field(None, alias="consentRecord")
+    disclosure_policy: DisclosurePolicy | None = Field(None, alias="disclosurePolicy")
+    audit_reference: str | None = Field(
+        None,
+        alias="auditReference",
+        max_length=256,
+        description="Opaque reference to DPO record or SAR case ID. MUST NOT contain SAR content.",
+    )
+
+    model_config = {"populate_by_name": True, "extra": "forbid"}
+
+    @model_validator(mode="after")
+    def _tipping_off_required_for_sar(self) -> "GdprSensitivityMetadata":
+        if self.classification in ("sar_restricted", "internal_suspicion"):
+            if not self.tipping_off_protected:
+                raise ValueError(
+                    f"tippingOffProtected must be True when classification is '{self.classification}'."
+                )
+        return self
+
+
+# ---------------------------------------------------------------------------
 # SD-JWT selective disclosure models
 # ---------------------------------------------------------------------------
 
@@ -288,7 +422,7 @@ class WalletConfig(BaseModel):
 # Main OpenKYCAMLVC model
 # ---------------------------------------------------------------------------
 
-_SCHEMA_BASE = "https://openkycaml.org/schema/v1.2.0/kyc-aml-hybrid-extended.json"
+_SCHEMA_BASE = "https://openkycaml.org/schema/v1.3.0/kyc-aml-hybrid-extended.json"
 _VC_TYPE_URI = "https://openkycaml.org/credentials/v1/OpenKYCAMLCredential"
 _VC_CONTEXTS = [
     "https://www.w3.org/2018/credentials/v1",
@@ -324,6 +458,12 @@ class OpenKYCAMLVC(BaseModel):
         SD-JWT selective disclosure descriptor.  Required for ``dc+sd-jwt`` output.
     trusted_issuers : list[TrustedIssuer]
         Optional issuer allowlist published alongside the credential configuration.
+    gdpr_sensitivity : GdprSensitivityMetadata | None
+        Optional GDPR/AML sensitivity classification block.  Set this to
+        ``GdprSensitivityMetadata(classification="sar_restricted",
+        tippingOffProtected=True, ...)`` when the payload contains SAR material.
+        Wallets and relying parties that honour this field MUST NOT disclose
+        SAR-restricted fields to the data subject or unauthorised parties.
     message_id : str
         Unique message identifier (UUID v4).  Auto-generated if not provided.
     message_date_time : datetime
@@ -339,6 +479,10 @@ class OpenKYCAMLVC(BaseModel):
     evidence: list[CredentialEvidence] = Field(default_factory=list)
     selective_disclosure: SelectiveDisclosure | None = None
     trusted_issuers: list[TrustedIssuer] = Field(default_factory=list)
+    gdpr_sensitivity: GdprSensitivityMetadata | None = Field(
+        None,
+        description="Optional GDPR/AML sensitivity classification. When set with classification='sar_restricted' or 'internal_suspicion', tippingOffProtected is enforced automatically.",
+    )
 
     message_id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     message_date_time: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
@@ -417,7 +561,7 @@ class OpenKYCAMLVC(BaseModel):
         """
         envelope: dict[str, Any] = {
             "$schema": _SCHEMA_BASE,
-            "version": "1.2.0",
+            "version": "1.3.0",
             "messageId": self.message_id,
             "messageDateTime": self._issuance_date(),
             "verifiableCredential": self._build_vc_block(validity_days),
@@ -430,6 +574,10 @@ class OpenKYCAMLVC(BaseModel):
             envelope["trustedIssuers"] = [
                 ti.model_dump(mode="json", exclude_none=True) for ti in self.trusted_issuers
             ]
+        if self.gdpr_sensitivity:
+            envelope["gdprSensitivityMetadata"] = self.gdpr_sensitivity.model_dump(
+                mode="json", by_alias=True, exclude_none=True
+            )
         return envelope
 
     # ------------------------------------------------------------------

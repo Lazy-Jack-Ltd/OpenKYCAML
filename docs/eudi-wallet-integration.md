@@ -20,6 +20,7 @@ specifications.
 9. [Revocation and Status](#9-revocation-and-status)
 10. [Trusted Issuer Validation](#10-trusted-issuer-validation)
 11. [Examples](#11-examples)
+12. [Handling Restricted Data in EUDIW Presentations](#12-handling-restricted-data-in-eudiw-presentations)
 
 ---
 
@@ -419,8 +420,197 @@ The EU Commission publishes the authoritative List of Trusted Lists (LOTL) at:
 | [`examples/legal-entity-sd-jwt-eudi-wallet.json`](../examples/legal-entity-sd-jwt-eudi-wallet.json) | Legal entity SD-JWT credential |
 | [`examples/sd-jwt-compact-token.json`](../examples/sd-jwt-compact-token.json) | Annotated SD-JWT compact-token format — shows encoded `_sd` digests and `~disclosure` structure |
 | [`examples/full-kyc-profile-eudi-wallet.json`](../examples/full-kyc-profile-eudi-wallet.json) | Full KYC profile with EUDI Wallet evidence |
+| [`examples/hybrid-with-sar-restriction.json`](../examples/hybrid-with-sar-restriction.json) | SAR-restricted VC with `gdprSensitivityMetadata`, `tippingOffProtected: true`, and SD-JWT withholding of SAR fields |
+
+---
+
+## 12. Handling Restricted Data in EUDIW Presentations
+
+### 12.1 The Tipping-Off Problem
+
+When an OpenKYCAML credential is issued to a user's EUDI Wallet, there is a
+fundamental tension between:
+
+- **Portability** — the user controls their credential and may present it to any
+  relying party.
+- **Tipping-off prohibition** — AMLR Art. 73 and FATF Recommendation 21 make it a
+  criminal offence in most jurisdictions to disclose the *existence* of a SAR/STR
+  or internal suspicion flag to the data subject or to parties outside the AML
+  compliance chain.
+
+Without explicit sensitivity metadata, a user's wallet app could inadvertently
+display SAR-related fields in the credential viewer, or a relying party could
+inadvertently request and receive them via an OpenID4VP presentation.
+
+### 12.2 The `gdprSensitivityMetadata` Block
+
+OpenKYCAML v1.3.0 introduces the optional **`gdprSensitivityMetadata`** top-level
+object. It provides a machine-readable classification that wallets, issuers, and
+relying parties can consume to enforce the correct data-handling policy
+automatically.
+
+```json
+"gdprSensitivityMetadata": {
+  "classification": "sar_restricted",
+  "restrictedFields": [
+    "/kycProfile/adverseMedia",
+    "/kycProfile/sarFilingReference",
+    "/kycProfile/internalSuspicionFlag"
+  ],
+  "tippingOffProtected": true,
+  "legalBasis": "AMLR-Art73",
+  "retentionPeriod": "P5Y",
+  "consentRecord": {
+    "consentGiven": false,
+    "withdrawalPossible": false
+  },
+  "disclosurePolicy": {
+    "allowedRecipients": ["fiu_only", "law_enforcement_authority"],
+    "prohibitedRecipients": ["data_subject", "counterparty_vasp"],
+    "requiresExplicitConsent": false
+  },
+  "auditReference": "sar-case-ref:sha256:c7f3e2a1b9d8f45e..."
+}
+```
+
+#### Classification values
+
+| Value | Meaning | Applicable regulation |
+|---|---|---|
+| `standard` | Ordinary personal data | GDPR Art. 6 |
+| `sensitive_personal` | Special-category data (biometrics, health) | GDPR Art. 9 |
+| `criminal_offence` | Data on criminal convictions or offences | GDPR Art. 10 |
+| `sar_restricted` | SAR/STR material — tipping-off protected | AMLR Art. 73 / FATF Rec. 21 |
+| `internal_suspicion` | Internal AML suspicion not yet formalised as SAR | AMLR Art. 73 |
+| `confidential_aml` | AML/CFT investigation data | AMLR Art. 55 |
+
+#### Enforcement rule
+
+When `tippingOffProtected` is `true`:
+
+1. **Issuer**: MUST NOT include SAR field values in the SD-JWT `decodedDisclosures`
+   array. The fields appear only as SHA-256 digests in the `_sd` array of the
+   Issuer-JWT and are never appended to a presentation token.
+2. **Wallet software**: MUST NOT render `restrictedFields` in the credential
+   viewer UI. The wallet MAY display a generic "Restricted — regulatory compliance"
+   placeholder.
+3. **Relying party**: MUST NOT include `restrictedFields` in `input_descriptors`
+   of an OpenID4VP `presentation_definition`. Any presentation token containing
+   a disclosure for a restricted field MUST be rejected.
+4. **Audit log**: The issuer MUST record the `auditReference` in its DPO/AML
+   compliance register. The `auditReference` value MUST be an opaque identifier —
+   it MUST NOT contain the SAR narrative or case details.
+
+### 12.3 Cryptographic Enforcement with SD-JWT
+
+The `gdprSensitivityMetadata.restrictedFields` declaration is a policy hint.
+**Cryptographic enforcement** is achieved by never generating SD-JWT disclosures
+for the restricted fields:
+
+```
+Compact SD-JWT token = <Issuer-JWT>~<disclosure-name>~<disclosure-address>~<kb-JWT>
+```
+
+SAR-restricted claims (`adverseMedia`, `sarFilingReference`, `internalSuspicionFlag`)
+have SHA-256 digests in the Issuer-JWT `_sd` array but no corresponding
+`~disclosure` appended. A relying party that receives this token cannot reconstruct
+the restricted values even if they attempt to brute-force the salt (the salt is
+cryptographically random and at least 128 bits).
+
+This two-layer approach (policy metadata + cryptographic withholding) is the
+recommended pattern:
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  gdprSensitivityMetadata  (policy layer)                        │
+│  ─────────────────────────────────────────────────────────────  │
+│  classification:         sar_restricted                         │
+│  tippingOffProtected:    true                                    │
+│  disclosurePolicy:       allowedRecipients: [fiu_only]          │
+│                          prohibitedRecipients: [data_subject]   │
+└─────────────────────────────────────────────────────────────────┘
+         │
+         ▼  enforced by
+┌─────────────────────────────────────────────────────────────────┐
+│  SD-JWT cryptographic layer                                     │
+│  ─────────────────────────────────────────────────────────────  │
+│  SAR fields: digest only in _sd[]  ← NO disclosure appended    │
+│  Other fields: normal disclosures appended after ~              │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### 12.4 Issuer Guidance: When to Set `tippingOffProtected`
+
+Issuers MUST set `gdprSensitivityMetadata` with `classification: "sar_restricted"`
+and `tippingOffProtected: true` in any OpenKYCAML credential that:
+
+- Contains a `kycProfile.adverseMedia` entry linked to a filed SAR/STR.
+- Contains an internal suspicion flag or AML case reference.
+- Is issued after the obliged entity has filed or is considering filing a SAR.
+
+Issuers SHOULD also:
+
+- Populate `disclosurePolicy.prohibitedRecipients` with at minimum `"data_subject"`.
+- Set `legalBasis: "AMLR-Art73"` and `retentionPeriod: "P5Y"` (or longer per
+  national law).
+- Use a cryptographic hash or UUID for `auditReference` — never embed the SAR
+  narrative.
+- Instruct the wallet delivery system to suppress the credential from the wallet's
+  credential viewer if the wallet supports sensitivity-aware display.
+
+### 12.5 GDPR Art. 9 / Art. 10 Data
+
+For credentials containing biometric data, health data, or data relating to
+criminal convictions or offences (GDPR Art. 9 / Art. 10):
+
+- Use `classification: "sensitive_personal"` or `"criminal_offence"` respectively.
+- Set `legalBasis` to `"GDPR-Art9-2g"` (substantial public interest) or
+  `"GDPR-Art10"` (official authority).
+- `tippingOffProtected` is not required for Art. 9/10 data unless it also
+  relates to a SAR. Set `disclosurePolicy.requiresExplicitConsent: true` where
+  national law requires documented consent.
+
+### 12.6 Python Helper
+
+Using the `GdprSensitivityMetadata` Pydantic model from `tools/python/models.py`:
+
+```python
+from tools.python.models import (
+    OpenKYCAMLVC, KYCProfileModel, GdprSensitivityMetadata,
+    GdprConsentRecord, DisclosurePolicy,
+)
+
+vc = OpenKYCAMLVC(
+    credential_subject_did="did:ebsi:z5KMnPq9rLtUvWxYz3NjRsT",
+    issuer_did="did:web:acme-crypto.example.nl",
+    issuer_name="Acme Crypto Exchange BV",
+    kyc_profile=KYCProfileModel(customerRiskRating="HIGH", dueDiligenceType="EDD"),
+    gdpr_sensitivity=GdprSensitivityMetadata(
+        classification="sar_restricted",
+        tippingOffProtected=True,          # enforced by model validator
+        legalBasis="AMLR-Art73",
+        retentionPeriod="P5Y",
+        restrictedFields=[
+            "/kycProfile/adverseMedia",
+            "/kycProfile/sarFilingReference",
+        ],
+        consentRecord=GdprConsentRecord(consentGiven=False, withdrawalPossible=False),
+        disclosurePolicy=DisclosurePolicy(
+            allowedRecipients=["fiu_only"],
+            prohibitedRecipients=["data_subject"],
+        ),
+        auditReference="sar-case-ref:sha256:c7f3e2a1b9d8f45e6c09...",
+    ),
+)
+envelope = vc.issue()
+```
+
+The model validator raises a `ValueError` at construction time if
+`tippingOffProtected` is missing or `False` for `sar_restricted` or
+`internal_suspicion` classifications, preventing accidental omission of the
+tipping-off flag.
 
 ---
 
 *This document is part of the [OpenKYCAML](https://openkycaml.org) specification.*
-*For schema details see [`schema/versions/v1.2.0.json`](../schema/versions/v1.2.0.json).*
+*For schema details see [`schema/versions/v1.3.0.json`](../schema/versions/v1.3.0.json).*
