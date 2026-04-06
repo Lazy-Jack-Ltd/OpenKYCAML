@@ -215,28 +215,20 @@ node validator.js ../../examples/full-kyc-profile.json
 
 ## Example Payloads
 
-Every scenario is available in two forms: a **plain IVMS 101** baseline and an **EUDI Wallet VC-wrapped** companion that demonstrates DID triangulation (subject wallet DID · PID/LPID issuer DID · VASP DID). SD-JWT selective disclosure variants are provided for the natural person and legal entity scenarios.
+There are **25 example payloads** in [`examples/`](examples/) covering the full range of scenarios — from a minimal two-party Travel Rule message to complex 4-tier ownership structures, EUDI Wallet DID triangulation, SD-JWT selective disclosure, and v1.5.0 Verification Document Bundles.
 
-| Scenario | Plain baseline | EUDI Wallet / DID version |
+The complete catalogue with per-file descriptions, schema block inventory, and testing guidance is in **[`examples/EXAMPLES.md`](examples/EXAMPLES.md)**.
+
+### Highlights
+
+| Scenario | File(s) | Schema ver |
 |---|---|---|
-| Natural person Travel Rule | [`natural-person-plain.json`](examples/natural-person-plain.json) | [`natural-person-eudi-wallet.json`](examples/natural-person-eudi-wallet.json) |
-| Natural person — SD-JWT selective disclosure | — | [`natural-person-sd-jwt-eudi-wallet.json`](examples/natural-person-sd-jwt-eudi-wallet.json) |
-| Legal entity Travel Rule | [`legal-entity-plain.json`](examples/legal-entity-plain.json) | [`legal-entity-eudi-wallet.json`](examples/legal-entity-eudi-wallet.json) |
-| Legal entity — SD-JWT selective disclosure | — | [`legal-entity-sd-jwt-eudi-wallet.json`](examples/legal-entity-sd-jwt-eudi-wallet.json) |
-| Legal entity — Deep UBO chain (AMLR Art. 26) | [`legal-entity-deep-ubo.json`](examples/legal-entity-deep-ubo.json) | — |
-| Legal entity — Trust structure | [`legal-entity-trust.json`](examples/legal-entity-trust.json) | — |
-| Legal entity — Partnership (LLP) | [`legal-entity-partnership.json`](examples/legal-entity-partnership.json) | — |
-| Hybrid VC-wrapped (IVMS 101 + kycProfile) | [`hybrid-vc-wrapped.json`](examples/hybrid-vc-wrapped.json) | [`hybrid-vc-eudi-wallet.json`](examples/hybrid-vc-eudi-wallet.json) |
-| Full KYC profile (EDD, PEP, UBOs) | [`full-kyc-profile.json`](examples/full-kyc-profile.json) | [`full-kyc-profile-eudi-wallet.json`](examples/full-kyc-profile-eudi-wallet.json) |
-| Minimal Travel Rule | [`minimal-travel-rule.json`](examples/minimal-travel-rule.json) | [`minimal-travel-rule-eudi-wallet.json`](examples/minimal-travel-rule-eudi-wallet.json) |
-| Travel Rule VC-wrapped | [`travel-rule-vc-wrapped.json`](examples/travel-rule-vc-wrapped.json) | [`travel-rule-vc-eudi-wallet.json`](examples/travel-rule-vc-eudi-wallet.json) |
-| SAR-restricted VC — tipping-off protection (v1.3.0) | [`hybrid-with-sar-restriction.json`](examples/hybrid-with-sar-restriction.json) | — |
-| Complex multi-tier group ownership | [`complex-group-multi-tier.json`](examples/complex-group-multi-tier.json) | — |
-| Foundation complex UBO | [`foundation-complex-ubo.json`](examples/foundation-complex-ubo.json) | — |
-| LLP complex UBO | [`llp-complex-ubo.json`](examples/llp-complex-ubo.json) | — |
-| Trust complex UBO | [`trust-complex-ubo.json`](examples/trust-complex-ubo.json) | — |
-| **Document bundle — natural person (v1.5.0)** | [`document-bundle-natural-person.json`](examples/document-bundle-natural-person.json) | — |
-| **Document bundle — legal entity UK PLC (v1.5.0)** | [`document-bundle-legal-entity.json`](examples/document-bundle-legal-entity.json) | — |
+| Minimal Travel Rule (FATF baseline) | [`minimal-travel-rule.json`](examples/minimal-travel-rule.json) · [`-eudi-wallet`](examples/minimal-travel-rule-eudi-wallet.json) | 1.3.0 |
+| Natural person — full EDD / PEP profile | [`full-kyc-profile.json`](examples/full-kyc-profile.json) · [`-eudi-wallet`](examples/full-kyc-profile-eudi-wallet.json) | 1.3.0 |
+| Legal entity — deep 4-tier UBO chain (AMLR Art. 26) | [`legal-entity-deep-ubo.json`](examples/legal-entity-deep-ubo.json) | 1.3.0 |
+| ISO 20275 trust / partnership (ELF codes) | [`legal-entity-trust.json`](examples/legal-entity-trust.json) · [`legal-entity-partnership.json`](examples/legal-entity-partnership.json) | 1.4.0 |
+| Verification Document Bundle | [`document-bundle-natural-person.json`](examples/document-bundle-natural-person.json) · [`document-bundle-legal-entity.json`](examples/document-bundle-legal-entity.json) | 1.5.0 |
+| SAR tipping-off protection | [`hybrid-with-sar-restriction.json`](examples/hybrid-with-sar-restriction.json) | 1.3.0 |
 
 ### EUDI Wallet examples — DID triangulation
 

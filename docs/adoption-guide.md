@@ -244,6 +244,15 @@ else:
         print(f"  {error.path}: {error.message}")
 ```
 
+### Using examples as test fixtures
+
+The [`examples/`](../examples/) directory contains 25 schema-valid payloads covering the full range of compliance scenarios.  They are automatically validated by the CI workflow on every push — adding a new file to `examples/` enrolls it in CI with no workflow changes needed.
+
+See **[`examples/EXAMPLES.md`](../examples/EXAMPLES.md)** for:
+- A full per-file catalogue table (scenario, subject type, schema version, data blocks present)
+- Copy-paste pytest parametrize patterns for integration test suites
+- Notes on special files (`sd-jwt-compact-token.json`, `travel-rule-vc-wrapped.json`, document bundle examples)
+
 ---
 
 ## 8. Building a Compliant Document Bundle
