@@ -101,7 +101,7 @@ All IVMS 101 fields map 1:1 into the `ivms101` block. No IVMS 101 fields are ren
 
 ## 7. ISO 20022 Cross-Reference
 
-OpenKYCAML v1.3.0 ships a complete ISO 20022 bridge layer in [`iso20022-integration/`](../iso20022-integration/). The table below maps key OpenKYCAML fields to their ISO 20022 counterparts; for the full bidirectional mapping and gap analysis see [`iso20022-integration/mapping/`](../iso20022-integration/mapping/).
+OpenKYCAML v1.3.0 ships a complete ISO 20022 bridge layer in [`iso20022-integration/`](../../iso20022-integration/). The table below maps key OpenKYCAML fields to their ISO 20022 counterparts; for the full bidirectional mapping and gap analysis see [`iso20022-integration/mapping/`](../../iso20022-integration/mapping/).
 
 ### 7.1 Standard Field Mapping (ISO 20022 native elements)
 
@@ -140,10 +140,10 @@ The following OpenKYCAML fields have no ISO 20022 native counterpart and are emb
 
 For the complete Python and TypeScript converters, XML examples, and pre-validated profiles, see:
 
-- **Full integration module**: [`iso20022-integration/`](../iso20022-integration/)
-- **Bidirectional field mapping**: [`iso20022-integration/mapping/openkycaml-to-iso20022-mapping.yaml`](../iso20022-integration/mapping/openkycaml-to-iso20022-mapping.yaml)
-- **Gap analysis**: [`iso20022-integration/mapping/field-level-gap-analysis.md`](../iso20022-integration/mapping/field-level-gap-analysis.md)
-- **KYCAMLEnvelope JSON Schema**: [`iso20022-integration/supplementary-data/kyc-aml-envelope-schema.json`](../iso20022-integration/supplementary-data/kyc-aml-envelope-schema.json)
+- **Full integration module**: [`iso20022-integration/`](../../iso20022-integration/)
+- **Bidirectional field mapping**: [`iso20022-integration/mapping/openkycaml-to-iso20022-mapping.yaml`](../../iso20022-integration/mapping/openkycaml-to-iso20022-mapping.yaml)
+- **Gap analysis**: [`iso20022-integration/mapping/field-level-gap-analysis.md`](../../iso20022-integration/mapping/field-level-gap-analysis.md)
+- **KYCAMLEnvelope JSON Schema**: [`iso20022-integration/supplementary-data/kyc-aml-envelope-schema.json`](../../iso20022-integration/supplementary-data/kyc-aml-envelope-schema.json)
 - **Profiles**: pacs.008 CBPR+ Travel Rule, pain.001 CDD reliance, camt.053 audit trail
 
 ---

@@ -26,7 +26,7 @@ This guide walks you through integrating OpenKYCAML into your product or infrast
 ## 1. Prerequisites
 
 - An understanding of [IVMS 101](https://intervasp.org/) for the Travel Rule payload.
-- JSON Schema draft 2020-12 compatible validator (see [tools/](../tools/)).
+- JSON Schema draft 2020-12 compatible validator (see [tools/](../../tools/)).
 - Optional: familiarity with [W3C Verifiable Credentials Data Model v2](https://www.w3.org/TR/vc-data-model-2.0/) for VC wrapping.
 
 ---
@@ -60,7 +60,7 @@ For a FATF-compliant Travel Rule message, the `ivms101` block must include:
 - `originatingVASP.nationalIdentification.nationalIdentifier` (LEI preferred)
 
 ### Example
-See [`examples/minimal-travel-rule.json`](../examples/minimal-travel-rule.json).
+See [`examples/minimal-travel-rule.json`](../../examples/minimal-travel-rule.json).
 
 ### Integration Checklist
 - [ ] Generate a unique `messageId` (UUID v4) per message.
@@ -95,7 +95,7 @@ Accept KYC data from a third-party CDD provider and store/forward it in a standa
 | `kycProfile.pepStatus.isPEP` | If `true`, apply your own EDD before relying. |
 
 ### Example
-See [`examples/full-kyc-profile.json`](../examples/full-kyc-profile.json).
+See [`examples/full-kyc-profile.json`](../../examples/full-kyc-profile.json).
 
 ---
 
@@ -121,7 +121,7 @@ Issue a Verifiable Credential (VC) that encapsulates a customer's KYC/AML status
 - `DataIntegrityProof` — for advanced cryptographic suites (BBS+, etc.).
 
 ### Example
-See [`examples/hybrid-vc-wrapped.json`](../examples/hybrid-vc-wrapped.json).
+See [`examples/hybrid-vc-wrapped.json`](../../examples/hybrid-vc-wrapped.json).
 
 ---
 
@@ -156,7 +156,7 @@ When sharing a legal entity record, always include:
 Per AMLR Article 26, you **must** include the `beneficialOwnership` array for all legal entities, listing all UBOs with ≥ 25% ownership or effective control.
 
 ### Example
-See [`examples/legal-entity-plain.json`](../examples/legal-entity-plain.json) and [`examples/full-kyc-profile.json`](../examples/full-kyc-profile.json).
+See [`examples/legal-entity-plain.json`](../../examples/legal-entity-plain.json) and [`examples/full-kyc-profile.json`](../../examples/full-kyc-profile.json).
 
 ---
 
@@ -175,9 +175,9 @@ The `<PlcAndNm>` discriminator `OpenKYCAML/KYCAMLEnvelope/1.0` identifies the en
 
 | Profile | File | Use Case |
 |---|---|---|
-| Travel Rule (CBPR+) | [`travel-rule-pacs.008-profile.json`](../iso20022-integration/profiles/travel-rule-pacs.008-profile.json) | FATF Rec 16 / MiCA Art. 83 VASP-to-VASP transfer |
-| CDD Reliance | [`pain.001-kyc-envelope-profile.json`](../iso20022-integration/profiles/pain.001-kyc-envelope-profile.json) | AMLR Art. 48 third-party CDD reliance |
-| Audit Trail | [`camt.053-kyc-audit-profile.json`](../iso20022-integration/profiles/camt.053-kyc-audit-profile.json) | AMLR Art. 56 five-year record-keeping |
+| Travel Rule (CBPR+) | [`travel-rule-pacs.008-profile.json`](../../iso20022-integration/profiles/travel-rule-pacs.008-profile.json) | FATF Rec 16 / MiCA Art. 83 VASP-to-VASP transfer |
+| CDD Reliance | [`pain.001-kyc-envelope-profile.json`](../../iso20022-integration/profiles/pain.001-kyc-envelope-profile.json) | AMLR Art. 48 third-party CDD reliance |
+| Audit Trail | [`camt.053-kyc-audit-profile.json`](../../iso20022-integration/profiles/camt.053-kyc-audit-profile.json) | AMLR Art. 56 five-year record-keeping |
 
 ### Quick Start (Python)
 
@@ -202,11 +202,11 @@ print(recovered["ivms101"]["originator"])
 
 ### XML Examples
 
-- [`pacs.008-with-openkycaml-supplementarydata.xml`](../iso20022-integration/examples/pacs.008-with-openkycaml-supplementarydata.xml) — Full CBPR+ Travel Rule message
-- [`pain.001-with-kyc-envelope.xml`](../iso20022-integration/examples/pain.001-with-kyc-envelope.xml) — Corporate CDD reliance message
-- [`minimal-travel-rule-pacs008-snippet.xml`](../iso20022-integration/examples/minimal-travel-rule-pacs008-snippet.xml) — Copy-paste `<SplmtryData>` block
+- [`pacs.008-with-openkycaml-supplementarydata.xml`](../../iso20022-integration/examples/pacs.008-with-openkycaml-supplementarydata.xml) — Full CBPR+ Travel Rule message
+- [`pain.001-with-kyc-envelope.xml`](../../iso20022-integration/examples/pain.001-with-kyc-envelope.xml) — Corporate CDD reliance message
+- [`minimal-travel-rule-pacs008-snippet.xml`](../../iso20022-integration/examples/minimal-travel-rule-pacs008-snippet.xml) — Copy-paste `<SplmtryData>` block
 
-See [`iso20022-integration/`](../iso20022-integration/) for the complete module, including TypeScript support, bidirectional field mapping, and the `KYCAMLEnvelope` JSON Schema.
+See [`iso20022-integration/`](../../iso20022-integration/) for the complete module, including TypeScript support, bidirectional field mapping, and the `KYCAMLEnvelope` JSON Schema.
 
 ---
 
@@ -246,9 +246,9 @@ else:
 
 ### Using examples as test fixtures
 
-The [`examples/`](../examples/) directory contains 25 schema-valid payloads covering the full range of compliance scenarios.  They are automatically validated by the CI workflow on every push — adding a new file to `examples/` enrolls it in CI with no workflow changes needed.
+The [`examples/`](../../examples/) directory contains 25 schema-valid payloads covering the full range of compliance scenarios.  They are automatically validated by the CI workflow on every push — adding a new file to `examples/` enrolls it in CI with no workflow changes needed.
 
-See **[`examples/EXAMPLES.md`](../examples/EXAMPLES.md)** for:
+See **[`examples/EXAMPLES.md`](../../examples/EXAMPLES.md)** for:
 - A full per-file catalogue table (scenario, subject type, schema version, data blocks present)
 - Copy-paste pytest parametrize patterns for integration test suites
 - Notes on special files (`sd-jwt-compact-token.json`, `travel-rule-vc-wrapped.json`, document bundle examples)
@@ -393,8 +393,8 @@ Use the cross-reference fields added in v1.5.0 to connect verified claims back t
 
 ### 8.6 Complete Working Examples
 
-- **Natural person bundle:** [`examples/document-bundle-natural-person.json`](../examples/document-bundle-natural-person.json) — German national: Personalausweis + proof of address + eIDAS PID VC.
-- **Legal entity bundle (UK PLC):** [`examples/document-bundle-legal-entity.json`](../examples/document-bundle-legal-entity.json) — Certificate of Incorporation + Companies House extract + LEI registration + vLEI OOR + PSC register (GLEIF RAL `RA000585`, ELF code `Z13E`).
+- **Natural person bundle:** [`examples/document-bundle-natural-person.json`](../../examples/document-bundle-natural-person.json) — German national: Personalausweis + proof of address + eIDAS PID VC.
+- **Legal entity bundle (UK PLC):** [`examples/document-bundle-legal-entity.json`](../../examples/document-bundle-legal-entity.json) — Certificate of Incorporation + Companies House extract + LEI registration + vLEI OOR + PSC register (GLEIF RAL `RA000585`, ELF code `Z13E`).
 
 ---
 
@@ -435,7 +435,7 @@ Never for Travel Rule messages alone. It is required when sharing CDD data under
 Use your existing message encryption layer (e.g., JWE, TLS 1.3). OpenKYCAML defines the data structure, not the transport security. For VC-wrapped payloads, selective disclosure using SD-JWT or BBS+ is recommended.
 
 **Q: How do I flag SAR-related data to prevent tipping-off?**
-Use the `gdprSensitivityMetadata` block (added v1.3.0). Set `classification: "sar_restricted"`, `tippingOffProtected: true`, and populate `restrictedFields[]` with the JSON Pointer paths of SAR-linked fields. Set `disclosurePolicy.prohibitedRecipients` to include `"data_subject"`. Critically, do **not** include SAR-restricted fields in the SD-JWT `decodedDisclosures` array — they should appear only as `_sd` digests in the Issuer-JWT. See [`examples/hybrid-with-sar-restriction.json`](../examples/hybrid-with-sar-restriction.json) for a complete example, and §12 of the [EUDI Wallet Integration Guide](eudi-wallet-integration.md) for full guidance.
+Use the `gdprSensitivityMetadata` block (added v1.3.0). Set `classification: "sar_restricted"`, `tippingOffProtected: true`, and populate `restrictedFields[]` with the JSON Pointer paths of SAR-linked fields. Set `disclosurePolicy.prohibitedRecipients` to include `"data_subject"`. Critically, do **not** include SAR-restricted fields in the SD-JWT `decodedDisclosures` array — they should appear only as `_sd` digests in the Issuer-JWT. See [`examples/hybrid-with-sar-restriction.json`](../../examples/hybrid-with-sar-restriction.json) for a complete example, and §12 of the [EUDI Wallet Integration Guide](eudi-wallet-integration.md) for full guidance.
 
 **Q: What is the difference between `sar_restricted` and `internal_suspicion`?**
 `sar_restricted` is for data linked to a SAR/STR that has been (or is being) filed. `internal_suspicion` is for earlier-stage AML flags before a formal SAR decision. Both require `tippingOffProtected: true` — the Pydantic model enforces this at construction time.

@@ -2,7 +2,7 @@
 
 This document contains Mermaid sequence diagrams for the eIDAS 2.0 OpenKYCAML Verifiable Credential lifecycle: issuance via **OpenID4VCI** and presentation via **OpenID4VP**.
 
-For narrative integration guidance, see the [EUDI Wallet Integration Guide](../eudi-wallet-integration.md).
+For narrative integration guidance, see the [EUDI Wallet Integration Guide](../guides/eudi-wallet-integration.md).
 
 ---
 

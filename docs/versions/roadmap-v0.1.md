@@ -34,7 +34,7 @@
   - `kycProfile.dueDiligenceRequirements` block — machine-readable DD tier + verified attribute record per AMLR Art. 22; designed to track binding attribute sets once the AMLA RTS on CDD attribute sets is published.
   - `kycProfile.pepStatus.pepCategory` — consolidated AMLA draft RTS taxonomy: `DOMESTIC_PEP`, `FOREIGN_PEP`, `INTERNATIONAL_ORGANISATION`, `FAMILY_MEMBER_OF_PEP`, `CLOSE_ASSOCIATE_OF_PEP`, `FORMER_PEP`, `NOT_PEP` (AMLR Art. 28–31).
 - Compliance matrix updated to v1.2.0 (SD-JWT, deep UBO, PID/LPID, new AMLA RTS alignment section with pending-RTS tracking).
-- AMLR 2027 compliance checklist (`docs/amlr-2027-compliance-checklist.md`).
+- AMLR 2027 compliance checklist (`docs/compliance/amlr-2027-compliance-checklist.md`).
 - ⚠ Items pending AMLA RTS publication (to be finalised in v1.3.0 or v2.0.0 once binding RTS adopted):
   - CDD attribute sets per tier (Art. 22(4) RTS)
   - EDD measures for high-risk third countries (Art. 29(4) RTS)

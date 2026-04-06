@@ -1,6 +1,6 @@
 {
-  "$schema": "https://openkycaml.org/schema/v1.5.0/kyc-aml-hybrid-extended.json",
-  "version": "1.5.0",
+  "$schema": "https://openkycaml.org/schema/v1.6.0/kyc-aml-hybrid-extended.json",
+  "version": "1.6.0",
   "messageId": "MSG-LE-DOC-BUNDLE-001",
   "messageDateTime": "2026-04-06T09:00:00Z",
   "ivms101": {
@@ -129,6 +129,7 @@
         "verificationDate": "2026-03-15",
         "verifiedByName": "UK Digital Assets Exchange Ltd Compliance Team",
         "documentPresence": "Digital",
+        "documentId": "urn:openkycaml:doc:gb:cert-incorp:529900w18lqjjn6sj336:2009-06",
         "documentRef": "urn:doc:gb-cert-incorp-acme-global-trading-plc",
         "registryUrl": "https://find-and-update.company-information.service.gov.uk/company/00123456",
         "elfCodeVerified": "Z13E",
@@ -177,6 +178,7 @@
         "verificationDate": "2026-03-15",
         "verifiedByName": "UK Digital Assets Exchange Ltd Compliance Team",
         "documentPresence": "Digital",
+        "documentId": "urn:openkycaml:doc:gb:articles:529900w18lqjjn6sj336:2020-09",
         "documentRef": "urn:doc:gb-articles-acme-global-trading-plc-2020",
         "registryUrl": "https://find-and-update.company-information.service.gov.uk/company/00123456/filing-history",
         "elfCodeVerified": "Z13E",
@@ -211,6 +213,7 @@
         "verificationDate": "2026-03-15",
         "verifiedByName": "UK Digital Assets Exchange Ltd Compliance Team",
         "documentPresence": "Digital",
+        "documentId": "urn:openkycaml:doc:gb:registry-extract:529900w18lqjjn6sj336:2026-03",
         "documentRef": "urn:doc:gb-registry-extract-acme-global-trading-plc-2026-03",
         "registryUrl": "https://find-and-update.company-information.service.gov.uk/company/00123456",
         "elfCodeVerified": "Z13E",
@@ -248,6 +251,7 @@
         "verificationDate": "2026-03-15",
         "verifiedByName": "Bloomberg Finance L.P.",
         "documentPresence": "Digital",
+        "documentId": "urn:openkycaml:doc:gb:lei:529900w18lqjjn6sj336:2026-01",
         "documentRef": "urn:doc:lei-529900W18LQJJN6SJ336-confirmation-2026",
         "registryUrl": "https://www.gleif.org/en/lei-data/global-lei-index/lei-search?lei=529900W18LQJJN6SJ336",
         "elfCodeVerified": "Z13E",
@@ -298,6 +302,7 @@
         "credentialId": "urn:credential:vlei-oor-acme-director-j-bloggs-2026",
         "credentialIssuer": "did:web:qvi.luxtrust.lu",
         "vLEICredentialType": "OOR",
+        "documentId": "urn:openkycaml:doc:gb:vlei:529900w18lqjjn6sj336:2026-02",
         "documentRef": "urn:doc:vlei-oor-acme-global-trading-plc-j-bloggs-2026",
         "extractedAttributes": [
           {
@@ -340,6 +345,7 @@
         "verificationDate": "2026-03-15",
         "verifiedByName": "UK Digital Assets Exchange Ltd Compliance Team",
         "documentPresence": "Digital",
+        "documentId": "urn:openkycaml:doc:gb:ubo-register:529900w18lqjjn6sj336:2026-03",
         "documentRef": "urn:doc:gb-psc-register-acme-global-trading-plc-2026-03",
         "registryUrl": "https://find-and-update.company-information.service.gov.uk/company/00123456/persons-with-significant-control",
         "extractedAttributes": [

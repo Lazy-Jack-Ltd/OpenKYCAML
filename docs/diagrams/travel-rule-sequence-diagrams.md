@@ -2,7 +2,7 @@
 
 This document contains Mermaid sequence diagrams for the five major Travel Rule protocols supported by OpenKYCAML: **TRISA**, **OpenVASP**, **Notabene / DAP**, **TRP (SWIFT)**, and **Sygna Bridge**.
 
-For protocol integration code, see the [Travel Rule Implementation Guide](../travel-rule-implementation-guide.md).
+For protocol integration code, see the [Travel Rule Implementation Guide](../guides/travel-rule-implementation-guide.md).
 
 ---
 

@@ -230,3 +230,104 @@ jobs:
               exit 1
             fi
           done
+
+  lint-naming:
+    name: Lint file naming convention
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check file naming convention
+        run: |
+          python3 - <<'EOF'
+          import pathlib, re, sys
+
+          # Root-level conventional filenames that are exempt from kebab-case rule
+          ROOT_EXEMPT = {
+              "README.md", "CHANGELOG.md", "CONTRIBUTING.md", "GOVERNANCE.md",
+              "LICENSE", "SECURITY.md", "ROADMAP.md", "CODE_OF_CONDUCT.md", "NOTICE",
+              "pyproject.toml", ".gitignore", ".namingignore",
+          }
+
+          # Filenames that are conventional regardless of their directory
+          ALWAYS_EXEMPT_NAMES = {"README.md", "EXAMPLES.md"}
+
+          # Directories whose contents follow language-idiomatic snake_case (Python, Go)
+          SNAKE_CASE_DIRS = {
+              "tools/python",
+              "tools/go",
+              "iso20022-integration/libraries/python",
+              "iso20022-integration/test-suite",
+          }
+
+          # Directory path prefixes to skip entirely (hidden, generated, etc.)
+          SKIP_PREFIXES = (
+              ".git/", ".github/",
+              "iso20022-integration/test-suite/validation-tests/compiled/",
+          )
+
+          KEBAB_RE = re.compile(r'^[a-z0-9][a-z0-9\-\.]*$')
+          SNAKE_RE = re.compile(r'^[a-z0-9][a-z0-9_\.]*$')
+
+          def is_snake_case_dir(path: pathlib.Path) -> bool:
+              path_str = path.as_posix()
+              return any(path_str.startswith(d) for d in SNAKE_CASE_DIRS)
+
+          failed = []
+          root = pathlib.Path(".")
+
+          for p in sorted(root.rglob("*")):
+              if p.is_dir():
+                  continue
+              parts = p.parts
+              rel = p.as_posix()
+
+              # Skip hidden dirs and known generated paths
+              if any(part.startswith(".") for part in parts):
+                  continue
+              if any(part.startswith("__") for part in parts):
+                  continue
+              if any(rel.startswith(prefix) for prefix in SKIP_PREFIXES):
+                  continue
+
+              name = p.name
+
+              # Conventional filenames are always allowed anywhere
+              if name in ALWAYS_EXEMPT_NAMES:
+                  continue
+
+              # Root-level files
+              if len(parts) == 1:
+                  if name not in ROOT_EXEMPT:
+                      if not KEBAB_RE.match(name):
+                          failed.append((rel, "root file should be kebab-case or in ROOT_EXEMPT"))
+                  continue
+
+              # Check directory names
+              for i, part in enumerate(parts[:-1]):
+                  dir_path = "/".join(parts[:i+1])
+                  if part.startswith("."):
+                      break
+                  if is_snake_case_dir(pathlib.Path(dir_path)):
+                      continue
+                  if not KEBAB_RE.match(part):
+                      failed.append((dir_path + "/", f"directory '{part}' should be kebab-case"))
+
+              # Check filename
+              if is_snake_case_dir(p.parent):
+                  if not SNAKE_RE.match(name):
+                      failed.append((rel, "snake_case expected for this language"))
+              else:
+                  if not KEBAB_RE.match(name):
+                      failed.append((rel, "kebab-case expected"))
+
+          if failed:
+              print("Naming convention violations found:")
+              for path, reason in failed:
+                  print(f"  FAIL: {path}  ({reason})")
+              sys.exit(1)
+          else:
+              print("All file and directory names comply with the naming convention.")
+          EOF
