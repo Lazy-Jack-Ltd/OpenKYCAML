@@ -31,7 +31,7 @@ sequenceDiagram
 
     Customer->>OrigVASP: Initiate virtual asset transfer
     OrigVASP->>OrigVASP: Build OpenKYCAML payload\n(ivms101 + optional kycProfile/VC)
-    OrigVASP->>OrigVASP: Validate payload against\nOpenKYCAML schema v1.3.0
+    OrigVASP->>OrigVASP: Validate payload against\nOpenKYCAML schema v1.7.0
     OrigVASP->>BeneVASP: Transmit OpenKYCAML payload\n(via Travel Rule protocol)
     BeneVASP->>BeneVASP: Validate received payload
     BeneVASP->>BeneVASP: Screen originator (PEP/sanctions)
@@ -242,4 +242,4 @@ sequenceDiagram
 
 ---
 
-*All diagrams are rendered with [Mermaid](https://mermaid.js.org/). Last updated: v1.3.0.*
+*All diagrams are rendered with [Mermaid](https://mermaid.js.org/). Last updated: v1.7.0.*

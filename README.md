@@ -153,8 +153,8 @@ node validator.js ../../examples/full-kyc-profile.json
 
 ```json
 {
-  "$schema": "https://openkycaml.org/schema/v1.5.0/kyc-aml-hybrid-extended.json",
-  "version": "1.5.0",
+  "$schema": "https://openkycaml.org/schema/v1.7.0/kyc-aml-hybrid-extended.json",
+  "version": "1.7.0",
   "messageId": "550e8400-e29b-41d4-a716-446655440001",
   "messageDateTime": "2024-06-15T09:30:00Z",
   "ivms101": {
@@ -190,8 +190,8 @@ node validator.js ../../examples/full-kyc-profile.json
 
 ```json
 {
-  "$schema": "https://openkycaml.org/schema/v1.5.0/kyc-aml-hybrid-extended.json",
-  "version": "1.5.0",
+  "$schema": "https://openkycaml.org/schema/v1.7.0/kyc-aml-hybrid-extended.json",
+  "version": "1.7.0",
   "verifiableCredential": {
     "issuer": { "id": "did:web:acme-crypto.example.nl", "name": "Acme Crypto Exchange BV" },
     "credentialSubject": {
@@ -255,7 +255,9 @@ Each `-eudi-wallet.json` example documents a **trust chain** using W3C VC eviden
 | [Travel Rule Implementation Guide](docs/guides/travel-rule-implementation-guide.md) | Protocol-specific integration guide (TRISA, OpenVASP, Notabene, TRP, Sygna Bridge) |
 | [ERC-3643 (T-REX) Mapping](docs/mappings/mapping-erc3643.md) | Field-level mapping from OpenKYCAML to ERC-3643 on-chain permissioned token standard |
 | [Sovrin / Hyperledger Indy (AnonCreds) Mapping](docs/mappings/mapping-sovrin.md) | Field-level mapping from OpenKYCAML to Sovrin DID Method, Indy ledger transactions, and AnonCreds ZKP credentials |
-| [XRPL Credentials, DIDs, and MPTs Mapping](docs/mappings/mapping-xrpl-credentials-mpt.md) | Field-level mapping from OpenKYCAML to XRPL Credentials (XLS-40d), `did:xrpl` DID method, and Multi-Purpose Tokens (XLS-33d) for on-ledger KYC/AML gating and regulated asset compliance |
+| [XRPL Credentials, DIDs, MPTs, Permissioned Domains, and Confidential Transfers Mapping](docs/mappings/mapping-xrpl-credentials-mpt.md) | Field-level mapping from OpenKYCAML to XRPL Credentials (XLS-70), `did:xrpl` DID method, Multi-Purpose Tokens (XLS-33d), Permissioned Domains (XLS-80), Permissioned DEX (XLS-81d), Deep Freeze (XLS-77), and Confidential Transfers (XLS-96) |
+| [Bitcoin and Lightning Network Mapping](docs/mappings/mapping-bitcoin-lightning.md) | Service-layer enforcement for Bitcoin/Lightning — Lightspark, Voltage, LNURL-auth, Taproot Assets, RGB, Liquid Network |
+| [Three-Tier Enforcement Model](docs/compliance/enforcement-tiers.md) | Normative document mapping Tier 1 (Ethereum ERC-3643), Tier 2 (XRPL protocol), and Tier 3 (Bitcoin/Lightning service-layer) compliance enforcement |
 | [Roadmap](ROADMAP.md) | Planned features and upcoming versions |
 | [Contributing](CONTRIBUTING.md) | How to contribute to the standard |
 | [Governance](GOVERNANCE.md) | Steering committee model, RFC process |
@@ -269,7 +271,7 @@ Each `-eudi-wallet.json` example documents a **trust chain** using W3C VC eviden
 | **IVMS 101 v1.0** | ✅ Full superset — all fields supported |
 | **FATF Recommendation 16** | ✅ Travel Rule compliant |
 | **FATF Recommendations 10, 12, 24** | ✅ CDD, PEP, UBO fields |
-| **EU AMLR 2024** | ✅ Art. 20–22, 24, 26, 28–31, 56, 83; verification document bundle (Art. 22 & 26, v1.5.0) |
+| **EU AMLR 2024** | ✅ Art. 20–22, 24, 26, 28–31, 56, 73, 83; verification document bundle (Art. 22 & 26, v1.5.0); document ID URN scheme (Art. 56, v1.6.0) |
 | **eIDAS 2.0 / ARF** | ✅ W3C VC Data Model v2, DID, Ed25519 proof suites, LPID, QEAA mandates |
 | **EU Digital Identity Wallet (EUDIW)** | ✅ PID + LPID credential flows via OpenID4VP; W3C VC evidence block; EUDI_WALLET onboarding channel; `gdprSensitivityMetadata` for tipping-off-safe EUDIW presentations (v1.3.0) |
 | **ISO 20022** | ✅ v1.3.0 — SupplementaryData envelope, pacs.008/pain.001/camt.053 profiles, Python & TypeScript converters (bidirectional) — see [`iso20022-integration/`](iso20022-integration/) |
@@ -278,7 +280,8 @@ Each `-eudi-wallet.json` example documents a **trust chain** using W3C VC eviden
 | **GDPR** | ✅ Consent record, data retention date, EUDI Wallet SD-JWT selective disclosure; `gdprSensitivityMetadata` block for SAR/tipping-off protection (Art. 9/10 special categories and criminal-offence data, AMLR Art. 73) — added v1.3.0 |
 | **ERC-3643 (T-REX)** | ✅ ONCHAINID, eligibility flag, wallet addresses, frozen tokens, accredited investor claim — see [ERC-3643 mapping](docs/mappings/mapping-erc3643.md) |
 | **Sovrin / Hyperledger Indy (AnonCreds)** | ✅ `did:sov` / `did:indy` DIDs, AnonCreds CL credentials, CLAIM_DEF, REVOC_REG, Rich Schema — see [Sovrin mapping](docs/mappings/mapping-sovrin.md) |
-| **XRPL Credentials (XLS-40d), DIDs (`did:xrpl`), and MPTs (XLS-33d)** | ✅ On-ledger `Credential` object anchoring W3C VCs, `did:xrpl` DID method, MPT permissioned tokens with `lsfMPTRequireAuth` / `lsfMPTAuthorized` KYC/AML gating, `DepositPreauth` credential gates — see [XRPL mapping](docs/mappings/mapping-xrpl-credentials-mpt.md) |
+| **XRPL Credentials (XLS-70), DIDs (`did:xrpl`), MPTs (XLS-33d), Permissioned Domains (XLS-80/81d), Confidential Transfers (XLS-96), Deep Freeze (XLS-77)** | ✅ On-ledger `Credential` anchoring W3C VCs (XLS-70, live on mainnet), `did:xrpl` DID method, MPT permissioned tokens, Permissioned Domain + DEX gating (v1.7.0), EC-ElGamal Confidential Transfers with selective disclosure (v1.7.0), Deep Freeze (v1.7.0), Native Clawback (v1.7.0) — see [XRPL mapping](docs/mappings/mapping-xrpl-credentials-mpt.md) |
+| **Bitcoin / Lightning Network** | ✅ v1.7.0 — service-layer enforcement; Lightning node pubkey (`lightningNodePubkey`), LSP identification (`lightningServiceProvider`), Bitcoin script type (`bitcoinScriptType`); Lightspark/Voltage/BitGo compliance wrapper integration — see [Bitcoin/Lightning mapping](docs/mappings/mapping-bitcoin-lightning.md) |
 
 ---
 
@@ -287,14 +290,16 @@ Each `-eudi-wallet.json` example documents a **trust chain** using W3C VC eviden
 ```
 openKYCAML/
 ├── schema/
-│   ├── kyc-aml-hybrid-extended.json     ← Canonical schema (latest — currently v1.5.0)
+│   ├── kyc-aml-hybrid-extended.json     ← Canonical schema (latest — currently v1.7.0)
 │   └── versions/
 │       ├── v1.0.0.json                  ← v1.0.0 snapshot
 │       ├── v1.1.0.json                  ← v1.1.0 snapshot
 │       ├── v1.2.0.json                  ← v1.2.0 snapshot
 │       ├── v1.3.0.json                  ← v1.3.0 snapshot
-│       ├── v1.4.0.json                  ← v1.4.0 snapshot
-│       └── v1.5.0.json                  ← v1.5.0 snapshot (current)
+│       ├── v1.4.0.json                  ← v1.4.0 snapshot (ISO 20275 ELF, entity types)
+│       ├── v1.5.0.json                  ← v1.5.0 snapshot (Verification Document Bundle)
+│       ├── v1.6.0.json                  ← v1.6.0 snapshot (Document ID URN scheme)
+│       └── v1.7.0.json                  ← v1.7.0 snapshot (current — XRPL XLS-70/80/81/96/77, Bitcoin/Lightning)
 ├── examples/
 │   ├── *-plain.json                     ← Plain IVMS 101 baseline examples
 │   ├── *-wrapped.json                   ← VC-wrapped examples

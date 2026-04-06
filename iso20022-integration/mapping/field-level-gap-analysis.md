@@ -222,4 +222,4 @@ The `<SplmtryData>` mechanism is essential: roughly 60% of the OpenKYCAML data m
 
 ---
 
-*Last updated: v1.0.0 — April 2026. Maintained by the OpenKYCAML Technical Working Group.*
+*Last updated: v1.7.0 — April 2026. Maintained by the OpenKYCAML Technical Working Group.*
