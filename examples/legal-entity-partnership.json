@@ -134,44 +134,12 @@
       ]
     },
     "originatingVASP": {
-      "originatingVASP": {
-        "legalPerson": {
-          "name": {
-            "nameIdentifier": [
-              {
-                "legalPersonName": "Cairn Digital Ventures LLP",
-                "legalPersonNameIdentifierType": "LEGL"
-              }
-            ]
-          },
-          "nationalIdentification": {
-            "nationalIdentifier": "SO300447",
-            "nationalIdentifierType": "RAID",
-            "countryOfIssue": "GB"
-          },
-          "countryOfRegistration": "GB"
-        }
-      }
+      "name": "Cairn Digital Ventures LLP",
+      "vaspIdentifier": "GB-Cairn Digital Ventures LLP"
     },
     "beneficiaryVASP": {
-      "beneficiaryVASP": {
-        "legalPerson": {
-          "name": {
-            "nameIdentifier": [
-              {
-                "legalPersonName": "Northstar Digital Exchange Ltd",
-                "legalPersonNameIdentifierType": "LEGL"
-              }
-            ]
-          },
-          "nationalIdentification": {
-            "nationalIdentifier": "GB-CH-13456781",
-            "nationalIdentifierType": "RAID",
-            "countryOfIssue": "GB"
-          },
-          "countryOfRegistration": "GB"
-        }
-      }
+      "name": "Northstar Digital Exchange Ltd",
+      "vaspIdentifier": "GB-Northstar Digital Exchange Ltd"
     },
     "transferredAmount": {
       "amount": "120000.00",

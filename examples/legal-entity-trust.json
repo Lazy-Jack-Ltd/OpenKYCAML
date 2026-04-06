@@ -165,44 +165,12 @@
       ]
     },
     "originatingVASP": {
-      "originatingVASP": {
-        "legalPerson": {
-          "name": {
-            "nameIdentifier": [
-              {
-                "legalPersonName": "Harbour Gate Digital Assets Ltd",
-                "legalPersonNameIdentifierType": "LEGL"
-              }
-            ]
-          },
-          "nationalIdentification": {
-            "nationalIdentifier": "KY-CO-2020-009901",
-            "nationalIdentifierType": "RAID",
-            "countryOfIssue": "KY"
-          },
-          "countryOfRegistration": "KY"
-        }
-      }
+      "name": "Harbour Gate Digital Assets Ltd",
+      "vaspIdentifier": "KY-Harbour Gate Digital Assets Ltd"
     },
     "beneficiaryVASP": {
-      "beneficiaryVASP": {
-        "legalPerson": {
-          "name": {
-            "nameIdentifier": [
-              {
-                "legalPersonName": "Meridian Digital Custody Ltd",
-                "legalPersonNameIdentifierType": "LEGL"
-              }
-            ]
-          },
-          "nationalIdentification": {
-            "nationalIdentifier": "GB-CH-10987654",
-            "nationalIdentifierType": "RAID",
-            "countryOfIssue": "GB"
-          },
-          "countryOfRegistration": "GB"
-        }
-      }
+      "name": "Meridian Digital Custody Ltd",
+      "vaspIdentifier": "GB-Meridian Digital Custody Ltd"
     },
     "transferredAmount": {
       "amount": "85000.00",
