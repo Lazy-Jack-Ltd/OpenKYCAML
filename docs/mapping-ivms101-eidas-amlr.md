@@ -41,6 +41,13 @@ All IVMS 101 fields map 1:1 into the `ivms101` block. No IVMS 101 fields are ren
 | `ivms101.originator.originatorPersons[].legalPerson.nationalIdentification.nationalIdentifier` (LEIX) | `Originator.legalPerson.nationalIdentification.nationalIdentifier` | `legal_entity_identifier` (GLEIF) | Art. 26(1)(b) |
 | `ivms101.originator.originatorPersons[].legalPerson.countryOfRegistration` | `Originator.legalPerson.countryOfRegistration` | `established_in` | Art. 26(1)(a) |
 | `ivms101.originator.originatorPersons[].legalPerson.geographicAddresses[].streetName` | `Originator.legalPerson.geographicAddresses[].streetName` | `registered_address` | Art. 26(1)(c) |
+| `legalPerson.legalFormCode` | _(IVMS 101 extension)_ | — | ISO 20275:2017 (GLEIF ELF); FATF Rec. 24/25; AMLR Art. 26(2)(b) |
+| `legalPerson.legalFormDescription` | _(IVMS 101 extension)_ | — | ISO 20275:2017 fallback where ELF code unavailable |
+| `legalPerson.entityType` | _(IVMS 101 extension)_ | — | FATF Rec. 25; AMLR Art. 26(2)(b) — typed legal arrangement disclosure |
+| `legalPerson.trustDetails.*` | _(IVMS 101 extension)_ | — | FATF Rec. 25; AMLR Art. 26(2)(b) — settlor, trustee, protector, beneficiary class |
+| `legalPerson.foundationDetails.*` | _(IVMS 101 extension)_ | — | FATF Rec. 25; AMLR Art. 26 — founders, council members, purpose |
+| `legalPerson.partnershipDetails.*` | _(IVMS 101 extension)_ | — | FATF Rec. 24; AMLR Art. 26 — LP/LLP/GP partners and members |
+| `legalPerson.nationalIdentification.nationalIdentifierType` = `ISO_20275_ELF_CODE` | `Originator.legalPerson.nationalIdentification.nationalIdentifierType` | — | ISO 20275:2017 — IVMS 101 interoperability path for ELF codes |
 
 ---
 

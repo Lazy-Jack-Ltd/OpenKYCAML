@@ -1,9 +1,9 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://openkycaml.org/schema/v1.3.0/kyc-aml-hybrid-extended.json",
+  "$id": "https://openkycaml.org/schema/v1.4.0/kyc-aml-hybrid-extended.json",
   "title": "OpenKYCAML Hybrid KYC/AML Schema",
   "description": "Root OpenKYCAML document. At least one of 'ivms101' or 'verifiableCredential' MUST be present.",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "$defs": {
     "NaturalPersonNameIdentifier": {
       "title": "NaturalPersonNameIdentifier",
@@ -149,7 +149,8 @@
             "SOCS",
             "IDCD",
             "LEIX",
-            "MISC"
+            "MISC",
+            "ISO_20275_ELF_CODE"
           ]
         },
         "countryOfIssue": {
@@ -426,6 +427,281 @@
         "lpid": {
           "$ref": "#/$defs/LegalPersonIdentificationData",
           "description": "Optional eIDAS 2.0 Legal Person Identification Data (LPID) block. Carries LPID-specific attributes (current legal name, unique identifier, VAT, EORI, LEI, mandates) for EUDI Wallet and AMLR high-assurance CDD flows. Backward-compatible — omit for pure IVMS 101 usage."
+        },
+        "legalFormCode": {
+          "type": "string",
+          "description": "ISO 20275:2017 Entity Legal Form (ELF) code as published by GLEIF (https://www.gleif.org/en/about-lei/code-lists/iso-20275-entity-legal-forms-code-list). Four-character alphanumeric code uniquely identifying the entity's legal form within its jurisdiction (e.g. '8888' = US LLC, 'Z13E' = UK PLC, '2HBR' = Jersey Discretionary Trust). Mandatory for GLEIF LEI registrations. Recommended for FATF Rec. 24/25 and AMLR Art. 26 compliance.",
+          "pattern": "^[A-Z0-9]{4}$"
+        },
+        "legalFormDescription": {
+          "type": "string",
+          "description": "Free-text description of the entity's legal form. Use when the ISO 20275 ELF code is unavailable, the jurisdiction is not yet in the GLEIF ELF code list, or additional context beyond the code is needed (e.g. 'Discretionary Trust governed by Jersey law'). Should complement, not replace, legalFormCode where the code is known.",
+          "maxLength": 200
+        },
+        "entityType": {
+          "type": "string",
+          "description": "High-level classification of the legal arrangement type. Drives the corresponding typed sub-object (trustDetails, foundationDetails, partnershipDetails). Required for FATF Rec. 25 and AMLR Art. 26(2)(b) typed disclosure of legal arrangements. Use COMPANY for ordinary corporate entities where the ELF code alone is sufficient.",
+          "enum": [
+            "COMPANY",
+            "TRUST",
+            "FOUNDATION",
+            "PARTNERSHIP",
+            "OTHER"
+          ]
+        },
+        "trustDetails": {
+          "$ref": "#/$defs/TrustDetails",
+          "description": "Typed trust-arrangement sub-object. Present when entityType is TRUST. Captures the four FATF Rec. 25 / AMLR Art. 26(2)(b) principal categories: settlor, trustee, protector, and beneficiary class."
+        },
+        "foundationDetails": {
+          "$ref": "#/$defs/FoundationDetails",
+          "description": "Typed foundation sub-object. Present when entityType is FOUNDATION. Captures founders, council members, and foundation purpose per FATF Rec. 25 / AMLR Art. 26."
+        },
+        "partnershipDetails": {
+          "$ref": "#/$defs/PartnershipDetails",
+          "description": "Typed partnership sub-object. Present when entityType is PARTNERSHIP. Distinguishes LP, LLP, and GP structures and records general and limited partners per FATF Rec. 24/25."
+        },
+        "otherEntityDescription": {
+          "type": "string",
+          "description": "Free-text description of the legal arrangement when entityType is OTHER and no typed sub-object applies. Should describe the nature, form, and governing law of the arrangement.",
+          "maxLength": 500
+        }
+      },
+      "if": {
+        "properties": {
+          "entityType": { "const": "TRUST" }
+        },
+        "required": ["entityType"]
+      },
+      "then": {
+        "required": ["trustDetails"]
+      },
+      "else": {
+        "if": {
+          "properties": {
+            "entityType": { "const": "FOUNDATION" }
+          },
+          "required": ["entityType"]
+        },
+        "then": {
+          "required": ["foundationDetails"]
+        },
+        "else": {
+          "if": {
+            "properties": {
+              "entityType": { "const": "PARTNERSHIP" }
+            },
+            "required": ["entityType"]
+          },
+          "then": {
+            "required": ["partnershipDetails"]
+          }
+        }
+      }
+    },
+    "TrustDetails": {
+      "title": "TrustDetails",
+      "description": "Typed sub-object for trust arrangements. Captures the four principal categories required by FATF Recommendation 25 and AMLR Art. 26(2)(b): settlors, trustees, protectors, and beneficiary class. All person arrays accept natural persons and/or legal persons (e.g. a corporate trustee).",
+      "type": "object",
+      "properties": {
+        "settlors": {
+          "type": "array",
+          "description": "Persons (natural or legal) who settled the trust assets. FATF Rec. 25 requires identification of the settlor.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "naturalPerson": { "$ref": "#/$defs/NaturalPerson" },
+              "legalPerson": { "$ref": "#/$defs/LegalPerson" }
+            },
+            "oneOf": [
+              { "required": ["naturalPerson"] },
+              { "required": ["legalPerson"] }
+            ]
+          }
+        },
+        "trustees": {
+          "type": "array",
+          "description": "Persons (natural or legal) holding legal title and administering the trust. FATF Rec. 25 requires identification of each trustee.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "naturalPerson": { "$ref": "#/$defs/NaturalPerson" },
+              "legalPerson": { "$ref": "#/$defs/LegalPerson" }
+            },
+            "oneOf": [
+              { "required": ["naturalPerson"] },
+              { "required": ["legalPerson"] }
+            ]
+          }
+        },
+        "protectors": {
+          "type": "array",
+          "description": "Persons holding a power to direct or remove trustees (protector role). Required for AMLR Art. 26(2)(b) where a protector exists.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "naturalPerson": { "$ref": "#/$defs/NaturalPerson" },
+              "legalPerson": { "$ref": "#/$defs/LegalPerson" }
+            },
+            "oneOf": [
+              { "required": ["naturalPerson"] },
+              { "required": ["legalPerson"] }
+            ]
+          }
+        },
+        "beneficiaryClass": {
+          "type": "string",
+          "description": "Description of the class of beneficiaries (e.g. 'Named beneficiaries: Alice Smith, Bob Smith; remainder class: lawful descendants'). Use when individual beneficiaries cannot be fully enumerated at onboarding. FATF Rec. 25 permits description of the class where beneficiaries are not yet determined.",
+          "maxLength": 1000
+        },
+        "namedBeneficiaries": {
+          "type": "array",
+          "description": "Individually named beneficiaries where determinable. Should supplement beneficiaryClass where both apply.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "naturalPerson": { "$ref": "#/$defs/NaturalPerson" },
+              "legalPerson": { "$ref": "#/$defs/LegalPerson" }
+            },
+            "oneOf": [
+              { "required": ["naturalPerson"] },
+              { "required": ["legalPerson"] }
+            ]
+          }
+        },
+        "dateEstablished": {
+          "type": "string",
+          "format": "date",
+          "description": "Date the trust was settled or constituted."
+        },
+        "jurisdictionOfLaw": {
+          "type": "string",
+          "description": "ISO 3166-1 alpha-2 country code of the governing law jurisdiction (e.g. 'JE' for Jersey, 'KY' for Cayman Islands).",
+          "pattern": "^[A-Z]{2}$"
+        },
+        "trustDeedReference": {
+          "type": "string",
+          "description": "Reference number or identifier for the trust deed or settlement document.",
+          "maxLength": 100
+        }
+      }
+    },
+    "FoundationDetails": {
+      "title": "FoundationDetails",
+      "description": "Typed sub-object for foundation legal arrangements. Captures founders, council members, and foundation purpose per FATF Recommendation 25 and AMLR Art. 26.",
+      "type": "object",
+      "properties": {
+        "founders": {
+          "type": "array",
+          "description": "Persons (natural or legal) who established the foundation.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "naturalPerson": { "$ref": "#/$defs/NaturalPerson" },
+              "legalPerson": { "$ref": "#/$defs/LegalPerson" }
+            },
+            "oneOf": [
+              { "required": ["naturalPerson"] },
+              { "required": ["legalPerson"] }
+            ]
+          }
+        },
+        "councilMembers": {
+          "type": "array",
+          "description": "Members of the foundation council or supervisory board.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "naturalPerson": { "$ref": "#/$defs/NaturalPerson" },
+              "legalPerson": { "$ref": "#/$defs/LegalPerson" }
+            },
+            "oneOf": [
+              { "required": ["naturalPerson"] },
+              { "required": ["legalPerson"] }
+            ]
+          }
+        },
+        "foundationPurpose": {
+          "type": "string",
+          "description": "Objects or purpose of the foundation as stated in its constitutional documents (e.g. charitable, family wealth preservation, private interest).",
+          "maxLength": 1000
+        },
+        "dateEstablished": {
+          "type": "string",
+          "format": "date",
+          "description": "Date the foundation was established or registered."
+        },
+        "jurisdictionOfRegistration": {
+          "type": "string",
+          "description": "ISO 3166-1 alpha-2 country code where the foundation is registered.",
+          "pattern": "^[A-Z]{2}$"
+        }
+      }
+    },
+    "PartnershipDetails": {
+      "title": "PartnershipDetails",
+      "description": "Typed sub-object for partnership arrangements (LP, LLP, GP). Records general and limited partners per FATF Recommendation 24/25.",
+      "type": "object",
+      "properties": {
+        "partnershipType": {
+          "type": "string",
+          "description": "Structural sub-type of the partnership. LP = Limited Partnership; LLP = Limited Liability Partnership; GP = General Partnership.",
+          "enum": ["LP", "LLP", "GP"]
+        },
+        "generalPartners": {
+          "type": "array",
+          "description": "General partners who bear unlimited liability and manage the partnership. Required for LP and GP structures under FATF Rec. 24.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "naturalPerson": { "$ref": "#/$defs/NaturalPerson" },
+              "legalPerson": { "$ref": "#/$defs/LegalPerson" }
+            },
+            "oneOf": [
+              { "required": ["naturalPerson"] },
+              { "required": ["legalPerson"] }
+            ]
+          }
+        },
+        "limitedPartners": {
+          "type": "array",
+          "description": "Limited partners whose liability is restricted to their capital contribution. Present for LP structures.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "naturalPerson": { "$ref": "#/$defs/NaturalPerson" },
+              "legalPerson": { "$ref": "#/$defs/LegalPerson" }
+            },
+            "oneOf": [
+              { "required": ["naturalPerson"] },
+              { "required": ["legalPerson"] }
+            ]
+          }
+        },
+        "members": {
+          "type": "array",
+          "description": "Members of an LLP (used instead of generalPartners/limitedPartners for LLP structures where all members share limited liability).",
+          "items": {
+            "type": "object",
+            "properties": {
+              "naturalPerson": { "$ref": "#/$defs/NaturalPerson" },
+              "legalPerson": { "$ref": "#/$defs/LegalPerson" }
+            },
+            "oneOf": [
+              { "required": ["naturalPerson"] },
+              { "required": ["legalPerson"] }
+            ]
+          }
+        },
+        "dateEstablished": {
+          "type": "string",
+          "format": "date",
+          "description": "Date the partnership was formed or registered."
+        },
+        "jurisdictionOfRegistration": {
+          "type": "string",
+          "description": "ISO 3166-1 alpha-2 country code where the partnership is registered.",
+          "pattern": "^[A-Z]{2}$"
         }
       }
     },

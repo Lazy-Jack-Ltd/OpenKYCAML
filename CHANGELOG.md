@@ -44,6 +44,31 @@ For the full project roadmap and planned features, see [ROADMAP.md](ROADMAP.md).
 
 ---
 
+## [1.4.0] — April 2026
+
+### Added
+- **ISO 20275:2017 Entity Legal Form (ELF) classification** — new optional fields on `LegalPerson`:
+  - `legalFormCode` — 4-character GLEIF ELF code (pattern `^[A-Z0-9]{4}$`), references the ISO 20275 Annex A / GLEIF ELF code list (e.g. `8888` = US LLC, `Z13E` = UK PLC, `KY39` = Cayman Exempted Trust). Mandatory for GLEIF LEI registration compliance.
+  - `legalFormDescription` — free-text fallback where the ELF code is unavailable or the jurisdiction is not yet in the GLEIF code list.
+  - `entityType` — enum discriminator (`COMPANY`, `TRUST`, `FOUNDATION`, `PARTNERSHIP`, `OTHER`) driving typed sub-object validation.
+- **Typed legal-arrangement sub-objects** for FATF Rec. 25 / AMLR Art. 26(2)(b) structured disclosure:
+  - `trustDetails` (`TrustDetails`) — settlors, trustees, protectors, `beneficiaryClass`, `namedBeneficiaries`, `dateEstablished`, `jurisdictionOfLaw`, `trustDeedReference`. Required when `entityType = TRUST`.
+  - `foundationDetails` (`FoundationDetails`) — founders, councilMembers, `foundationPurpose`, `dateEstablished`, `jurisdictionOfRegistration`. Required when `entityType = FOUNDATION`.
+  - `partnershipDetails` (`PartnershipDetails`) — `partnershipType` (`LP`/`LLP`/`GP`), `generalPartners`, `limitedPartners`, `members`, `dateEstablished`, `jurisdictionOfRegistration`. Required when `entityType = PARTNERSHIP`.
+  - All person arrays within the typed sub-objects accept `naturalPerson` or `legalPerson` references to support corporate trustees, general partners that are companies, etc.
+  - `otherEntityDescription` free-text for `entityType = OTHER`.
+- **`ISO_20275_ELF_CODE`** added to `nationalIdentifierType` enum — provides an IVMS 101-interoperable path to record ELF codes in the `nationalIdentification` block for counterparties that require strict IVMS 101 field-path compliance.
+- **New examples**:
+  - `examples/legal-entity-trust.json` — Cayman Islands Exempted Discretionary Trust (`legalFormCode: KY39`, full `trustDetails` with corporate trustee and named protector).
+  - `examples/legal-entity-partnership.json` — Scotland LLP (`legalFormCode: XLCT`, `partnershipDetails` with two natural-person members and one corporate member).
+
+### Changed
+- `$id` and `version` bumped to `v1.4.0`.
+- `docs/compliance-matrix.md` — FATF Rec. 24/25 and AMLR Art. 26 rows updated to reflect full structural coverage provided by v1.4.0 typed sub-objects; "RFC pending" caveat removed.
+- `docs/mapping-ivms101-eidas-amlr.md` — ISO 20275 mapping rows added to §3 Legal Entity Fields.
+
+---
+
 ## [1.3.0] — April 2026
 
 ### Added
