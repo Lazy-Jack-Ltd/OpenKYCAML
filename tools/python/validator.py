@@ -2,7 +2,7 @@
 """
 OpenKYCAML Schema Validator
 ===========================
-Validates JSON payloads against the OpenKYCAML schema (v1.3.0).
+Validates JSON payloads against the OpenKYCAML schema (v1.6.0).
 
 Usage:
     python validator.py <path-to-payload.json>
@@ -26,6 +26,7 @@ from __future__ import annotations
 import argparse
 import datetime
 import json
+import re
 import sys
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -37,6 +38,12 @@ from jsonschema.exceptions import SchemaError
 
 # Resolve schema relative to this file so the validator works from any CWD.
 _SCHEMA_PATH = Path(__file__).resolve().parents[2] / "schema" / "kyc-aml-hybrid-extended.json"
+
+# Canonical pattern for OpenKYCAML Document ID URNs.
+# Format: urn:openkycaml:doc:{country}:{doc-type-code}:{subject-ref}:{YYYY-MM}
+_DOCUMENT_ID_PATTERN = re.compile(
+    r"^urn:openkycaml:doc:[a-z]{2}:[a-z0-9-]+:[a-z0-9-]+:[0-9]{4}-[0-9]{2}$"
+)
 
 
 @dataclass
@@ -206,6 +213,25 @@ class OpenKYCAMLValidator:
                     "gdprSensitivityMetadata.tippingOffProtected should be true when "
                     f"classification is '{cls}' (AMLR Art. 73 / FATF Rec. 21)."
                 )
+
+        # Warn when documents in identityDocuments lack a canonical documentId or
+        # carry a documentId that does not conform to the OpenKYCAML URN scheme.
+        identity_docs = payload.get("identityDocuments", {})
+        for collection_key in ("naturalPersonDocuments", "legalEntityDocuments"):
+            for idx, doc in enumerate(identity_docs.get(collection_key, [])):
+                doc_id = doc.get("documentId")
+                location = f"identityDocuments.{collection_key}[{idx}]"
+                if not doc_id:
+                    warns.append(
+                        f"{location} is missing documentId — a canonical URN is recommended "
+                        "for cross-system deduplication (see docs/reference/document-id-convention.md)."
+                    )
+                elif not _DOCUMENT_ID_PATTERN.match(doc_id):
+                    warns.append(
+                        f"{location}.documentId '{doc_id}' does not conform to the "
+                        "OpenKYCAML Document ID URN scheme "
+                        "'urn:openkycaml:doc:{{country}}:{{doc-type-code}}:{{subject-ref}}:{{YYYY-MM}}'."
+                    )
 
         return warns
 

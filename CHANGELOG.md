@@ -31,6 +31,33 @@ For the full project roadmap and planned features, see [ROADMAP.md](ROADMAP.md).
 
 ---
 
+## [1.6.0] — April 2026
+
+### Added
+
+- **`documentId` on `NaturalPersonDocument` and `LegalEntityDocument`** — new optional (strongly recommended) canonical portable identifier for inter-system document exchange. Uses the OpenKYCAML Document ID URN scheme:
+  ```
+  urn:openkycaml:doc:{issuing-country}:{doc-type-code}:{subject-ref}:{YYYY-MM}
+  ```
+  Distinct from `documentRef` (internal storage path) and `credentialId` (W3C VC URI). Must remain stable when the document is re-shared. Validated by schema `pattern` constraint.
+
+- **`docs/reference/document-id-convention.md`** — normative specification for the Document ID URN scheme. Covers: pattern and segment semantics, short-code table for all 11 natural-person and 16 legal-entity `documentType` enum values, subject-reference construction (pseudonymous SHA-256 truncation for natural persons; LEI or registration number for legal entities), discriminator rules for same-month collisions, relationship to `documentRef`/`credentialId`/`verifyingDocumentRef`, cross-system deduplication guidance, and document lifecycle rules.
+
+- **`schema/versions/v1.6.0.json`** — versioned snapshot of the schema at v1.6.0.
+
+- **Validator warnings for missing or malformed `documentId`** — both the Python (`tools/python/validator.py`) and JavaScript (`tools/javascript/validator.js`) validators now emit advisory warnings when a document in `identityDocuments` is missing `documentId` or when the value does not conform to the URN pattern.
+
+### Changed
+
+- `examples/document-bundle-natural-person.json` — added `documentId` to each of the three document records. Subject reference for Andreas Schmidt: `sha256-421149` (derived from `SHA256("L01X00T471DE1985-07-22")[0:6]`).
+- `examples/document-bundle-legal-entity.json` — added `documentId` to each of the six document records for Acme Global Trading PLC. Subject reference: LEI `529900w18lqjjn6sj336`.
+
+### Scope
+
+Fully additive and backward-compatible with v1.5.0 payloads. No existing required fields or enum values changed.
+
+---
+
 ## [1.5.0] — April 2026
 
 ### Added

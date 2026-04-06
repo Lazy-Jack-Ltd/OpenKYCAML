@@ -2,7 +2,7 @@
 /**
  * OpenKYCAML Schema Validator (JavaScript / Node.js)
  * ====================================================
- * Validates JSON payloads against the OpenKYCAML v1.3.0 schema.
+ * Validates JSON payloads against the OpenKYCAML v1.6.0 schema.
  *
  * Usage (CLI):
  *   node validator.js <path-to-payload.json>
@@ -27,6 +27,10 @@ const addFormats = require('ajv-formats');
 
 // Resolve schema relative to this file.
 const SCHEMA_PATH = path.resolve(__dirname, '../../schema/kyc-aml-hybrid-extended.json');
+
+// Canonical pattern for OpenKYCAML Document ID URNs.
+// Format: urn:openkycaml:doc:{country}:{doc-type-code}:{subject-ref}:{YYYY-MM}
+const DOCUMENT_ID_PATTERN = /^urn:openkycaml:doc:[a-z]{2}:[a-z0-9-]+:[a-z0-9-]+:[0-9]{4}-[0-9]{2}$/;
 
 /**
  * @typedef {Object} FieldError
@@ -178,6 +182,28 @@ class OpenKYCAMLValidator {
           '(AMLR Art. 73 / FATF Rec. 21).'
         );
       }
+    }
+
+    // Warn when documents in identityDocuments lack a canonical documentId or
+    // carry a documentId that does not conform to the OpenKYCAML URN scheme.
+    const identityDocs = payload.identityDocuments || {};
+    for (const collectionKey of ['naturalPersonDocuments', 'legalEntityDocuments']) {
+      const docs = identityDocs[collectionKey] || [];
+      docs.forEach((doc, idx) => {
+        const location = `identityDocuments.${collectionKey}[${idx}]`;
+        if (!doc.documentId) {
+          warns.push(
+            `${location} is missing documentId — a canonical URN is recommended ` +
+            'for cross-system deduplication (see docs/reference/document-id-convention.md).'
+          );
+        } else if (!DOCUMENT_ID_PATTERN.test(doc.documentId)) {
+          warns.push(
+            `${location}.documentId '${doc.documentId}' does not conform to the ` +
+            "OpenKYCAML Document ID URN scheme " +
+            "'urn:openkycaml:doc:{country}:{doc-type-code}:{subject-ref}:{YYYY-MM}'."
+          );
+        }
+      });
     }
 
     return warns;
