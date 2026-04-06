@@ -614,3 +614,19 @@ tipping-off flag.
 
 *This document is part of the [OpenKYCAML](https://openkycaml.org) specification.*
 *For schema details see [`schema/versions/v1.3.0.json`](../schema/versions/v1.3.0.json).*
+
+---
+
+## W3C VC Data Model Version Support
+
+**Current position (v1.x):** OpenKYCAML v1.x uses the **W3C VC Data Model v1.1** `@context` URL:
+
+```
+https://www.w3.org/2018/credentials/v1
+```
+
+This is enforced as a `const` in the schema at `verifiableCredential.@context[0]`. Some descriptions in earlier documentation referred to "W3C VC Data Model v2" — this referred to structural alignment with the v2 data model concepts, not the context URL. The v2 context URL (`https://www.w3.org/ns/credentials/v2`) introduces breaking changes and is scheduled for adoption in OpenKYCAML **v2.0.0** (planned H1 2027 to align with AMLR full applicability).
+
+**EUDI Wallet context URL:** The second context URL used in EUDI Wallet examples (`https://europa.eu/2018/credentials/eudi/v1`) is a **placeholder** pending the European Commission's official ARF VC JSON-LD context publication. Adopters should monitor the EU Commission's ARF releases and update this URL when the official context is published. This document and the examples will be updated at that time.
+
+For the full v1.1 → v2.0 migration guide, see [`vc-data-model-migration.md`](vc-data-model-migration.md).

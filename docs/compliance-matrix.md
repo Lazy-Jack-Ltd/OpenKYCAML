@@ -23,7 +23,7 @@ This matrix documents the alignment of the OpenKYCAML v1.3.0 schema with major r
 | **Rec 20** — Reporting of suspicious transactions | 🟡 | `kycProfile.monitoringInfo.alerts` (SAR trigger fields); `gdprSensitivityMetadata.classification` = `sar_restricted` marks SAR-linked data — SAR submission itself is out of scope |
 | **Rec 21** — Tipping-off and confidentiality | ✅ | `gdprSensitivityMetadata.tippingOffProtected` (AMLR Art. 73 / FATF Rec. 21); `disclosurePolicy.prohibitedRecipients` blocks disclosure to data subject; cryptographic withholding via SD-JWT `_sd` digests without appended disclosures (added v1.3.0) |
 | **Rec 24** — Beneficial ownership of legal persons | ✅ | `kycProfile.beneficialOwnership[]` |
-| **Rec 25** — Beneficial ownership of legal arrangements | 🟡 | Covered by `kycProfile.beneficialOwnership` for trusts; specific trust-deed fields planned for v1.1 |
+| **Rec 25** — Beneficial ownership of legal arrangements | ✅ | `kycProfile.beneficialOwnership` covers natural-person and legal-person beneficial owners for trusts, foundations, and LLPs (see `trust-complex-ubo.json`, `foundation-complex-ubo.json`, `llp-complex-ubo.json`). Generic `naturalPerson`/`legalPerson` wrappers capture the mandatory UBO identity fields. Note: typed sub-objects for trust-deed specifics (settlor, trustee, protector) are planned for v1.4.0 (RFC pending) to achieve full structural FATF R.25 coverage beyond narrative disclosure. |
 
 ---
 
@@ -50,11 +50,14 @@ This matrix documents the alignment of the OpenKYCAML v1.3.0 schema with major r
 
 ---
 
-## 3. EU Markets in Crypto Assets (MiCA) Regulation
+## 3. EU Funds Transfer Regulation (TFR) 2023/1113 and EU Markets in Crypto Assets (MiCA) Regulation
 
-| MiCA Article / Provision | Coverage | Notes |
+> **Note on legal basis:** The EU Travel Rule obligation for crypto-asset transfers is primarily set out in **EU Funds Transfer Regulation (TFR) 2023/1113 Art. 14**. MiCA Art. 83 cross-references the TFR but the TFR is the operative instrument. Both are cited below for completeness.
+
+| TFR / MiCA Article / Provision | Coverage | Notes |
 |---|---|---|
-| **Art. 83** — Transfer of crypto-assets | ✅ | `ivms101` block supports full VASP Travel Rule payload per IVMS 101 |
+| **TFR 2023/1113 Art. 14** — Transfer of crypto-assets (Travel Rule) | ✅ | `ivms101` block supports full VASP Travel Rule payload per IVMS 101; primary EU legal basis for crypto-asset transfer data requirements |
+| **MiCA Art. 83** — Transfer of crypto-assets (cross-reference to TFR) | ✅ | Cross-references TFR 2023/1113 Art. 14; `ivms101` block satisfies both provisions |
 | **Art. 68** — VASP authorisation | ⬜ | Out of scope — operational, not data model |
 | **Art. 82** — Customer onboarding | 🟡 | `kycProfile.onboardingChannel`, `kycProfile.kycCompletionDate` |
 
@@ -107,7 +110,7 @@ This matrix documents the alignment of the OpenKYCAML v1.3.0 schema with major r
 | `pacs.008` — FI Credit Transfer (CBPR+) | ✅ | Full XML serialiser via `openkycaml_to_pacs008()` + Travel Rule profile — see [`iso20022-integration/profiles/travel-rule-pacs.008-profile.json`](../iso20022-integration/profiles/travel-rule-pacs.008-profile.json) |
 | `camt.053` — Bank-to-Customer Statement | ✅ | Audit trail + data-retention profile — see [`iso20022-integration/profiles/camt.053-kyc-audit-profile.json`](../iso20022-integration/profiles/camt.053-kyc-audit-profile.json) |
 | `<SplmtryData>` KYCAMLEnvelope schema | ✅ | JSON Schema for the envelope embedded in `<Envlp>` — [`iso20022-integration/supplementary-data/kyc-aml-envelope-schema.json`](../iso20022-integration/supplementary-data/kyc-aml-envelope-schema.json) |
-| pacs.008 CBPR+ profile | ✅ | FATF Rec 16 + MiCA Art. 83 minimum required fields defined |
+| pacs.008 CBPR+ profile | ✅ | FATF Rec 16 + TFR 2023/1113 Art. 14 / MiCA Art. 83 minimum required fields defined |
 | pain.001 CDD reliance profile | ✅ | AMLR Art. 48 `thirdPartyCDDReliance` + risk rating in `<SplmtryData>` |
 | camt.053 audit profile | ✅ | `auditMetadata.changeLog` + `dataRetentionDate` in `<SplmtryData>` |
 | Python converter (bidirectional) | ✅ | `openkycaml_to_pacs008`, `openkycaml_to_pain001`, `iso20022_to_openkycaml` |
@@ -246,7 +249,7 @@ _✅ = full field mapping. 🔄 = conceptual equivalent (see [mapping-sovrin.md]
 | **MPT issuance identifier** (`MPTokenIssuanceID`) | ✅ | `kycProfile.blockchainAccountIds[].mptIssuanceId` ⭐ (48-char hex Hash192; added v1.3.0) |
 | **AML type** (`CredentialType = AMLCredential`) | ✅ | `kycProfile.sanctionsScreening` + `kycProfile.adverseMedia` |
 | **Accredited investor type** | ✅ | `kycProfile.customerClassification.accreditedInvestor` + `investorCategoryJurisdiction` |
-| **Travel Rule on XRPL** (FATF Rec 16 / MiCA Art. 83) | ✅ | `ivms101` block; `Credential.URI` anchors the IVMS 101 payload on-ledger |
+| **Travel Rule on XRPL** (FATF Rec 16 / TFR 2023/1113 Art. 14 / MiCA Art. 83) | ✅ | `ivms101` block; `Credential.URI` anchors the IVMS 101 payload on-ledger |
 
 _✅ = full field mapping. 🔄 = conceptual equivalent (see [mapping-xrpl-credentials-mpt.md](mapping-xrpl-credentials-mpt.md)). ℹ️ = out of scope. ⭐ = schema extended in v1.3.0._
 

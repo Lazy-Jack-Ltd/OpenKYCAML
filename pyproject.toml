@@ -1,0 +1,65 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.backends.legacy:build"
+
+[project]
+name = "openkycaml"
+version = "1.3.0"
+description = "OpenKYCAML — Open KYC/AML Standard: schema validator, converters, and typed models"
+readme = "README.md"
+license = { text = "Apache-2.0" }
+requires-python = ">=3.10"
+authors = [
+  { name = "OpenKYCAML Contributors", email = "maintainers@openkycaml.org" }
+]
+keywords = [
+  "kyc", "aml", "ivms101", "travel-rule", "eidas", "verifiable-credentials",
+  "compliance", "fintech", "vasp", "schema-validation", "eudi-wallet", "amlr"
+]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Financial and Insurance Industry",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: Apache Software License",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Office/Business :: Financial",
+  "Topic :: Security",
+  "Topic :: Software Development :: Libraries :: Python Modules",
+]
+dependencies = [
+  "jsonschema[format-nongpl]>=4.21.0",
+  "pydantic>=2.6.0",
+  "requests>=2.31.0",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.0",
+  "pytest-cov>=4.1",
+]
+rich = [
+  "rich>=13.7.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/Lazy-Jack-Ltd/openKYCAML"
+Documentation = "https://github.com/Lazy-Jack-Ltd/openKYCAML/tree/main/docs"
+Repository = "https://github.com/Lazy-Jack-Ltd/openKYCAML"
+"Bug Tracker" = "https://github.com/Lazy-Jack-Ltd/openKYCAML/issues"
+Changelog = "https://github.com/Lazy-Jack-Ltd/openKYCAML/blob/main/CHANGELOG.md"
+
+[project.scripts]
+openkycaml-validate = "openkycaml.validator:main"
+openkycaml-convert = "openkycaml.converter:main"
+
+[tool.setuptools.packages.find]
+where = ["tools/python"]
+
+[tool.setuptools.package-data]
+"*" = ["*.json"]
+
+[tool.pytest.ini_options]
+testpaths = ["tools/python/tests"]

@@ -39,9 +39,9 @@ Transmit compliant Travel Rule messages between VASPs under FATF Recommendation 
 For a FATF-compliant Travel Rule message, the `ivms101` block must include:
 
 **Originator (natural person):**
-- `name.nameIdentifiers[0].primaryIdentifier` — family name
-- `name.nameIdentifiers[0].secondaryIdentifier` — given name
-- `name.nameIdentifiers[0].nameIdentifierType` = `"LEGL"`
+- `name.nameIdentifier[0].primaryIdentifier` — family name
+- `name.nameIdentifier[0].secondaryIdentifier` — given name
+- `name.nameIdentifier[0].nameIdentifierType` = `"LEGL"`
 - `nationalIdentification.nationalIdentifier`
 - `nationalIdentification.nationalIdentifierType`
 - `dateAndPlaceOfBirth.dateOfBirth` *(or address)*
@@ -55,8 +55,8 @@ For a FATF-compliant Travel Rule message, the `ivms101` block must include:
 - `transferredAmount.assetType`
 
 **Originating VASP:**
-- `originatingVASP.originatingVASP.name.nameIdentifiers[0].legalPersonName`
-- `originatingVASP.originatingVASP.nationalIdentification.nationalIdentifier` (LEI preferred)
+- `originatingVASP.name.nameIdentifier[0].legalPersonName`
+- `originatingVASP.nationalIdentification.nationalIdentifier` (LEI preferred)
 
 ### Example
 See [`examples/minimal-travel-rule.json`](../examples/minimal-travel-rule.json).

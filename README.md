@@ -221,6 +221,10 @@ Every scenario is available in two forms: a **plain IVMS 101** baseline and an *
 | Minimal Travel Rule | [`minimal-travel-rule.json`](examples/minimal-travel-rule.json) | [`minimal-travel-rule-eudi-wallet.json`](examples/minimal-travel-rule-eudi-wallet.json) |
 | Travel Rule VC-wrapped | [`travel-rule-vc-wrapped.json`](examples/travel-rule-vc-wrapped.json) | [`travel-rule-vc-eudi-wallet.json`](examples/travel-rule-vc-eudi-wallet.json) |
 | SAR-restricted VC — tipping-off protection (v1.3.0) | [`hybrid-with-sar-restriction.json`](examples/hybrid-with-sar-restriction.json) | — |
+| Complex multi-tier group ownership | [`complex-group-multi-tier.json`](examples/complex-group-multi-tier.json) | — |
+| Foundation complex UBO | [`foundation-complex-ubo.json`](examples/foundation-complex-ubo.json) | — |
+| LLP complex UBO | [`llp-complex-ubo.json`](examples/llp-complex-ubo.json) | — |
+| Trust complex UBO | [`trust-complex-ubo.json`](examples/trust-complex-ubo.json) | — |
 
 ### EUDI Wallet examples — DID triangulation
 

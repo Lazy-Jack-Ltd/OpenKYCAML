@@ -1,6 +1,7 @@
 # OpenKYCAML Documentation Roadmap
 
-> For the project roadmap, see [`../ROADMAP.md`](../ROADMAP.md).
+> **Scope:** This file tracks **documentation-specific** improvements (new docs, doc updates, example additions). It is the documentation-only backlog.
+> For the full **project roadmap** covering schema features, tooling, new releases, and technical debt, see [`../ROADMAP.md`](../ROADMAP.md).
 
 This page tracks documentation-specific improvements planned for upcoming releases.
 

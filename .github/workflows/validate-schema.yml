@@ -7,6 +7,8 @@ on:
       - "schema/**"
       - "examples/**"
       - "tools/**"
+      - "iso20022-integration/**"
+      - "docs/**"
       - ".github/workflows/validate-schema.yml"
   pull_request:
     branches: ["main"]
@@ -14,6 +16,8 @@ on:
       - "schema/**"
       - "examples/**"
       - "tools/**"
+      - "iso20022-integration/**"
+      - "docs/**"
       - ".github/workflows/validate-schema.yml"
 
 permissions:
@@ -159,6 +163,27 @@ jobs:
             console.log(`\nAll ${files.length} examples passed.`);
           }
           EOF
+
+  validate-iso20022:
+    name: Validate ISO 20022 integration (pytest)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+          cache-dependency-path: iso20022-integration/test-suite/requirements.txt
+
+      - name: Install dependencies
+        run: pip install -r iso20022-integration/test-suite/requirements.txt
+
+      - name: Run ISO 20022 test suite
+        run: pytest iso20022-integration/test-suite/ -v
 
   lint-json:
     name: Lint JSON formatting

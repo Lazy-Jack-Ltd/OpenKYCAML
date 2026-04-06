@@ -125,9 +125,9 @@ console.log(xml);
 ## Standards References
 
 - **ISO 20022** — Financial Services — Universal financial industry message scheme. International Organization for Standardization. [iso20022.org](https://www.iso20022.org/)
-- **SWIFT CBPR+** — Cross-Border Payments and Reporting Plus programme. Mandatory for SWIFT MT→MX migration (November 2025).
+- **SWIFT CBPR+** — Cross-Border Payments and Reporting Plus programme. The SWIFT MT→MX migration completed in November 2025; CBPR+ is now mandatory for cross-border payment messages on the SWIFT network.
 - **FATF Recommendation 16** — Wire Transfers / Travel Rule. [fatf-gafi.org](https://www.fatf-gafi.org/en/recommendations/fatfrecommendations.html)
-- **MiCA Article 83** — Transfer of crypto-assets (Travel Rule for VASPs).
+- **MiCA Article 83 / TFR 2023/1113 Art. 14** — Transfer of crypto-assets (Travel Rule for VASPs). The operative instrument for the EU crypto-asset Travel Rule is **EU Funds Transfer Regulation (TFR) 2023/1113 Art. 14**; MiCA Art. 83 cross-references the TFR but TFR is the primary legal basis for VASP transfer-of-funds data requirements.
 - **IVMS 101 v1.0** — InterVASP Messaging Standard. [intervasp.org](https://intervasp.org/)
 - **OpenKYCAML core schema** — [`schema/kyc-aml-hybrid-extended.json`](../schema/kyc-aml-hybrid-extended.json)
 

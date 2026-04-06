@@ -19,9 +19,9 @@ All IVMS 101 fields map 1:1 into the `ivms101` block. No IVMS 101 fields are ren
 
 | OpenKYCAML Field | IVMS 101 Field | eIDAS ARF Attribute | AMLR Reference |
 |---|---|---|---|
-| `ivms101.originator.originatorPersons[].naturalPerson.name.nameIdentifiers[].primaryIdentifier` | `Originator.naturalPerson.name.nameIdentifiers[].primaryIdentifier` | `family_name` (ISO/IEC 5218) | Art. 22(2)(a) |
-| `ivms101.originator.originatorPersons[].naturalPerson.name.nameIdentifiers[].secondaryIdentifier` | `Originator.naturalPerson.name.nameIdentifiers[].secondaryIdentifier` | `given_name` | Art. 22(2)(a) |
-| `ivms101.originator.originatorPersons[].naturalPerson.name.nameIdentifiers[].nameIdentifierType` | `Originator.naturalPerson.name.nameIdentifiers[].nameIdentifierType` | — | — |
+| `ivms101.originator.originatorPersons[].naturalPerson.name.nameIdentifier[].primaryIdentifier` | `Originator.naturalPerson.name.nameIdentifier[].primaryIdentifier` | `family_name` (ISO/IEC 5218) | Art. 22(2)(a) |
+| `ivms101.originator.originatorPersons[].naturalPerson.name.nameIdentifier[].secondaryIdentifier` | `Originator.naturalPerson.name.nameIdentifier[].secondaryIdentifier` | `given_name` | Art. 22(2)(a) |
+| `ivms101.originator.originatorPersons[].naturalPerson.name.nameIdentifier[].nameIdentifierType` | `Originator.naturalPerson.name.nameIdentifier[].nameIdentifierType` | — | — |
 | `ivms101.originator.originatorPersons[].naturalPerson.dateAndPlaceOfBirth.dateOfBirth` | `Originator.naturalPerson.dateAndPlaceOfBirth.dateOfBirth` | `birth_date` (ISO 8601) | Art. 22(2)(b) |
 | `ivms101.originator.originatorPersons[].naturalPerson.dateAndPlaceOfBirth.placeOfBirth` | `Originator.naturalPerson.dateAndPlaceOfBirth.placeOfBirth` | `birth_place` | Art. 22(2)(b) |
 | `ivms101.originator.originatorPersons[].naturalPerson.geographicAddresses[].streetName` | `Originator.naturalPerson.geographicAddresses[].streetName` | `address.street_address` | Art. 22(2)(c) |
@@ -36,8 +36,8 @@ All IVMS 101 fields map 1:1 into the `ivms101` block. No IVMS 101 fields are ren
 
 | OpenKYCAML Field | IVMS 101 Field | eIDAS ARF Attribute | AMLR Reference |
 |---|---|---|---|
-| `ivms101.originator.originatorPersons[].legalPerson.name.nameIdentifiers[].legalPersonName` | `Originator.legalPerson.name.nameIdentifiers[].legalPersonName` | `organization_name` | Art. 26(1)(a) |
-| `ivms101.originator.originatorPersons[].legalPerson.name.nameIdentifiers[].legalPersonNameIdentifierType` | `Originator.legalPerson.name.nameIdentifiers[].legalPersonNameIdentifierType` | — | — |
+| `ivms101.originator.originatorPersons[].legalPerson.name.nameIdentifier[].legalPersonName` | `Originator.legalPerson.name.nameIdentifier[].legalPersonName` | `organization_name` | Art. 26(1)(a) |
+| `ivms101.originator.originatorPersons[].legalPerson.name.nameIdentifier[].legalPersonNameIdentifierType` | `Originator.legalPerson.name.nameIdentifier[].legalPersonNameIdentifierType` | — | — |
 | `ivms101.originator.originatorPersons[].legalPerson.nationalIdentification.nationalIdentifier` (LEIX) | `Originator.legalPerson.nationalIdentification.nationalIdentifier` | `legal_entity_identifier` (GLEIF) | Art. 26(1)(b) |
 | `ivms101.originator.originatorPersons[].legalPerson.countryOfRegistration` | `Originator.legalPerson.countryOfRegistration` | `established_in` | Art. 26(1)(a) |
 | `ivms101.originator.originatorPersons[].legalPerson.geographicAddresses[].streetName` | `Originator.legalPerson.geographicAddresses[].streetName` | `registered_address` | Art. 26(1)(c) |
