@@ -12,5 +12,5 @@ This directory contains **pre-release draft schemas** from before the OpenKYCAML
 
 - These files use JSON Schema drafts that predate the project's adoption of JSON Schema draft 2020-12.
 - Field names and structure differ significantly from v1.x — do not use these for production integrations.
-- For the current schema, see [`../v1.5.0.json`](../v1.5.0.json) or the canonical [`../../kyc-aml-hybrid-extended.json`](../../kyc-aml-hybrid-extended.json).
+- For the current schema, see [`../v1.6.0.json`](../v1.6.0.json) or the canonical [`../../kyc-aml-hybrid-extended.json`](../../kyc-aml-hybrid-extended.json).
 - These files were originally committed with uppercase `.JSON` extensions and dot-delimited qualifiers; they have been normalised to lowercase kebab-case (`v0.1.0-hybrid.json`, `v0.1.0-alpha.json`, `v0.1.1-hybrid.json`) for consistency with the repository naming convention.
