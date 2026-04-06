@@ -185,6 +185,28 @@ jobs:
       - name: Run ISO 20022 test suite
         run: pytest iso20022-integration/test-suite/ -v
 
+  validate-go:
+    name: Validate Go validator (build + test)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.22"
+          cache-dependency-path: tools/go/go.sum
+
+      - name: Build Go validator
+        working-directory: tools/go
+        run: go build ./...
+
+      - name: Run Go tests
+        working-directory: tools/go
+        run: go test ./... -v
+
   lint-json:
     name: Lint JSON formatting
     runs-on: ubuntu-latest

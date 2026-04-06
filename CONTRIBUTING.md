@@ -56,6 +56,18 @@ pip install -r tools/python/requirements.txt
 python tools/python/validator.py examples/full-kyc-profile.json
 ```
 
+#### Running the Python test suite
+
+```bash
+# From the repo root (uses pyproject.toml testpaths config):
+pip install pytest
+pytest tools/python/tests/ -v
+
+# Or run individual test files:
+pytest tools/python/tests/test_validator.py -v
+pytest tools/python/tests/test_converter.py -v
+```
+
 ### JavaScript tools
 
 ```bash
@@ -64,6 +76,18 @@ npm install
 
 # Validate all examples
 node validator.js ../../examples/full-kyc-profile.json
+
+# Run the test suite
+npm test
+```
+
+### Go tools
+
+```bash
+cd tools/go
+go build ./...   # build the validator binary
+go test ./... -v # run all Go tests
+go run . --help  # show CLI usage
 ```
 
 ### Schema validation
@@ -176,6 +200,49 @@ Breaking changes include:
 | `area: ci` | Affects CI/CD workflows |
 | `status: needs-review` | Awaiting Technical Working Group review |
 | `status: approved` | Approved for merge |
+
+---
+
+## 8. Publishing
+
+### PyPI — `openkycaml` Python package
+
+Publishing is automated via the GitHub Actions release workflow (`.github/workflows/release.yml`).
+
+Manual publishing for maintainers:
+
+```bash
+# Install build tools
+pip install build twine
+
+# Build the distribution
+python -m build
+
+# Upload to PyPI (requires PYPI_TOKEN secret or ~/.pypirc)
+twine upload dist/*
+```
+
+Entry points provided by `pyproject.toml`:
+- `openkycaml-validate` — JSON Schema validator CLI
+- `openkycaml-convert` — Format converter CLI (IVMS 101, PID/LPID, ISO 20022)
+
+### npm — `@openkycaml/tools` Node.js package
+
+Publishing is automated on version tag push (`v*.*.*`) via `.github/workflows/release.yml`.
+
+Manual publishing for maintainers:
+
+```bash
+cd tools/javascript
+
+# Ensure tests pass before publishing
+npm test
+
+# Publish to npm registry (requires NPM_TOKEN secret or npm login)
+npm publish --access public
+```
+
+The `prepublishOnly` script in `package.json` automatically runs `npm test` before every `npm publish` to prevent publishing broken builds.
 
 ---
 

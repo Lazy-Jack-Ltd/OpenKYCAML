@@ -5,7 +5,8 @@
   "main": "validator.js",
   "scripts": {
     "validate": "node validator.js",
-    "test": "node --test tests/*.js"
+    "test": "node --test tests/*.js",
+    "prepublishOnly": "npm test"
   },
   "keywords": [
     "kyc",

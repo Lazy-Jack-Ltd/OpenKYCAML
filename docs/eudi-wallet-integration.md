@@ -15,6 +15,7 @@ specifications.
 4. [Wallet API Mapping](#4-wallet-api-mapping)
 5. [Issuance Flow (OpenID4VCI)](#5-issuance-flow-openid4vci)
 6. [Presentation Flow (OpenID4VP)](#6-presentation-flow-openid4vp)
+   - [6.1 Constructing the Authorization Request (Travel Rule Minimum)](#61-constructing-the-authorization-request-travel-rule-minimum)
 7. [Credential Metadata](#7-credential-metadata)
 8. [Selective Disclosure (SD-JWT VC)](#8-selective-disclosure-sd-jwt-vc)
 9. [Revocation and Status](#9-revocation-and-status)
@@ -252,7 +253,7 @@ after completing KYC onboarding:
 
 ## 6. Presentation Flow (OpenID4VP)
 
-1. **RP sends Authorization Request**: includes `presentation_definition` (see §4.2).
+1. **RP sends Authorization Request**: includes `presentation_definition` (see §4.2 and the canonical definition below).
 2. **Wallet evaluates**: matches request against stored credentials by `vct`.
 3. **User approves**: selects claims to disclose (selective disclosure).
 4. **Wallet builds VP Token**: constructs compact SD-JWT:
@@ -263,6 +264,86 @@ after completing KYC onboarding:
 5. **RP verifies**: validates issuer JWT signature, disclosure hashes, and key binding.
 6. **RP stores OpenKYCAML record**: reconstructs full credential from disclosed claims
    for CDD reliance and audit records.
+
+### 6.1 Constructing the Authorization Request (Travel Rule Minimum)
+
+A VASP acting as a Relying Party (RP) for Travel Rule verification constructs an OpenID4VP
+Authorization Request using the canonical Presentation Definition from
+[`examples/presentation-definitions/travel-rule-minimum.json`](../examples/presentation-definitions/travel-rule-minimum.json).
+This definition requests exactly the FATF Recommendation 16 minimum claims.
+
+**Example Authorization Request (JAR — JWT-secured):**
+
+```
+GET /authorize?
+  response_type=vp_token
+  &client_id=https%3A%2F%2Fvasp.example.nl
+  &response_uri=https%3A%2F%2Fvasp.example.nl%2Fcallback
+  &response_mode=direct_post
+  &nonce=n-0S6_WzA2Mj
+  &presentation_definition_uri=https%3A%2F%2Fvasp.example.nl%2Fpd%2Ftravel-rule-minimum.json
+```
+
+Or inline with the definition embedded:
+
+```json
+{
+  "response_type": "vp_token",
+  "client_id": "https://vasp.example.nl",
+  "response_uri": "https://vasp.example.nl/callback",
+  "response_mode": "direct_post",
+  "nonce": "n-0S6_WzA2Mj",
+  "presentation_definition": {
+    "id": "openkycaml-travel-rule-minimum-v1",
+    "name": "OpenKYCAML Travel Rule Minimum (FATF Rec 16 / TFR 2023/1113 Art. 14)",
+    "purpose": "Verify the FATF Recommendation 16 minimum identity data for a natural person originator or beneficiary.",
+    "format": {
+      "dc+sd-jwt": {
+        "sd-jwt_alg_values": ["ES256", "ES384"],
+        "kb-jwt_alg_values": ["ES256", "ES384"]
+      }
+    },
+    "input_descriptors": [
+      {
+        "id": "openkycaml-natural-person-identity",
+        "name": "OpenKYCAML KYC Identity Attestation — Natural Person",
+        "constraints": {
+          "limit_disclosure": "required",
+          "fields": [
+            {
+              "path": ["$.vct"],
+              "filter": { "type": "string", "const": "https://openkycaml.org/credentials/v1/OpenKYCAMLCredential" }
+            },
+            {
+              "path": ["$.credentialSubject.ivms101.originator.originatorPersons[0].naturalPerson.name.nameIdentifier[0].primaryIdentifier"],
+              "purpose": "Family name (FATF Rec 16 mandatory)"
+            },
+            {
+              "path": ["$.credentialSubject.ivms101.originator.originatorPersons[0].naturalPerson.name.nameIdentifier[0].secondaryIdentifier"],
+              "purpose": "Given name(s) (FATF Rec 16 mandatory)"
+            },
+            {
+              "path": ["$.credentialSubject.ivms101.originator.originatorPersons[0].naturalPerson.nationalIdentification.nationalIdentifier"],
+              "purpose": "National identifier (FATF Rec 16 / TFR 2023/1113 Art. 14)"
+            },
+            {
+              "path": ["$.credentialSubject.ivms101.originator.accountNumber[0]"],
+              "purpose": "Originator account number (crypto address or IBAN)"
+            }
+          ]
+        }
+      }
+    ]
+  }
+}
+```
+
+> **`limit_disclosure: required`** instructs the wallet to apply selective disclosure and only
+> reveal the fields listed above — GDPR data-minimisation is enforced at the protocol layer.
+> The wallet holder must explicitly approve each disclosure before the VP Token is sent.
+
+The full canonical Presentation Definition (including optional DoB / address alternative fields
+and format constraints) is at [`examples/presentation-definitions/travel-rule-minimum.json`](../examples/presentation-definitions/travel-rule-minimum.json).
 
 ---
 
