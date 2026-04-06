@@ -618,7 +618,7 @@
     },
     "VerifiableCredentialProof": {
       "title": "VerifiableCredentialProof",
-      "description": "Cryptographic proof section conforming to W3C VC Data Model v2 / eIDAS 2.0 ARF.",
+      "description": "Cryptographic proof section conforming to W3C VC Data Model v1.1 / v2-compatible structure / eIDAS 2.0 ARF.",
       "type": "object",
       "required": [
         "type",
@@ -671,7 +671,7 @@
     },
     "VerifiableCredentialWrapper": {
       "title": "VerifiableCredentialWrapper",
-      "description": "Optional W3C Verifiable Credential envelope conforming to W3C VC Data Model v2 and eIDAS 2.0 ARF §6.3. When present, the IVMS101 payload and kycProfile are transported as credentialSubject.",
+      "description": "Optional W3C Verifiable Credential envelope conforming to W3C VC Data Model v1.1 (v2-compatible structure) and eIDAS 2.0 ARF §6.3. When present, the IVMS101 payload and kycProfile are transported as credentialSubject. Note: the @context[0] uses the W3C VC DM v1.1 URL; migration to the v2 URL is planned for v2.0.0.",
       "type": "object",
       "required": [
         "@context",
@@ -743,7 +743,7 @@
         },
         "credentialSubject": {
           "type": "object",
-          "description": "The subject of this credential. Embeds the IVMS 101 Travel Rule payload and/or the KYC profile directly so that a single signed VC carries all required AML identity data for eIDAS 2.0 / EUDIW wallet flows. Maps to W3C VC Data Model v2 credentialSubject.",
+          "description": "The subject of this credential. Embeds the IVMS 101 Travel Rule payload and/or the KYC profile directly so that a single signed VC carries all required AML identity data for eIDAS 2.0 / EUDIW wallet flows. Maps to W3C VC Data Model v1.1 credentialSubject.",
           "properties": {
             "id": {
               "type": "string",

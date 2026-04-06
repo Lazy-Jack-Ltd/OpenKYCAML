@@ -103,8 +103,8 @@ These are the standard attribute names used in Sovrin KYC credential schemas pub
 
 | Indy Schema Attribute | Description | OpenKYCAML Field |
 |---|---|---|
-| `first_name` / `given_name` | Given name(s) | `ivms101.originator.originatorPersons[].naturalPerson.name.nameIdentifiers[].secondaryIdentifier` |
-| `last_name` / `family_name` | Family / surname | `ivms101.originator.originatorPersons[].naturalPerson.name.nameIdentifiers[].primaryIdentifier` |
+| `first_name` / `given_name` | Given name(s) | `ivms101.originator.originatorPersons[].naturalPerson.name.nameIdentifier[].secondaryIdentifier` |
+| `last_name` / `family_name` | Family / surname | `ivms101.originator.originatorPersons[].naturalPerson.name.nameIdentifier[].primaryIdentifier` |
 | `full_name` | Full legal name | Combination of `primaryIdentifier` + `secondaryIdentifier` |
 | `birth_date` / `date_of_birth` / `birthdate` | Date of birth (ISO 8601) | `ivms101.originator.originatorPersons[].naturalPerson.dateAndPlaceOfBirth.dateOfBirth` |
 | `birth_place` / `place_of_birth` | Place of birth | `ivms101.originator.originatorPersons[].naturalPerson.dateAndPlaceOfBirth.placeOfBirth` |
@@ -134,7 +134,7 @@ These are the standard attribute names used in Sovrin KYC credential schemas pub
 
 | Indy Schema Attribute | Description | OpenKYCAML Field |
 |---|---|---|
-| `organization_name` / `org_name` / `legal_name` | Legal entity name | `ivms101.originator.originatorPersons[].legalPerson.name.nameIdentifiers[].legalPersonName` |
+| `organization_name` / `org_name` / `legal_name` | Legal entity name | `ivms101.originator.originatorPersons[].legalPerson.name.nameIdentifier[].legalPersonName` |
 | `registration_number` / `company_number` | Company registration number | `ivms101.originator.originatorPersons[].legalPerson.nationalIdentification.nationalIdentifier` (type `REGISTRATION_AUTHORITY`) |
 | `legal_entity_identifier` / `lei` | LEI (ISO 17442) | `ivms101.originator.originatorPersons[].legalPerson.nationalIdentification.nationalIdentifier` (type `LEIX`) |
 | `jurisdiction` / `country_of_registration` | Jurisdiction / country of incorporation | `ivms101.originator.originatorPersons[].legalPerson.countryOfRegistration` |
@@ -343,8 +343,8 @@ Store the resulting schema ID in `verifiableCredential.credentialSchema.id`:
 Map OpenKYCAML fields to AnonCreds attribute values:
 
 ```
-first_name  → ivms101.originator.originatorPersons[0].naturalPerson.name.nameIdentifiers[0].secondaryIdentifier
-last_name   → ivms101.originator.originatorPersons[0].naturalPerson.name.nameIdentifiers[0].primaryIdentifier
+first_name  → ivms101.originator.originatorPersons[0].naturalPerson.name.nameIdentifier[0].secondaryIdentifier
+last_name   → ivms101.originator.originatorPersons[0].naturalPerson.name.nameIdentifier[0].primaryIdentifier
 birth_date  → ivms101.originator.originatorPersons[0].naturalPerson.dateAndPlaceOfBirth.dateOfBirth
 country_of_residence → ivms101.originator.originatorPersons[0].naturalPerson.countryOfResidence
 national_id → ivms101.originator.originatorPersons[0].naturalPerson.nationalIdentification.nationalIdentifier
@@ -395,7 +395,7 @@ For ZKP presentations where only some attributes are revealed (e.g., prove `age 
         "/credentialSubject/ivms101/originator/originatorPersons/0/naturalPerson/dateAndPlaceOfBirth/dateOfBirth"
       ],
       "requiredClaimPaths": [
-        "/credentialSubject/ivms101/originator/originatorPersons/0/naturalPerson/name/nameIdentifiers/0/primaryIdentifier",
+        "/credentialSubject/ivms101/originator/originatorPersons/0/naturalPerson/name/nameIdentifier/0/primaryIdentifier",
         "/credentialSubject/kycProfile/isEligible"
       ]
     }

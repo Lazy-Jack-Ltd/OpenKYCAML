@@ -9,6 +9,7 @@ This directory contains mapping scripts for converting between OpenKYCAML and ot
 | [`../python/converter.py`](../python/converter.py) | Python | IVMS 101 ↔ OpenKYCAML, eIDAS 2.0 PID ↔ OpenKYCAML, eIDAS 2.0 LPID ↔ OpenKYCAML, OpenKYCAML → ISO 20022 (simplified dict), VC extraction |
 | [`../../iso20022-integration/libraries/python/converter.py`](../../iso20022-integration/libraries/python/converter.py) | Python | **Full ISO 20022 XML** — `openkycaml_to_pacs008()`, `openkycaml_to_pain001()`, `iso20022_to_openkycaml()` |
 | [`../../iso20022-integration/libraries/typescript/converter.ts`](../../iso20022-integration/libraries/typescript/converter.ts) | TypeScript | Same three ISO 20022 functions as ESM module |
+| [`../javascript/openvaspConverter.js`](../javascript/openvaspConverter.js) | JavaScript | OpenVASP Transfer body ↔ OpenKYCAML `ivms101` block |
 
 ## Supported Conversion Commands
 

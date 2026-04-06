@@ -1,6 +1,8 @@
 {
   "_comment_format": "SD-JWT Compact Token — Annotated Reference Example. This file documents the structure of an OpenKYCAML SD-JWT VC in its compact serialisation as it travels between an issuer, an EUDI Wallet, and a relying party (VASP/bank). The compact token is a single ASCII string in the form: <Issuer-JWT>~<Disclosure-1>~<Disclosure-2>~...~<KB-JWT>. Each component is a Base64url-encoded value. This JSON file decodes all components for readability and developer tooling.",
 
+  "_disclaimer": "STRUCTURAL REFERENCE ONLY — NOT FOR PRODUCTION USE. This file contains placeholder/stub cryptographic signature values (see _comment_placeholder_signatures below) that CANNOT be cryptographically verified. It is a developer documentation aid demonstrating SD-JWT field structure and selective-disclosure patterns. It is intentionally excluded from automated schema-correctness assertions that depend on cryptographic validity. Real implementations MUST replace all placeholder values with genuine signatures produced by the issuer's and holder's private keys.",
+
   "_comment_scenario": "Anna Müller presents her OpenKYCAML KYC Attestation at Beneficiary VASP (NL). She selectively discloses her legal name and residential address (FATF Travel Rule minimum) and withholds her date of birth, national identifier, and nationality under GDPR data-minimisation. The relying party requests only the mandatory Travel Rule claims via an OpenID4VP Presentation Definition.",
 
   "$schema": "https://openkycaml.org/schema/v1.3.0/kyc-aml-hybrid-extended.json",

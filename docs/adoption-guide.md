@@ -17,8 +17,9 @@ This guide walks you through integrating OpenKYCAML into your product or infrast
 5. [Use Case 4: Full KYC Profile Sharing](#5-use-case-4-full-kyc-profile-sharing)
 6. [Use Case 5: Integrating with Legacy Payment Rails via ISO 20022](#6-use-case-5-integrating-with-legacy-payment-rails-via-iso-20022)
 7. [Validation](#7-validation)
-8. [Versioning and Upgrades](#8-versioning-and-upgrades)
-9. [FAQ](#9-faq)
+8. [Building a Compliant Document Bundle](#8-building-a-compliant-document-bundle)
+9. [Versioning and Upgrades](#9-versioning-and-upgrades)
+10. [FAQ](#10-faq)
 
 ---
 
@@ -39,9 +40,9 @@ Transmit compliant Travel Rule messages between VASPs under FATF Recommendation 
 For a FATF-compliant Travel Rule message, the `ivms101` block must include:
 
 **Originator (natural person):**
-- `name.nameIdentifiers[0].primaryIdentifier` — family name
-- `name.nameIdentifiers[0].secondaryIdentifier` — given name
-- `name.nameIdentifiers[0].nameIdentifierType` = `"LEGL"`
+- `name.nameIdentifier[0].primaryIdentifier` — family name
+- `name.nameIdentifier[0].secondaryIdentifier` — given name
+- `name.nameIdentifier[0].nameIdentifierType` = `"LEGL"`
 - `nationalIdentification.nationalIdentifier`
 - `nationalIdentification.nationalIdentifierType`
 - `dateAndPlaceOfBirth.dateOfBirth` *(or address)*
@@ -55,8 +56,8 @@ For a FATF-compliant Travel Rule message, the `ivms101` block must include:
 - `transferredAmount.assetType`
 
 **Originating VASP:**
-- `originatingVASP.originatingVASP.name.nameIdentifiers[0].legalPersonName`
-- `originatingVASP.originatingVASP.nationalIdentification.nationalIdentifier` (LEI preferred)
+- `originatingVASP.name.nameIdentifier[0].legalPersonName`
+- `originatingVASP.nationalIdentification.nationalIdentifier` (LEI preferred)
 
 ### Example
 See [`examples/minimal-travel-rule.json`](../examples/minimal-travel-rule.json).
@@ -243,9 +244,161 @@ else:
         print(f"  {error.path}: {error.message}")
 ```
 
+### Using examples as test fixtures
+
+The [`examples/`](../examples/) directory contains 25 schema-valid payloads covering the full range of compliance scenarios.  They are automatically validated by the CI workflow on every push — adding a new file to `examples/` enrolls it in CI with no workflow changes needed.
+
+See **[`examples/EXAMPLES.md`](../examples/EXAMPLES.md)** for:
+- A full per-file catalogue table (scenario, subject type, schema version, data blocks present)
+- Copy-paste pytest parametrize patterns for integration test suites
+- Notes on special files (`sd-jwt-compact-token.json`, `travel-rule-vc-wrapped.json`, document bundle examples)
+
 ---
 
-## 8. Versioning and Upgrades
+## 8. Building a Compliant Document Bundle
+
+OpenKYCAML v1.5.0 introduces the `identityDocuments` block — a typed, structured bundle of verification documents that satisfies the documentary evidence requirements of **ISO 17442**, **GLEIF LOUs**, **FATF Rec. 10/24/25**, and **AMLR Art. 22 and 26**.
+
+### Why a document bundle?
+
+The `kycProfile.dueDiligenceRequirements.verificationMethods[]` block records *how* each attribute was verified. The `identityDocuments` block records *what documents* were examined to produce that verification. Together they provide end-to-end auditability from raw evidence → extracted attribute → verified identity claim.
+
+### 8.1 GLEIF RAL Lookup Workflow
+
+When onboarding a legal entity, the correct registration authority must be identified using the **GLEIF Registration Authorities List (RAL)**. The RAL maps every jurisdiction to its official national business registry.
+
+**Steps:**
+
+1. Determine the entity's `countryOfRegistration` (ISO 3166-1 alpha-2).
+2. Look up the RAL at [https://www.gleif.org/en/about-lei/code-lists/gleif-registration-authorities-list](https://www.gleif.org/en/about-lei/code-lists/gleif-registration-authorities-list).
+3. Find the matching `ralCode` (format: `RA######`).
+4. Populate `nationalIdentification.registrationAuthorityDetail` with the structured RAL reference.
+
+**Common RAL codes:**
+
+| Jurisdiction | Registry | RAL Code |
+|---|---|---|
+| United Kingdom | Companies House | `RA000585` |
+| Germany | Handelsregister | `RA000602` |
+| United States (Federal) | SEC / IRS EIN | `RA000543` |
+| France | INSEE / RCS | `RA000518` |
+| Netherlands | Kamer van Koophandel | `RA000440` |
+| Japan | Ministry of Justice | `RA000397` |
+| Ireland | Companies Registration Office | `RA000190` |
+
+When the registry is digitally accessible (`digitalAccessible: true`), the live registry record is the primary evidence source per GLEIF LOU practice. A `registryUrl` should always be included so the record can be re-verified in future.
+
+### 8.2 Required Documents by Entity Type
+
+#### Natural Persons (CDD)
+
+| Required | Document Type | Notes |
+|---|---|---|
+| Yes (one of) | `PASSPORT`, `NATIONAL_ID_CARD`, `RESIDENCE_PERMIT` | Primary photo-ID |
+| Yes | `PROOF_OF_ADDRESS` | Utility bill or bank statement, not older than 3 months |
+| EDD only | `TAX_IDENTIFICATION` or `SOCIAL_SECURITY` | Secondary identifier |
+| EDD / Remote | `EIDAS_PID_CREDENTIAL` | Fulfils AMLR Art. 22(5)(b) for non-face-to-face |
+
+#### Legal Entities — Company (COMPANY)
+
+| Required | Document Type | Notes |
+|---|---|---|
+| Yes | `CERTIFICATE_OF_INCORPORATION` | Evidences legal name, date of formation, ELF code |
+| Yes | `ARTICLES_OF_ASSOCIATION` | Evidences legal sub-type (private/public) |
+| Yes | `REGISTRY_EXTRACT` | Current extract from RAL-designated registry; validity ≤ 6 months |
+| Recommended | `LEI_REGISTRATION` | Confirms LEI via ISO 17442 |
+| Recommended | `ULTIMATE_BENEFICIAL_OWNER_REGISTER` | e.g. UK PSC register, EU UBO register |
+| EDD | `ANNUAL_REPORT_ACCOUNTS` | Source of funds verification |
+| EDD | `AUTHORISED_SIGNATORY_LIST` | Mandate and representative verification |
+
+#### Legal Entities — Trust (TRUST)
+
+| Required | Document Type |
+|---|---|
+| Yes | `TRUST_DEED` |
+| Yes | `ULTIMATE_BENEFICIAL_OWNER_REGISTER` |
+| Recommended | `REGISTRY_EXTRACT` (if registered) |
+| Recommended | `AUTHORISED_SIGNATORY_LIST` |
+
+#### Legal Entities — Foundation (FOUNDATION)
+
+| Required | Document Type |
+|---|---|
+| Yes | `FOUNDATION_CHARTER` |
+| Yes | `REGISTRY_EXTRACT` |
+| Recommended | `ULTIMATE_BENEFICIAL_OWNER_REGISTER` |
+
+#### Legal Entities — Partnership (PARTNERSHIP)
+
+| Required | Document Type |
+|---|---|
+| Yes | `PARTNERSHIP_AGREEMENT` |
+| Yes | `REGISTRY_EXTRACT` |
+| Recommended | `ULTIMATE_BENEFICIAL_OWNER_REGISTER` |
+
+### 8.3 The GLEIF vLEI Credential Hierarchy
+
+For legal entities that have a GLEIF vLEI credential, include a `VLEI_CREDENTIAL` record and set the `vLEICredentialType`:
+
+| Type | Full Name | Purpose |
+|---|---|---|
+| `QVI` | Qualified vLEI Issuer credential | Issued by GLEIF to authorised QVI issuers; confirms issuer authority |
+| `OOR` | Official Organisational Role credential | Issued to legal representatives (Directors, Authorised Signatories); maps to `lpid.mandates[]` |
+| `ECR` | Engagement Context Role credential | Issued to employees for specific business contexts |
+
+**Example vLEI chain:** GLEIF → QVI (e.g. LuxTrust SA) → OOR for Director of Acme PLC.
+
+The `credentialIssuer` field should be the DID of the QVI, and `credentialId` the URI of the specific credential.
+
+### 8.4 Populating `extractedAttributes`
+
+The `extractedAttributes[]` array records exactly which data elements were read from each document and whether they match the asserted values in the IVMS 101 / `kycProfile` record:
+
+```json
+{
+  "attributeName": "dateOfBirth",
+  "value": "1985-07-22",
+  "matchesRecord": true
+}
+```
+
+Set `matchesRecord: false` when a discrepancy is detected — this flags the record for manual review before setting `bundleCompleteness: "COMPLETE"`.
+
+### 8.5 Linking Documents to Assertions
+
+Use the cross-reference fields added in v1.5.0 to connect verified claims back to their evidence:
+
+```json
+"nationalIdentification": {
+  "nationalIdentifier": "L01X00T471",
+  "nationalIdentifierType": "IDCD",
+  "verifyingDocumentRef": "urn:doc:de-nid-andreas-schmidt-001"
+}
+```
+
+```json
+"legalPerson": {
+  "legalFormCode": "Z13E",
+  "verifyingDocumentRef": "urn:doc:gb-registry-extract-acme-plc-2026"
+}
+```
+
+```json
+"verificationMethods": [{
+  "attribute": "legalPerson.legalFormCode",
+  "method": "DATABASE_CHECK",
+  "documentRef": "urn:doc:lei-529900W18LQJJN6SJ336-confirmation-2026"
+}]
+```
+
+### 8.6 Complete Working Examples
+
+- **Natural person bundle:** [`examples/document-bundle-natural-person.json`](../examples/document-bundle-natural-person.json) — German national: Personalausweis + proof of address + eIDAS PID VC.
+- **Legal entity bundle (UK PLC):** [`examples/document-bundle-legal-entity.json`](../examples/document-bundle-legal-entity.json) — Certificate of Incorporation + Companies House extract + LEI registration + vLEI OOR + PSC register (GLEIF RAL `RA000585`, ELF code `Z13E`).
+
+---
+
+## 9. Versioning and Upgrades
 
 OpenKYCAML follows **semantic versioning** (MAJOR.MINOR.PATCH):
 
@@ -264,7 +417,7 @@ When upgrading:
 
 ---
 
-## 9. FAQ
+## 10. FAQ
 
 **Q: Do I need to use the `verifiableCredential` wrapper?**
 No. It is entirely optional. Use it only if you need eIDAS 2.0 / EUDIW-compatible attestations.

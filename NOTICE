@@ -11,6 +11,14 @@ This standard incorporates concepts and field definitions from:
 - EU Anti-Money Laundering Regulation (AMLR) — European Parliament and Council
 - ISO 20022 Financial Services Messaging — International Organization for Standardization
 - LEI (Legal Entity Identifier) — GLEIF
+- OpenID4VP (OpenID for Verifiable Presentations) — OpenID Foundation
+  Specification: https://openid.net/specs/openid-4-verifiable-presentations-1_0.html
+  Copyright (c) The OpenID Foundation and Contributors. Used for reference in EUDI Wallet
+  presentation flows; this product does not redistribute the specification itself.
+- OpenID4VCI (OpenID for Verifiable Credential Issuance) — OpenID Foundation
+  Specification: https://openid.net/specs/openid-4-verifiable-credential-issuance-1_0.html
+  Copyright (c) The OpenID Foundation and Contributors. Used for reference in EUDI Wallet
+  credential issuance flows; this product does not redistribute the specification itself.
 
 All referenced standards remain the intellectual property of their respective owners.
 References are made for interoperability purposes only and do not imply endorsement

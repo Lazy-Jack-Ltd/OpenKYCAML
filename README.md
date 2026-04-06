@@ -5,7 +5,7 @@
 **The neutral, open hybrid KYC/AML data standard for the compliant digital economy.**
 
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
-[![Schema Version](https://img.shields.io/badge/schema-v1.3.0-brightgreen.svg)](schema/kyc-aml-hybrid-extended.json)
+[![Schema Version](https://img.shields.io/badge/schema-v1.5.0-brightgreen.svg)](schema/kyc-aml-hybrid-extended.json)
 [![IVMS 101](https://img.shields.io/badge/IVMS%20101-compatible-orange.svg)](docs/mapping-ivms101-eidas-amlr.md)
 [![eIDAS 2.0](https://img.shields.io/badge/eIDAS%202.0-VC%20ready-blueviolet.svg)](docs/mapping-ivms101-eidas-amlr.md)
 [![AMLR 2027 Ready](https://img.shields.io/badge/AMLR%202027-ready-red.svg)](docs/compliance-matrix.md)
@@ -103,6 +103,14 @@ OpenKYCAML payload
 │   ├── monitoringInfo            ← Monitoring level, alerts, review dates
 │   └── auditMetadata             ← Record ID, version, change log
 │
+├── identityDocuments            ← (optional, v1.5.0+) Verification document bundle
+│   ├── naturalPersonDocuments[] ← Typed docs: PASSPORT / NATIONAL_ID_CARD / EIDAS_PID_CREDENTIAL / ...
+│   ├── legalEntityDocuments[]   ← Typed docs: CERTIFICATE_OF_INCORPORATION / REGISTRY_EXTRACT /
+│   │                                LEI_REGISTRATION / VLEI_CREDENTIAL / TRUST_DEED / ...
+│   ├── bundleCompleteness        ← COMPLETE / PARTIAL / PENDING
+│   ├── bundleValidatedBy         ← Compliance officer or automated system
+│   └── requiredDocumentTypes[]  ← Jurisdiction/entity-type-specific required doc list
+│
 └── gdprSensitivityMetadata      ← (optional, v1.3.0+) GDPR/AML sensitivity classification
     ├── classification            ← standard / sensitive_personal / criminal_offence /
     │                                sar_restricted / internal_suspicion / confidential_aml
@@ -145,8 +153,8 @@ node validator.js ../../examples/full-kyc-profile.json
 
 ```json
 {
-  "$schema": "https://openkycaml.org/schema/v1.3.0/kyc-aml-hybrid-extended.json",
-  "version": "1.3.0",
+  "$schema": "https://openkycaml.org/schema/v1.5.0/kyc-aml-hybrid-extended.json",
+  "version": "1.5.0",
   "messageId": "550e8400-e29b-41d4-a716-446655440001",
   "messageDateTime": "2024-06-15T09:30:00Z",
   "ivms101": {
@@ -182,8 +190,8 @@ node validator.js ../../examples/full-kyc-profile.json
 
 ```json
 {
-  "$schema": "https://openkycaml.org/schema/v1.3.0/kyc-aml-hybrid-extended.json",
-  "version": "1.3.0",
+  "$schema": "https://openkycaml.org/schema/v1.5.0/kyc-aml-hybrid-extended.json",
+  "version": "1.5.0",
   "verifiableCredential": {
     "issuer": { "id": "did:web:acme-crypto.example.nl", "name": "Acme Crypto Exchange BV" },
     "credentialSubject": {
@@ -207,20 +215,20 @@ node validator.js ../../examples/full-kyc-profile.json
 
 ## Example Payloads
 
-Every scenario is available in two forms: a **plain IVMS 101** baseline and an **EUDI Wallet VC-wrapped** companion that demonstrates DID triangulation (subject wallet DID · PID/LPID issuer DID · VASP DID). SD-JWT selective disclosure variants are provided for the natural person and legal entity scenarios.
+There are **25 example payloads** in [`examples/`](examples/) covering the full range of scenarios — from a minimal two-party Travel Rule message to complex 4-tier ownership structures, EUDI Wallet DID triangulation, SD-JWT selective disclosure, and v1.5.0 Verification Document Bundles.
 
-| Scenario | Plain baseline | EUDI Wallet / DID version |
+The complete catalogue with per-file descriptions, schema block inventory, and testing guidance is in **[`examples/EXAMPLES.md`](examples/EXAMPLES.md)**.
+
+### Highlights
+
+| Scenario | File(s) | Schema ver |
 |---|---|---|
-| Natural person Travel Rule | [`natural-person-plain.json`](examples/natural-person-plain.json) | [`natural-person-eudi-wallet.json`](examples/natural-person-eudi-wallet.json) |
-| Natural person — SD-JWT selective disclosure | — | [`natural-person-sd-jwt-eudi-wallet.json`](examples/natural-person-sd-jwt-eudi-wallet.json) |
-| Legal entity Travel Rule | [`legal-entity-plain.json`](examples/legal-entity-plain.json) | [`legal-entity-eudi-wallet.json`](examples/legal-entity-eudi-wallet.json) |
-| Legal entity — SD-JWT selective disclosure | — | [`legal-entity-sd-jwt-eudi-wallet.json`](examples/legal-entity-sd-jwt-eudi-wallet.json) |
-| Legal entity — Deep UBO chain (AMLR Art. 26) | [`legal-entity-deep-ubo.json`](examples/legal-entity-deep-ubo.json) | — |
-| Hybrid VC-wrapped (IVMS 101 + kycProfile) | [`hybrid-vc-wrapped.json`](examples/hybrid-vc-wrapped.json) | [`hybrid-vc-eudi-wallet.json`](examples/hybrid-vc-eudi-wallet.json) |
-| Full KYC profile (EDD, PEP, UBOs) | [`full-kyc-profile.json`](examples/full-kyc-profile.json) | [`full-kyc-profile-eudi-wallet.json`](examples/full-kyc-profile-eudi-wallet.json) |
-| Minimal Travel Rule | [`minimal-travel-rule.json`](examples/minimal-travel-rule.json) | [`minimal-travel-rule-eudi-wallet.json`](examples/minimal-travel-rule-eudi-wallet.json) |
-| Travel Rule VC-wrapped | [`travel-rule-vc-wrapped.json`](examples/travel-rule-vc-wrapped.json) | [`travel-rule-vc-eudi-wallet.json`](examples/travel-rule-vc-eudi-wallet.json) |
-| SAR-restricted VC — tipping-off protection (v1.3.0) | [`hybrid-with-sar-restriction.json`](examples/hybrid-with-sar-restriction.json) | — |
+| Minimal Travel Rule (FATF baseline) | [`minimal-travel-rule.json`](examples/minimal-travel-rule.json) · [`-eudi-wallet`](examples/minimal-travel-rule-eudi-wallet.json) | 1.3.0 |
+| Natural person — full EDD / PEP profile | [`full-kyc-profile.json`](examples/full-kyc-profile.json) · [`-eudi-wallet`](examples/full-kyc-profile-eudi-wallet.json) | 1.3.0 |
+| Legal entity — deep 4-tier UBO chain (AMLR Art. 26) | [`legal-entity-deep-ubo.json`](examples/legal-entity-deep-ubo.json) | 1.3.0 |
+| ISO 20275 trust / partnership (ELF codes) | [`legal-entity-trust.json`](examples/legal-entity-trust.json) · [`legal-entity-partnership.json`](examples/legal-entity-partnership.json) | 1.4.0 |
+| Verification Document Bundle | [`document-bundle-natural-person.json`](examples/document-bundle-natural-person.json) · [`document-bundle-legal-entity.json`](examples/document-bundle-legal-entity.json) | 1.5.0 |
+| SAR tipping-off protection | [`hybrid-with-sar-restriction.json`](examples/hybrid-with-sar-restriction.json) | 1.3.0 |
 
 ### EUDI Wallet examples — DID triangulation
 
@@ -261,11 +269,12 @@ Each `-eudi-wallet.json` example documents a **trust chain** using W3C VC eviden
 | **IVMS 101 v1.0** | ✅ Full superset — all fields supported |
 | **FATF Recommendation 16** | ✅ Travel Rule compliant |
 | **FATF Recommendations 10, 12, 24** | ✅ CDD, PEP, UBO fields |
-| **EU AMLR 2024** | ✅ Art. 20–22, 24, 26, 28–31, 56, 83 |
+| **EU AMLR 2024** | ✅ Art. 20–22, 24, 26, 28–31, 56, 83; verification document bundle (Art. 22 & 26, v1.5.0) |
 | **eIDAS 2.0 / ARF** | ✅ W3C VC Data Model v2, DID, Ed25519 proof suites, LPID, QEAA mandates |
 | **EU Digital Identity Wallet (EUDIW)** | ✅ PID + LPID credential flows via OpenID4VP; W3C VC evidence block; EUDI_WALLET onboarding channel; `gdprSensitivityMetadata` for tipping-off-safe EUDIW presentations (v1.3.0) |
 | **ISO 20022** | ✅ v1.3.0 — SupplementaryData envelope, pacs.008/pain.001/camt.053 profiles, Python & TypeScript converters (bidirectional) — see [`iso20022-integration/`](iso20022-integration/) |
-| **GLEIF / LEI** | ✅ LEIX national identifier type; ISO 17442 check digit validation |
+| **GLEIF / LEI** | ✅ LEIX national identifier type; ISO 17442 check digit validation; GLEIF RAL `RegistrationAuthorityDetail` (v1.5.0); `LegalEntityDocument` with `gleifRegistrationAuthority`, `elfCodeVerified`, and `vLEICredentialType` (QVI/OOR/ECR) |
+| **ISO 17442 / vLEI** | ✅ v1.5.0 — LEI field, GLEIF RAL structured reference, vLEI Verifiable Credential support (QVI → OOR → ECR hierarchy), `LEI_REGISTRATION` and `VLEI_CREDENTIAL` document types |
 | **GDPR** | ✅ Consent record, data retention date, EUDI Wallet SD-JWT selective disclosure; `gdprSensitivityMetadata` block for SAR/tipping-off protection (Art. 9/10 special categories and criminal-offence data, AMLR Art. 73) — added v1.3.0 |
 | **ERC-3643 (T-REX)** | ✅ ONCHAINID, eligibility flag, wallet addresses, frozen tokens, accredited investor claim — see [ERC-3643 mapping](docs/mapping-erc3643.md) |
 | **Sovrin / Hyperledger Indy (AnonCreds)** | ✅ `did:sov` / `did:indy` DIDs, AnonCreds CL credentials, CLAIM_DEF, REVOC_REG, Rich Schema — see [Sovrin mapping](docs/mapping-sovrin.md) |
@@ -278,17 +287,20 @@ Each `-eudi-wallet.json` example documents a **trust chain** using W3C VC eviden
 ```
 openKYCAML/
 ├── schema/
-│   ├── kyc-aml-hybrid-extended.json     ← Canonical schema (latest — currently v1.3.0)
+│   ├── kyc-aml-hybrid-extended.json     ← Canonical schema (latest — currently v1.5.0)
 │   └── versions/
 │       ├── v1.0.0.json                  ← v1.0.0 snapshot
 │       ├── v1.1.0.json                  ← v1.1.0 snapshot
 │       ├── v1.2.0.json                  ← v1.2.0 snapshot
-│       └── v1.3.0.json                  ← v1.3.0 snapshot (current)
+│       ├── v1.3.0.json                  ← v1.3.0 snapshot
+│       ├── v1.4.0.json                  ← v1.4.0 snapshot
+│       └── v1.5.0.json                  ← v1.5.0 snapshot (current)
 ├── examples/
 │   ├── *-plain.json                     ← Plain IVMS 101 baseline examples
 │   ├── *-wrapped.json                   ← VC-wrapped examples
-│   └── *-eudi-wallet.json               ← EUDI Wallet / DID triangulation examples
-├── iso20022-integration/                ← ISO 20022 bridge module (v1.3.0)
+│   ├── *-eudi-wallet.json               ← EUDI Wallet / DID triangulation examples
+│   └── document-bundle-*.json           ← Verification document bundle examples (v1.5.0)
+├── iso20022-integration/                ← ISO 20022 bridge module (v1.3.0+)
 │   ├── mapping/                         ← Bidirectional field mapping YAML + gap analysis
 │   ├── supplementary-data/              ← KYCAMLEnvelope JSON Schema + reference instance
 │   ├── profiles/                        ← pacs.008 / pain.001 / camt.053 profiles

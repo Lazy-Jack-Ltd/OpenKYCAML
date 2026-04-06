@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "lib": ["ES2022"],
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "outDir": "../../test-suite/validation-tests/compiled",
+    "rootDir": "../..",
+    "declaration": false,
+    "sourceMap": false
+  },
+  "include": [
+    "swift-mt-converter.ts",
+    "../../test-suite/validation-tests/swift_mt_converter.test.ts"
+  ]
+}
