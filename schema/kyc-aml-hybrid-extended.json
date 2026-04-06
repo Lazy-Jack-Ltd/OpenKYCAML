@@ -1,9 +1,9 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://openkycaml.org/schema/v1.4.0/kyc-aml-hybrid-extended.json",
+  "$id": "https://openkycaml.org/schema/v1.5.0/kyc-aml-hybrid-extended.json",
   "title": "OpenKYCAML Hybrid KYC/AML Schema",
   "description": "Root OpenKYCAML document. At least one of 'ivms101' or 'verifiableCredential' MUST be present.",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "$defs": {
     "NaturalPersonNameIdentifier": {
       "title": "NaturalPersonNameIdentifier",
@@ -162,6 +162,15 @@
           "type": "string",
           "description": "Registration authority (required when nationalIdentifierType is LEIX).",
           "maxLength": 8
+        },
+        "verifyingDocumentRef": {
+          "type": "string",
+          "format": "uri",
+          "description": "Reference to the document record in identityDocuments.naturalPersonDocuments[] or identityDocuments.legalEntityDocuments[] (by documentRef URI) that provided evidence for this identifier. Enables traceability from identifier to source document."
+        },
+        "registrationAuthorityDetail": {
+          "$ref": "#/$defs/RegistrationAuthorityDetail",
+          "description": "Structured GLEIF RAL reference to the registration authority, replacing or supplementing the free-text registrationAuthority field. Required when nationalIdentifierType is LEIX or ISO_20275_ELF_CODE."
         }
       }
     },
@@ -465,36 +474,59 @@
           "type": "string",
           "description": "Free-text description of the legal arrangement when entityType is OTHER and no typed sub-object applies. Should describe the nature, form, and governing law of the arrangement.",
           "maxLength": 500
+        },
+        "verifyingDocumentRef": {
+          "type": "string",
+          "format": "uri",
+          "description": "Reference to the LegalEntityDocument record (by documentRef URI) in identityDocuments.legalEntityDocuments[] that confirmed the legalFormCode via the GLEIF RAL. Typically a REGISTRY_EXTRACT or CERTIFICATE_OF_INCORPORATION record."
         }
       },
       "if": {
         "properties": {
-          "entityType": { "const": "TRUST" }
+          "entityType": {
+            "const": "TRUST"
+          }
         },
-        "required": ["entityType"]
+        "required": [
+          "entityType"
+        ]
       },
       "then": {
-        "required": ["trustDetails"]
+        "required": [
+          "trustDetails"
+        ]
       },
       "else": {
         "if": {
           "properties": {
-            "entityType": { "const": "FOUNDATION" }
+            "entityType": {
+              "const": "FOUNDATION"
+            }
           },
-          "required": ["entityType"]
+          "required": [
+            "entityType"
+          ]
         },
         "then": {
-          "required": ["foundationDetails"]
+          "required": [
+            "foundationDetails"
+          ]
         },
         "else": {
           "if": {
             "properties": {
-              "entityType": { "const": "PARTNERSHIP" }
+              "entityType": {
+                "const": "PARTNERSHIP"
+              }
             },
-            "required": ["entityType"]
+            "required": [
+              "entityType"
+            ]
           },
           "then": {
-            "required": ["partnershipDetails"]
+            "required": [
+              "partnershipDetails"
+            ]
           }
         }
       }
@@ -510,12 +542,24 @@
           "items": {
             "type": "object",
             "properties": {
-              "naturalPerson": { "$ref": "#/$defs/NaturalPerson" },
-              "legalPerson": { "$ref": "#/$defs/LegalPerson" }
+              "naturalPerson": {
+                "$ref": "#/$defs/NaturalPerson"
+              },
+              "legalPerson": {
+                "$ref": "#/$defs/LegalPerson"
+              }
             },
             "oneOf": [
-              { "required": ["naturalPerson"] },
-              { "required": ["legalPerson"] }
+              {
+                "required": [
+                  "naturalPerson"
+                ]
+              },
+              {
+                "required": [
+                  "legalPerson"
+                ]
+              }
             ]
           }
         },
@@ -525,12 +569,24 @@
           "items": {
             "type": "object",
             "properties": {
-              "naturalPerson": { "$ref": "#/$defs/NaturalPerson" },
-              "legalPerson": { "$ref": "#/$defs/LegalPerson" }
+              "naturalPerson": {
+                "$ref": "#/$defs/NaturalPerson"
+              },
+              "legalPerson": {
+                "$ref": "#/$defs/LegalPerson"
+              }
             },
             "oneOf": [
-              { "required": ["naturalPerson"] },
-              { "required": ["legalPerson"] }
+              {
+                "required": [
+                  "naturalPerson"
+                ]
+              },
+              {
+                "required": [
+                  "legalPerson"
+                ]
+              }
             ]
           }
         },
@@ -540,12 +596,24 @@
           "items": {
             "type": "object",
             "properties": {
-              "naturalPerson": { "$ref": "#/$defs/NaturalPerson" },
-              "legalPerson": { "$ref": "#/$defs/LegalPerson" }
+              "naturalPerson": {
+                "$ref": "#/$defs/NaturalPerson"
+              },
+              "legalPerson": {
+                "$ref": "#/$defs/LegalPerson"
+              }
             },
             "oneOf": [
-              { "required": ["naturalPerson"] },
-              { "required": ["legalPerson"] }
+              {
+                "required": [
+                  "naturalPerson"
+                ]
+              },
+              {
+                "required": [
+                  "legalPerson"
+                ]
+              }
             ]
           }
         },
@@ -560,12 +628,24 @@
           "items": {
             "type": "object",
             "properties": {
-              "naturalPerson": { "$ref": "#/$defs/NaturalPerson" },
-              "legalPerson": { "$ref": "#/$defs/LegalPerson" }
+              "naturalPerson": {
+                "$ref": "#/$defs/NaturalPerson"
+              },
+              "legalPerson": {
+                "$ref": "#/$defs/LegalPerson"
+              }
             },
             "oneOf": [
-              { "required": ["naturalPerson"] },
-              { "required": ["legalPerson"] }
+              {
+                "required": [
+                  "naturalPerson"
+                ]
+              },
+              {
+                "required": [
+                  "legalPerson"
+                ]
+              }
             ]
           }
         },
@@ -597,12 +677,24 @@
           "items": {
             "type": "object",
             "properties": {
-              "naturalPerson": { "$ref": "#/$defs/NaturalPerson" },
-              "legalPerson": { "$ref": "#/$defs/LegalPerson" }
+              "naturalPerson": {
+                "$ref": "#/$defs/NaturalPerson"
+              },
+              "legalPerson": {
+                "$ref": "#/$defs/LegalPerson"
+              }
             },
             "oneOf": [
-              { "required": ["naturalPerson"] },
-              { "required": ["legalPerson"] }
+              {
+                "required": [
+                  "naturalPerson"
+                ]
+              },
+              {
+                "required": [
+                  "legalPerson"
+                ]
+              }
             ]
           }
         },
@@ -612,12 +704,24 @@
           "items": {
             "type": "object",
             "properties": {
-              "naturalPerson": { "$ref": "#/$defs/NaturalPerson" },
-              "legalPerson": { "$ref": "#/$defs/LegalPerson" }
+              "naturalPerson": {
+                "$ref": "#/$defs/NaturalPerson"
+              },
+              "legalPerson": {
+                "$ref": "#/$defs/LegalPerson"
+              }
             },
             "oneOf": [
-              { "required": ["naturalPerson"] },
-              { "required": ["legalPerson"] }
+              {
+                "required": [
+                  "naturalPerson"
+                ]
+              },
+              {
+                "required": [
+                  "legalPerson"
+                ]
+              }
             ]
           }
         },
@@ -646,7 +750,11 @@
         "partnershipType": {
           "type": "string",
           "description": "Structural sub-type of the partnership. LP = Limited Partnership; LLP = Limited Liability Partnership; GP = General Partnership.",
-          "enum": ["LP", "LLP", "GP"]
+          "enum": [
+            "LP",
+            "LLP",
+            "GP"
+          ]
         },
         "generalPartners": {
           "type": "array",
@@ -654,12 +762,24 @@
           "items": {
             "type": "object",
             "properties": {
-              "naturalPerson": { "$ref": "#/$defs/NaturalPerson" },
-              "legalPerson": { "$ref": "#/$defs/LegalPerson" }
+              "naturalPerson": {
+                "$ref": "#/$defs/NaturalPerson"
+              },
+              "legalPerson": {
+                "$ref": "#/$defs/LegalPerson"
+              }
             },
             "oneOf": [
-              { "required": ["naturalPerson"] },
-              { "required": ["legalPerson"] }
+              {
+                "required": [
+                  "naturalPerson"
+                ]
+              },
+              {
+                "required": [
+                  "legalPerson"
+                ]
+              }
             ]
           }
         },
@@ -669,12 +789,24 @@
           "items": {
             "type": "object",
             "properties": {
-              "naturalPerson": { "$ref": "#/$defs/NaturalPerson" },
-              "legalPerson": { "$ref": "#/$defs/LegalPerson" }
+              "naturalPerson": {
+                "$ref": "#/$defs/NaturalPerson"
+              },
+              "legalPerson": {
+                "$ref": "#/$defs/LegalPerson"
+              }
             },
             "oneOf": [
-              { "required": ["naturalPerson"] },
-              { "required": ["legalPerson"] }
+              {
+                "required": [
+                  "naturalPerson"
+                ]
+              },
+              {
+                "required": [
+                  "legalPerson"
+                ]
+              }
             ]
           }
         },
@@ -684,12 +816,24 @@
           "items": {
             "type": "object",
             "properties": {
-              "naturalPerson": { "$ref": "#/$defs/NaturalPerson" },
-              "legalPerson": { "$ref": "#/$defs/LegalPerson" }
+              "naturalPerson": {
+                "$ref": "#/$defs/NaturalPerson"
+              },
+              "legalPerson": {
+                "$ref": "#/$defs/LegalPerson"
+              }
             },
             "oneOf": [
-              { "required": ["naturalPerson"] },
-              { "required": ["legalPerson"] }
+              {
+                "required": [
+                  "naturalPerson"
+                ]
+              },
+              {
+                "required": [
+                  "legalPerson"
+                ]
+              }
             ]
           }
         },
@@ -1674,6 +1818,14 @@
               }
             }
           }
+        },
+        "verifyingDocumentRefs": {
+          "type": "array",
+          "description": "References to document records (by documentRef URIs) in identityDocuments.legalEntityDocuments[] that evidence this beneficial ownership claim. Typically ULTIMATE_BENEFICIAL_OWNER_REGISTER, TRUST_DEED, or REGISTRY_EXTRACT records.",
+          "items": {
+            "type": "string",
+            "format": "uri"
+          }
         }
       }
     },
@@ -2335,6 +2487,11 @@
                 "type": "string",
                 "description": "Name or DID of the identity verification service or PID Provider that performed verification.",
                 "maxLength": 200
+              },
+              "documentRef": {
+                "type": "string",
+                "format": "uri",
+                "description": "Reference to the specific document in identityDocuments (by documentRef URI) that was the primary evidence source for this attribute verification step."
               }
             }
           }
@@ -2742,7 +2899,11 @@
             "minimumAssuranceLevel": {
               "type": "string",
               "description": "Minimum eIDAS assurance level that the issuer must have achieved for the credential to be accepted by this relying party.",
-              "enum": ["low", "substantial", "high"]
+              "enum": [
+                "low",
+                "substantial",
+                "high"
+              ]
             }
           },
           "additionalProperties": false
@@ -2862,6 +3023,381 @@
         }
       },
       "additionalProperties": false
+    },
+    "ExtractedAttribute": {
+      "title": "ExtractedAttribute",
+      "description": "A single data element extracted from a verification document, with a flag indicating whether the extracted value matches the corresponding asserted field in the IVMS 101 or kycProfile record.",
+      "type": "object",
+      "required": [
+        "attributeName",
+        "value"
+      ],
+      "properties": {
+        "attributeName": {
+          "type": "string",
+          "description": "Name of the extracted field (e.g. 'familyName', 'dateOfBirth', 'legalName', 'registrationNumber').",
+          "maxLength": 100
+        },
+        "value": {
+          "type": "string",
+          "description": "Extracted value as a string.",
+          "maxLength": 500
+        },
+        "matchesRecord": {
+          "type": "boolean",
+          "description": "Whether the extracted value matches the corresponding asserted field in the OpenKYCAML record. True = confirmed match; false = discrepancy requiring resolution."
+        }
+      }
+    },
+    "RegistrationAuthorityDetail": {
+      "title": "RegistrationAuthorityDetail",
+      "description": "Structured reference to a GLEIF Registration Authorities List (RAL) entry. Identifies the official national or regional business registry that is the authoritative source of truth for an entity's legal form and registration data, as required by ISO 17442 and the GLEIF Rulebook.",
+      "type": "object",
+      "required": [
+        "ralCode",
+        "authorityName",
+        "jurisdiction"
+      ],
+      "properties": {
+        "ralCode": {
+          "type": "string",
+          "description": "GLEIF Registration Authorities List (RAL) code uniquely identifying the registry (e.g. 'RA000585' for Companies House UK, 'RA000602' for Handelsregister Germany). See https://www.gleif.org/en/about-lei/code-lists/gleif-registration-authorities-list.",
+          "pattern": "^RA[0-9]{6}$",
+          "examples": [
+            "RA000585",
+            "RA000602",
+            "RA000518"
+          ]
+        },
+        "authorityName": {
+          "type": "string",
+          "description": "Human-readable name of the registration authority (e.g. 'Companies House', 'Handelsregister', 'Secretary of State - Delaware').",
+          "maxLength": 200
+        },
+        "jurisdiction": {
+          "type": "string",
+          "description": "ISO 3166-1 alpha-2 country code of the jurisdiction governed by this authority, or ISO 3166-2 subdivision code for sub-national registries (e.g. 'GB', 'DE', 'US-DE').",
+          "pattern": "^[A-Z]{2}(-[A-Z0-9]{1,3})?$"
+        },
+        "registryUrl": {
+          "type": "string",
+          "format": "uri",
+          "description": "Base URL of the public-facing registry portal (e.g. 'https://find-and-update.company-information.service.gov.uk/')."
+        },
+        "digitalAccessible": {
+          "type": "boolean",
+          "description": "Whether the registry is digitally accessible for real-time or near-real-time lookups. When false, physical documents are required as the primary evidence per GLEIF LOU practice."
+        }
+      }
+    },
+    "NaturalPersonDocument": {
+      "title": "NaturalPersonDocument",
+      "description": "A government-issued or qualified-credential document examined to verify attributes of a natural person. Covers physical identity documents (passports, national ID cards) and digital credentials (eIDAS 2.0 PID VCs). Each record links the document type to the specific identity attributes it evidenced, supporting FATF Rec. 10 and AMLR Art. 22 CDD requirements.",
+      "type": "object",
+      "required": [
+        "documentType"
+      ],
+      "properties": {
+        "documentType": {
+          "type": "string",
+          "description": "Standardised type code for the natural person identity document.",
+          "enum": [
+            "NATIONAL_ID_CARD",
+            "PASSPORT",
+            "RESIDENCE_PERMIT",
+            "DRIVERS_LICENCE",
+            "BIRTH_CERTIFICATE",
+            "PROOF_OF_ADDRESS",
+            "TAX_IDENTIFICATION",
+            "SOCIAL_SECURITY",
+            "BIOMETRIC_DATA_RECORD",
+            "EIDAS_PID_CREDENTIAL",
+            "OTHER"
+          ]
+        },
+        "documentTitle": {
+          "type": "string",
+          "description": "Human-readable title or local name of the document (e.g. 'Personalausweis', 'Carte nationale d\\'identité', 'Biometric Residence Permit').",
+          "maxLength": 200
+        },
+        "documentNumber": {
+          "type": "string",
+          "description": "The document number or serial identifier as printed on the document (e.g. passport number, ID card number).",
+          "maxLength": 50
+        },
+        "issuingCountry": {
+          "type": "string",
+          "description": "ISO 3166-1 alpha-2 country code of the issuing state.",
+          "pattern": "^[A-Z]{2}$"
+        },
+        "issuingAuthority": {
+          "type": "string",
+          "description": "Name of the government body or authority that issued the document (e.g. 'Her Majesty\\'s Passport Office', 'Bundesdruckerei GmbH', 'DVLA').",
+          "maxLength": 200
+        },
+        "issueDate": {
+          "type": "string",
+          "format": "date",
+          "description": "ISO 8601 date on which the document was issued."
+        },
+        "expiryDate": {
+          "type": "string",
+          "format": "date",
+          "description": "ISO 8601 date on which the document expires or becomes invalid."
+        },
+        "verificationDate": {
+          "type": "string",
+          "format": "date",
+          "description": "ISO 8601 date on which the document was examined and verified by the obliged entity or its verification provider."
+        },
+        "verificationMethod": {
+          "type": "string",
+          "description": "Method used to verify the document.",
+          "enum": [
+            "EIDAS_HIGH",
+            "EIDAS_SUBSTANTIAL",
+            "EUDI_WALLET_PID",
+            "DOCUMENT_CHECK",
+            "BIOMETRIC_MATCH",
+            "DATABASE_CHECK",
+            "THIRD_PARTY_RELIANCE",
+            "SELF_DECLARATION",
+            "OTHER"
+          ]
+        },
+        "assuranceLevel": {
+          "type": "string",
+          "description": "eIDAS assurance level achieved for this document, where applicable.",
+          "enum": [
+            "LOW",
+            "SUBSTANTIAL",
+            "HIGH"
+          ]
+        },
+        "documentPresence": {
+          "type": "string",
+          "description": "Whether the document was presented physically or as a digital credential.",
+          "enum": [
+            "Physical",
+            "Digital"
+          ]
+        },
+        "documentRef": {
+          "type": "string",
+          "format": "uri",
+          "description": "Internal storage URI or content-addressed reference to the document file or scan held by the obliged entity (e.g. 'urn:doc:abc123', 'https://vault.internal/docs/passport-1.pdf'). MUST be treated as sensitive personal data."
+        },
+        "credentialId": {
+          "type": "string",
+          "format": "uri",
+          "description": "URI of the underlying W3C Verifiable Credential, SD-JWT VC, or ISO mDL document. Required when documentType is EIDAS_PID_CREDENTIAL. Links to the credential in the VC evidence block."
+        },
+        "credentialIssuer": {
+          "type": "string",
+          "format": "uri",
+          "description": "DID or URL of the authority that issued the digital credential (e.g. national PID Provider DID). Used when documentType is EIDAS_PID_CREDENTIAL."
+        },
+        "extractedAttributes": {
+          "type": "array",
+          "description": "Data elements extracted from this document and cross-referenced against the asserted IVMS 101 or kycProfile fields.",
+          "items": {
+            "$ref": "#/$defs/ExtractedAttribute"
+          }
+        }
+      }
+    },
+    "LegalEntityDocument": {
+      "title": "LegalEntityDocument",
+      "description": "An official document or digital credential examined to verify attributes of a legal entity. Covers incorporation documents, registry extracts, LEI/vLEI credentials, and governance documents. Each record links the document type to the GLEIF Registration Authority and ISO 20275 ELF code it evidenced, supporting ISO 17442, FATF Rec. 24/25, and AMLR Art. 26 requirements.",
+      "type": "object",
+      "required": [
+        "documentType"
+      ],
+      "properties": {
+        "documentType": {
+          "type": "string",
+          "description": "Standardised type code for the legal entity verification document.",
+          "enum": [
+            "CERTIFICATE_OF_INCORPORATION",
+            "ARTICLES_OF_ASSOCIATION",
+            "REGISTRY_EXTRACT",
+            "LEI_REGISTRATION",
+            "VLEI_CREDENTIAL",
+            "PROOF_OF_REGISTERED_ADDRESS",
+            "TRUST_DEED",
+            "PARTNERSHIP_AGREEMENT",
+            "FOUNDATION_CHARTER",
+            "ULTIMATE_BENEFICIAL_OWNER_REGISTER",
+            "AUTHORISED_SIGNATORY_LIST",
+            "ANNUAL_REPORT_ACCOUNTS",
+            "VAT_REGISTRATION_CERTIFICATE",
+            "REGULATORY_LICENCE",
+            "LPID_CREDENTIAL",
+            "OTHER"
+          ]
+        },
+        "documentTitle": {
+          "type": "string",
+          "description": "Human-readable title of the document (e.g. 'Certificate of Incorporation on Change of Name', 'Handelsregisterauszug', 'PSC Register Extract').",
+          "maxLength": 300
+        },
+        "documentNumber": {
+          "type": "string",
+          "description": "Document-level reference number or certificate number (e.g. a Companies House certificate number).",
+          "maxLength": 100
+        },
+        "registrationNumber": {
+          "type": "string",
+          "description": "The entity's registration number as recorded in the issuing registry (e.g. '12345678' for UK Companies House). Distinct from documentNumber.",
+          "maxLength": 100
+        },
+        "issuingCountry": {
+          "type": "string",
+          "description": "ISO 3166-1 alpha-2 country code of the issuing jurisdiction.",
+          "pattern": "^[A-Z]{2}$"
+        },
+        "issuingAuthority": {
+          "type": "string",
+          "description": "Human-readable name of the issuing authority or registry (e.g. 'Companies House', 'Bundesanzeiger', 'GLEIF').",
+          "maxLength": 200
+        },
+        "gleifRegistrationAuthority": {
+          "$ref": "#/$defs/RegistrationAuthorityDetail",
+          "description": "Structured GLEIF RAL reference for the issuing registry. Provides machine-readable identification of the authoritative registration authority per ISO 17442."
+        },
+        "issueDate": {
+          "type": "string",
+          "format": "date",
+          "description": "ISO 8601 date on which the document was issued or the registry extract was generated."
+        },
+        "expiryDate": {
+          "type": "string",
+          "format": "date",
+          "description": "ISO 8601 date on which the document or extract expires. Particularly relevant for registry extracts, which typically have a validity window (e.g. 3–6 months)."
+        },
+        "verificationDate": {
+          "type": "string",
+          "format": "date",
+          "description": "ISO 8601 date on which the document was verified by the obliged entity, its KYB provider, or the LOU."
+        },
+        "verifiedByName": {
+          "type": "string",
+          "description": "Name of the LOU, KYB provider, or verification body that verified this document (e.g. 'Bloomberg Finance L.P.', 'Dun & Bradstreet', 'LuxTrust').",
+          "maxLength": 200
+        },
+        "documentPresence": {
+          "type": "string",
+          "description": "Whether the document was examined as a physical original/certified copy or as a digital record/credential.",
+          "enum": [
+            "Physical",
+            "Digital"
+          ]
+        },
+        "documentRef": {
+          "type": "string",
+          "format": "uri",
+          "description": "Internal storage URI or content-addressed reference to the document file held by the obliged entity. MUST be treated as sensitive business data."
+        },
+        "registryUrl": {
+          "type": "string",
+          "format": "uri",
+          "description": "Permalink or deep-link to the live registry record for this entity (e.g. 'https://find-and-update.company-information.service.gov.uk/company/12345678'). Enables real-time re-verification against the authoritative source."
+        },
+        "credentialId": {
+          "type": "string",
+          "format": "uri",
+          "description": "URI of the underlying W3C Verifiable Credential. Required when documentType is VLEI_CREDENTIAL or LPID_CREDENTIAL."
+        },
+        "credentialIssuer": {
+          "type": "string",
+          "format": "uri",
+          "description": "DID or URL of the authority that issued the digital credential (e.g. GLEIF vLEI QVI DID, national LPID Provider DID)."
+        },
+        "vLEICredentialType": {
+          "type": "string",
+          "description": "When documentType is VLEI_CREDENTIAL, the specific vLEI credential role. QVI = Qualified vLEI Issuer credential; OOR = Official Organisational Role credential (legal representatives); ECR = Engagement Context Role credential (authorised employees).",
+          "enum": [
+            "QVI",
+            "OOR",
+            "ECR"
+          ]
+        },
+        "elfCodeVerified": {
+          "type": "string",
+          "description": "The ISO 20275 ELF code that this document confirmed for the entity's legal form (e.g. 'Z13E' for UK PLC, '8888' for US LLC). Cross-references legalPerson.legalFormCode.",
+          "pattern": "^[0-9A-Z]{4}$"
+        },
+        "extractedAttributes": {
+          "type": "array",
+          "description": "Data elements extracted from this document and cross-referenced against the asserted legalPerson or kycProfile fields.",
+          "items": {
+            "$ref": "#/$defs/ExtractedAttribute"
+          }
+        }
+      }
+    },
+    "VerificationDocumentBundle": {
+      "title": "VerificationDocumentBundle",
+      "description": "A structured, typed bundle of verification documents assembled to evidence the identity of a natural person and/or a legal entity. Satisfies the documentary evidence requirements of ISO 17442, GLEIF LOUs, FATF Rec. 10/24/25, AMLR Art. 22 and 26, and ISO/IEC 17029:2019. The bundle is evaluated for completeness against the `requiredDocumentTypes` list, which is populated based on the entity type and due diligence level.",
+      "type": "object",
+      "properties": {
+        "naturalPersonDocuments": {
+          "type": "array",
+          "description": "Documents verifying natural person identity. At least one primary photo-ID document (PASSPORT, NATIONAL_ID_CARD, or RESIDENCE_PERMIT) SHOULD be present for CDD. For EDD, a PROOF_OF_ADDRESS and a secondary identifier are additionally recommended.",
+          "items": {
+            "$ref": "#/$defs/NaturalPersonDocument"
+          }
+        },
+        "legalEntityDocuments": {
+          "type": "array",
+          "description": "Documents verifying legal entity identity and legal form. For COMPANY type: CERTIFICATE_OF_INCORPORATION, ARTICLES_OF_ASSOCIATION, and REGISTRY_EXTRACT are recommended. For TRUST: TRUST_DEED and ULTIMATE_BENEFICIAL_OWNER_REGISTER. For PARTNERSHIP: PARTNERSHIP_AGREEMENT and REGISTRY_EXTRACT. For FOUNDATION: FOUNDATION_CHARTER and REGISTRY_EXTRACT.",
+          "items": {
+            "$ref": "#/$defs/LegalEntityDocument"
+          }
+        },
+        "bundleCompleteness": {
+          "type": "string",
+          "description": "Assessment of whether the bundle satisfies the required document types for this customer profile. COMPLETE = all required documents present and verified; PARTIAL = some required documents outstanding; PENDING = document collection in progress.",
+          "enum": [
+            "COMPLETE",
+            "PARTIAL",
+            "PENDING"
+          ]
+        },
+        "bundleValidatedBy": {
+          "type": "string",
+          "description": "Name or DID of the person, team, or automated system that assessed the bundle completeness (e.g. 'Compliance Officer – Jane Smith', 'AutoKYB v2.1', 'did:web:kyb.provider.example').",
+          "maxLength": 200
+        },
+        "bundleValidationDate": {
+          "type": "string",
+          "format": "date",
+          "description": "ISO 8601 date on which the bundle completeness was last assessed."
+        },
+        "requiredDocumentTypes": {
+          "type": "array",
+          "description": "List of document type codes that are required for this customer profile based on entity type, jurisdiction, and due diligence level. Populated by the obliged entity's compliance system to indicate what the bundle must contain. See VerificationDocumentBundle description for entity-type guidance.",
+          "items": {
+            "type": "string"
+          },
+          "examples": [
+            [
+              "CERTIFICATE_OF_INCORPORATION",
+              "ARTICLES_OF_ASSOCIATION",
+              "REGISTRY_EXTRACT"
+            ],
+            [
+              "PASSPORT",
+              "PROOF_OF_ADDRESS"
+            ],
+            [
+              "TRUST_DEED",
+              "ULTIMATE_BENEFICIAL_OWNER_REGISTER",
+              "AUTHORISED_SIGNATORY_LIST"
+            ]
+          ]
+        }
+      }
     }
   },
   "type": "object",
@@ -2915,6 +3451,10 @@
     "gdprSensitivityMetadata": {
       "$ref": "#/$defs/GdprSensitivityMetadata",
       "description": "Optional GDPR/AML sensitivity classification block. Provides machine-readable tipping-off protection flags (AMLR Art. 73 / FATF Rec. 21), legal-basis references (GDPR Art. 9/10), retention rules, and disclosure policies. When present, wallets and relying parties MUST apply the stated classification before rendering or forwarding any credential fields."
+    },
+    "identityDocuments": {
+      "$ref": "#/$defs/VerificationDocumentBundle",
+      "description": "Optional verification document bundle. Contains the typed, named set of government-issued documents and digital credentials examined to verify natural person and/or legal entity identity. Satisfies ISO 17442 (LEI), GLEIF LOU documentary evidence requirements, FATF Rec. 10/24/25, and AMLR Art. 22 and 26. All changes are additive; omitting this block does not affect v1.4.0 payload validity."
     }
   },
   "anyOf": [

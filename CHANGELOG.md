@@ -11,6 +11,45 @@ For the full project roadmap and planned features, see [ROADMAP.md](ROADMAP.md).
 
 ## [Unreleased]
 
+---
+
+## [1.5.0] — April 2026
+
+### Added
+
+- **Verification Document Bundle (`identityDocuments`)** — new optional root-level property providing a typed, structured bundle of verification documents for natural persons and legal entities. Satisfies ISO 17442 (LEI), GLEIF LOU documentary evidence requirements, FATF Rec. 10/24/25, and AMLR Art. 22 and 26. All changes are fully additive and backward-compatible with v1.4.0 payloads.
+
+- **`$defs/ExtractedAttribute`** — new reusable definition recording a single data element extracted from a verification document (`attributeName`, `value`, `matchesRecord`). Enables traceability from raw document data to asserted IVMS 101 / kycProfile fields.
+
+- **`$defs/NaturalPersonDocument`** — typed document record for natural person identity verification. Supports 11 document types: `NATIONAL_ID_CARD`, `PASSPORT`, `RESIDENCE_PERMIT`, `DRIVERS_LICENCE`, `BIRTH_CERTIFICATE`, `PROOF_OF_ADDRESS`, `TAX_IDENTIFICATION`, `SOCIAL_SECURITY`, `BIOMETRIC_DATA_RECORD`, `EIDAS_PID_CREDENTIAL`, `OTHER`. Carries issuing authority, dates, verification method, assurance level, document presence (Physical/Digital), internal document URI, credential ID (for VCs), and `extractedAttributes[]`.
+
+- **`$defs/LegalEntityDocument`** — typed document record for legal entity identity verification. Supports 16 document types: `CERTIFICATE_OF_INCORPORATION`, `ARTICLES_OF_ASSOCIATION`, `REGISTRY_EXTRACT`, `LEI_REGISTRATION`, `VLEI_CREDENTIAL`, `PROOF_OF_REGISTERED_ADDRESS`, `TRUST_DEED`, `PARTNERSHIP_AGREEMENT`, `FOUNDATION_CHARTER`, `ULTIMATE_BENEFICIAL_OWNER_REGISTER`, `AUTHORISED_SIGNATORY_LIST`, `ANNUAL_REPORT_ACCOUNTS`, `VAT_REGISTRATION_CERTIFICATE`, `REGULATORY_LICENCE`, `LPID_CREDENTIAL`, `OTHER`. Includes `gleifRegistrationAuthority` (structured RAL reference), `elfCodeVerified` (ISO 20275 ELF code confirmed), `vLEICredentialType` (`QVI`/`OOR`/`ECR`), `registryUrl` (permalink to live registry record), and `extractedAttributes[]`.
+
+- **`$defs/RegistrationAuthorityDetail`** — structured GLEIF Registration Authorities List (RAL) reference replacing the free-text `registrationAuthority` field. Contains `ralCode` (pattern `RA######`), `authorityName`, `jurisdiction` (ISO 3166-1 or 3166-2), `registryUrl`, and `digitalAccessible`. Used in `NationalIdentification.registrationAuthorityDetail` and `LegalEntityDocument.gleifRegistrationAuthority`.
+
+- **`$defs/VerificationDocumentBundle`** — top-level container for the document bundle. Contains `naturalPersonDocuments[]`, `legalEntityDocuments[]`, `bundleCompleteness` (`COMPLETE`/`PARTIAL`/`PENDING`), `bundleValidatedBy`, `bundleValidationDate`, and `requiredDocumentTypes[]`.
+
+- **Cross-reference fields** on existing schema objects:
+  - `NationalIdentification.verifyingDocumentRef` — links the national identifier to its source document in the bundle.
+  - `NationalIdentification.registrationAuthorityDetail` — structured GLEIF RAL reference alongside the existing free-text `registrationAuthority`.
+  - `LegalPerson.verifyingDocumentRef` — links `legalFormCode` to the `LegalEntityDocument` that confirmed it via the GLEIF RAL.
+  - `DueDiligenceRequirements.verificationMethods[].documentRef` — links each verified attribute to its source document.
+  - `BeneficialOwner.verifyingDocumentRefs[]` — links each UBO claim to the evidence documents (e.g. PSC register extract, trust deed).
+
+- **`examples/document-bundle-natural-person.json`** — complete natural person verification bundle: German Personalausweis + proof of address + eIDAS 2.0 PID Verifiable Credential (Bundesdruckerei GmbH PID Provider), with `extractedAttributes` cross-referencing IVMS 101 fields and `documentRef` linkage in `nationalIdentification`.
+
+- **`examples/document-bundle-legal-entity.json`** — complete UK PLC verification bundle (EDD level): Certificate of Incorporation + Companies House current appointments extract + LEI confirmation (Bloomberg LOU) + GLEIF vLEI OOR credential (LuxTrust QVI) + PSC register UBO extract. Demonstrates `gleifRegistrationAuthority = RA000585`, `elfCodeVerified = Z13E`, `verifyingDocumentRefs[]` on beneficial owner record, and `documentRef` linkage in `verificationMethods[]`.
+
+- **`schema/versions/v1.5.0.json`** — versioned copy of the schema.
+
+- **`docs/mapping-ivms101-eidas-amlr.md` §10** — new section "Verification Document Bundle" with mapping tables for all 11 natural person document types and 16 legal entity document types to AMLR articles, FATF recommendations, and relevant ISO standards; cross-reference field table; and document completeness guidance by entity type.
+
+- **`docs/adoption-guide.md` §8** — new section "Building a Compliant Document Bundle" covering: GLEIF RAL lookup workflow with common RAL codes (UK, DE, US, FR, NL, JP, IE); required documents by entity type (natural person CDD/EDD, company, trust, foundation, partnership); GLEIF vLEI credential hierarchy (QVI → OOR → ECR); guidance on populating `extractedAttributes[]`; and cross-reference field usage with JSON examples.
+
+---
+
+## [Unreleased]
+
 ### Fixed
 - `nameIdentifier` field-name inconsistency in `docs/mapping-ivms101-eidas-amlr.md` and `docs/adoption-guide.md` (was incorrectly written as `nameIdentifiers` with a trailing 's' in several places).
 - Double `originatingVASP.originatingVASP.*` field path in `docs/adoption-guide.md` minimum-required-fields table — corrected to `originatingVASP.*`.

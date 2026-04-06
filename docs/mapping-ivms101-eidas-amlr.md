@@ -256,4 +256,71 @@ The `gdprSensitivityMetadata` block provides a machine-readable sensitivity clas
 
 ---
 
+## 10. Verification Document Bundle (`identityDocuments`)
+
+OpenKYCAML v1.5.0 introduces a first-class `identityDocuments` block containing a typed bundle of verification documents. This section maps each document type to the regulatory requirements it satisfies.
+
+### 10.1 Natural Person Document Types
+
+| `documentType` | Document | AMLR Article | FATF Rec. | ISO/Standards |
+|---|---|---|---|---|
+| `NATIONAL_ID_CARD` | National identity card | Art. 22(2)(a) — identity verification | Rec. 10 | eIDAS 2.0 ARF; ISO 18013-5 |
+| `PASSPORT` | International passport | Art. 22(2)(a) — identity verification | Rec. 10 | ICAO Doc 9303 |
+| `RESIDENCE_PERMIT` | Residence / immigration permit | Art. 22(2)(c) — address verification | Rec. 10 | — |
+| `DRIVERS_LICENCE` | Driver's licence (secondary ID) | Art. 22(2)(a) — supplementary ID | Rec. 10 | ISO 18013-1 |
+| `BIRTH_CERTIFICATE` | Birth certificate | Art. 22(2)(b) — date/place of birth | Rec. 10 | — |
+| `PROOF_OF_ADDRESS` | Utility bill / bank statement | Art. 22(2)(c) — address verification | Rec. 10 | — |
+| `TAX_IDENTIFICATION` | Tax identification document | Art. 22(2)(d) — identifier | Rec. 10 | IVMS 101 `TXID` |
+| `SOCIAL_SECURITY` | Social security / national insurance card | Art. 22(2)(d) — identifier | Rec. 10 | IVMS 101 `SOCS` |
+| `BIOMETRIC_DATA_RECORD` | Machine-readable travel document biometric | Art. 22(5)(b) — remote onboarding | Rec. 10 | ISO 18013-5; ICAO 9303 |
+| `EIDAS_PID_CREDENTIAL` | eIDAS 2.0 PID Verifiable Credential | Art. 22(5)(b) — qualified remote onboarding | Rec. 10 | eIDAS 2.0 ARF §6.3; W3C VC DM v2 |
+| `OTHER` | Other government-issued document | Art. 22(2) | Rec. 10 | — |
+
+### 10.2 Legal Entity Document Types
+
+| `documentType` | Document | AMLR Article | FATF Rec. | ISO/Standards |
+|---|---|---|---|---|
+| `CERTIFICATE_OF_INCORPORATION` | Certificate of Incorporation / Formation | Art. 26(1)(a) — legal name and formation | Rec. 24 | ISO 17442; GLEIF Rulebook §4 |
+| `ARTICLES_OF_ASSOCIATION` | Articles / Memorandum of Association | Art. 26(2)(b) — legal form sub-type | Rec. 24 | GLEIF Rulebook §4; ISO 20275:2017 |
+| `REGISTRY_EXTRACT` | Official registry extract / Certificate of Good Standing | Art. 26(1)(a),(c) | Rec. 24 | ISO 17442; GLEIF RAL |
+| `LEI_REGISTRATION` | LEI confirmation from GLEIF / LOU | Art. 26(1)(b) — LEI | Rec. 24 | ISO 17442 |
+| `VLEI_CREDENTIAL` | GLEIF vLEI Verifiable Credential (QVI / OOR / ECR) | Art. 26(1)(b); Art. 22 — representatives | Rec. 24 | GLEIF vLEI Ecosystem; W3C VC DM v2 |
+| `PROOF_OF_REGISTERED_ADDRESS` | Registered office documentation | Art. 26(1)(c) — registered address | Rec. 24 | — |
+| `TRUST_DEED` | Trust Deed / Settlement Document | Art. 26(2)(b) — trust governance | Rec. 25 | FATF Guidance on Trusts and TCSPs |
+| `PARTNERSHIP_AGREEMENT` | Partnership Agreement / LLP Certificate | Art. 26 — partnership structure | Rec. 24 | — |
+| `FOUNDATION_CHARTER` | Foundation Charter / Constitutional Documents | Art. 26(2)(b) — foundation purpose | Rec. 25 | — |
+| `ULTIMATE_BENEFICIAL_OWNER_REGISTER` | UBO register extract (e.g. PSC register) | Art. 26 — beneficial owners | Rec. 24/25 | FATF Rec. 24/25; EU UBO Directive |
+| `AUTHORISED_SIGNATORY_LIST` | Authorised signatories / mandates document | Art. 26 — representatives | Rec. 24 | eIDAS 2.0 LPID mandate field |
+| `ANNUAL_REPORT_ACCOUNTS` | Audited annual report / financial statements | Art. 29 — EDD source of funds | Rec. 12 | — |
+| `VAT_REGISTRATION_CERTIFICATE` | VAT registration certificate | Art. 26 — supplementary ID | Rec. 24 | LPID `vatRegistrationNumber` |
+| `REGULATORY_LICENCE` | Operating licence (VASP, banking, etc.) | Art. 38 — VASP registration | Rec. 15/16 | MiCA; TFR 2023/1113 |
+| `LPID_CREDENTIAL` | eIDAS 2.0 LPID Verifiable Credential | Art. 22/26 — qualified entity onboarding | Rec. 24 | eIDAS 2.0 ARF; W3C VC DM v2 |
+| `OTHER` | Other official document | Art. 26 | Rec. 24 | — |
+
+### 10.3 Cross-Reference Fields (v1.5.0 additions)
+
+| OpenKYCAML Field | Links To | Purpose |
+|---|---|---|
+| `identityDocuments` (root) | `VerificationDocumentBundle` | Top-level document bundle container |
+| `legalPerson.verifyingDocumentRef` | `LegalEntityDocument.documentRef` | Document that confirmed the ELF code via GLEIF RAL |
+| `nationalIdentification.verifyingDocumentRef` | `NaturalPersonDocument.documentRef` or `LegalEntityDocument.documentRef` | Document that verified the national identifier |
+| `nationalIdentification.registrationAuthorityDetail` | `RegistrationAuthorityDetail` | Structured GLEIF RAL reference replacing free-text `registrationAuthority` |
+| `dueDiligenceRequirements.verificationMethods[].documentRef` | `*Document.documentRef` | Document that was the primary evidence for each verified attribute |
+| `beneficialOwnership[].verifyingDocumentRefs[]` | `LegalEntityDocument.documentRef` | Documents evidencing each UBO claim |
+
+### 10.4 Document Completeness Guidance by Entity Type
+
+| Entity Type / Condition | Recommended Document Types |
+|---|---|
+| Natural person (CDD) | `NATIONAL_ID_CARD` or `PASSPORT` or `RESIDENCE_PERMIT`; plus `PROOF_OF_ADDRESS` |
+| Natural person (EDD) | Primary photo ID + `PROOF_OF_ADDRESS` + secondary ID (`TAX_IDENTIFICATION` or `SOCIAL_SECURITY`) |
+| `entityType = COMPANY` | `CERTIFICATE_OF_INCORPORATION`, `ARTICLES_OF_ASSOCIATION`, `REGISTRY_EXTRACT` |
+| `entityType = TRUST` | `TRUST_DEED`, `ULTIMATE_BENEFICIAL_OWNER_REGISTER` |
+| `entityType = FOUNDATION` | `FOUNDATION_CHARTER`, `REGISTRY_EXTRACT` |
+| `entityType = PARTNERSHIP` | `PARTNERSHIP_AGREEMENT`, `REGISTRY_EXTRACT` |
+| `dueDiligenceType = EDD` (legal entity) | All standard docs plus `ANNUAL_REPORT_ACCOUNTS` and `AUTHORISED_SIGNATORY_LIST` |
+| Any entity with LEI | `LEI_REGISTRATION`; `VLEI_CREDENTIAL` strongly recommended |
+
+---
+
 *Maintained by the OpenKYCAML Technical Working Group. For corrections or additions, please open an issue or pull request.*
