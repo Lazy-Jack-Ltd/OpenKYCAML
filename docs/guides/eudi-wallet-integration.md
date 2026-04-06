@@ -237,7 +237,7 @@ after completing KYC onboarding:
 
 1. **KYC completion**: the obliged entity performs CDD / eIDAS PID verification.
 2. **Build OpenKYCAML payload**: construct the full JSON payload per the
-   [schema](../schema/kyc-aml-hybrid-extended.json) with `verifiableCredential`
+   [schema](../../schema/kyc-aml-hybrid-extended.json) with `verifiableCredential`
    block and `selectiveDisclosure` descriptor.
 3. **Sign JWT**: issue a signed SD-JWT:
    - Header: `{"alg": "ES256", "typ": "dc+sd-jwt"}`
@@ -269,7 +269,7 @@ after completing KYC onboarding:
 
 A VASP acting as a Relying Party (RP) for Travel Rule verification constructs an OpenID4VP
 Authorization Request using the canonical Presentation Definition from
-[`examples/presentation-definitions/travel-rule-minimum.json`](../examples/presentation-definitions/travel-rule-minimum.json).
+[`examples/presentation-definitions/travel-rule-minimum.json`](../../examples/presentation-definitions/travel-rule-minimum.json).
 This definition requests exactly the FATF Recommendation 16 minimum claims.
 
 **Example Authorization Request (JAR — JWT-secured):**
@@ -343,7 +343,7 @@ Or inline with the definition embedded:
 > The wallet holder must explicitly approve each disclosure before the VP Token is sent.
 
 The full canonical Presentation Definition (including optional DoB / address alternative fields
-and format constraints) is at [`examples/presentation-definitions/travel-rule-minimum.json`](../examples/presentation-definitions/travel-rule-minimum.json).
+and format constraints) is at [`examples/presentation-definitions/travel-rule-minimum.json`](../../examples/presentation-definitions/travel-rule-minimum.json).
 
 ---
 
@@ -495,13 +495,13 @@ The EU Commission publishes the authoritative List of Trusted Lists (LOTL) at:
 
 | File | Description |
 |---|---|
-| [`examples/natural-person-eudi-wallet.json`](../examples/natural-person-eudi-wallet.json) | Full natural-person EUDI Wallet credential (VC-JWT form) |
-| [`examples/natural-person-sd-jwt-eudi-wallet.json`](../examples/natural-person-sd-jwt-eudi-wallet.json) | Natural-person credential with SD-JWT selective disclosure |
-| [`examples/legal-entity-eudi-wallet.json`](../examples/legal-entity-eudi-wallet.json) | Legal entity (LPID) EUDI Wallet credential |
-| [`examples/legal-entity-sd-jwt-eudi-wallet.json`](../examples/legal-entity-sd-jwt-eudi-wallet.json) | Legal entity SD-JWT credential |
-| [`examples/sd-jwt-compact-token.json`](../examples/sd-jwt-compact-token.json) | Annotated SD-JWT compact-token format — shows encoded `_sd` digests and `~disclosure` structure |
-| [`examples/full-kyc-profile-eudi-wallet.json`](../examples/full-kyc-profile-eudi-wallet.json) | Full KYC profile with EUDI Wallet evidence |
-| [`examples/hybrid-with-sar-restriction.json`](../examples/hybrid-with-sar-restriction.json) | SAR-restricted VC with `gdprSensitivityMetadata`, `tippingOffProtected: true`, and SD-JWT withholding of SAR fields |
+| [`examples/natural-person-eudi-wallet.json`](../../examples/natural-person-eudi-wallet.json) | Full natural-person EUDI Wallet credential (VC-JWT form) |
+| [`examples/natural-person-sd-jwt-eudi-wallet.json`](../../examples/natural-person-sd-jwt-eudi-wallet.json) | Natural-person credential with SD-JWT selective disclosure |
+| [`examples/legal-entity-eudi-wallet.json`](../../examples/legal-entity-eudi-wallet.json) | Legal entity (LPID) EUDI Wallet credential |
+| [`examples/legal-entity-sd-jwt-eudi-wallet.json`](../../examples/legal-entity-sd-jwt-eudi-wallet.json) | Legal entity SD-JWT credential |
+| [`examples/sd-jwt-compact-token.json`](../../examples/sd-jwt-compact-token.json) | Annotated SD-JWT compact-token format — shows encoded `_sd` digests and `~disclosure` structure |
+| [`examples/full-kyc-profile-eudi-wallet.json`](../../examples/full-kyc-profile-eudi-wallet.json) | Full KYC profile with EUDI Wallet evidence |
+| [`examples/hybrid-with-sar-restriction.json`](../../examples/hybrid-with-sar-restriction.json) | SAR-restricted VC with `gdprSensitivityMetadata`, `tippingOffProtected: true`, and SD-JWT withholding of SAR fields |
 
 ---
 
@@ -694,7 +694,7 @@ tipping-off flag.
 ---
 
 *This document is part of the [OpenKYCAML](https://openkycaml.org) specification.*
-*For schema details see [`schema/versions/v1.3.0.json`](../schema/versions/v1.3.0.json).*
+*For schema details see [`schema/versions/v1.3.0.json`](../../schema/versions/v1.3.0.json).*
 
 ---
 
@@ -710,4 +710,4 @@ This is enforced as a `const` in the schema at `verifiableCredential.@context[0]
 
 **EUDI Wallet context URL:** The second context URL used in EUDI Wallet examples (`https://europa.eu/2018/credentials/eudi/v1`) is a **placeholder** pending the European Commission's official ARF VC JSON-LD context publication. Adopters should monitor the EU Commission's ARF releases and update this URL when the official context is published. This document and the examples will be updated at that time.
 
-For the full v1.1 → v2.0 migration guide, see [`vc-data-model-migration.md`](vc-data-model-migration.md).
+For the full v1.1 → v2.0 migration guide, see [`vc-data-model-migration.md`](../reference/vc-data-model-migration.md).

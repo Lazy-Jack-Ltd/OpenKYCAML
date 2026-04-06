@@ -6,10 +6,10 @@
 
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 [![Schema Version](https://img.shields.io/badge/schema-v1.5.0-brightgreen.svg)](schema/kyc-aml-hybrid-extended.json)
-[![IVMS 101](https://img.shields.io/badge/IVMS%20101-compatible-orange.svg)](docs/mapping-ivms101-eidas-amlr.md)
-[![eIDAS 2.0](https://img.shields.io/badge/eIDAS%202.0-VC%20ready-blueviolet.svg)](docs/mapping-ivms101-eidas-amlr.md)
-[![AMLR 2027 Ready](https://img.shields.io/badge/AMLR%202027-ready-red.svg)](docs/compliance-matrix.md)
-[![FATF Rec 16](https://img.shields.io/badge/FATF%20Rec%2016-compliant-yellow.svg)](docs/compliance-matrix.md)
+[![IVMS 101](https://img.shields.io/badge/IVMS%20101-compatible-orange.svg)](docs/mappings/mapping-ivms101-eidas-amlr.md)
+[![eIDAS 2.0](https://img.shields.io/badge/eIDAS%202.0-VC%20ready-blueviolet.svg)](docs/mappings/mapping-ivms101-eidas-amlr.md)
+[![AMLR 2027 Ready](https://img.shields.io/badge/AMLR%202027-ready-red.svg)](docs/compliance/compliance-matrix.md)
+[![FATF Rec 16](https://img.shields.io/badge/FATF%20Rec%2016-compliant-yellow.svg)](docs/compliance/compliance-matrix.md)
 [![CI](https://github.com/Lazy-Jack-Ltd/openKYCAML/actions/workflows/validate-schema.yml/badge.svg)](https://github.com/Lazy-Jack-Ltd/openKYCAML/actions/workflows/validate-schema.yml)
 
 ---
@@ -247,15 +247,15 @@ Each `-eudi-wallet.json` example documents a **trust chain** using W3C VC eviden
 
 | Document | Description |
 |---|---|
-| [Adoption Guide](docs/adoption-guide.md) | Step-by-step integration for VASPs, banks, KYC utilities |
+| [Adoption Guide](docs/guides/adoption-guide.md) | Step-by-step integration for VASPs, banks, KYC utilities |
 | [ISO 20022 Integration](iso20022-integration/README.md) | Complete ISO 20022 bridge — pacs.008/pain.001/camt.053 profiles, Python & TypeScript converters, XML examples, KYCAMLEnvelope schema |
-| [Mapping: IVMS 101 / eIDAS / AMLR](docs/mapping-ivms101-eidas-amlr.md) | Field-level mapping across all referenced standards |
-| [Compliance Matrix](docs/compliance-matrix.md) | Exact alignment with FATF, AMLR, ISO 20022, LEI, eIDAS, ERC-3643, Sovrin |
-| [AMLR 2027 Compliance Checklist](docs/amlr-2027-compliance-checklist.md) | Operational checklist for obliged entities — schema configuration and process obligations |
-| [Travel Rule Implementation Guide](docs/travel-rule-implementation-guide.md) | Protocol-specific integration guide (TRISA, OpenVASP, Notabene, TRP, Sygna Bridge) |
-| [ERC-3643 (T-REX) Mapping](docs/mapping-erc3643.md) | Field-level mapping from OpenKYCAML to ERC-3643 on-chain permissioned token standard |
-| [Sovrin / Hyperledger Indy (AnonCreds) Mapping](docs/mapping-sovrin.md) | Field-level mapping from OpenKYCAML to Sovrin DID Method, Indy ledger transactions, and AnonCreds ZKP credentials |
-| [XRPL Credentials, DIDs, and MPTs Mapping](docs/mapping-xrpl-credentials-mpt.md) | Field-level mapping from OpenKYCAML to XRPL Credentials (XLS-40d), `did:xrpl` DID method, and Multi-Purpose Tokens (XLS-33d) for on-ledger KYC/AML gating and regulated asset compliance |
+| [Mapping: IVMS 101 / eIDAS / AMLR](docs/mappings/mapping-ivms101-eidas-amlr.md) | Field-level mapping across all referenced standards |
+| [Compliance Matrix](docs/compliance/compliance-matrix.md) | Exact alignment with FATF, AMLR, ISO 20022, LEI, eIDAS, ERC-3643, Sovrin |
+| [AMLR 2027 Compliance Checklist](docs/compliance/amlr-2027-compliance-checklist.md) | Operational checklist for obliged entities — schema configuration and process obligations |
+| [Travel Rule Implementation Guide](docs/guides/travel-rule-implementation-guide.md) | Protocol-specific integration guide (TRISA, OpenVASP, Notabene, TRP, Sygna Bridge) |
+| [ERC-3643 (T-REX) Mapping](docs/mappings/mapping-erc3643.md) | Field-level mapping from OpenKYCAML to ERC-3643 on-chain permissioned token standard |
+| [Sovrin / Hyperledger Indy (AnonCreds) Mapping](docs/mappings/mapping-sovrin.md) | Field-level mapping from OpenKYCAML to Sovrin DID Method, Indy ledger transactions, and AnonCreds ZKP credentials |
+| [XRPL Credentials, DIDs, and MPTs Mapping](docs/mappings/mapping-xrpl-credentials-mpt.md) | Field-level mapping from OpenKYCAML to XRPL Credentials (XLS-40d), `did:xrpl` DID method, and Multi-Purpose Tokens (XLS-33d) for on-ledger KYC/AML gating and regulated asset compliance |
 | [Roadmap](ROADMAP.md) | Planned features and upcoming versions |
 | [Contributing](CONTRIBUTING.md) | How to contribute to the standard |
 | [Governance](GOVERNANCE.md) | Steering committee model, RFC process |
@@ -276,9 +276,9 @@ Each `-eudi-wallet.json` example documents a **trust chain** using W3C VC eviden
 | **GLEIF / LEI** | ✅ LEIX national identifier type; ISO 17442 check digit validation; GLEIF RAL `RegistrationAuthorityDetail` (v1.5.0); `LegalEntityDocument` with `gleifRegistrationAuthority`, `elfCodeVerified`, and `vLEICredentialType` (QVI/OOR/ECR) |
 | **ISO 17442 / vLEI** | ✅ v1.5.0 — LEI field, GLEIF RAL structured reference, vLEI Verifiable Credential support (QVI → OOR → ECR hierarchy), `LEI_REGISTRATION` and `VLEI_CREDENTIAL` document types |
 | **GDPR** | ✅ Consent record, data retention date, EUDI Wallet SD-JWT selective disclosure; `gdprSensitivityMetadata` block for SAR/tipping-off protection (Art. 9/10 special categories and criminal-offence data, AMLR Art. 73) — added v1.3.0 |
-| **ERC-3643 (T-REX)** | ✅ ONCHAINID, eligibility flag, wallet addresses, frozen tokens, accredited investor claim — see [ERC-3643 mapping](docs/mapping-erc3643.md) |
-| **Sovrin / Hyperledger Indy (AnonCreds)** | ✅ `did:sov` / `did:indy` DIDs, AnonCreds CL credentials, CLAIM_DEF, REVOC_REG, Rich Schema — see [Sovrin mapping](docs/mapping-sovrin.md) |
-| **XRPL Credentials (XLS-40d), DIDs (`did:xrpl`), and MPTs (XLS-33d)** | ✅ On-ledger `Credential` object anchoring W3C VCs, `did:xrpl` DID method, MPT permissioned tokens with `lsfMPTRequireAuth` / `lsfMPTAuthorized` KYC/AML gating, `DepositPreauth` credential gates — see [XRPL mapping](docs/mapping-xrpl-credentials-mpt.md) |
+| **ERC-3643 (T-REX)** | ✅ ONCHAINID, eligibility flag, wallet addresses, frozen tokens, accredited investor claim — see [ERC-3643 mapping](docs/mappings/mapping-erc3643.md) |
+| **Sovrin / Hyperledger Indy (AnonCreds)** | ✅ `did:sov` / `did:indy` DIDs, AnonCreds CL credentials, CLAIM_DEF, REVOC_REG, Rich Schema — see [Sovrin mapping](docs/mappings/mapping-sovrin.md) |
+| **XRPL Credentials (XLS-40d), DIDs (`did:xrpl`), and MPTs (XLS-33d)** | ✅ On-ledger `Credential` object anchoring W3C VCs, `did:xrpl` DID method, MPT permissioned tokens with `lsfMPTRequireAuth` / `lsfMPTAuthorized` KYC/AML gating, `DepositPreauth` credential gates — see [XRPL mapping](docs/mappings/mapping-xrpl-credentials-mpt.md) |
 
 ---
 

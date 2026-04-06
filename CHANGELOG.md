@@ -11,6 +11,24 @@ For the full project roadmap and planned features, see [ROADMAP.md](ROADMAP.md).
 
 ## [Unreleased]
 
+### Added
+
+- `docs/naming-convention.md` — new document defining the repository-wide file and directory naming convention (lowercase kebab-case, sub-folder organisation for docs, pattern rules for examples, schema versions, and versioned artefacts).
+
+### Changed (naming/organisation — no schema changes)
+
+- `docs/` reorganised into sub-folders by type: `guides/`, `mappings/`, `compliance/`, `reference/` (existing `diagrams/` and `versions/` unchanged). All cross-references updated.
+- `docs/AMLR-requirements.md` → `docs/compliance/amlr-requirements.md` (lowercase, moved to compliance sub-folder).
+- `docs/versions/roadmapv0.1.md` → `docs/versions/roadmap-v0.1.md` (added hyphen before version).
+- `examples/structure_diagrams/` → `examples/structure-diagrams/` (underscores → hyphens).
+- `tools/javascript/openvaspConverter.js` → `tools/javascript/openvasp-converter.js` (camelCase → kebab-case).
+- `schema/versions/archive/v0.1.hybrid.json` → `schema/versions/archive/v0.1.0-hybrid.json`.
+- `schema/versions/archive/v0.1.1.hybrid.json` → `schema/versions/archive/v0.1.1-hybrid.json`.
+- `schema/versions/archive/v0.1.a.json` → `schema/versions/archive/v0.1.0-alpha.json`.
+- `CONTRIBUTING.md` updated with new §7 "File and Document Naming" section.
+- `docs/README.md` restructured to reflect sub-folder organisation with section headers per category.
+- CI (`validate-schema.yml`) gains a new `lint-naming` job that enforces the naming convention on every push and pull request.
+
 ---
 
 ## [1.5.0] — April 2026
@@ -42,23 +60,23 @@ For the full project roadmap and planned features, see [ROADMAP.md](ROADMAP.md).
 
 - **`schema/versions/v1.5.0.json`** — versioned copy of the schema.
 
-- **`docs/mapping-ivms101-eidas-amlr.md` §10** — new section "Verification Document Bundle" with mapping tables for all 11 natural person document types and 16 legal entity document types to AMLR articles, FATF recommendations, and relevant ISO standards; cross-reference field table; and document completeness guidance by entity type.
+- **`docs/mappings/mapping-ivms101-eidas-amlr.md` §10** — new section "Verification Document Bundle" with mapping tables for all 11 natural person document types and 16 legal entity document types to AMLR articles, FATF recommendations, and relevant ISO standards; cross-reference field table; and document completeness guidance by entity type.
 
-- **`docs/adoption-guide.md` §8** — new section "Building a Compliant Document Bundle" covering: GLEIF RAL lookup workflow with common RAL codes (UK, DE, US, FR, NL, JP, IE); required documents by entity type (natural person CDD/EDD, company, trust, foundation, partnership); GLEIF vLEI credential hierarchy (QVI → OOR → ECR); guidance on populating `extractedAttributes[]`; and cross-reference field usage with JSON examples.
+- **`docs/guides/adoption-guide.md` §8** — new section "Building a Compliant Document Bundle" covering: GLEIF RAL lookup workflow with common RAL codes (UK, DE, US, FR, NL, JP, IE); required documents by entity type (natural person CDD/EDD, company, trust, foundation, partnership); GLEIF vLEI credential hierarchy (QVI → OOR → ECR); guidance on populating `extractedAttributes[]`; and cross-reference field usage with JSON examples.
 
 ---
 
 ## [Unreleased]
 
 ### Fixed
-- `nameIdentifier` field-name inconsistency in `docs/mapping-ivms101-eidas-amlr.md` and `docs/adoption-guide.md` (was incorrectly written as `nameIdentifiers` with a trailing 's' in several places).
-- Double `originatingVASP.originatingVASP.*` field path in `docs/adoption-guide.md` minimum-required-fields table — corrected to `originatingVASP.*`.
+- `nameIdentifier` field-name inconsistency in `docs/mappings/mapping-ivms101-eidas-amlr.md` and `docs/guides/adoption-guide.md` (was incorrectly written as `nameIdentifiers` with a trailing 's' in several places).
+- Double `originatingVASP.originatingVASP.*` field path in `docs/guides/adoption-guide.md` minimum-required-fields table — corrected to `originatingVASP.*`.
 - Example count updated from 17 to 21 in `ROADMAP.md` highlights.
 - README example table now includes all four complex-ownership examples (`complex-group-multi-tier.json`, `foundation-complex-ubo.json`, `llp-complex-ubo.json`, `trust-complex-ubo.json`).
 - FATF Rec. 25 compliance matrix row updated from `🟡 Partial` to `✅` reflecting existing trust/foundation/LLP example coverage; note added for planned typed sub-object extensions (v1.4.0).
 - Stale SWIFT MT→MX "November 2025" migration deadline reworded to past tense in `iso20022-integration/README.md`.
 - MiCA Art. 83 Travel Rule citations in compliance matrix and ISO 20022 README now correctly reference **TFR 2023/1113 Art. 14** as the primary EU operative instrument alongside MiCA.
-- `docs/AMLR-requirements.md` expanded from a 23-line stub to a full quick-reference document with article-to-field mapping table, AMLA RTS status table, and links to the compliance checklist.
+- `docs/compliance/amlr-requirements.md` (formerly `docs/compliance/amlr-requirements.md`) expanded from a 23-line stub to a full quick-reference document with article-to-field mapping table, AMLA RTS status table, and links to the compliance checklist.
 - Roadmap cross-references: `docs/roadmap.md` header clarified as documentation-only backlog; `ROADMAP.md` now points readers to `docs/roadmap.md` for doc-specific tasks.
 
 ### Added
@@ -71,10 +89,10 @@ For the full project roadmap and planned features, see [ROADMAP.md](ROADMAP.md).
 - `examples/sd-jwt-compact-token.json` — `_disclaimer` field added making the placeholder-signature nature of the file explicit.
 - `SECURITY.md` — responsible-disclosure policy, severity classification table, and scope statement.
 - `CHANGELOG.md` — this file (backfilled from v1.0.0).
-- `docs/vc-data-model-migration.md` — W3C VC Data Model v1.1 → v2.0 migration guide for adopters.
+- `docs/reference/vc-data-model-migration.md` — W3C VC Data Model v1.1 → v2.0 migration guide for adopters.
 - `examples/presentation-definitions/travel-rule-minimum.json` — canonical OpenID4VP Presentation Definition for FATF Rec 16 Travel Rule minimum claims.
 - `tools/go/` — Go validator scaffold (`go.mod`, `validator.go`, `validator_test.go`) for TRISA-native integrations.
-- `tools/javascript/openvaspConverter.js` — OpenVASP identity payload ↔ OpenKYCAML `ivms101` block converter.
+- `tools/javascript/openvasp-converter.js` — OpenVASP identity payload ↔ OpenKYCAML `ivms101` block converter.
 - `tools/python/tests/` — pytest test suite for core Python tooling (`validator.py`, `converter.py`, `models.py`).
 - `pyproject.toml` — packaging metadata enabling `pip install openkycaml`.
 
@@ -103,8 +121,8 @@ For the full project roadmap and planned features, see [ROADMAP.md](ROADMAP.md).
 
 ### Changed
 - `$id` and `version` bumped to `v1.4.0`.
-- `docs/compliance-matrix.md` — FATF Rec. 24/25 and AMLR Art. 26 rows updated to reflect full structural coverage provided by v1.4.0 typed sub-objects; "RFC pending" caveat removed.
-- `docs/mapping-ivms101-eidas-amlr.md` — ISO 20275 mapping rows added to §3 Legal Entity Fields.
+- `docs/compliance/compliance-matrix.md` — FATF Rec. 24/25 and AMLR Art. 26 rows updated to reflect full structural coverage provided by v1.4.0 typed sub-objects; "RFC pending" caveat removed.
+- `docs/mappings/mapping-ivms101-eidas-amlr.md` — ISO 20275 mapping rows added to §3 Legal Entity Fields.
 
 ### Added (SWIFT MT Converter)
 - **SWIFT MT legacy bridge** (`iso20022-integration/libraries/python/swift_mt_converter.py` + `iso20022-integration/libraries/typescript/swift-mt-converter.ts`) — bidirectional converter between OpenKYCAML v1.4.0 payloads and SWIFT FIN MT messages, addressing Issue #28:

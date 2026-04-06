@@ -135,7 +135,7 @@ When OpenKYCAML v2.0.0 is released, adopters will need to:
 - [W3C VC Data Model v1.1](https://www.w3.org/TR/vc-data-model/) — current basis for OpenKYCAML v1.x
 - [W3C VC Data Model v2.0](https://www.w3.org/TR/vc-data-model-2.0/) — target for OpenKYCAML v2.0.0
 - [EUDI Wallet ARF](https://digital-strategy.ec.europa.eu/en/policies/eudi-wallet-technical-specifications) — EU Commission ARF technical specifications (context URL pending publication)
-- [OpenKYCAML ROADMAP.md](../ROADMAP.md) — v2.0.0 planned scope and AMLR 2027 alignment
+- [OpenKYCAML ROADMAP.md](../../ROADMAP.md) — v2.0.0 planned scope and AMLR 2027 alignment
 
 ---
 

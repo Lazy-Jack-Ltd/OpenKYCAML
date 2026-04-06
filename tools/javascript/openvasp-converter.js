@@ -12,7 +12,7 @@
  * Reference: OpenVASP Whitepaper (https://www.openvasp.org/)
  *
  * Usage (Node.js):
- *   const { openvaspToOpenKYCAML, openKYCAMLToOpenVASP } = require('./openvaspConverter');
+ *   const { openvaspToOpenKYCAML, openKYCAMLToOpenVASP } = require('./openvasp-converter');
  *
  *   const envelope  = openvaspToOpenKYCAML(openvaspTransferPayload);
  *   const ovPayload = openKYCAMLToOpenVASP(openKYCAMLEnvelope);
@@ -236,7 +236,7 @@ if (require.main === module) {
 
   const args = process.argv.slice(2);
   if (args.length < 2) {
-    console.error('Usage: node openvaspConverter.js <command> <input.json>');
+    console.error('Usage: node openvasp-converter.js <command> <input.json>');
     console.error('Commands:');
     console.error('  openvasp-to-openkycaml  Convert OpenVASP Transfer body to OpenKYCAML');
     console.error('  openkycaml-to-openvasp  Extract OpenVASP Transfer body from OpenKYCAML');

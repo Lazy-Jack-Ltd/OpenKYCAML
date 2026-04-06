@@ -14,7 +14,8 @@ Contributions from fintech engineers, compliance professionals, identity archite
 4. [Submitting Changes](#4-submitting-changes)
 5. [Schema Change Process](#5-schema-change-process)
 6. [Coding Standards](#6-coding-standards)
-7. [Issue and PR Labels](#7-issue-and-pr-labels)
+7. [File and Document Naming](#7-file-and-document-naming)
+8. [Issue and PR Labels](#8-issue-and-pr-labels)
 
 ---
 
@@ -28,7 +29,7 @@ Contributions from fintech engineers, compliance professionals, identity archite
 | **Tool improvement** (Python/JS) | Fork → improve → tests → PR |
 | **Documentation fix** | Fork → edit `docs/` → PR |
 | **New language tool** (e.g., Go, Java) | Open an issue to discuss first |
-| **Compliance mapping update** | Fork → edit `docs/compliance-matrix.md` → PR with citations |
+| **Compliance mapping update** | Fork → edit `docs/compliance/compliance-matrix.md` → PR with citations |
 
 ---
 
@@ -185,7 +186,22 @@ Breaking changes include:
 
 ---
 
-## 7. Issue and PR Labels
+## 7. File and Document Naming
+
+All file and directory names in this repository must follow the convention documented in [`docs/naming-convention.md`](docs/naming-convention.md). The key rules are:
+
+- **All filenames** use `lowercase-kebab-case` (e.g. `natural-person-plain.json`, `openvasp-converter.js`)
+- **Docs** are organised into sub-folders by type: `docs/guides/`, `docs/mappings/`, `docs/compliance/`, `docs/reference/`, `docs/diagrams/`, `docs/versions/`
+- **Examples** follow `<subject-type>[-<variant>][-<format>].json`
+- **Schema versions** follow `v<major>.<minor>.<patch>.json`
+- **Tool files** follow the idiomatic convention of their target language (Python → `snake_case`, JavaScript/TypeScript → `kebab-case`, Go → `snake_case`)
+- **Root-level conventional files** (`README.md`, `CHANGELOG.md`, `CONTRIBUTING.md`, etc.) are exempt from the lowercase rule
+
+A CI lint check in `.github/workflows/validate-schema.yml` enforces these rules on every push and pull request. PRs that introduce files with non-compliant names will fail CI.
+
+---
+
+## 8. Issue and PR Labels
 
 | Label | Meaning |
 |---|---|

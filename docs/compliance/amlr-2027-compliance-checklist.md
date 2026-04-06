@@ -158,4 +158,4 @@ The following items are captured in the schema with placeholder fields or notes.
 ---
 
 *Document version: v1.3.0 — April 2026. Maintained by the OpenKYCAML Technical Working Group.*
-*For schema field reference, see [mapping-ivms101-eidas-amlr.md](mapping-ivms101-eidas-amlr.md) and the [compliance matrix](compliance-matrix.md).*
+*For schema field reference, see [mapping-ivms101-eidas-amlr.md](../mappings/mapping-ivms101-eidas-amlr.md) and the [compliance matrix](compliance-matrix.md).*

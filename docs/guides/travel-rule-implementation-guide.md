@@ -335,7 +335,7 @@ from converter import openkycaml_to_pain001
 pain001_xml = openkycaml_to_pain001(payload)
 ```
 
-See [`iso20022-integration/`](../iso20022-integration/) for the full library, XML examples, and pre-validated profiles.
+See [`iso20022-integration/`](../../iso20022-integration/) for the full library, XML examples, and pre-validated profiles.
 
 ### Key References
 - TRP GitHub: https://github.com/travelruleprotocol

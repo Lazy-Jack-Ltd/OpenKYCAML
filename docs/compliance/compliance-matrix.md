@@ -106,17 +106,17 @@ This matrix documents the alignment of the OpenKYCAML v1.3.0 schema with major r
 
 | ISO 20022 Element | Coverage | Notes |
 |---|---|---|
-| `pain.001` — Credit Transfer | ✅ | Full XML serialiser via `openkycaml_to_pain001()` — see [`iso20022-integration/libraries/python/`](../iso20022-integration/libraries/python/) |
-| `pacs.008` — FI Credit Transfer (CBPR+) | ✅ | Full XML serialiser via `openkycaml_to_pacs008()` + Travel Rule profile — see [`iso20022-integration/profiles/travel-rule-pacs.008-profile.json`](../iso20022-integration/profiles/travel-rule-pacs.008-profile.json) |
-| `camt.053` — Bank-to-Customer Statement | ✅ | Audit trail + data-retention profile — see [`iso20022-integration/profiles/camt.053-kyc-audit-profile.json`](../iso20022-integration/profiles/camt.053-kyc-audit-profile.json) |
-| `<SplmtryData>` KYCAMLEnvelope schema | ✅ | JSON Schema for the envelope embedded in `<Envlp>` — [`iso20022-integration/supplementary-data/kyc-aml-envelope-schema.json`](../iso20022-integration/supplementary-data/kyc-aml-envelope-schema.json) |
+| `pain.001` — Credit Transfer | ✅ | Full XML serialiser via `openkycaml_to_pain001()` — see [`iso20022-integration/libraries/python/`](../../iso20022-integration/libraries/python/) |
+| `pacs.008` — FI Credit Transfer (CBPR+) | ✅ | Full XML serialiser via `openkycaml_to_pacs008()` + Travel Rule profile — see [`iso20022-integration/profiles/travel-rule-pacs.008-profile.json`](../../iso20022-integration/profiles/travel-rule-pacs.008-profile.json) |
+| `camt.053` — Bank-to-Customer Statement | ✅ | Audit trail + data-retention profile — see [`iso20022-integration/profiles/camt.053-kyc-audit-profile.json`](../../iso20022-integration/profiles/camt.053-kyc-audit-profile.json) |
+| `<SplmtryData>` KYCAMLEnvelope schema | ✅ | JSON Schema for the envelope embedded in `<Envlp>` — [`iso20022-integration/supplementary-data/kyc-aml-envelope-schema.json`](../../iso20022-integration/supplementary-data/kyc-aml-envelope-schema.json) |
 | pacs.008 CBPR+ profile | ✅ | FATF Rec 16 + TFR 2023/1113 Art. 14 / MiCA Art. 83 minimum required fields defined |
 | pain.001 CDD reliance profile | ✅ | AMLR Art. 48 `thirdPartyCDDReliance` + risk rating in `<SplmtryData>` |
 | camt.053 audit profile | ✅ | `auditMetadata.changeLog` + `dataRetentionDate` in `<SplmtryData>` |
 | Python converter (bidirectional) | ✅ | `openkycaml_to_pacs008`, `openkycaml_to_pain001`, `iso20022_to_openkycaml` |
-| TypeScript ESM converter (bidirectional) | ✅ | Same three functions, typed interfaces — [`iso20022-integration/libraries/typescript/`](../iso20022-integration/libraries/typescript/) |
+| TypeScript ESM converter (bidirectional) | ✅ | Same three functions, typed interfaces — [`iso20022-integration/libraries/typescript/`](../../iso20022-integration/libraries/typescript/) |
 | XML examples | ✅ | pacs.008 + pain.001 full messages + minimal copy-paste snippet |
-| Bidirectional field mapping YAML | ✅ | [`iso20022-integration/mapping/`](../iso20022-integration/mapping/) — 14 clean 1:1 mappings, ~12 transformations, ~30 SplmtryData-only fields documented |
+| Bidirectional field mapping YAML | ✅ | [`iso20022-integration/mapping/`](../../iso20022-integration/mapping/) — 14 clean 1:1 mappings, ~12 transformations, ~30 SplmtryData-only fields documented |
 | LEI (`LEIX` type) | ✅ | `nationalIdentification.nationalIdentifierType` = `"LEIX"`, `registrationAuthority` per GLEIF |
 | BIC/SWIFT (RAID type) | ✅ | `nationalIdentification.nationalIdentifierType` = `"RAID"` |
 | IBAN | ✅ | Detected by pattern and mapped to dedicated `<IBAN>` element; non-IBAN accounts to `<Othr>` |
@@ -150,7 +150,7 @@ This matrix documents the alignment of the OpenKYCAML v1.3.0 schema with major r
 
 ## 10. ERC-3643 (T-REX) — On-Chain Permissioned Token Standard
 
-> ERC-3643 is the Ethereum standard for regulated / security token issuance. It uses ONCHAINID (ERC-734/735) to manage investor identities on-chain. The full field-level mapping is in [mapping-erc3643.md](mapping-erc3643.md).
+> ERC-3643 is the Ethereum standard for regulated / security token issuance. It uses ONCHAINID (ERC-734/735) to manage investor identities on-chain. The full field-level mapping is in [mapping-erc3643.md](../mappings/mapping-erc3643.md).
 
 | ERC-3643 Data Point | Coverage | OpenKYCAML Field(s) |
 |---|---|---|
@@ -176,7 +176,7 @@ This matrix documents the alignment of the OpenKYCAML v1.3.0 schema with major r
 | **Transfer compliance (`canTransfer`)** | 🔄 | Off-chain: `kycProfile.isEligible` + `kycProfile.customerRiskRating` + `kycProfile.sanctionsScreening` |
 | **Token contract metadata** (name, symbol, decimals) | ℹ️ | Out of scope — token-level, not investor KYC |
 
-_✅ = full field mapping. 🔄 = conceptual equivalent (see [mapping-erc3643.md](mapping-erc3643.md)). ℹ️ = out of scope._
+_✅ = full field mapping. 🔄 = conceptual equivalent (see [mapping-erc3643.md](../mappings/mapping-erc3643.md)). ℹ️ = out of scope._
 
 > _AMLA (Anti-Money Laundering Authority, established under Regulation (EU) 2024/1620) is mandated to issue Regulatory Technical Standards (RTS) and Guidelines under the AMLR. Several RTS are anticipated but not yet published as of April 2026. This section tracks alignment with draft and final RTS._
 
@@ -194,7 +194,7 @@ _✅ = full field mapping. 🔄 = conceptual equivalent (see [mapping-erc3643.md
 
 ## 11. Sovrin / Hyperledger Indy (AnonCreds) — Decentralised Identity Network
 
-> Sovrin is a public permissioned blockchain for self-sovereign identity built on Hyperledger Indy, using AnonCreds (Camenisch-Lysyanskaya) zero-knowledge proof credentials. The full field-level mapping is in [mapping-sovrin.md](mapping-sovrin.md).
+> Sovrin is a public permissioned blockchain for self-sovereign identity built on Hyperledger Indy, using AnonCreds (Camenisch-Lysyanskaya) zero-knowledge proof credentials. The full field-level mapping is in [mapping-sovrin.md](../mappings/mapping-sovrin.md).
 
 | Sovrin / Indy Data Point | Coverage | OpenKYCAML Field(s) |
 |---|---|---|
@@ -219,13 +219,13 @@ _✅ = full field mapping. 🔄 = conceptual equivalent (see [mapping-erc3643.md
 | **Ledger transaction metadata** (seqNo, txnTime) | ℹ️ | Out of scope — network infrastructure |
 | **NYM network roles** (TRUSTEE, STEWARD, ENDORSER) | ℹ️ | Out of scope — ledger governance, not investor KYC data |
 
-_✅ = full field mapping. 🔄 = conceptual equivalent (see [mapping-sovrin.md](mapping-sovrin.md)). ℹ️ = out of scope._
+_✅ = full field mapping. 🔄 = conceptual equivalent (see [mapping-sovrin.md](../mappings/mapping-sovrin.md)). ℹ️ = out of scope._
 
 ---
 
 ## 12. XRPL Credentials (XLS-40d), DIDs (did:xrpl), and Multi-Purpose Tokens (XLS-33d)
 
-> XRPL Credentials provide an on-ledger anchor for W3C VCs; the `did:xrpl` DID method binds XRPL accounts to W3C DIDs; and MPTs (Multi-Purpose Tokens) implement permissioned token issuance with KYC/AML gating analogous to ERC-3643. The full field-level mapping is in [mapping-xrpl-credentials-mpt.md](mapping-xrpl-credentials-mpt.md).
+> XRPL Credentials provide an on-ledger anchor for W3C VCs; the `did:xrpl` DID method binds XRPL accounts to W3C DIDs; and MPTs (Multi-Purpose Tokens) implement permissioned token issuance with KYC/AML gating analogous to ERC-3643. The full field-level mapping is in [mapping-xrpl-credentials-mpt.md](../mappings/mapping-xrpl-credentials-mpt.md).
 
 | XRPL Data Point | Coverage | OpenKYCAML Field(s) |
 |---|---|---|
@@ -251,7 +251,7 @@ _✅ = full field mapping. 🔄 = conceptual equivalent (see [mapping-sovrin.md]
 | **Accredited investor type** | ✅ | `kycProfile.customerClassification.accreditedInvestor` + `investorCategoryJurisdiction` |
 | **Travel Rule on XRPL** (FATF Rec 16 / TFR 2023/1113 Art. 14 / MiCA Art. 83) | ✅ | `ivms101` block; `Credential.URI` anchors the IVMS 101 payload on-ledger |
 
-_✅ = full field mapping. 🔄 = conceptual equivalent (see [mapping-xrpl-credentials-mpt.md](mapping-xrpl-credentials-mpt.md)). ℹ️ = out of scope. ⭐ = schema extended in v1.3.0._
+_✅ = full field mapping. 🔄 = conceptual equivalent (see [mapping-xrpl-credentials-mpt.md](../mappings/mapping-xrpl-credentials-mpt.md)). ℹ️ = out of scope. ⭐ = schema extended in v1.3.0._
 
 ---
 
