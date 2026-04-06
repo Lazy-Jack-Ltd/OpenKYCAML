@@ -6,7 +6,7 @@ This document is the **authoritative project roadmap** covering schema features,
 
 ---
 
-## Current Version: v1.3.0
+## Current Version: v1.5.0
 
 **Released:** April 2026
 
@@ -24,12 +24,14 @@ This document is the **authoritative project roadmap** covering schema features,
   - `kycProfile.pepStatus.pepCategory` aligned to AMLA draft PEP taxonomy (AMLR Art. 28–31).
 - PID/LPID converters (Python) for ARF flat-format ↔ OpenKYCAML envelope.
 - Travel Rule implementation guide covering TRISA, OpenVASP, Notabene, TRP, Sygna Bridge.
-- **21 validated example payloads** (including SD-JWT selective disclosure, deep UBO chain, and SAR-restriction variants).
+- **25 validated example payloads** (including SD-JWT selective disclosure, deep UBO chain, SAR-restriction variants, and verification document bundles).
 - AMLR 2027 compliance checklist for obliged entities.
-- **ERC-3643 (T-REX) mapping** — full field-level alignment with ONCHAINID (ERC-734/735) and ERC-3643 contract interfaces. New schema fields: `kycProfile.isEligible`, `kycProfile.eligibilityLastConfirmed`, `kycProfile.blockchainAccountIds[]` (address, network, ONCHAINID address, frozen status), `kycProfile.customerClassification.accreditedInvestor`, `kycProfile.customerClassification.investorCategoryJurisdiction`.
-- **Sovrin / Hyperledger Indy (AnonCreds) mapping** — full field-level alignment with `did:sov` / `did:indy` DID Method, Indy NYM/ATTRIB/SCHEMA/CLAIM_DEF/REVOC_REG_DEF ledger transactions, AnonCreds ZKP credential and presentation protocol, and Rich Schema objects. New schema fields: `verifiableCredential.credentialSchema.credDefId`, `credentialSchema.type` extended to include `AnonCredsDefinition`, `credentialStatus.type` extended with `AnonCredsCredentialStatusList2023`, `proof.type` examples extended with `CLSignature2019` and `AnonCredsProof2023`.
-- **`gdprSensitivityMetadata` block (v1.3.0)**: machine-readable GDPR/AML sensitivity classification for SAR/STR tipping-off protection (AMLR Art. 73 / FATF Rec. 21), GDPR Art. 9/10 special-category and criminal-offence data, retention rules, and disclosure policies for EUDI Wallet presentation flows. Enforces non-disclosure of SAR material at both policy and cryptographic (SD-JWT) layers.
-- **ISO 20022 integration module** — complete bridge layer in [`iso20022-integration/`](iso20022-integration/): `<SplmtryData>` KYCAMLEnvelope JSON Schema, pacs.008 CBPR+ Travel Rule profile, pain.001 CDD reliance profile, camt.053 audit trail profile, Python + TypeScript bidirectional converters, XML examples, and 70-test pytest suite. Zero breaking changes to the core schema.
+- **ERC-3643 (T-REX) mapping** — full field-level alignment with ONCHAINID (ERC-734/735) and ERC-3643 contract interfaces.
+- **Sovrin / Hyperledger Indy (AnonCreds) mapping** — full field-level alignment with `did:sov` / `did:indy` DID Method and AnonCreds ZKP credentials.
+- **`gdprSensitivityMetadata` block (v1.3.0)**: machine-readable GDPR/AML sensitivity classification for SAR/STR tipping-off protection.
+- **ISO 20022 integration module (v1.3.0)** — complete bridge layer in [`iso20022-integration/`](iso20022-integration/).
+- **ISO 20275 ELF classification (v1.4.0)** — `legalFormCode`, `entityType` enum, typed `TrustDetails`/`FoundationDetails`/`PartnershipDetails` sub-objects, `nationalIdentifierType: ISO_20275_ELF_CODE`.
+- **Verification Document Bundle (v1.5.0)** — new `identityDocuments` root block; 5 new `$defs` (`VerificationDocumentBundle`, `NaturalPersonDocument`, `LegalEntityDocument`, `RegistrationAuthorityDetail`, `ExtractedAttribute`); GLEIF RAL structured reference; vLEI credential hierarchy (QVI/OOR/ECR); cross-reference fields on `LegalPerson`, `NationalIdentification`, `BeneficialOwner`, and `verificationMethods[]`.
 
 ---
 
@@ -97,7 +99,7 @@ The following issues were identified during a critical review of the full reposi
 
 ---
 
-## v1.4.0 — Planned Q3 2026
+## v1.4.0 — Complete
 
 **Theme: Institutional and Cross-Border Interoperability**
 
@@ -115,14 +117,41 @@ The following issues were identified during a critical review of the full reposi
 | FATCA / CRS tax residency extension | Planned | — |
 | ISO 20022 pain.001 full serialiser (Python) | ✅ Completed in v1.3.0 | — |
 | XRPL schema fields: `blockchainAccountIds[].xrplCredentialType` (hex CredentialType) and `blockchainAccountIds[].mptIssuanceId` (MPTokenIssuanceID) | ✅ Completed in v1.3.0 | — |
+| Typed trust/foundation/LLP sub-objects in `LegalPerson` — `TrustDetails`, `FoundationDetails`, `PartnershipDetails` | ✅ Completed in v1.4.0 | — |
+| ISO 20275 ELF `legalFormCode` + `entityType` enum on `LegalPerson` | ✅ Completed in v1.4.0 | — |
+| `nationalIdentifierType: ISO_20275_ELF_CODE` | ✅ Completed in v1.4.0 | — |
+| Complex multi-tier group ownership examples | ✅ Completed in v1.4.0 | — |
 | Add CI step for ISO 20022 pytest suite + widen path triggers | Planned | Technical Debt #10, #11 |
 | Fix `nameIdentifier` field-name inconsistency in docs | Planned | Bug #1 |
 | Fix `originatingVASP.originatingVASP` double-nesting in adoption guide | Planned | Bug #2 |
-| Add `SECURITY.md` and `CHANGELOG.md` | Planned | Gap #15, #16 |
+| Add `SECURITY.md` and `CHANGELOG.md` | ✅ Completed in v1.4.0 | Gap #15, #16 |
 | Publish `@openkycaml/tools` to npm and `openkycaml` to PyPI | Planned | Gap #21 |
 | Fix JS `tests/` directory referenced in `package.json` | Planned | CI #12 |
-| Typed trust/foundation/LLP sub-objects in `beneficialOwnership` | Planned | Standards #25 |
 | Canonical OpenID4VP Presentation Definition for Travel Rule minimum | Planned | Standards #26 |
+
+---
+
+## v1.5.0 — Complete
+
+**Theme: Verification Document Bundle — FATF Rec. 10/24/25, AMLR Art. 22/26, ISO 17442**
+
+| Feature | Status |
+|---|---|
+| New `identityDocuments` root property | ✅ Complete |
+| `VerificationDocumentBundle` $def — `bundleCompleteness` / `bundleValidatedBy` / `requiredDocumentTypes[]` | ✅ Complete |
+| `NaturalPersonDocument` $def — 11 typed doc codes (PASSPORT, NATIONAL_ID_CARD, EIDAS_PID_CREDENTIAL, …) | ✅ Complete |
+| `LegalEntityDocument` $def — 16 typed doc codes (CERTIFICATE_OF_INCORPORATION, REGISTRY_EXTRACT, VLEI_CREDENTIAL, TRUST_DEED, ULTIMATE_BENEFICIAL_OWNER_REGISTER, …) | ✅ Complete |
+| `RegistrationAuthorityDetail` $def — structured GLEIF RAL reference (`ralCode` pattern `RA######`) | ✅ Complete |
+| `ExtractedAttribute` $def — per-document field extraction with `matchesRecord` flag | ✅ Complete |
+| `verifyingDocumentRef` cross-reference on `LegalPerson` and `NationalIdentification` | ✅ Complete |
+| `registrationAuthorityDetail` structured GLEIF RAL on `NationalIdentification` | ✅ Complete |
+| `documentRef` cross-reference on `verificationMethods[]` items | ✅ Complete |
+| `verifyingDocumentRefs[]` cross-reference on `BeneficialOwner` | ✅ Complete |
+| Document bundle example — natural person (Personalausweis + eIDAS PID VC + proof of address) | ✅ Complete |
+| Document bundle example — UK PLC EDD (CoI + Companies House + LEI + vLEI OOR + PSC register) | ✅ Complete |
+| `mapping-ivms101-eidas-amlr.md` §10 — Verification Document Bundle mapping tables | ✅ Complete |
+| `adoption-guide.md` §8 — Building a Compliant Document Bundle | ✅ Complete |
+| `CHANGELOG.md` v1.5.0 entry | ✅ Complete |
 
 ---
 
@@ -167,6 +196,8 @@ Planned breaking changes (subject to TWG consensus):
 | v1.1.0 | April 2025 | EUDI Wallet evidence block, LPID + QEAA mandates, DID triangulation examples, `EUDI_WALLET` onboarding channel, ISO 17442 LEI fixes |
 | v1.2.0 | April 2026 | SD-JWT selective disclosure, deep UBO chain, PID/LPID converters, Travel Rule guide, AMLA RTS alignment (`thirdPartyCDDReliance`, `dueDiligenceRequirements`, AMLA PEP taxonomy), AMLR 2027 compliance checklist |
 | v1.3.0 | April 2026 | `gdprSensitivityMetadata` block — SAR/STR tipping-off protection (AMLR Art. 73 / FATF Rec. 21), GDPR Art. 9/10 classification, EUDI Wallet restricted-data handling, SAR-restriction example, updated compliance docs. **ISO 20022 integration** — complete `<SplmtryData>` KYCAMLEnvelope, pacs.008/pain.001/camt.053 profiles, Python + TypeScript bidirectional converters, XML examples, 70-test test suite. **XRPL Credentials, DIDs, and MPTs mapping** — full field-level mapping to XLS-40d `Credential` and `DID` objects, `did:xrpl` DID method, and XLS-33d Multi-Purpose Tokens. **XRPL schema extensions** — `blockchainAccountIds[].xrplCredentialType` (hex CredentialType, XLS-40d) and `blockchainAccountIds[].mptIssuanceId` (MPTokenIssuanceID Hash192, XLS-33d) added to `kycProfile`; see [mapping-xrpl-credentials-mpt.md](docs/mapping-xrpl-credentials-mpt.md) |
+| v1.4.0 | April 2026 | ISO 20275 ELF `legalFormCode` and `entityType` enum on `LegalPerson`; typed `TrustDetails`, `FoundationDetails`, `PartnershipDetails` sub-objects; `nationalIdentifierType: ISO_20275_ELF_CODE`; complex multi-tier group ownership examples; `CHANGELOG.md`; `SECURITY.md` |
+| v1.5.0 | April 2026 | **Verification Document Bundle** — `identityDocuments` root property; 5 new `$defs` (`VerificationDocumentBundle`, `NaturalPersonDocument`, `LegalEntityDocument`, `RegistrationAuthorityDetail`, `ExtractedAttribute`); 11 NP doc types + 16 LE doc types; GLEIF RAL structured reference; vLEI QVI/OOR/ECR hierarchy; cross-reference fields on `LegalPerson`, `NationalIdentification`, `BeneficialOwner`, `verificationMethods[]`; 2 new document bundle examples; docs updated |
 
 ---
 
