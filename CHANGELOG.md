@@ -67,6 +67,15 @@ For the full project roadmap and planned features, see [ROADMAP.md](ROADMAP.md).
 - `docs/compliance-matrix.md` — FATF Rec. 24/25 and AMLR Art. 26 rows updated to reflect full structural coverage provided by v1.4.0 typed sub-objects; "RFC pending" caveat removed.
 - `docs/mapping-ivms101-eidas-amlr.md` — ISO 20275 mapping rows added to §3 Legal Entity Fields.
 
+### Added (SWIFT MT Converter)
+- **SWIFT MT legacy bridge** (`iso20022-integration/libraries/python/swift_mt_converter.py` + `iso20022-integration/libraries/typescript/swift-mt-converter.ts`) — bidirectional converter between OpenKYCAML v1.4.0 payloads and SWIFT FIN MT messages, addressing Issue #28:
+  - **Message types supported:** MT 103 (customer credit transfer), MT 202 (general FI transfer), MT 202 COV (covered FI transfer), MT 910 (confirmation of credit), MT 940 (customer statement).
+  - **Direction:** bidirectional — OpenKYCAML → MT (outbound) and MT → OpenKYCAML (inbound parsing).
+  - **Field mapping:** full MT 103 field set including `:32A:` value date/currency/amount, `:50K:` / `:59:` parties with address, `:52A:` / `:57A:` VASP agents, `:71A:` charges, `:70:` remittance info, `:77B:` regulatory reporting.
+  - **:77B: Travel Rule carrier (FATF Rec. 16):** `build_77b` / `build77b` writes structured `/ORDERRES/` + `/BENEFRES/` + `/UETR/` lines from OpenKYCAML data; `parse_77b` / `parse77b` performs best-effort extraction back to `ivms101` originator/beneficiary fields.
+  - **Test coverage:** 91-test Python pytest suite + 83-test TypeScript/Node.js suite; all pass ✅.
+  - **No new dependencies** — Python standard library only; TypeScript uses only `node:crypto`.
+
 ---
 
 ## [1.3.0] — April 2026
