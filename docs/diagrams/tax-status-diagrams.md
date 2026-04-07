@@ -35,7 +35,7 @@ sequenceDiagram
 
     Customer->>VASP: Provide self-certification with US SSN and GB UTR
     VASP->>IRS: Submit TIN match request for SSN 123-45-6789
-    IRS-->>VASP: Return verified — tinType EIN matched to individual
+    IRS-->>VASP: Return verified — tinType TIN matched to individual
     VASP->>HMRC: Validate UTR 1234567890
     HMRC-->>VASP: Return verified — functionalEquivalent confirmed
     VASP->>VASP: Build taxStatus.tinIdentifiers[] with two entries\n(jurisdiction US + GB, both verificationStatus verified)
