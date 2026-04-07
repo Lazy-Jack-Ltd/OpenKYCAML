@@ -139,4 +139,4 @@ When OpenKYCAML v2.0.0 is released, adopters will need to:
 
 ---
 
-*Last updated: April 2026 (v1.3.0). This document will be updated when the W3C VC DM v2.0 migration is implemented in OpenKYCAML v2.0.0.*
+*Last updated: April 2026 (v1.7.0). This document will be updated when the W3C VC DM v2.0 migration is implemented in OpenKYCAML v2.0.0.*

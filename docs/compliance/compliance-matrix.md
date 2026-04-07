@@ -1,6 +1,6 @@
 # OpenKYCAML Compliance Matrix
 
-This matrix documents the alignment of the OpenKYCAML v1.3.0 schema with major regulatory and technical standards.
+This matrix documents the alignment of the OpenKYCAML v1.7.0 schema with major regulatory and technical standards.
 
 **Legend:**
 - ✅ Full alignment — the standard is directly addressed.
@@ -223,36 +223,70 @@ _✅ = full field mapping. 🔄 = conceptual equivalent (see [mapping-sovrin.md]
 
 ---
 
-## 12. XRPL Credentials (XLS-40d), DIDs (did:xrpl), and Multi-Purpose Tokens (XLS-33d)
+## 12. XRPL Credentials (XLS-70), DIDs (did:xrpl), Permissioned Domains (XLS-80), and Multi-Purpose Tokens (XLS-33d)
 
-> XRPL Credentials provide an on-ledger anchor for W3C VCs; the `did:xrpl` DID method binds XRPL accounts to W3C DIDs; and MPTs (Multi-Purpose Tokens) implement permissioned token issuance with KYC/AML gating analogous to ERC-3643. The full field-level mapping is in [mapping-xrpl-credentials-mpt.md](../mappings/mapping-xrpl-credentials-mpt.md).
+> XRPL Credentials (XLS-70, live on mainnet) provide an on-ledger anchor for W3C VCs; the `did:xrpl` DID method binds XRPL accounts to W3C DIDs; Permissioned Domains (XLS-80) and the Permissioned DEX (XLS-81d) gate access to trading venues; XLS-96 provides encrypted confidential transfers; and MPTs (Multi-Purpose Tokens) implement permissioned token issuance with KYC/AML gating analogous to ERC-3643. The full field-level mapping is in [mapping-xrpl-credentials-mpt.md](../mappings/mapping-xrpl-credentials-mpt.md).
 
 | XRPL Data Point | Coverage | OpenKYCAML Field(s) |
 |---|---|---|
-| **`Credential.Subject`** (XRPL account → `did:xrpl`) | ✅ | `verifiableCredential.credentialSubject.id` (`did:xrpl:1:r...`) |
-| **`Credential.Issuer`** (XRPL account → `did:xrpl`) | ✅ | `verifiableCredential.issuer.id` (`did:xrpl:1:r...`) |
-| **`Credential.URI`** (off-chain VC payload URI) | ✅ | `verifiableCredential.id` (canonical URI of the OpenKYCAML VC) |
-| **`Credential.Expiration`** (Ripple epoch) | ✅ | `verifiableCredential.expirationDate` (ISO 8601; Ripple epoch = Unix − 946684800) |
-| **`Credential.CredentialType`** (hex-encoded type) | 🔄 | `verifiableCredential.type[]` (decoded string; see hex→string table in mapping doc §2.2) |
-| **`lsfAccepted`** (credential accepted by subject) | 🔄 | `kycProfile.auditMetadata.changeLog[]` entry (`credential_accepted`) |
-| **`DID` object** (`DIDDocument` + `URI`) | ✅ | `verifiableCredential.credentialSubject.id` / `verifiableCredential.issuer.id` (DID resolves via XRPL DID resolver) |
+| **`Credential.Subject`** (XRPL account → `did:xrpl`) — XLS-70 | ✅ | `verifiableCredential.credentialSubject.id` (`did:xrpl:1:r...`) |
+| **`Credential.Issuer`** (XRPL account → `did:xrpl`) — XLS-70 | ✅ | `verifiableCredential.issuer.id` (`did:xrpl:1:r...`) |
+| **`Credential.URI`** (off-chain VC payload URI) — XLS-70 | ✅ | `verifiableCredential.id` (canonical URI of the OpenKYCAML VC) |
+| **`Credential.Expiration`** (Ripple epoch) — XLS-70 | ✅ | `verifiableCredential.expirationDate` (ISO 8601; Ripple epoch = Unix − 946684800) |
+| **`Credential.CredentialType`** (hex-encoded type) — XLS-70 | 🔄 | `verifiableCredential.type[]` (decoded string; see hex→string table in mapping doc §2.2) |
+| **`lsfAccepted`** (credential accepted by subject) — XLS-70 | 🔄 | `kycProfile.auditMetadata.changeLog[]` entry (`credential_accepted`) |
+| **`DID` object** (`DIDDocument` + `URI`) — XLS-70 | ✅ | `verifiableCredential.credentialSubject.id` / `verifiableCredential.issuer.id` (DID resolves via XRPL DID resolver) |
 | **`did:xrpl` DID method** | ✅ | All DID fields are DID-method-agnostic; `did:xrpl:1:r...` is a valid value |
 | **DID triangulation** (subject / issuer / relying party) | ✅ | `verifiableCredential.evidence[].credentialIssuer` + `.verifier` + `credentialSubject.id` |
-| **`DepositPreauth` credential gate** (`{Issuer, CredentialType}`) | ✅ | `kycProfile.isEligible: true` + `verifiableCredential.type[]` (off-chain pre-authorisation record) |
+| **`DepositPreauth` credential gate** (`{Issuer, CredentialType}`) — XLS-70 | ✅ | `kycProfile.isEligible: true` + `verifiableCredential.type[]` (off-chain pre-authorisation record) |
+| **Permissioned Domain ID** (Hash256) — XLS-80 | ✅ | `kycProfile.blockchainAccountIds[].xrplPermissionedDomainId` ⭐ (64-char hex; added v1.7.0) |
+| **Permissioned Domain credential requirements** — XLS-80 | ✅ | `kycProfile.blockchainAccountIds[].xrplAuthorizedCredentialTypes[]` ⭐ (added v1.7.0) |
+| **Permissioned DEX access gate** — XLS-81d | ✅ | `kycProfile.isEligible: true` + `xrplPermissionedDomainId` ⭐ — domain membership gates DEX offer matching |
+| **Authorised Trustline** (IssuerAuthorizesTrustline) | ✅ | `kycProfile.isEligible: true` → triggers trustline auth by issuer |
 | **`MPToken.lsfMPTAuthorized`** (holder authorised) | ✅ | `kycProfile.isEligible` (boolean) + `kycProfile.eligibilityLastConfirmed` |
 | **`MPToken.lsfMPTLocked`** (holder frozen) | ✅ | `kycProfile.blockchainAccountIds[].isFrozen` |
 | **Holder XRPL wallet address** | ✅ | `kycProfile.blockchainAccountIds[].address` (`network: "xrpl"`) |
 | **`MPTIssuance.lsfMPTRequireAuth`** (gate flag) | 🔄 | `kycProfile.isEligible` — off-chain prerequisite for `MPTokenAuthorize` |
+| **MPT flags bitmask** — XLS-33d | ✅ | `kycProfile.blockchainAccountIds[].mptFlags` ⭐ (added v1.7.0) |
+| **MPT metadata / ISIN / compliance rules** — XLS-33d | ✅ | `kycProfile.blockchainAccountIds[].mptMetadata` ⭐ (added v1.7.0) |
+| **MPT transfer fee** — XLS-33d | ✅ | `kycProfile.blockchainAccountIds[].mptTransferFee` ⭐ (added v1.7.0) |
 | **Credential revocation** (`CredentialDelete`) | ✅ | `verifiableCredential.credentialStatus` (StatusList2021Entry) + `kycProfile.isEligible: false` + `changeLog[]` |
 | **KYC type** (`CredentialType = KYCCredential`) | ✅ | `kycProfile.kycCompletionDate` + `kycProfile.dueDiligenceRequirements` |
-| **XRPL `CredentialType` hex** (round-trip reconstruction) | ✅ | `kycProfile.blockchainAccountIds[].xrplCredentialType` ⭐ (hex string, 2–128 chars; added v1.3.0) |
+| **XRPL `CredentialType` hex** (round-trip reconstruction) — XLS-70 | ✅ | `kycProfile.blockchainAccountIds[].xrplCredentialType` ⭐ (hex string, 2–128 chars; added v1.3.0) |
 | **MPT issuance identifier** (`MPTokenIssuanceID`) | ✅ | `kycProfile.blockchainAccountIds[].mptIssuanceId` ⭐ (48-char hex Hash192; added v1.3.0) |
 | **AML type** (`CredentialType = AMLCredential`) | ✅ | `kycProfile.sanctionsScreening` + `kycProfile.adverseMedia` |
 | **Accredited investor type** | ✅ | `kycProfile.customerClassification.accreditedInvestor` + `investorCategoryJurisdiction` |
+| **Deep Freeze** (XLS-77) | ✅ | `kycProfile.blockchainAccountIds[].xrplFreezeType: "DEEP_FREEZE"` ⭐ (added v1.7.0) |
+| **Individual / Global Freeze** | ✅ | `kycProfile.blockchainAccountIds[].isFrozen` + `xrplFreezeType` ⭐ (`"INDIVIDUAL_FREEZE"` / `"GLOBAL_FREEZE"`; added v1.7.0) |
+| **Native Clawback** (Clawback amendment / `lsfMPTCanClawback`) | ✅ | `kycProfile.blockchainAccountIds[].xrplClawbackEnabled` ⭐ (added v1.7.0) |
+| **Confidential transfer flag** — XLS-96 | ✅ | `kycProfile.blockchainAccountIds[].xrplConfidentialTransfer.enabled` ⭐ (added v1.7.0) |
+| **Auditor public key** — XLS-96 | ✅ | `kycProfile.blockchainAccountIds[].xrplConfidentialTransfer.auditorPublicKey` ⭐ (added v1.7.0) |
+| **Regulator public key** — XLS-96 | ✅ | `kycProfile.blockchainAccountIds[].xrplConfidentialTransfer.regulatorPublicKey` ⭐ (added v1.7.0) |
 | **Travel Rule on XRPL** (FATF Rec 16 / TFR 2023/1113 Art. 14 / MiCA Art. 83) | ✅ | `ivms101` block; `Credential.URI` anchors the IVMS 101 payload on-ledger |
 
-_✅ = full field mapping. 🔄 = conceptual equivalent (see [mapping-xrpl-credentials-mpt.md](../mappings/mapping-xrpl-credentials-mpt.md)). ℹ️ = out of scope. ⭐ = schema extended in v1.3.0._
+_✅ = full field mapping. 🔄 = conceptual equivalent (see [mapping-xrpl-credentials-mpt.md](../mappings/mapping-xrpl-credentials-mpt.md)). ℹ️ = out of scope. ⭐ = schema extended._
 
 ---
 
-*Last updated: v1.3.0 — April 2026. Maintained by the OpenKYCAML Technical Working Group.*
+## 13. Bitcoin and Lightning Network (Service-Layer Enforcement)
+
+> Bitcoin has no protocol-level compliance framework comparable to ERC-3643 or XRPL's credential system. Compliance on Bitcoin and Lightning is enforced entirely at the service layer. The full mapping is in [mapping-bitcoin-lightning.md](../mappings/mapping-bitcoin-lightning.md).
+
+| Bitcoin / Lightning Data Point | Coverage | OpenKYCAML Field(s) |
+|---|---|---|
+| **Bitcoin wallet address** (P2PKH / P2WPKH / P2TR) | ✅ | `kycProfile.blockchainAccountIds[].address` (`network: "bitcoin"`) |
+| **Bitcoin script type** (P2PKH / P2WPKH / P2TR) | ✅ | `kycProfile.blockchainAccountIds[].bitcoinScriptType` ⭐ (added v1.7.0) |
+| **Lightning node public key** | ✅ | `kycProfile.blockchainAccountIds[].lightningNodePubkey` ⭐ (66-char hex; added v1.7.0) |
+| **Lightning Service Provider** (Lightspark, Voltage, etc.) | ✅ | `kycProfile.blockchainAccountIds[].lightningServiceProvider` ⭐ (name or DID; added v1.7.0) |
+| **KYC identity** (natural or legal person) | ✅ | `ivms101.originator.*` and `kycProfile.*` — same payload as Ethereum/XRPL; compliance is at service layer |
+| **Travel Rule** (FATF Rec 16 — Lightning service providers) | ✅ | `ivms101` block — Lightning VASP Travel Rule uses the same IVMS 101 fields; enforcement is by the LSP (Lightspark Compliance API, Voltage Flow, etc.) |
+| **AML screening** | ✅ | `kycProfile.sanctionsScreening`, `kycProfile.adverseMedia` — fed into LSP compliance engine |
+| **Beneficial ownership** (Bitcoin VASP entity) | ✅ | `kycProfile.beneficialOwnership[]` |
+| **On-chain enforcement** | ⬜ | Not applicable — Bitcoin scripting language does not support compliance enforcement at the protocol level |
+| **Layer-2 compliance** (RGB Protocol, Taproot Assets, Liquid Network) | ⬜ | Out of scope at the protocol level; these Layer-2 networks do not have on-chain compliance enforcement comparable to ERC-3643 or XRPL credentials. OpenKYCAML payloads feed the off-chain compliance systems that wrap these networks. |
+
+_✅ = full field mapping. ⬜ = not in scope / service-layer enforcement only._
+
+---
+
+*Last updated: v1.7.0 — April 2026. Maintained by the OpenKYCAML Technical Working Group.*

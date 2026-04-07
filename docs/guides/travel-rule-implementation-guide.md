@@ -15,6 +15,7 @@ This guide explains how to embed and exchange **OpenKYCAML** payloads across the
 7. [Sygna Bridge](#7-sygna-bridge)
 8. [Protocol-Agnostic Best Practices](#8-protocol-agnostic-best-practices)
 9. [Decision Guide: Choosing a Protocol](#9-decision-guide-choosing-a-protocol)
+10. [XRPL Domain-Gating and Permissioned DEX Integration](#10-xrpl-domain-gating-and-permissioned-dex-integration)
 
 ---
 
@@ -509,3 +510,90 @@ Regulatory preference:
 ```
 
 > **Multi-protocol tip:** Because OpenKYCAML separates data format from transport, you can run a single internal OpenKYCAML record and fan out to multiple protocol networks simultaneously by extracting and transforming the `ivms101` block as shown in each section above.
+
+---
+
+## 10. XRPL Domain-Gating and Permissioned DEX Integration
+
+When a counterparty transacts on the **XRP Ledger**, Travel Rule data delivery may need to be co-ordinated with XRPL's protocol-level compliance gates. This section describes the integration pattern for VASPs that interact with XRPL accounts enrolled in a **Permissioned Domain** (XLS-80) and/or a **Permissioned DEX** (XLS-81d).
+
+### 10.1 What is an XRPL Permissioned Domain?
+
+An XRPL Permissioned Domain (XLS-80) is an on-ledger object that restricts DEX access, lending protocols, or other XRPL primitives to accounts holding specific on-chain credentials (XLS-70). The domain operator specifies a set of accepted `CredentialType` hex values; only accounts holding a matching, non-expired credential may participate.
+
+Field mapping:
+
+| OpenKYCAML Field | XRPL On-Ledger Object | Meaning |
+|---|---|---|
+| `blockchainAccountIds[].xrplPermissionedDomainId` | `DomainID` (Hash256) | Identifies the Permissioned Domain gate |
+| `blockchainAccountIds[].xrplAuthorizedCredentialTypes[]` | `AcceptedCredentials[].CredentialType` | Credential types accepted in this domain (cross-ref XLS-70) |
+| `blockchainAccountIds[].xrplCredentialType` | `Credential.CredentialType` | The credential held by this wallet anchoring the KYC/AML proof |
+| `kycProfile.isEligible` | Derived from credential validity + domain check | Eligibility gate — `true` only if credential is valid and accepted by domain |
+
+### 10.2 Integration Steps
+
+**Step 1 — Identify the Permissioned Domain**
+
+Before initiating a Travel Rule exchange for an XRPL-originated or XRPL-destined transfer, determine whether the originator or beneficiary wallet is a member of a Permissioned Domain:
+
+```
+GET /v1/ledger/accounts/{rAddress}/domains    (XRPL REST gateway)
+```
+
+If a `DomainID` is returned, record it in `blockchainAccountIds[].xrplPermissionedDomainId`.
+
+**Step 2 — Retrieve accepted credential types**
+
+Fetch the domain's `AcceptedCredentials` list and record the matching `CredentialType` hex strings in `xrplAuthorizedCredentialTypes[]`. Cross-reference these against the wallet's live `Credential` objects to confirm that `xrplCredentialType` is in the accepted set.
+
+**Step 3 — Set isEligible**
+
+Set `kycProfile.isEligible: true` only when:
+1. The wallet holds a valid (non-expired, non-revoked) XLS-70 credential whose `CredentialType` is in `xrplAuthorizedCredentialTypes[]`.
+2. The credential's subject matches the KYC record subject (IVMS 101 name + national ID).
+3. No open sanctions hit, freeze, or clawback applies.
+
+**Step 4 — Include domain fields in Travel Rule payload**
+
+Embed the XRPL-specific fields in the OpenKYCAML payload alongside the IVMS 101 block:
+
+```json
+{
+  "$schema": "https://openkycaml.org/schema/v1.7.0/kyc-aml-hybrid-extended.json",
+  "version": "1.7.0",
+  "ivms101": { "...": "..." },
+  "kycProfile": {
+    "customerRiskRating": "LOW",
+    "dueDiligenceType": "CDD",
+    "isEligible": true,
+    "eligibilityLastConfirmed": "2026-04-06T18:00:00Z",
+    "blockchainAccountIds": [
+      {
+        "address": "rCustomerXRPLAddress...",
+        "network": "xrpl",
+        "xrplCredentialType": "4b594343726564656e7469616c",
+        "xrplPermissionedDomainId": "A1B2C3D4E5F6A1B2C3D4E5F6A1B2C3D4E5F6A1B2C3D4E5F6A1B2C3D4E5F60001",
+        "xrplAuthorizedCredentialTypes": ["4b594343726564656e7469616c"],
+        "isFrozen": false,
+        "xrplClawbackEnabled": false
+      }
+    ]
+  }
+}
+```
+
+**Step 5 — Beneficiary VASP verification**
+
+The beneficiary VASP should:
+1. Re-verify the wallet's credential status on XRPL using a local rippled or Clio node (do not rely solely on the originator's `isEligible` flag).
+2. Confirm the `xrplPermissionedDomainId` value matches their own domain registration if they operate a domain gate.
+3. Reject the payload and escalate for review if `isEligible: false` or if the credential has expired.
+
+### 10.3 Permissioned DEX (XLS-81d)
+
+XLS-81d restricts DEX offer matching to domain members. No additional schema fields are required beyond those in §10.1 — domain membership established by `xrplPermissionedDomainId` and `isEligible` together gates DEX participation.
+
+Key points for compliance teams:
+- Secondary market trading of a permissioned MPT via the XRPL DEX requires the trading wallet to be a domain member (`xrplPermissionedDomainId` set and `isEligible: true`).
+- In combination with `lsfMPTRequireAuth` MPT flag (bitfield 0x0004 in `mptFlags`), issuers can require both KYC verification *and* domain membership before any MPT transfer settles.
+- `isEligible: false` combined with an `xrplFreezeType` of `INDIVIDUAL_FREEZE` or `DEEP_FREEZE` indicates a holder who was previously eligible but has been suspended — flag for EDD review.

@@ -125,12 +125,13 @@ These data points are token-level (not investor-level). OpenKYCAML focuses on in
 
 | ERC-3643 Field | Type | Description | OpenKYCAML Field | Notes |
 |---|---|---|---|---|
-| `isFrozen(address)` | `bool` | Whether the investor's wallet is frozen | `kycProfile.blockchainAccountIds[].isFrozen` ⭐ | Per-wallet entry in `blockchainAccountIds[]`. |
+| `isFrozen(address)` | `bool` | Whether the investor's wallet is frozen | `kycProfile.blockchainAccountIds[].isFrozen` ⭐ | Per-wallet entry in `blockchainAccountIds[]`. For XRPL, use `xrplFreezeType` ⭐ (v1.7.0) to distinguish Individual, Global, or Deep Freeze (XLS-77). |
 | `getFrozenTokens(address)` | `uint256` | Amount frozen on the wallet | `kycProfile.blockchainAccountIds[].frozenTokenAmount` ⭐ | Decimal string per-wallet entry. |
 | `onchainID` (token's) | `address` | Token issuer's ONCHAINID address | ℹ️ Token metadata, not investor KYC | Not in scope of investor KYC record. |
 | `name`, `symbol`, `decimals`, `version` | Token metadata | Token contract metadata | ℹ️ Not investor data | Could be referenced in `kycProfile.auditMetadata` or transaction records. |
 | `paused` | `bool` | Token transfer pause status | ℹ️ Token-level state | Not investor-specific. |
 | `recoveryAddress(lost, new, onchainID)` | action | Key recovery for lost wallets | `kycProfile.auditMetadata.changeLog[]` with event type `UPDATED` + note on wallet change | The old and new wallet addresses should be logged in the audit trail. |
+| `forcedTransfer(from, to, amount)` | action | Issuer-initiated forced transfer of tokens from a holder | `kycProfile.auditMetadata.changeLog[]` with event type `UPDATED` | XRPL equivalent: Native Clawback amendment (`Clawback` transaction); `kycProfile.blockchainAccountIds[].xrplClawbackEnabled` ⭐ (v1.7.0) records whether the issuer holds clawback rights. |
 
 ---
 
@@ -233,5 +234,24 @@ Full mapping: [ISO 3166-1 alpha-2 to numeric](https://en.wikipedia.org/wiki/ISO_
 
 ---
 
-*Document version: v1.3.0 — April 2026. Maintained by the OpenKYCAML Technical Working Group.*
+*Document version: v1.7.0 — April 2026. Maintained by the OpenKYCAML Technical Working Group.*
 *ERC-3643 reference: [EIP-3643](https://github.com/TokenySolutions/EIP3643), [ONCHAINID](https://github.com/onchain-id/solidity)*
+
+---
+
+## 11. Cross-Network Equivalence: ERC-3643 vs XRPL vs Bitcoin/Lightning
+
+The table below maps ERC-3643 capabilities to their equivalents on XRPL and Bitcoin/Lightning, showing how the same OpenKYCAML fields serve all three enforcement models. See [docs/compliance/enforcement-tiers.md](../compliance/enforcement-tiers.md) for the full three-tier enforcement model.
+
+| Capability | ERC-3643 (Ethereum) | XRPL | Bitcoin / Lightning |
+|---|---|---|---|
+| **On-chain identity** | ONCHAINID (ERC-734/735) contract — `onchainIDAddress` | XLS-70 `Credential` object — `xrplCredentialType` | Not applicable (service-layer only) |
+| **Compliance-gated trading** | `ICompliance.canTransfer()` transfer restriction | XLS-80 Permissioned Domains + XLS-81d Permissioned DEX — `xrplPermissionedDomainId` | Not applicable (LSP compliance engine) |
+| **Token standard** | ERC-3643 T-REX (ERC-20 extension) | Multi-Purpose Tokens (XLS-33d) — `mptIssuanceId`, `mptFlags`, `mptMetadata` | Not applicable |
+| **Privacy** | None natively | XLS-96 Confidential Transfers (EC-ElGamal + ZKP) — `xrplConfidentialTransfer` | Not applicable |
+| **Clawback / forced transfer** | `forcedTransfer(from, to, amount)` in T-REX | Native Clawback amendment — `xrplClawbackEnabled` | Not applicable |
+| **Freeze** | `setAddressFrozen(address, true)` in T-REX | Native Freeze + Deep Freeze (XLS-77) — `xrplFreezeType` (`INDIVIDUAL_FREEZE` / `GLOBAL_FREEZE` / `DEEP_FREEZE`) | Not applicable |
+| **Eligibility gate** | `IIdentityRegistry.isVerified(address)` | `lsfMPTAuthorized` on `MPToken` | `kycProfile.isEligible` fed to LSP |
+| **OpenKYCAML eligibility field** | `kycProfile.isEligible` | `kycProfile.isEligible` | `kycProfile.isEligible` |
+| **Lightning node identity** | Not applicable | Not applicable | `lightningNodePubkey` ⭐ |
+| **Service provider** | Not applicable | Not applicable | `lightningServiceProvider` ⭐ |

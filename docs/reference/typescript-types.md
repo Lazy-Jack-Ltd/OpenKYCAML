@@ -1,6 +1,6 @@
 # TypeScript Type Definitions
 
-This document provides TypeScript type definitions for the OpenKYCAML v1.3.0 schema. These types mirror the JSON Schema `$defs` and can be used to build strongly-typed OpenKYCAML payloads in TypeScript / Node.js projects.
+This document provides TypeScript type definitions for the OpenKYCAML v1.7.0 schema. These types mirror the JSON Schema `$defs` and can be used to build strongly-typed OpenKYCAML payloads in TypeScript / Node.js projects.
 
 > **Installation tip:** Copy the types below into a `types/openkycaml.d.ts` file in your project, or use them alongside the JavaScript validator at [`tools/javascript/validator.js`](../../tools/javascript/validator.js).
 
@@ -12,10 +12,11 @@ This document provides TypeScript type definitions for the OpenKYCAML v1.3.0 sch
 2. [IVMS 101 Types](#2-ivms-101-types)
 3. [Person Types](#3-person-types)
 4. [KYC Profile Types](#4-kyc-profile-types)
-5. [Verifiable Credential Types](#5-verifiable-credential-types)
-6. [GDPR Sensitivity Types](#6-gdpr-sensitivity-types)
-7. [Validator API](#7-validator-api)
-8. [Usage Examples](#8-usage-examples)
+5. [Verification Document Bundle Types (v1.5.0+)](#4b-verification-document-bundle-types-v150v160)
+6. [Verifiable Credential Types](#5-verifiable-credential-types)
+7. [GDPR Sensitivity Types](#6-gdpr-sensitivity-types)
+8. [Validator API](#7-validator-api)
+9. [Usage Examples](#8-usage-examples)
 
 ---
 
@@ -23,13 +24,13 @@ This document provides TypeScript type definitions for the OpenKYCAML v1.3.0 sch
 
 ```typescript
 /**
- * Root OpenKYCAML document envelope (schema v1.3.0).
+ * Root OpenKYCAML document envelope (schema v1.7.0).
  * At least one of `ivms101` or `verifiableCredential` must be present.
  */
 export interface OpenKYCAMLDocument {
   /** JSON Schema identifier */
   $schema?: string;
-  /** OpenKYCAML schema version (e.g. "1.3.0") */
+  /** OpenKYCAML schema version (e.g. "1.7.0") */
   version?: string;
   /** UUID v4 message identifier — unique per exchange */
   messageId: string;
@@ -43,6 +44,14 @@ export interface OpenKYCAMLDocument {
   kycProfile?: KYCProfile;
   /** W3C Verifiable Credential envelope */
   verifiableCredential?: VerifiableCredentialWrapper;
+  /** Verification Document Bundle — typed identity document evidence (v1.5.0). */
+  identityDocuments?: VerificationDocumentBundle;
+  /** GDPR/AML sensitivity classification at document level (v1.3.0). */
+  gdprSensitivityMetadata?: GdprSensitivityMetadata;
+  /** Transaction monitoring metadata. */
+  transactionMonitoring?: TransactionMonitoring;
+  /** Trusted issuer registry entries. */
+  trustedIssuers?: TrustedIssuer[];
 }
 ```
 
@@ -224,18 +233,152 @@ export interface Mandate {
 /** KYC/AML profile — risk rating, screening results, UBO chain, monitoring. */
 export interface KYCProfile {
   customerRiskRating: 'LOW' | 'MEDIUM' | 'HIGH' | 'VERY_HIGH';
+  /** Narrative detail explaining the risk rating. */
+  riskRatingDetail?: string;
+  /** Customer classification segment (e.g. RETAIL, PROFESSIONAL, INSTITUTIONAL). */
+  customerClassification?: string;
   dueDiligenceType: 'SDD' | 'CDD' | 'EDD';
   pepStatus?: PEPStatus;
   sanctionsScreening?: SanctionsScreening;
   adverseMedia?: AdverseMedia;
   sourceOfFundsWealth?: SourceOfFundsWealth;
-  beneficialOwners?: BeneficialOwner[];
+  /** Narrative detail supporting the source-of-funds/wealth declaration. */
+  sourceOfFundsWealthDetail?: string;
+  /** Beneficial ownership chain (UBO records). */
+  beneficialOwnership?: BeneficialOwner[];
   monitoringInfo?: MonitoringInfo;
   auditMetadata?: AuditMetadata;
   gdprSensitivityMetadata?: GdprSensitivityMetadata;
   onboardingChannel?: string;
   kycCompletionDate?: string;
+  /** Consent record for GDPR Art. 6/9 lawful-basis tracking. */
+  consentRecord?: ConsentRecord;
+  /** AMLA RTS CDD tier requirements (added v1.2.0). */
+  dueDiligenceRequirements?: DueDiligenceRequirements;
+  /** Third-party CDD reliance record (added v1.2.0). */
+  thirdPartyCDDReliance?: ThirdPartyCDDReliance;
+  /** Whether the customer is eligible to transact (ERC-3643 / XRPL compliance gate). */
+  isEligible?: boolean;
+  /** ISO 8601 timestamp of the last eligibility confirmation. */
+  eligibilityLastConfirmed?: string;
+  /** Blockchain wallet addresses associated with this customer (v1.3.0+). */
+  blockchainAccountIds?: BlockchainAccountId[];
   jurisdictionOfService?: string;
+}
+
+/** GDPR consent record (Art. 6 / Art. 9 lawful basis). */
+export interface ConsentRecord {
+  consentGiven: boolean;
+  consentDate?: string;
+  withdrawalPossible?: boolean;
+  consentPurpose?: string;
+}
+
+/** AMLA RTS CDD tier requirements (v1.2.0). */
+export interface DueDiligenceRequirements {
+  requiresEDD?: boolean;
+  eddTriggerReason?: string;
+  sddEligible?: boolean;
+  sddExpiryDate?: string;
+}
+
+/** Third-party CDD reliance record (v1.2.0). */
+export interface ThirdPartyCDDReliance {
+  relyingOnThirdParty: boolean;
+  thirdPartyName?: string;
+  thirdPartyLEI?: string;
+  relianceDate?: string;
+  cddStandardApplied?: string;
+}
+
+/**
+ * Blockchain wallet address entry (v1.3.0–v1.7.0).
+ * Supports Ethereum (ONCHAINID/ERC-3643), XRPL (XLS-70/80/81/96/77),
+ * and Bitcoin/Lightning service-layer fields.
+ */
+export interface BlockchainAccountId {
+  /** Blockchain address (Ethereum hex, XRPL r-address, Bitcoin bech32, etc.). */
+  address: string;
+  /** Network identifier — e.g. "ethereum", "xrpl", "bitcoin". */
+  network: string;
+  /** ERC-734/735 ONCHAINID smart contract address (Ethereum). */
+  onchainIDAddress?: string;
+  /** ISO 8601 timestamp when this wallet was registered with the VASP. */
+  registeredAt?: string;
+  /** Whether this wallet/trustline is currently frozen. */
+  isFrozen?: boolean;
+  /** Amount of tokens frozen (string to avoid precision loss). */
+  frozenTokenAmount?: string;
+  // ── XRPL-specific fields ─────────────────────────────────────────────────
+  /** XLS-70 CredentialType hex string (2–128 chars) anchoring a W3C VC on XRPL. */
+  xrplCredentialType?: string;
+  /** XLS-33d MPTokenIssuanceID — 48-char Hash192 hex identifying the MPT issuance. */
+  mptIssuanceId?: string;
+  /**
+   * XLS-80 Permissioned Domain ID — 64-char Hash256 hex.
+   * Links this wallet to a Permissioned Domain gate on XRPL.
+   */
+  xrplPermissionedDomainId?: string;
+  /**
+   * XLS-80 authorised CredentialType hex strings accepted within this domain.
+   * Cross-references XLS-70 credential types.
+   */
+  xrplAuthorizedCredentialTypes?: string[];
+  /** XLS-96 Confidential Transfer configuration for this MPT issuance. */
+  xrplConfidentialTransfer?: XrplConfidentialTransfer;
+  /**
+   * XLS-33d MPTIssuance flags bitmask.
+   * Common flags: lsfMPTCanLock (0x0002), lsfMPTRequireAuth (0x0004),
+   * lsfMPTCanClawback (0x0008), lsfMPTCanTransfer (0x0010), lsfMPTCanTrade (0x0020).
+   */
+  mptFlags?: number;
+  /** XLS-33d MPTIssuance URI or hex metadata blob (compliance rules in token). */
+  mptMetadata?: string;
+  /** XLS-33d transfer fee in millionths of the token (0–50000; e.g. 1000 = 0.1%). */
+  mptTransferFee?: number;
+  /**
+   * XLS-77 freeze granularity — extends the boolean `isFrozen` field.
+   * INDIVIDUAL_FREEZE: single trustline frozen.
+   * GLOBAL_FREEZE: issuer-level global freeze (no transfers).
+   * DEEP_FREEZE: XLS-77 deep freeze — no inbound or outbound transfers.
+   */
+  xrplFreezeType?: 'INDIVIDUAL_FREEZE' | 'GLOBAL_FREEZE' | 'DEEP_FREEZE';
+  /**
+   * Whether the issuer has the Clawback amendment enabled for this trustline/MPT.
+   * XRPL protocol-level equivalent of ERC-3643 forcedTransfer().
+   */
+  xrplClawbackEnabled?: boolean;
+  // ── Bitcoin / Lightning fields ────────────────────────────────────────────
+  /**
+   * Lightning Network node public key — 66-char hex compressed secp256k1 pubkey.
+   * Used for LNURL-auth identity binding.
+   */
+  lightningNodePubkey?: string;
+  /**
+   * Name or DID of the Lightning Service Provider delivering the compliance wrapper.
+   * Examples: "Lightspark", "Voltage", "BitGo".
+   */
+  lightningServiceProvider?: string;
+  /**
+   * Bitcoin script type — used for chain analysis context.
+   * P2PKH: legacy, P2WPKH: native SegWit, P2TR: Taproot.
+   */
+  bitcoinScriptType?: 'P2PKH' | 'P2WPKH' | 'P2TR';
+}
+
+/** XLS-96 Confidential Transfer configuration (EC-ElGamal + ZKP). */
+export interface XrplConfidentialTransfer {
+  /** Whether this MPT issuance uses XLS-96 confidential transfers. */
+  enabled: boolean;
+  /**
+   * Encryption scheme identifier.
+   * Currently: "EC_ELGAMAL". Additional schemes may be added in future XLS revisions.
+   */
+  encryptionScheme?: 'EC_ELGAMAL';
+  /** EC public key of the designated auditor (hex or base58). */
+  auditorPublicKey?: string;
+  /** Regulator's selective disclosure key — optional; only for regulated issuances. */
+  regulatorPublicKey?: string;
 }
 
 /** Politically Exposed Person screening result. */
@@ -368,11 +511,110 @@ export interface AuditMetadata {
   dataProvider?: string;
   dataRetentionDate?: string;
 }
+
+/** Transaction monitoring metadata (top-level). */
+export interface TransactionMonitoring {
+  transactionId?: string;
+  monitoringStatus?: 'PASS' | 'REVIEW' | 'ESCALATED' | 'BLOCKED';
+  riskScore?: number;
+  riskIndicators?: string[];
+  lastChecked?: string;
+}
+
+/** Trusted issuer registry entry. */
+export interface TrustedIssuer {
+  issuerDID: string;
+  issuerName?: string;
+  credentialTypes?: string[];
+  trustedSince?: string;
+}
 ```
 
 ---
 
-## 5. Verifiable Credential Types
+## 4b. Verification Document Bundle Types (v1.5.0–v1.6.0)
+
+```typescript
+/** Root container for identity verification documents (v1.5.0). */
+export interface VerificationDocumentBundle {
+  naturalPersonDocuments?: NaturalPersonDocument[];
+  legalEntityDocuments?: LegalEntityDocument[];
+}
+
+/**
+ * Individual identity document (passport, driving licence, national ID,
+ * PID Verifiable Credential, etc.).
+ * Added v1.5.0. Document ID URN pattern added v1.6.0.
+ */
+export interface NaturalPersonDocument {
+  /**
+   * URN document ID following the pattern:
+   * urn:openkycaml:doc:{countryCode}:{documentType}:{issuingAuthority}:{YYYY-MM}
+   * Example: urn:openkycaml:doc:gb:passport:hm-passport-office:2024-03
+   */
+  documentId?: string;
+  documentType:
+    | 'PASSPORT' | 'NATIONAL_ID' | 'DRIVING_LICENCE' | 'RESIDENCE_PERMIT'
+    | 'UTILITY_BILL' | 'BANK_STATEMENT' | 'PID_CREDENTIAL' | 'EUDI_PID'
+    | 'OTHER';
+  documentNumber?: string;
+  issuingCountry?: string;
+  issuingAuthority?: string;
+  issueDate?: string;
+  expiryDate?: string;
+  /** Whether document was verified against authoritative source. */
+  verified?: boolean;
+  verificationMethod?: string;
+  /** Fields extracted from the document and their match status. */
+  extractedAttributes?: ExtractedAttribute[];
+  /** Reference to the original document image/file (URI or CID). */
+  documentReference?: string;
+}
+
+/**
+ * Corporate / legal entity verification document (certificate of incorporation,
+ * LEI registration, vLEI VC, GLEIF BRIS filing, etc.).
+ */
+export interface LegalEntityDocument {
+  /** URN document ID (same pattern as NaturalPersonDocument.documentId). */
+  documentId?: string;
+  documentType:
+    | 'CERTIFICATE_OF_INCORPORATION' | 'ARTICLES_OF_ASSOCIATION'
+    | 'LEI_REGISTRATION' | 'VLEI_CREDENTIAL' | 'PROOF_OF_ADDRESS'
+    | 'AUDITED_ACCOUNTS' | 'REGISTER_EXTRACT' | 'OTHER';
+  documentNumber?: string;
+  issuingCountry?: string;
+  issuingAuthority?: string;
+  issueDate?: string;
+  expiryDate?: string;
+  verified?: boolean;
+  verificationMethod?: string;
+  extractedAttributes?: ExtractedAttribute[];
+  documentReference?: string;
+  /** Structured GLEIF RAL reference (v1.5.0). */
+  registrationAuthorityDetail?: RegistrationAuthorityDetail;
+  gleifRegistrationAuthority?: string;
+  elfCodeVerified?: boolean;
+  vLEICredentialType?: 'QVI' | 'OOR' | 'ECR';
+}
+
+/** Field extracted from a verification document with match status. */
+export interface ExtractedAttribute {
+  fieldName: string;
+  value: string;
+  /** Whether the extracted value matches the corresponding claim in the KYC record. */
+  matchesRecord?: boolean;
+  confidence?: number;
+}
+
+/** Structured GLEIF Registration Authority List (RAL) reference (v1.5.0). */
+export interface RegistrationAuthorityDetail {
+  /** GLEIF RAL code (e.g. "RA000585" for Companies House UK). */
+  ralCode?: string;
+  authorityName?: string;
+  jurisdiction?: string;
+  registrationUrl?: string;
+}
 
 ```typescript
 /** W3C Verifiable Credential envelope (VC Data Model v2 / eIDAS 2.0 ARF). */
@@ -642,4 +884,4 @@ const sensitivity: GdprSensitivityMetadata = {
 
 ---
 
-*Type definitions derived from OpenKYCAML JSON Schema v1.3.0. Last updated: v1.3.0.*
+*Type definitions derived from OpenKYCAML JSON Schema v1.7.0. Last updated: v1.7.0.*

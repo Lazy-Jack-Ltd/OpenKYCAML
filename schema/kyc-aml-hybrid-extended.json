@@ -1,9 +1,9 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://openkycaml.org/schema/v1.6.0/kyc-aml-hybrid-extended.json",
+  "$id": "https://openkycaml.org/schema/v1.7.0/kyc-aml-hybrid-extended.json",
   "title": "OpenKYCAML Hybrid KYC/AML Schema",
   "description": "Root OpenKYCAML document. At least one of 'ivms101' or 'verifiableCredential' MUST be present.",
-  "version": "1.6.0",
+  "version": "1.7.0",
   "$defs": {
     "NaturalPersonNameIdentifier": {
       "title": "NaturalPersonNameIdentifier",
@@ -2792,7 +2792,7 @@
               },
               "xrplCredentialType": {
                 "type": "string",
-                "description": "XRPL on-ledger credential type associated with this wallet, stored as a hexadecimal string (1–64 bytes, 2–128 hex characters, case-insensitive). Mirrors the `CredentialType` field of an XRPL `Credential` ledger object (XLS-40d). Enables round-trip reconstruction of the on-ledger XRPL credential without relying on external state. The decoded human-readable equivalent is captured in `verifiableCredential.type[]`. Examples: '4b594343726564656e7469616c' (KYCCredential), '4f70656e4b5943414d4c43726564656e7469616c' (OpenKYCAMLCredential).",
+                "description": "XRPL on-ledger credential type associated with this wallet, stored as a hexadecimal string (1–64 bytes, 2–128 hex characters, case-insensitive). Mirrors the `CredentialType` field of an XRPL `Credential` ledger object (XLS-70). Enables round-trip reconstruction of the on-ledger XRPL credential without relying on external state. The decoded human-readable equivalent is captured in `verifiableCredential.type[]`. Examples: '4b594343726564656e7469616c' (KYCCredential), '4f70656e4b5943414d4c43726564656e7469616c' (OpenKYCAMLCredential).",
                 "pattern": "^[0-9a-fA-F]{2,128}$",
                 "maxLength": 128
               },
@@ -2800,6 +2800,87 @@
                 "type": "string",
                 "description": "XRPL Multi-Purpose Token issuance identifier (MPTokenIssuanceID) for which this wallet holds or has been authorised, stored as a 48-character hexadecimal string (case-insensitive; Hash192 = 24 bytes). Mirrors the `MPTokenIssuanceID` field of XRPL `MPTIssuance` and `MPToken` ledger objects (XLS-33d). Useful for multi-issuance scenarios where a single investor holds authorisation for multiple regulated asset pools via separate `MPTokenAuthorize` transactions.",
                 "pattern": "^[0-9a-fA-F]{48}$"
+              },
+              "xrplPermissionedDomainId": {
+                "type": "string",
+                "description": "XRPL Permissioned Domain identifier (Hash256) that this wallet is registered or authorised within (XLS-80). Permissioned Domains are controlled environments on the XRP Ledger used to restrict access to Permissioned DEXes, lending protocols, and other compliance-gated services. The domain owner defines which credential types are required for membership. This field links the investor's wallet to the specific on-ledger domain gate, enabling a VASP or asset manager to confirm that the holder satisfies domain-level access controls. Pattern: exactly 64 hex characters (32 bytes, case-insensitive).",
+                "pattern": "^[0-9a-fA-F]{64}$"
+              },
+              "xrplAuthorizedCredentialTypes": {
+                "type": "array",
+                "description": "Array of XRPL credential type hex strings that have been accepted and authorised within the Permissioned Domain identified by `xrplPermissionedDomainId` (XLS-80). Each entry follows the same hex-encoding convention as `xrplCredentialType` (1–64 bytes, 2–128 hex characters). A domain may require holders to satisfy multiple credential types simultaneously (e.g. KYC + AML + AccreditedInvestor) before gaining access. This field records which credential types the issuer has confirmed are satisfied for this wallet in this domain.",
+                "items": {
+                  "type": "string",
+                  "pattern": "^[0-9a-fA-F]{2,128}$",
+                  "maxLength": 128
+                }
+              },
+              "xrplConfidentialTransfer": {
+                "type": "object",
+                "description": "Configuration record for XLS-96 Confidential Transfers applied to the MPT issuance associated with this wallet. XLS-96 encrypts MPT balances and transfer amounts using EC-ElGamal combined with Zero-Knowledge Proofs, so that validators can enforce supply limits and prevent double-spends without seeing actual amounts. Issuers and designated auditors hold decryption keys for selective disclosure; regulators receive visibility only when legally required. This object carries the public-key material and scheme identifier needed to support selective disclosure to authorised parties.",
+                "required": ["enabled"],
+                "properties": {
+                  "enabled": {
+                    "type": "boolean",
+                    "description": "Whether the MPT issuance associated with this wallet uses XLS-96 confidential transfers. When true, on-ledger balances and transfer amounts are encrypted; the remaining fields in this object carry the selective disclosure key material."
+                  },
+                  "encryptionScheme": {
+                    "type": "string",
+                    "description": "Encryption scheme used for confidential transfers. 'EC_ELGAMAL' is the XLS-96 scheme (EC-ElGamal + ZKP). Additional schemes may be defined as the standard evolves.",
+                    "enum": ["EC_ELGAMAL"]
+                  },
+                  "auditorPublicKey": {
+                    "type": "string",
+                    "description": "EC public key of the designated auditor who holds a decryption key for selective disclosure of encrypted MPT balances and transfer amounts. Encoded as a compressed public key in hexadecimal (66 hex characters = 33 bytes for secp256k1/Ed25519) or base58. Required when enabled is true and an auditor has been designated.",
+                    "maxLength": 256
+                  },
+                  "regulatorPublicKey": {
+                    "type": "string",
+                    "description": "EC public key of the designated regulator who may receive selective disclosure of encrypted balances when legally required. Optional — only populated when a specific regulatory authority has been assigned decryption rights for this issuance. Same encoding as auditorPublicKey.",
+                    "maxLength": 256
+                  }
+                }
+              },
+              "mptFlags": {
+                "type": "integer",
+                "description": "Bitmask of MPTIssuance flags from the XLS-33d Multi-Purpose Token standard, reflecting the compliance configuration of the token issuance. Key flag values: lsfMPTCanLock (0x0002) — individual holder balances can be frozen; lsfMPTRequireAuth (0x0004) — holders must be individually authorised (KYC gate); lsfMPTCanEscrow (0x0008) — tokens can be placed in escrow; lsfMPTCanTrade (0x0010) — tokens are tradeable on DEX; lsfMPTCanTransfer (0x0020) — tokens can transfer between non-issuer accounts; lsfMPTCanClawback (0x0040) — issuer can claw back tokens. Recording the flags enables downstream systems to derive the applicable compliance enforcement model without querying the ledger.",
+                "minimum": 0,
+                "maximum": 4294967295
+              },
+              "mptMetadata": {
+                "type": "string",
+                "description": "Issuer-defined metadata embedded in the MPTIssuance object (XLS-33d `MPTokenMetadata` field, up to 1024 bytes). Typically carries a URI to the token's prospectus or term sheet, an ISIN, asset class, or a JSON-LD token descriptor that embeds compliance rules directly in the token at the protocol level. May be hex-encoded bytes or a UTF-8 URI string. Mirrors the 'compliance rules in token' pattern described in the Multi-Purpose Token standard for institutional RWA issuance.",
+                "maxLength": 2048
+              },
+              "mptTransferFee": {
+                "type": "integer",
+                "description": "Transfer fee configured on the MPT issuance, in units of 1/1,000,000 (millionths). For example, a value of 1000 represents a 0.1% transfer fee. Mirrors the `TransferFee` field on the `MPTIssuance` ledger object (XLS-33d). Range: 0 (no fee) to 50000 (5%). Recording this field enables fee-aware compliance calculations in off-chain systems.",
+                "minimum": 0,
+                "maximum": 50000
+              },
+              "xrplFreezeType": {
+                "type": "string",
+                "description": "XRPL freeze type applied to this wallet or its token holdings, providing more granular freeze state than the boolean `isFrozen` field. Maps to XRPL's native freeze hierarchy: INDIVIDUAL_FREEZE — only this specific wallet's trustline or MPT holding is frozen (operator or issuer action); GLOBAL_FREEZE — the issuer has frozen all trustlines or MPT holdings for the asset globally; DEEP_FREEZE (XLS-77) — an enhanced freeze that prevents the holder from even receiving tokens or having frozen funds released without issuer action, providing stronger enforcement capability equivalent to ERC-3643 `forcedTransfer()`. When set, `isFrozen` should also be true.",
+                "enum": ["INDIVIDUAL_FREEZE", "GLOBAL_FREEZE", "DEEP_FREEZE"]
+              },
+              "xrplClawbackEnabled": {
+                "type": "boolean",
+                "description": "Whether the XRPL Clawback amendment is enabled on the issuer account for the trustline or MPT issuance associated with this wallet. When true, the issuer may claw back tokens from this holder using the `Clawback` transaction (native XRPL Clawback amendment) or `MPTokenIssuanceSet` with the clawback flag. This is the XRPL protocol-level equivalent of ERC-3643 `forcedTransfer()`. Recording this flag allows off-chain compliance systems to understand the issuer's enforcement rights without querying ledger state."
+              },
+              "lightningNodePubkey": {
+                "type": "string",
+                "description": "Lightning Network node public key (compressed secp256k1 public key, 33 bytes = 66 hex characters) associated with this wallet entry. Used to bind a KYC identity to a Lightning node for LNURL-auth identity verification or Lightning Service Provider (LSP) compliance workflows. Applicable when `network` is 'lightning' or 'bitcoin'. In the OpenKYCAML three-tier enforcement model, Bitcoin and Lightning compliance is enforced at the service layer (Tier 3) rather than at the protocol or smart contract level.",
+                "pattern": "^[0-9a-fA-F]{66}$"
+              },
+              "lightningServiceProvider": {
+                "type": "string",
+                "description": "Name or DID of the Lightning Service Provider (LSP) that supplies the compliance wrapper for this Lightning node or Bitcoin wallet. Examples: 'Lightspark' (Lightspark Compliance API), 'Voltage' (Voltage Flow), 'BitGo', 'Coinbase Lightning'. For DID-based LSP references, use a `did:web` or `did:key` URI. This field records which service-layer entity is responsible for AML/KYC enforcement on the Lightning or Bitcoin side, consistent with the OpenKYCAML Tier 3 (service-layer enforcement) model.",
+                "maxLength": 256
+              },
+              "bitcoinScriptType": {
+                "type": "string",
+                "description": "Bitcoin script type for the address in the `address` field. Used to provide chain analysis context and determine the applicable UTXO model for compliance screening. P2PKH — Pay to Public Key Hash (legacy); P2WPKH — Pay to Witness Public Key Hash (native SegWit); P2TR — Pay to Taproot (Taproot, BIP-341). Applicable when `network` is 'bitcoin' or a Bitcoin Layer-2 network (Liquid, RGB). Not applicable for Lightning channel addresses (use `lightningNodePubkey` instead).",
+                "enum": ["P2PKH", "P2WPKH", "P2TR"]
               }
             }
           }

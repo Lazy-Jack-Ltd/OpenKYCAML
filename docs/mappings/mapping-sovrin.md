@@ -420,6 +420,6 @@ FATF Travel Rule mandatory fields (name, account number) **must** be in `require
 
 ---
 
-*Document version: v1.3.0 — April 2026. Maintained by the OpenKYCAML Technical Working Group.*
+*Document version: v1.7.0 — April 2026. Maintained by the OpenKYCAML Technical Working Group.*
 *Sovrin sources: [sovrin-foundation/sovrin](https://github.com/sovrin-foundation/sovrin), [hyperledger-indy/indy-node](https://github.com/hyperledger-indy/indy-node)*
 *AnonCreds: [Hyperledger AnonCreds Specification](https://hyperledger.github.io/anoncreds-spec/)*

@@ -65,7 +65,7 @@ See [`examples/minimal-travel-rule.json`](../../examples/minimal-travel-rule.jso
 ### Integration Checklist
 - [ ] Generate a unique `messageId` (UUID v4) per message.
 - [ ] Set `messageDateTime` to the current UTC timestamp.
-- [ ] Set `version` to `"1.3.0"` (or the current schema version).
+- [ ] Set `version` to `"1.7.0"` (or the current schema version).
 - [ ] Validate the payload against the OpenKYCAML schema before sending.
 - [ ] Ensure your Travel Rule protocol (OpenVASP, TRP, TRISA, Notabene) transmits the `ivms101` block in its data payload.
 
