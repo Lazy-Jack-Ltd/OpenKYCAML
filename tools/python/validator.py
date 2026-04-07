@@ -293,6 +293,26 @@ class OpenKYCAMLValidator:
                     "supervisory viewing key access for confidential transfers (XLS-96d)."
                 )
 
+        # Tax status ESR and Pillar 2 warnings (v1.9.0).
+        tax = payload.get("taxStatus", {})
+        if tax:
+            esr = tax.get("economicSubstance", {})
+            if esr.get("status") == "nonCompliant":
+                jur = esr.get("jurisdiction", "unknown")
+                warns.append(
+                    f"taxStatus.economicSubstance.status is 'nonCompliant' for jurisdiction '{jur}' — "
+                    "ESR non-compliance is a direct AML red flag under AMLR Art. 26 and EBA ML/TF "
+                    "risk-factor guidelines. EDD is required; consider SAR filing."
+                )
+
+            p2 = tax.get("pillarTwo", {})
+            if p2.get("inScopeMNE") and not p2.get("girFilingReference", "").strip():
+                warns.append(
+                    "taxStatus.pillarTwo.inScopeMNE is true but girFilingReference is absent — "
+                    "in-scope MNEs must file a GloBE Information Return (GIR). "
+                    "Request the GIR reference and perform enhanced due diligence."
+                )
+
         return warns
 
 

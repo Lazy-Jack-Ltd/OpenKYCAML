@@ -323,4 +323,22 @@ OpenKYCAML v1.5.0 introduces a first-class `identityDocuments` block containing 
 
 ---
 
+## 11. TXID / TIN Migration Path (v1.9.0)
+
+OpenKYCAML v1.9.0 introduces `taxStatus.tinIdentifiers[]` as a structured, multi-jurisdiction replacement for the IVMS 101 `nationalIdentification.nationalIdentifierType = TXID` pattern. The table below shows the recommended migration path:
+
+| IVMS 101 v1.0 Field | OpenKYCAML v1.9.0 Structured Equivalent | Notes |
+|---|---|---|
+| `nationalIdentification.nationalIdentifier` (TXID) | `taxStatus.tinIdentifiers[0].tinValue` | 1:1 value mapping |
+| `nationalIdentification.countryOfIssue` | `taxStatus.tinIdentifiers[0].jurisdiction` | ISO 3166-1 alpha-2 |
+| _(no type field — implied TIN)_ | `taxStatus.tinIdentifiers[0].tinType = "TIN"` | Use `"EIN"` for US entities, `"functionalEquivalent"` for UK UTR / AU TFN / CL RUT |
+| _(no verification metadata)_ | `taxStatus.tinIdentifiers[0].verificationStatus` + `verificationSource` | Adds provenance for AMLR Art. 22 audit trails |
+| _(single jurisdiction only)_ | `taxStatus.tinIdentifiers[n]` (array) | Multi-jurisdiction dual-residency and MNE support |
+
+**Backward compatibility:** Implementers MAY include both the legacy `nationalIdentification` TXID entry and the new `taxStatus.tinIdentifiers[]` array in the same payload to support counterparties that have not yet migrated to v1.9.0.
+
+Full mapping and jurisdiction-specific TIN format examples are in [tax-status-oecd-esr-pillar2.md](tax-status-oecd-esr-pillar2.md).
+
+---
+
 *Maintained by the OpenKYCAML Technical Working Group. For corrections or additions, please open an issue or pull request.*

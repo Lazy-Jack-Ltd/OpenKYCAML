@@ -17,6 +17,7 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	"strings"
 
 	"github.com/santhosh-tekuri/jsonschema/v6"
 )
@@ -36,8 +37,9 @@ func schemaPath() string {
 
 // ValidationResult holds the outcome of validating a single payload.
 type ValidationResult struct {
-	IsValid bool
-	Errors  []string
+	IsValid  bool
+	Errors   []string
+	Warnings []string
 }
 
 // OpenKYCAMLValidator validates JSON payloads against the OpenKYCAML schema.
@@ -74,7 +76,8 @@ func NewOpenKYCAMLValidatorFromPath(path string) (*OpenKYCAMLValidator, error) {
 func (v *OpenKYCAMLValidator) Validate(payload any) ValidationResult {
 	err := v.schema.Validate(payload)
 	if err == nil {
-		return ValidationResult{IsValid: true}
+		warnings := businessWarnings(payload)
+		return ValidationResult{IsValid: true, Warnings: warnings}
 	}
 
 	var errs []string
@@ -85,6 +88,61 @@ func (v *OpenKYCAMLValidator) Validate(payload any) ValidationResult {
 	}
 
 	return ValidationResult{IsValid: false, Errors: errs}
+}
+
+// businessWarnings emits advisory warnings for common compliance oversights.
+// These are not schema violations but may indicate incomplete or risky data.
+func businessWarnings(payload any) []string {
+	m, ok := payload.(map[string]any)
+	if !ok {
+		return nil
+	}
+
+	var warns []string
+
+	// Tax status ESR and Pillar 2 warnings (v1.9.0).
+	taxRaw, hasTax := m["taxStatus"]
+	if hasTax {
+		tax, ok := taxRaw.(map[string]any)
+		if ok {
+			// ESR non-compliance warning.
+			if esrRaw, ok := tax["economicSubstance"]; ok {
+				if esr, ok := esrRaw.(map[string]any); ok {
+					if status, _ := esr["status"].(string); status == "nonCompliant" {
+						jur, _ := esr["jurisdiction"].(string)
+						if jur == "" {
+							jur = "unknown"
+						}
+						warns = append(warns,
+							fmt.Sprintf(
+								"taxStatus.economicSubstance.status is 'nonCompliant' for jurisdiction '%s' — "+
+									"ESR non-compliance is a direct AML red flag under AMLR Art. 26 and EBA ML/TF "+
+									"risk-factor guidelines. EDD is required; consider SAR filing.",
+								jur,
+							),
+						)
+					}
+				}
+			}
+
+			// Pillar 2 GIR reference missing warning.
+			if p2Raw, ok := tax["pillarTwo"]; ok {
+				if p2, ok := p2Raw.(map[string]any); ok {
+					inScope, _ := p2["inScopeMNE"].(bool)
+					girRef, _ := p2["girFilingReference"].(string)
+					if inScope && strings.TrimSpace(girRef) == "" {
+						warns = append(warns,
+							"taxStatus.pillarTwo.inScopeMNE is true but girFilingReference is absent — "+
+								"in-scope MNEs must file a GloBE Information Return (GIR). "+
+								"Request the GIR reference and perform enhanced due diligence.",
+						)
+					}
+				}
+			}
+		}
+	}
+
+	return warns
 }
 
 // ValidateReader validates a JSON payload read from an io.Reader.
@@ -149,6 +207,9 @@ func main() {
 
 	if result.IsValid {
 		fmt.Println("VALID")
+		for _, w := range result.Warnings {
+			fmt.Fprintf(os.Stderr, "  WARNING: %s\n", w)
+		}
 		os.Exit(0)
 	}
 

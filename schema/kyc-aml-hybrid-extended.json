@@ -1,9 +1,9 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://openkycaml.org/schema/v1.8.0/kyc-aml-hybrid-extended.json",
+  "$id": "https://openkycaml.org/schema/v1.9.0/kyc-aml-hybrid-extended.json",
   "title": "OpenKYCAML Hybrid KYC/AML Schema",
   "description": "Root OpenKYCAML document. At least one of 'ivms101' or 'verifiableCredential' MUST be present.",
-  "version": "1.8.0",
+  "version": "1.9.0",
   "$defs": {
     "NaturalPersonNameIdentifier": {
       "title": "NaturalPersonNameIdentifier",
@@ -3931,6 +3931,245 @@
           "description": "Reference to the corresponding document record in identityDocuments.legalEntityDocuments[] or identityDocuments.naturalPersonDocuments[] by documentRef URI. Enables full eIDAS triangulation: certificate metadata here links to the document bundle that holds the source credential and its extracted identity attributes."
         }
       }
+    },
+    "TinIdentifier": {
+      "title": "TinIdentifier",
+      "description": "A single Taxpayer Identification Number (TIN) or functional equivalent for one jurisdiction. Supports OECD CRS/CARF, FATCA, and AMLR Art. 22 tax-residency verification. Maps directly to IVMS 101 nationalIdentification.TXID for Travel Rule payloads.",
+      "type": "object",
+      "required": [
+        "jurisdiction",
+        "tinType",
+        "tinValue"
+      ],
+      "properties": {
+        "jurisdiction": {
+          "type": "string",
+          "pattern": "^[A-Z]{2}$",
+          "description": "ISO 3166-1 alpha-2 country code of the issuing tax authority (e.g. 'US', 'GB', 'DE')."
+        },
+        "tinType": {
+          "type": "string",
+          "enum": [
+            "TIN",
+            "VAT",
+            "GST",
+            "PST",
+            "EIN",
+            "functionalEquivalent",
+            "other"
+          ],
+          "description": "Type of tax identifier. Use 'TIN' for OECD CRS/CARF primary TINs. Use 'EIN' for US Employer Identification Numbers. Use 'functionalEquivalent' when the jurisdiction does not issue standard TINs (e.g. UK UTR, Chile RUT). Use 'VAT'/'GST'/'PST' when the VAT/GST/PST registration number doubles as the TIN."
+        },
+        "tinValue": {
+          "type": "string",
+          "description": "The raw TIN string as issued by the tax authority. Format varies by jurisdiction (e.g. US EIN '12-3456789', UK UTR '1234567890', DE TIN '86095742719')."
+        },
+        "issuanceDate": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 date-time when the TIN was issued or last confirmed by the tax authority."
+        },
+        "verificationStatus": {
+          "type": "string",
+          "enum": [
+            "verified",
+            "unverified",
+            "revoked",
+            "suspended"
+          ],
+          "description": "Current verification status of the TIN as at the time of this payload."
+        },
+        "verificationSource": {
+          "type": "string",
+          "description": "Source system or registry used to verify the TIN (e.g. 'OECD-TIN-list', 'VIES', 'GST-portal', 'HMRC-API', 'IRS-TIN-Matching')."
+        }
+      },
+      "additionalProperties": false
+    },
+    "IndirectTaxRegistration": {
+      "title": "IndirectTaxRegistration",
+      "description": "A VAT, GST, PST, HST, or sales-tax registration entry for one jurisdiction. Enables indirect-tax compliance checks during onboarding, source-of-wealth verification, and entity legitimacy screening.",
+      "type": "object",
+      "properties": {
+        "taxType": {
+          "type": "string",
+          "enum": [
+            "VAT",
+            "GST",
+            "PST",
+            "HST",
+            "salesTax"
+          ],
+          "description": "Type of indirect tax registration. 'VAT' = EU/UK Value Added Tax. 'GST' = Goods and Services Tax (India GSTIN, Australia, New Zealand, Singapore, etc.). 'PST' = Provincial Sales Tax (Canada). 'HST' = Harmonised Sales Tax (Canada). 'salesTax' = US state-level sales tax."
+        },
+        "jurisdiction": {
+          "type": "string",
+          "pattern": "^[A-Z]{2}$",
+          "description": "ISO 3166-1 alpha-2 country code of the registering tax authority."
+        },
+        "registrationNumber": {
+          "type": "string",
+          "description": "The registration number as issued (e.g. EU VAT 'DE123456789', India GSTIN '27AAPFU0939F1ZV', Australia ABN '12 345 678 901')."
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "active",
+            "suspended",
+            "revoked",
+            "exempt"
+          ],
+          "description": "Current registration status. 'active' = valid and in good standing. 'suspended' = temporarily inactive by authority. 'revoked' = cancelled (AML red flag). 'exempt' = entity is registered but exempt from charging VAT/GST."
+        },
+        "effectiveFrom": {
+          "type": "string",
+          "format": "date",
+          "description": "ISO 8601 date from which the registration became effective."
+        }
+      },
+      "additionalProperties": false
+    },
+    "EconomicSubstance": {
+      "title": "EconomicSubstance",
+      "description": "Economic Substance Regulation (ESR) classification for offshore or low-tax entities. Required for CDD of entities registered in BVI, Cayman Islands, UAE, Jersey, Guernsey, Isle of Man, and other EU/OECD-monitored jurisdictions. A 'nonCompliant' status is a direct AML red flag under AMLR Art. 26 and EBA Guidelines on ML/TF risk factors.",
+      "type": "object",
+      "properties": {
+        "jurisdiction": {
+          "type": "string",
+          "pattern": "^[A-Z]{2}$",
+          "description": "ISO 3166-1 alpha-2 jurisdiction code in which the ESR assessment applies (e.g. 'KY' = Cayman Islands, 'VG' = BVI, 'AE' = UAE, 'JE' = Jersey, 'GG' = Guernsey, 'IM' = Isle of Man)."
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "inScope-RelevantEntity",
+            "exempt-TaxResidentElsewhere",
+            "exempt-PureEquityHolding",
+            "compliant",
+            "nonCompliant"
+          ],
+          "description": "Current ESR status. 'inScope-RelevantEntity' = entity carries out a relevant activity and must satisfy substance tests. 'exempt-TaxResidentElsewhere' = entity is tax-resident in a non-blacklisted jurisdiction. 'exempt-PureEquityHolding' = pure equity holding with minimal permissible activities only. 'compliant' = passed most recent annual substance assessment. 'nonCompliant' = failed substance test — treat as enhanced due diligence (EDD) trigger."
+        },
+        "relevantActivities": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of relevant activities carried out by the entity as defined by the applicable ESR law (e.g. 'holdingCompany', 'bankingBusiness', 'insuranceBusiness', 'fundManagement', 'financingLeasing', 'headquartersBusiness', 'shippingBusiness', 'distributionServiceCentre', 'intellectualProperty')."
+        },
+        "coreIncomeGeneratingActivitiesPerformed": {
+          "type": "boolean",
+          "description": "Whether the entity performs its Core Income Generating Activities (CIGAs) in the jurisdiction. Must be true for substance test to be satisfied."
+        },
+        "lastNotificationDate": {
+          "type": "string",
+          "format": "date",
+          "description": "ISO 8601 date of the most recent ESR annual notification or filing submitted to the relevant authority."
+        },
+        "lastReportReference": {
+          "type": "string",
+          "description": "Reference number or URI of the most recent ESR annual report or notification acknowledgment."
+        }
+      },
+      "additionalProperties": false
+    },
+    "PillarTwo": {
+      "title": "PillarTwo",
+      "description": "OECD Pillar 2 (GloBE / BEPS 2.0) classification for multinational enterprise (MNE) constituent entities. Applies to MNE groups with consolidated annual revenue exceeding EUR 750 million. GloBE Information Return (GIR) references enable predictive AML base-erosion and profit-shifting (BEPS) risk scoring.",
+      "type": "object",
+      "properties": {
+        "inScopeMNE": {
+          "type": "boolean",
+          "description": "True if the entity is a constituent entity of an MNE group that meets or exceeds the EUR 750 million annual consolidated revenue threshold (OECD Pillar 2 Model Rules Art. 1.1)."
+        },
+        "consolidatedRevenueEUR": {
+          "type": "number",
+          "description": "Annual consolidated group revenue in EUR used to assess whether the EUR 750 million threshold is met. Source: most recent GloBE Information Return or consolidated financial statements."
+        },
+        "constituentEntityStatus": {
+          "type": "string",
+          "enum": [
+            "inScope",
+            "excluded",
+            "QDMTT"
+          ],
+          "description": "GloBE constituent entity status. 'inScope' = subject to top-up tax under IIR/UTPR. 'excluded' = excluded entity (government entity, international organisation, pension/investment fund, etc.). 'QDMTT' = subject to a Qualified Domestic Minimum Top-up Tax in the entity's own jurisdiction."
+        },
+        "etrJurisdictions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "jurisdiction": {
+                "type": "string",
+                "pattern": "^[A-Z]{2}$",
+                "description": "ISO 3166-1 alpha-2 jurisdiction code."
+              },
+              "etr": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1,
+                "description": "Effective Tax Rate (ETR) as a decimal fraction (e.g. 0.15 = 15%). If ETR falls below 0.15 (the GloBE minimum rate), a top-up tax may be levied."
+              }
+            },
+            "required": ["jurisdiction", "etr"],
+            "additionalProperties": false
+          },
+          "description": "Per-jurisdiction effective tax rates for the MNE group. Used to identify low-tax jurisdictions (ETR < 15%) triggering top-up tax obligations under GloBE IIR/UTPR."
+        },
+        "safeHarbourApplied": {
+          "type": "string",
+          "enum": [
+            "SimplifiedETR",
+            "SubstanceBased",
+            "DeMinimis",
+            "none"
+          ],
+          "description": "Safe harbour election applied in the most recent GIR filing period. 'SimplifiedETR' = Transitional CbCR Safe Harbour (simplified ETR test). 'SubstanceBased' = Substance-Based Income Exclusion (payroll + tangible assets carve-out). 'DeMinimis' = De Minimis Exclusion (revenue < EUR 10 m or income < EUR 1 m). 'none' = no safe harbour elected."
+        },
+        "girFilingReference": {
+          "type": "string",
+          "description": "Filing reference number or URI of the most recent GloBE Information Return (GIR) submitted to the lead filing jurisdiction. Enables cross-referencing with tax authority records for predictive AML BEPS risk scoring."
+        },
+        "lastGIRDate": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 date-time of the most recent GloBE Information Return filing."
+        }
+      },
+      "additionalProperties": false
+    },
+    "TaxStatus": {
+      "title": "TaxStatus",
+      "description": "Comprehensive tax status and identification block. Covers OECD CRS/CARF TINs, indirect tax registrations (VAT/GST/PST), Economic Substance Regulations (ESR), and OECD Pillar 2 GloBE classifications. Satisfies AMLR Art. 22 tax-residency verification requirements and provides machine-readable tax transparency data for predictive AML BEPS risk scoring. Fully backward-compatible with v1.8.0 — all sub-properties are optional.",
+      "type": "object",
+      "properties": {
+        "tinIdentifiers": {
+          "type": "array",
+          "description": "Array of TIN entries across one or more jurisdictions. Multi-jurisdiction arrays support CRS/CARF dual-residency and FATCA GIIN/EIN reporting.",
+          "items": {
+            "$ref": "#/$defs/TinIdentifier"
+          },
+          "minItems": 1
+        },
+        "indirectTaxRegistrations": {
+          "type": "array",
+          "description": "Array of VAT/GST/PST/HST/salesTax registrations. Used for entity legitimacy checks, source-of-wealth verification, and VIES validation during onboarding.",
+          "items": {
+            "$ref": "#/$defs/IndirectTaxRegistration"
+          },
+          "minItems": 1
+        },
+        "economicSubstance": {
+          "$ref": "#/$defs/EconomicSubstance",
+          "description": "Economic Substance Regulation (ESR) status block. Include for entities registered in BVI, Cayman Islands, UAE, Jersey, Guernsey, Isle of Man, or any other jurisdiction with an active ESR regime."
+        },
+        "pillarTwo": {
+          "$ref": "#/$defs/PillarTwo",
+          "description": "OECD Pillar 2 GloBE classification block. Include for MNE constituent entities with consolidated group revenue at or approaching EUR 750 million."
+        }
+      },
+      "additionalProperties": false
     }
   },
   "type": "object",
@@ -4004,6 +4243,10 @@
     "pkiEvidence": {
       "$ref": "#/$defs/PkiEvidence",
       "description": "Optional X.509 PKI evidence block. Captures certificate metadata (serial number, Subject/Issuer DNs, validity window, QCStatements, CRL/OCSP endpoints, SHA-256 thumbprint) and ASN.1 OIDs from ETSI EN 319 412 profiles. Satisfies AMLR Art. 22 & 56 PKI evidence requirements and enables predictive AML cert-provenance tracking (issuance/revocation timestamps in riskEvolutionHistory)."
+    },
+    "taxStatus": {
+      "$ref": "#/$defs/TaxStatus",
+      "description": "Optional tax status and identification block (v1.9.0). Covers OECD CRS/CARF TINs (tinIdentifiers[]), indirect tax registrations such as VAT/GST/PST (indirectTaxRegistrations[]), Economic Substance Regulations (economicSubstance), and OECD Pillar 2 GloBE classifications (pillarTwo). Satisfies AMLR Art. 22 tax-residency verification. All sub-properties optional; zero breaking changes for v1.8.0 payloads."
     }
   },
   "anyOf": [
