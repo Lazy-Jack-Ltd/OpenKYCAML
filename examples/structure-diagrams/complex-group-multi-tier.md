@@ -37,7 +37,7 @@ flowchart TD
     T1 -- "100%" --> SUBJECT
     UBO1 -- "75% effective indirect" -.-> SUBJECT
 
-    SUBJECT -- "750,000 ETH\nOpenKYCAML VC" --> BVASP
+    SUBJECT -- "750,000 ETH<br/>OpenKYCAML VC" --> BVASP
 
     style UBO1 fill:#dbeafe,stroke:#3b82f6
     style UBO2 fill:#dbeafe,stroke:#3b82f6
