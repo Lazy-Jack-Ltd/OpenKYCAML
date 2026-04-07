@@ -7,7 +7,7 @@
   "$defs": {
     "NaturalPersonNameIdentifier": {
       "title": "NaturalPersonNameIdentifier",
-      "description": "Structured name components for a natural person (IVMS 101 §3.2).",
+      "description": "Structured name components for a natural person (IVMS 101 \u00a73.2).",
       "type": "object",
       "required": [
         "primaryIdentifier",
@@ -39,7 +39,7 @@
     },
     "Address": {
       "title": "Address",
-      "description": "Structured postal address (IVMS 101 §3.5).",
+      "description": "Structured postal address (IVMS 101 \u00a73.5).",
       "type": "object",
       "required": [
         "country"
@@ -124,7 +124,7 @@
     },
     "NationalIdentification": {
       "title": "NationalIdentification",
-      "description": "National identification document (IVMS 101 §3.6).",
+      "description": "National identification document (IVMS 101 \u00a73.6).",
       "type": "object",
       "required": [
         "nationalIdentifier",
@@ -176,7 +176,7 @@
     },
     "DateAndPlaceOfBirth": {
       "title": "DateAndPlaceOfBirth",
-      "description": "Birth information for a natural person (IVMS 101 §3.3).",
+      "description": "Birth information for a natural person (IVMS 101 \u00a73.3).",
       "type": "object",
       "required": [
         "dateOfBirth",
@@ -190,7 +190,7 @@
         },
         "placeOfBirth": {
           "type": "string",
-          "description": "City or municipality of birth. Maps to eIDAS 2.0 PID attribute 'birth_place' (optional in eIDAS; required by IVMS 101 §3.3).",
+          "description": "City or municipality of birth. Maps to eIDAS 2.0 PID attribute 'birth_place' (optional in eIDAS; required by IVMS 101 \u00a73.3).",
           "maxLength": 70
         }
       }
@@ -267,7 +267,7 @@
     },
     "LegalPersonNameIdentifier": {
       "title": "LegalPersonNameIdentifier",
-      "description": "Structured name identifier for a legal person (IVMS 101 §3.8).",
+      "description": "Structured name identifier for a legal person (IVMS 101 \u00a73.8).",
       "type": "object",
       "required": [
         "legalPersonName",
@@ -340,7 +340,7 @@
         },
         "mandates": {
           "type": "array",
-          "description": "Representation and mandate records — natural persons authorised to act on behalf of the legal entity. Supports AMLR authorised representative and beneficial owner verification. May be conveyed as QEAAs in EUDI Wallet flows.",
+          "description": "Representation and mandate records \u2014 natural persons authorised to act on behalf of the legal entity. Supports AMLR authorised representative and beneficial owner verification. May be conveyed as QEAAs in EUDI Wallet flows.",
           "items": {
             "type": "object",
             "required": [
@@ -435,7 +435,7 @@
         },
         "lpid": {
           "$ref": "#/$defs/LegalPersonIdentificationData",
-          "description": "Optional eIDAS 2.0 Legal Person Identification Data (LPID) block. Carries LPID-specific attributes (current legal name, unique identifier, VAT, EORI, LEI, mandates) for EUDI Wallet and AMLR high-assurance CDD flows. Backward-compatible — omit for pure IVMS 101 usage."
+          "description": "Optional eIDAS 2.0 Legal Person Identification Data (LPID) block. Carries LPID-specific attributes (current legal name, unique identifier, VAT, EORI, LEI, mandates) for EUDI Wallet and AMLR high-assurance CDD flows. Backward-compatible \u2014 omit for pure IVMS 101 usage."
         },
         "legalFormCode": {
           "type": "string",
@@ -851,7 +851,7 @@
     },
     "Originator": {
       "title": "Originator",
-      "description": "IVMS 101 originator — the sending party in a virtual asset transfer.",
+      "description": "IVMS 101 originator \u2014 the sending party in a virtual asset transfer.",
       "type": "object",
       "required": [
         "originatorPersons"
@@ -896,7 +896,7 @@
     },
     "Beneficiary": {
       "title": "Beneficiary",
-      "description": "IVMS 101 beneficiary — the receiving party in a virtual asset transfer.",
+      "description": "IVMS 101 beneficiary \u2014 the receiving party in a virtual asset transfer.",
       "type": "object",
       "required": [
         "beneficiaryPersons"
@@ -941,7 +941,7 @@
     },
     "VASP": {
       "title": "VASP",
-      "description": "Virtual Asset Service Provider identifier (IVMS 101 §3.14).",
+      "description": "Virtual Asset Service Provider identifier (IVMS 101 \u00a73.14).",
       "type": "object",
       "properties": {
         "name": {
@@ -991,7 +991,7 @@
           "items": {
             "$ref": "#/$defs/VASP"
           },
-          "description": "Ordered list of intermediate VASPs in the transfer chain (IVMS 101 §3.15)."
+          "description": "Ordered list of intermediate VASPs in the transfer chain (IVMS 101 \u00a73.15)."
         },
         "payloadMetadata": {
           "type": "object",
@@ -1091,7 +1091,7 @@
     },
     "VerifiableCredentialWrapper": {
       "title": "VerifiableCredentialWrapper",
-      "description": "Optional W3C Verifiable Credential envelope conforming to W3C VC Data Model v1.1 (v2-compatible structure) and eIDAS 2.0 ARF §6.3. When present, the IVMS101 payload and kycProfile are transported as credentialSubject. Note: the @context[0] uses the W3C VC DM v1.1 URL; migration to the v2 URL is planned for v2.0.0.",
+      "description": "Optional W3C Verifiable Credential envelope conforming to W3C VC Data Model v1.1 (v2-compatible structure) and eIDAS 2.0 ARF \u00a76.3. When present, the IVMS101 payload and kycProfile are transported as credentialSubject. Note: the @context[0] uses the W3C VC DM v1.1 URL; migration to the v2 URL is planned for v2.0.0.",
       "type": "object",
       "required": [
         "@context",
@@ -1237,7 +1237,7 @@
         },
         "evidence": {
           "type": "array",
-          "description": "W3C VC §6.4 evidence block. Used in EUDI Wallet flows to reference the source credential(s) — typically a PID or LPID — that were presented by the subject and from which the IVMS 101 / kycProfile data was derived. Enables triangulation of the identity chain: PID Issuer → Subject Wallet → VASP.",
+          "description": "W3C VC \u00a76.4 evidence block. Used in EUDI Wallet flows to reference the source credential(s) \u2014 typically a PID or LPID \u2014 that were presented by the subject and from which the IVMS 101 / kycProfile data was derived. Enables triangulation of the identity chain: PID Issuer \u2192 Subject Wallet \u2192 VASP.",
           "items": {
             "type": "object",
             "required": [
@@ -1306,7 +1306,7 @@
         },
         "selectiveDisclosure": {
           "type": "object",
-          "description": "SD-JWT VC selective disclosure metadata (IETF draft-ietf-oauth-sd-jwt-vc / ARF §6.3.4). Present when this credential is issued or presented as an SD-JWT VC.",
+          "description": "SD-JWT VC selective disclosure metadata (IETF draft-ietf-oauth-sd-jwt-vc / ARF \u00a76.3.4). Present when this credential is issued or presented as an SD-JWT VC.",
           "properties": {
             "_sd_alg": {
               "type": "string",
@@ -1325,7 +1325,7 @@
             },
             "requiredClaimPaths": {
               "type": "array",
-              "description": "JSON Pointer paths always revealed — never withheld. Includes FATF Travel Rule mandatory fields.",
+              "description": "JSON Pointer paths always revealed \u2014 never withheld. Includes FATF Travel Rule mandatory fields.",
               "items": {
                 "type": "string"
               }
@@ -1342,7 +1342,7 @@
                 "properties": {
                   "salt": {
                     "type": "string",
-                    "description": "Random salt value (base64url, ≥128 bits entropy)."
+                    "description": "Random salt value (base64url, \u2265128 bits entropy)."
                   },
                   "claimName": {
                     "type": "string",
@@ -1380,7 +1380,7 @@
         },
         "pepCategory": {
           "type": "string",
-          "description": "PEP classification category aligned to the AMLA draft RTS taxonomy (AMLR Art. 28–31). Primary values: DOMESTIC_PEP, FOREIGN_PEP, INTERNATIONAL_ORGANISATION, FAMILY_MEMBER_OF_PEP, CLOSE_ASSOCIATE_OF_PEP, FORMER_PEP, NOT_PEP. Legacy aliases INTERNATIONAL_ORG_PEP and RCA are retained for backward compatibility.",
+          "description": "PEP classification category aligned to the AMLA draft RTS taxonomy (AMLR Art. 28\u201331). Primary values: DOMESTIC_PEP, FOREIGN_PEP, INTERNATIONAL_ORGANISATION, FAMILY_MEMBER_OF_PEP, CLOSE_ASSOCIATE_OF_PEP, FORMER_PEP, NOT_PEP. Legacy aliases INTERNATIONAL_ORG_PEP and RCA are retained for backward compatibility.",
           "enum": [
             "DOMESTIC_PEP",
             "FOREIGN_PEP",
@@ -1733,7 +1733,7 @@
         },
         "naturalPerson": {
           "$ref": "#/$defs/NaturalPerson",
-          "description": "The beneficial owner as a natural person. Legacy field — use 'person' when natural or legal person support is needed. Do not use alongside 'person'."
+          "description": "The beneficial owner as a natural person. Legacy field \u2014 use 'person' when natural or legal person support is needed. Do not use alongside 'person'."
         },
         "ownershipPercentage": {
           "type": "number",
@@ -1826,6 +1826,44 @@
             "type": "string",
             "format": "uri"
           }
+        },
+        "roleInArrangement": {
+          "type": "string",
+          "enum": [
+            "SETTLOR",
+            "TRUSTEE",
+            "PROTECTOR",
+            "BENEFICIARY_CLASS",
+            "ENFORCER",
+            "NOMINEE",
+            "FOUNDER",
+            "COUNCIL_MEMBER",
+            "PARTNER",
+            "OTHER"
+          ],
+          "description": "Role of this party within a legal arrangement (trust, foundation, or partnership) as required by FATF R.25 (2023 revision) and AMLR Art. 26. Extends the typed role fields in TrustDetails/FoundationDetails/PartnershipDetails sub-objects."
+        },
+        "nomineeFlags": {
+          "type": "object",
+          "description": "Nominee and transparency flags per FATF R.24/R.25 (2023 revisions) requiring identification of nominees acting on behalf of ultimate beneficial owners.",
+          "properties": {
+            "isNominee": {
+              "type": "boolean",
+              "description": "True when this party is a nominee (acting on behalf of the actual UBO). Triggers enhanced verification requirements under FATF R.24 and AMLR Art. 26."
+            },
+            "nominatorIdentified": {
+              "type": "boolean",
+              "description": "True when the actual person(s) on whose behalf the nominee is acting have been identified and verified."
+            },
+            "bearerShareFlag": {
+              "type": "boolean",
+              "description": "True when the entity has issued bearer shares, creating opacity risk. FATF R.24 requires immobilisation or conversion of bearer shares."
+            }
+          }
+        },
+        "trustInstrumentReference": {
+          "type": "string",
+          "description": "Reference to the trust deed, foundation charter, or equivalent legal instrument (e.g. document URI, notary reference, or documentId URN from identityDocuments.legalEntityDocuments[]). Supports FATF R.25 requirement to identify and verify the legal arrangement instrument."
         }
       }
     },
@@ -1935,6 +1973,58 @@
               }
             }
           }
+        },
+        "alertFrequency": {
+          "type": "string",
+          "enum": [
+            "REAL_TIME",
+            "DAILY",
+            "WEEKLY",
+            "MONTHLY",
+            "ON_TRIGGER"
+          ],
+          "description": "Frequency at which alerts are generated for this customer. REAL_TIME = streaming transaction monitoring; ON_TRIGGER = alerts generated only when a rule fires."
+        },
+        "ruleTriggerHistory": {
+          "type": "array",
+          "description": "History of AML/CTF rule triggers fired for this customer, supporting AMLR Art. 21 ongoing monitoring audit requirements.",
+          "items": {
+            "type": "object",
+            "required": [
+              "ruleId",
+              "triggeredAt"
+            ],
+            "properties": {
+              "ruleId": {
+                "type": "string",
+                "description": "Identifier of the transaction monitoring rule that triggered."
+              },
+              "ruleDescription": {
+                "type": "string",
+                "maxLength": 500,
+                "description": "Human-readable description of the triggered rule."
+              },
+              "triggeredAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "ISO 8601 date-time when the rule triggered."
+              },
+              "outcome": {
+                "type": "string",
+                "enum": [
+                  "ALERT_RAISED",
+                  "FALSE_POSITIVE",
+                  "SAR_FILED",
+                  "NO_ACTION"
+                ],
+                "description": "Disposition outcome for this rule trigger."
+              }
+            }
+          }
+        },
+        "tmModelVersion": {
+          "type": "string",
+          "description": "Version of the transaction monitoring (TM) rule engine or ML model in use when monitoring was last applied. Supports AMLR Art. 21 audit requirements and model lineage tracking for EU AI Act high-risk AML systems."
         }
       }
     },
@@ -2093,7 +2183,7 @@
               },
               "ruleName": {
                 "type": "string",
-                "description": "Human-readable name of the rule (e.g., 'Velocity – 7-day rolling window').",
+                "description": "Human-readable name of the rule (e.g., 'Velocity \u2013 7-day rolling window').",
                 "maxLength": 200
               },
               "ruleCategory": {
@@ -2531,7 +2621,7 @@
               "type": "integer",
               "minimum": 0,
               "maximum": 1000,
-              "description": "Numeric risk score (0–1000)."
+              "description": "Numeric risk score (0\u20131000)."
             },
             "riskRatingDate": {
               "type": "string",
@@ -2792,7 +2882,7 @@
               },
               "xrplCredentialType": {
                 "type": "string",
-                "description": "XRPL on-ledger credential type associated with this wallet, stored as a hexadecimal string (1–64 bytes, 2–128 hex characters, case-insensitive). Mirrors the `CredentialType` field of an XRPL `Credential` ledger object (XLS-40d). Enables round-trip reconstruction of the on-ledger XRPL credential without relying on external state. The decoded human-readable equivalent is captured in `verifiableCredential.type[]`. Examples: '4b594343726564656e7469616c' (KYCCredential), '4f70656e4b5943414d4c43726564656e7469616c' (OpenKYCAMLCredential).",
+                "description": "XRPL on-ledger credential type associated with this wallet, stored as a hexadecimal string (1\u201364 bytes, 2\u2013128 hex characters, case-insensitive). Mirrors the `CredentialType` field of an XRPL `Credential` ledger object (XLS-40d). Enables round-trip reconstruction of the on-ledger XRPL credential without relying on external state. The decoded human-readable equivalent is captured in `verifiableCredential.type[]`. Examples: '4b594343726564656e7469616c' (KYCCredential), '4f70656e4b5943414d4c43726564656e7469616c' (OpenKYCAMLCredential).",
                 "pattern": "^[0-9a-fA-F]{2,128}$",
                 "maxLength": 128
               },
@@ -2822,7 +2912,7 @@
         },
         "issuerName": {
           "type": "string",
-          "description": "Human-readable name of the issuer organisation (e.g. 'Bundesamt für Sicherheit in der Informationstechnik — PID Provider').",
+          "description": "Human-readable name of the issuer organisation (e.g. 'Bundesamt f\u00fcr Sicherheit in der Informationstechnik \u2014 PID Provider').",
           "maxLength": 256
         },
         "countryCode": {
@@ -2921,7 +3011,7 @@
       "properties": {
         "classification": {
           "type": "string",
-          "description": "Primary sensitivity class. 'standard' — ordinary personal data (GDPR Art. 6). 'sensitive_personal' — special-category data requiring Art. 9 safeguards (e.g. biometrics, health). 'criminal_offence' — data relating to criminal convictions or offences under GDPR Art. 10. 'sar_restricted' — Suspicious Activity Report or STR material; subject to tipping-off prohibition (AMLR Art. 73 / FATF Rec. 21). 'internal_suspicion' — internal AML suspicion flag not yet escalated to a formal SAR. 'confidential_aml' — AML/CFT investigation data protected from broader disclosure.",
+          "description": "Primary sensitivity class. 'standard' \u2014 ordinary personal data (GDPR Art. 6). 'sensitive_personal' \u2014 special-category data requiring Art. 9 safeguards (e.g. biometrics, health). 'criminal_offence' \u2014 data relating to criminal convictions or offences under GDPR Art. 10. 'sar_restricted' \u2014 Suspicious Activity Report or STR material; subject to tipping-off prohibition (AMLR Art. 73 / FATF Rec. 21). 'internal_suspicion' \u2014 internal AML suspicion flag not yet escalated to a formal SAR. 'confidential_aml' \u2014 AML/CFT investigation data protected from broader disclosure.",
           "enum": [
             "standard",
             "sensitive_personal",
@@ -2945,7 +3035,7 @@
         },
         "legalBasis": {
           "type": "string",
-          "description": "Primary legal basis for processing this data. 'GDPR-Art6-1c' — legal obligation. 'GDPR-Art6-1e' — public task. 'GDPR-Art9-2g' — substantial public interest. 'GDPR-Art10' — criminal-offence data under official authority. 'AMLR-Art55' — AML data-sharing obligation. 'AMLR-Art73' — tipping-off prohibition compliance. 'national_AML_law' — national transposition of AML directives.",
+          "description": "Primary legal basis for processing this data. 'GDPR-Art6-1c' \u2014 legal obligation. 'GDPR-Art6-1e' \u2014 public task. 'GDPR-Art9-2g' \u2014 substantial public interest. 'GDPR-Art10' \u2014 criminal-offence data under official authority. 'AMLR-Art55' \u2014 AML data-sharing obligation. 'AMLR-Art73' \u2014 tipping-off prohibition compliance. 'national_AML_law' \u2014 national transposition of AML directives.",
           "enum": [
             "GDPR-Art6-1c",
             "GDPR-Art6-1e",
@@ -3117,7 +3207,7 @@
         },
         "documentTitle": {
           "type": "string",
-          "description": "Human-readable title or local name of the document (e.g. 'Personalausweis', 'Carte nationale d\\'identité', 'Biometric Residence Permit').",
+          "description": "Human-readable title or local name of the document (e.g. 'Personalausweis', 'Carte nationale d\\'identit\u00e9', 'Biometric Residence Permit').",
           "maxLength": 200
         },
         "documentNumber": {
@@ -3279,7 +3369,7 @@
         "expiryDate": {
           "type": "string",
           "format": "date",
-          "description": "ISO 8601 date on which the document or extract expires. Particularly relevant for registry extracts, which typically have a validity window (e.g. 3–6 months)."
+          "description": "ISO 8601 date on which the document or extract expires. Particularly relevant for registry extracts, which typically have a validity window (e.g. 3\u20136 months)."
         },
         "verificationDate": {
           "type": "string",
@@ -3378,7 +3468,7 @@
         },
         "bundleValidatedBy": {
           "type": "string",
-          "description": "Name or DID of the person, team, or automated system that assessed the bundle completeness (e.g. 'Compliance Officer – Jane Smith', 'AutoKYB v2.1', 'did:web:kyb.provider.example').",
+          "description": "Name or DID of the person, team, or automated system that assessed the bundle completeness (e.g. 'Compliance Officer \u2013 Jane Smith', 'AutoKYB v2.1', 'did:web:kyb.provider.example').",
           "maxLength": 200
         },
         "bundleValidationDate": {
@@ -3408,6 +3498,218 @@
               "AUTHORISED_SIGNATORY_LIST"
             ]
           ]
+        }
+      }
+    },
+    "RiskSnapshot": {
+      "title": "RiskSnapshot",
+      "description": "A point-in-time snapshot of a customer's overall risk score for trend analysis and continuous KYC.",
+      "type": "object",
+      "properties": {
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 date-time when this snapshot was captured."
+        },
+        "overallRiskScore": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Composite risk score at this point in time (0 = lowest risk, 100 = highest risk)."
+        },
+        "deltaFromPrevious": {
+          "type": "number",
+          "description": "Change in overall risk score compared to the immediately prior snapshot. Positive = increased risk, negative = decreased risk."
+        }
+      }
+    },
+    "DataAggregationMetadata": {
+      "title": "DataAggregationMetadata",
+      "description": "BCBS 239 risk data aggregation metadata providing provenance and lineage traceability for regulatory reporting.",
+      "type": "object",
+      "properties": {
+        "bcbs239ComplianceLevel": {
+          "type": "string",
+          "enum": [
+            "full",
+            "partial",
+            "gap-analysis"
+          ],
+          "description": "Self-assessed BCBS 239 compliance level for this data aggregation: 'full' (all 14 principles met), 'partial' (some gaps), 'gap-analysis' (under assessment)."
+        },
+        "lastAggregationTimestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 date-time of the most recent data aggregation run that produced this payload."
+        },
+        "dataLineageReference": {
+          "type": "string",
+          "description": "Opaque reference to the data lineage or provenance record (e.g. a data catalogue entry URI, ETL job ID, or audit log reference). Supports BCBS 239 Principle 2 (Data Architecture and IT Infrastructure) and Principle 3 (Accuracy and Integrity)."
+        }
+      }
+    },
+    "PredictiveAML": {
+      "title": "PredictiveAML",
+      "description": "Predictive AML extension providing ML-ready, explainable, auditable risk scores and model metadata. Supports EU AI Act Art. 13 explainability, AMLR Art. 22(5) third-party reliance with provenance, and BCBS 239 data aggregation. Designed for integration with Fenergo, Actimize/NICE, and graph-based network risk engines.",
+      "type": "object",
+      "required": [
+        "modelMetadata",
+        "predictiveScores"
+      ],
+      "properties": {
+        "modelMetadata": {
+          "type": "object",
+          "description": "EU AI Act-aligned model card metadata (Art. 13 transparency obligations for high-risk AI systems in AML).",
+          "required": [
+            "modelId",
+            "modelVersion",
+            "euAiActClassification"
+          ],
+          "properties": {
+            "modelId": {
+              "type": "string",
+              "description": "Unique identifier for the AML model (e.g. UUID or vendor model reference)."
+            },
+            "modelVersion": {
+              "type": "string",
+              "description": "Semantic version of the model (e.g. '2.3.1')."
+            },
+            "provider": {
+              "type": "string",
+              "description": "Name or DID of the model provider / vendor."
+            },
+            "trainingDate": {
+              "type": "string",
+              "format": "date-time",
+              "description": "ISO 8601 date-time when the model was last trained."
+            },
+            "euAiActClassification": {
+              "type": "string",
+              "enum": [
+                "high-risk-aml",
+                "limited-risk",
+                "minimal-risk"
+              ],
+              "description": "EU AI Act Annex III classification. AML transaction monitoring and customer risk scoring systems are presumed 'high-risk-aml' under Art. 6(2) and Annex III point 5(b)."
+            },
+            "conformityAssessmentReference": {
+              "type": "string",
+              "description": "Reference to the EU AI Act conformity assessment record (Art. 43) or notified body certificate number. Required when euAiActClassification = 'high-risk-aml'."
+            }
+          }
+        },
+        "predictiveScores": {
+          "type": "array",
+          "description": "Array of typed predictive risk scores produced by the model.",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": [
+              "scoreType",
+              "value",
+              "confidence"
+            ],
+            "properties": {
+              "scoreType": {
+                "type": "string",
+                "enum": [
+                  "transaction_anomaly",
+                  "network_risk",
+                  "velocity_fraud",
+                  "ubo_graph_risk",
+                  "customer_lifetime_risk"
+                ],
+                "description": "Type of predictive risk score."
+              },
+              "value": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 100,
+                "description": "Score value on a 0\u2013100 scale (0 = lowest risk, 100 = highest risk)."
+              },
+              "confidence": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1,
+                "description": "Model confidence in this score (0\u20131). EU AI Act Art. 13(3)(b)(iv) requires confidence or reliability information."
+              },
+              "horizonDays": {
+                "type": "integer",
+                "minimum": 1,
+                "description": "Forward-looking horizon in calendar days over which the score is predictive (e.g. 30 = 30-day anomaly probability)."
+              },
+              "timestamp": {
+                "type": "string",
+                "format": "date-time",
+                "description": "ISO 8601 date-time when this score was computed."
+              }
+            }
+          }
+        },
+        "featureVector": {
+          "type": "object",
+          "description": "Optional hashed or privacy-preserved feature vector used to generate the scores (e.g. velocity_30d, avg_txn_value). Keys are feature names; values are numeric, string, or boolean. Personal data MUST be hashed or pseudonymised before inclusion (GDPR Art. 25 data minimisation).",
+          "additionalProperties": {
+            "type": [
+              "number",
+              "string",
+              "boolean"
+            ]
+          }
+        },
+        "explainability": {
+          "type": "object",
+          "description": "EU AI Act Art. 13 explainability output. Provides human-interpretable reasoning for the predictive scores.",
+          "properties": {
+            "method": {
+              "type": "string",
+              "enum": [
+                "SHAP",
+                "LIME",
+                "counterfactual"
+              ],
+              "description": "Explainability method used. SHAP (SHapley Additive exPlanations) and LIME (Local Interpretable Model-agnostic Explanations) are recommended for AML models."
+            },
+            "values": {
+              "type": "object",
+              "description": "Method-specific explanation output (e.g. SHAP feature importance values keyed by feature name). Structure is method-dependent.",
+              "additionalProperties": {}
+            }
+          }
+        },
+        "riskEvolutionHistory": {
+          "type": "array",
+          "description": "Ordered history of overall risk snapshots enabling delta-based continuous KYC (cKYC). Supports AMLR Art. 22 ongoing monitoring and avoids unnecessary full re-KYC when risk has not materially changed.",
+          "items": {
+            "$ref": "#/$defs/RiskSnapshot"
+          }
+        },
+        "alertCorrelationId": {
+          "type": "string",
+          "description": "Opaque correlation identifier linking this predictive payload to a transaction monitoring alert (e.g. Actimize case ID). Enables closed-loop feedback from alert disposition to model retrain."
+        },
+        "dataAggregationMetadata": {
+          "$ref": "#/$defs/DataAggregationMetadata"
+        }
+      }
+    },
+    "InformationSharingFlags": {
+      "title": "InformationSharingFlags",
+      "description": "US FinCEN Section 314(a) and 314(b) information sharing flags. Section 314(a) supports mandatory law-enforcement information requests; Section 314(b) enables voluntary institution-to-institution sharing with safe-harbor protection.",
+      "type": "object",
+      "properties": {
+        "section314aRequestId": {
+          "type": "string",
+          "description": "FinCEN Section 314(a) request identifier. Presence indicates this customer record is subject to a mandatory FinCEN information request. MUST NOT be disclosed to the data subject (tipping-off prohibition)."
+        },
+        "section314bSafeHarbor": {
+          "type": "boolean",
+          "description": "When true, this record was shared under the FinCEN Section 314(b) voluntary information sharing safe-harbor. The sharing institution must be a Section 314(b) registrant and sharing must be for AML purposes (31 CFR 1010.540)."
+        },
+        "sharingConsentTimestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 date-time when consent for information sharing was obtained or the safe-harbor sharing event occurred."
         }
       }
     }
@@ -3467,6 +3769,14 @@
     "identityDocuments": {
       "$ref": "#/$defs/VerificationDocumentBundle",
       "description": "Optional verification document bundle. Contains the typed, named set of government-issued documents and digital credentials examined to verify natural person and/or legal entity identity. Satisfies ISO 17442 (LEI), GLEIF LOU documentary evidence requirements, FATF Rec. 10/24/25, and AMLR Art. 22 and 26. All changes are additive; omitting this block does not affect v1.4.0 payload validity."
+    },
+    "predictiveAML": {
+      "$ref": "#/$defs/PredictiveAML",
+      "description": "Optional predictive AML extension providing ML-ready, explainable, auditable risk scores. See PredictiveAML $def for full schema."
+    },
+    "informationSharingFlags": {
+      "$ref": "#/$defs/InformationSharingFlags",
+      "description": "US FinCEN Section 314(a)/(b) information sharing flags. Optional; include only when a 314(a) request or 314(b) safe-harbor sharing event applies."
     }
   },
   "anyOf": [
