@@ -885,3 +885,148 @@ const sensitivity: GdprSensitivityMetadata = {
 ---
 
 *Type definitions derived from OpenKYCAML JSON Schema v1.7.0. Last updated: v1.7.0.*
+
+---
+
+## Tax Status Types (v1.9.0)
+
+```typescript
+/** ISO 3166-1 alpha-2 country code. */
+type JurisdictionCode = string;
+
+/** Type of tax identifier. */
+type TinType = 'TIN' | 'VAT' | 'GST' | 'PST' | 'EIN' | 'functionalEquivalent' | 'other';
+
+/** Verification status of a TIN entry. */
+type TinVerificationStatus = 'verified' | 'unverified' | 'revoked' | 'suspended';
+
+/** A single TIN or functional equivalent for one jurisdiction (OECD CRS/CARF, FATCA). */
+interface TinIdentifier {
+  jurisdiction: JurisdictionCode;
+  tinType: TinType;
+  tinValue: string;
+  issuanceDate?: string;           // ISO 8601 date-time
+  verificationStatus?: TinVerificationStatus;
+  verificationSource?: string;     // e.g. 'OECD-TIN-list', 'VIES', 'IRS-TIN-Matching'
+}
+
+/** Type of indirect tax registration. */
+type IndirectTaxType = 'VAT' | 'GST' | 'PST' | 'HST' | 'salesTax';
+
+/** Registration status for an indirect tax. */
+type IndirectTaxStatus = 'active' | 'suspended' | 'revoked' | 'exempt';
+
+/** A VAT/GST/PST/HST/salesTax registration entry for one jurisdiction. */
+interface IndirectTaxRegistration {
+  taxType?: IndirectTaxType;
+  jurisdiction?: JurisdictionCode;
+  registrationNumber?: string;
+  status?: IndirectTaxStatus;
+  effectiveFrom?: string;          // ISO 8601 date
+}
+
+/** ESR status for an entity in an ESR-regime jurisdiction. */
+type EsrStatus =
+  | 'inScope-RelevantEntity'
+  | 'exempt-TaxResidentElsewhere'
+  | 'exempt-PureEquityHolding'
+  | 'compliant'
+  | 'nonCompliant';
+
+/** Economic Substance Regulation (ESR) classification block. */
+interface EconomicSubstance {
+  jurisdiction?: JurisdictionCode;
+  status?: EsrStatus;
+  relevantActivities?: string[];   // e.g. 'holdingCompany', 'intellectualProperty'
+  coreIncomeGeneratingActivitiesPerformed?: boolean;
+  lastNotificationDate?: string;   // ISO 8601 date
+  lastReportReference?: string;
+}
+
+/** GloBE constituent entity status. */
+type ConstituentEntityStatus = 'inScope' | 'excluded' | 'QDMTT';
+
+/** Safe harbour election type. */
+type SafeHarbour = 'SimplifiedETR' | 'SubstanceBased' | 'DeMinimis' | 'none';
+
+/** Effective tax rate entry for one jurisdiction. */
+interface EtrJurisdiction {
+  jurisdiction: JurisdictionCode;
+  etr: number;   // decimal 0–1; e.g. 0.15 = 15%
+}
+
+/** OECD Pillar 2 GloBE (BEPS 2.0) classification block. */
+interface PillarTwo {
+  inScopeMNE?: boolean;
+  consolidatedRevenueEUR?: number;
+  constituentEntityStatus?: ConstituentEntityStatus;
+  etrJurisdictions?: EtrJurisdiction[];
+  safeHarbourApplied?: SafeHarbour;
+  girFilingReference?: string;
+  lastGIRDate?: string;            // ISO 8601 date-time
+}
+
+/** Root taxStatus block (v1.9.0). All sub-properties optional. */
+interface TaxStatus {
+  tinIdentifiers?: TinIdentifier[];
+  indirectTaxRegistrations?: IndirectTaxRegistration[];
+  economicSubstance?: EconomicSubstance;
+  pillarTwo?: PillarTwo;
+}
+```
+
+*Tax status types added in OpenKYCAML v1.9.0. Last updated: v1.9.0.*
+
+---
+
+## FATCA & CRS Types (v1.9.1)
+
+```typescript
+/** OECD CRS TIN verification / reason-code status. */
+type CrsTinVerificationStatus = 'verified' | 'unverified' | 'relief-applied' | 'not-required';
+
+/** Enhanced OECD CRS per-jurisdiction tax-residency entry. */
+interface CrsTaxResidency {
+  jurisdiction: JurisdictionCode;          // required
+  tinValue?: string;
+  tinVerificationStatus?: CrsTinVerificationStatus;
+  selfCertificationDate?: string;          // ISO 8601 date-time
+  controllingPersonFlag?: boolean;         // true for Passive NFE controlling persons
+}
+
+/** US FATCA Chapter 4 entity classification. */
+type Chapter4Classification =
+  | 'participatingFFI'
+  | 'registeredDeemedCompliantFFI'
+  | 'certifiedDeemedCompliantFFI'
+  | 'sponsoredDirectReportingNFFE'
+  | 'exemptBeneficialOwner'
+  | 'nonFinancialNonReportingEntity'
+  | 'nonParticipatingFFI'
+  | 'other';
+
+/**
+ * US FATCA Chapter 4 status block.
+ * GIIN pattern: /^[0-9A-Z]{6}\.[0-9A-Z]{5}\.[0-9A-Z]{2}\.[0-9A-Z]{3}$/
+ */
+interface FatcaStatus {
+  giin?: string;                           // 19-char IRS GIIN, regex-validated
+  chapter4Classification?: Chapter4Classification;
+  usTinRequired?: boolean;
+  temporaryReliefApplied?: boolean;        // IRS Notice 2024-78 relief (2025-2027)
+  ffiListVerificationTimestamp?: string;   // ISO 8601; refresh every 35 days
+  withholdingAgentReference?: string;
+}
+
+/** Updated TaxStatus interface (v1.9.1) — adds crsTaxResidencies[] and fatcaStatus. */
+interface TaxStatus {
+  tinIdentifiers?: TinIdentifier[];
+  indirectTaxRegistrations?: IndirectTaxRegistration[];
+  economicSubstance?: EconomicSubstance;
+  pillarTwo?: PillarTwo;
+  crsTaxResidencies?: CrsTaxResidency[];   // v1.9.1 — enhanced CRS per-residency data
+  fatcaStatus?: FatcaStatus;               // v1.9.1 — FATCA Chapter 4 first-class block
+}
+```
+
+*FATCA & CRS first-class types added in OpenKYCAML v1.9.1. Last updated: v1.9.1.*

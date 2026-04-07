@@ -272,6 +272,7 @@ jobs:
           ROOT_EXEMPT = {
               "README.md", "CHANGELOG.md", "CONTRIBUTING.md", "GOVERNANCE.md",
               "LICENSE", "SECURITY.md", "ROADMAP.md", "CODE_OF_CONDUCT.md", "NOTICE",
+              "CERTIFICATION.md",
               "pyproject.toml", ".gitignore", ".namingignore",
           }
 
@@ -282,6 +283,7 @@ jobs:
           SNAKE_CASE_DIRS = {
               "tools/python",
               "tools/go",
+              "tools/wolfsberg-importer",
               "iso20022-integration/libraries/python",
               "iso20022-integration/test-suite",
           }

@@ -206,6 +206,69 @@ class OpenKYCAMLValidator {
       });
     }
 
+    // XRPL confidential transfer compliance warning.
+    const blockchainIds = kyc.blockchainAccountIds || [];
+    for (let idx = 0; idx < blockchainIds.length; idx++) {
+      const ct = blockchainIds[idx].xrplConfidentialTransfer || {};
+      if (ct.enabled && (!ct.authorisedViewingKeys || ct.authorisedViewingKeys.length === 0)) {
+        warns.push(
+          `kycProfile.blockchainAccountIds[${idx}].xrplConfidentialTransfer.enabled is true ` +
+          'but authorisedViewingKeys is empty — AMLR Art. 21 / FATF R.16 require ' +
+          'supervisory viewing key access for confidential transfers (XLS-96d).'
+        );
+      }
+    }
+
+    // Tax status ESR and Pillar 2 warnings (v1.9.0).
+    const tax = payload.taxStatus || {};
+    const esr = tax.economicSubstance || {};
+    if (esr.status === 'nonCompliant') {
+      const jur = esr.jurisdiction || 'unknown';
+      warns.push(
+        `taxStatus.economicSubstance.status is 'nonCompliant' for jurisdiction '${jur}' — ` +
+        'ESR non-compliance is a direct AML red flag under AMLR Art. 26 and EBA ML/TF ' +
+        'risk-factor guidelines. EDD is required; consider SAR filing.'
+      );
+    }
+
+    const p2 = tax.pillarTwo || {};
+    if (p2.inScopeMNE && (!p2.girFilingReference || !p2.girFilingReference.trim())) {
+      warns.push(
+        'taxStatus.pillarTwo.inScopeMNE is true but girFilingReference is absent — ' +
+        'in-scope MNEs must file a GloBE Information Return (GIR). ' +
+        'Request the GIR reference and perform enhanced due diligence.'
+      );
+    }
+
+    // FATCA warnings (v1.9.1).
+    const fatca = tax.fatcaStatus || null;
+    if (fatca) {
+      const GIIN_REGEX = /^[0-9A-Z]{6}\.[0-9A-Z]{5}\.[0-9A-Z]{2}\.[0-9A-Z]{3}$/;
+      if (fatca.giin && !GIIN_REGEX.test(fatca.giin)) {
+        warns.push(
+          `taxStatus.fatcaStatus.giin '${fatca.giin}' does not match the IRS GIIN format ` +
+          '(XXXXXX.XXXXX.XX.XXX). Please verify against the IRS FATCA FFI List.'
+        );
+      }
+      if (fatca.chapter4Classification === 'nonParticipatingFFI') {
+        warns.push(
+          "taxStatus.fatcaStatus.chapter4Classification is 'nonParticipatingFFI' — " +
+          'non-participating FFIs are subject to 30% FATCA withholding and represent ' +
+          'elevated US tax-risk. EDD is recommended.'
+        );
+      }
+      if (fatca.ffiListVerificationTimestamp) {
+        const ts = new Date(fatca.ffiListVerificationTimestamp);
+        const ageMs = Date.now() - ts.getTime();
+        if (!isNaN(ageMs) && ageMs > 35 * 24 * 60 * 60 * 1000) {
+          warns.push(
+            'taxStatus.fatcaStatus.ffiListVerificationTimestamp is more than 35 days old — ' +
+            'the IRS FATCA FFI List is updated monthly; please re-verify the GIIN.'
+          );
+        }
+      }
+    }
+
     return warns;
   }
 }

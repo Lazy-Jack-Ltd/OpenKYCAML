@@ -16,7 +16,10 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"regexp"
 	"runtime"
+	"strings"
+	"time"
 
 	"github.com/santhosh-tekuri/jsonschema/v6"
 )
@@ -36,8 +39,9 @@ func schemaPath() string {
 
 // ValidationResult holds the outcome of validating a single payload.
 type ValidationResult struct {
-	IsValid bool
-	Errors  []string
+	IsValid  bool
+	Errors   []string
+	Warnings []string
 }
 
 // OpenKYCAMLValidator validates JSON payloads against the OpenKYCAML schema.
@@ -74,7 +78,8 @@ func NewOpenKYCAMLValidatorFromPath(path string) (*OpenKYCAMLValidator, error) {
 func (v *OpenKYCAMLValidator) Validate(payload any) ValidationResult {
 	err := v.schema.Validate(payload)
 	if err == nil {
-		return ValidationResult{IsValid: true}
+		warnings := businessWarnings(payload)
+		return ValidationResult{IsValid: true, Warnings: warnings}
 	}
 
 	var errs []string
@@ -85,6 +90,95 @@ func (v *OpenKYCAMLValidator) Validate(payload any) ValidationResult {
 	}
 
 	return ValidationResult{IsValid: false, Errors: errs}
+}
+
+// businessWarnings emits advisory warnings for common compliance oversights.
+// These are not schema violations but may indicate incomplete or risky data.
+func businessWarnings(payload any) []string {
+	m, ok := payload.(map[string]any)
+	if !ok {
+		return nil
+	}
+
+	var warns []string
+
+	// Tax status ESR and Pillar 2 warnings (v1.9.0).
+	taxRaw, hasTax := m["taxStatus"]
+	if hasTax {
+		tax, ok := taxRaw.(map[string]any)
+		if ok {
+			// ESR non-compliance warning.
+			if esrRaw, ok := tax["economicSubstance"]; ok {
+				if esr, ok := esrRaw.(map[string]any); ok {
+					if status, _ := esr["status"].(string); status == "nonCompliant" {
+						jur, _ := esr["jurisdiction"].(string)
+						if jur == "" {
+							jur = "unknown"
+						}
+						warns = append(warns,
+							fmt.Sprintf(
+								"taxStatus.economicSubstance.status is 'nonCompliant' for jurisdiction '%s' — "+
+									"ESR non-compliance is a direct AML red flag under AMLR Art. 26 and EBA ML/TF "+
+									"risk-factor guidelines. EDD is required; consider SAR filing.",
+								jur,
+							),
+						)
+					}
+				}
+			}
+
+			// Pillar 2 GIR reference missing warning.
+			if p2Raw, ok := tax["pillarTwo"]; ok {
+				if p2, ok := p2Raw.(map[string]any); ok {
+					inScope, _ := p2["inScopeMNE"].(bool)
+					girRef, _ := p2["girFilingReference"].(string)
+					if inScope && strings.TrimSpace(girRef) == "" {
+						warns = append(warns,
+							"taxStatus.pillarTwo.inScopeMNE is true but girFilingReference is absent — "+
+								"in-scope MNEs must file a GloBE Information Return (GIR). "+
+								"Request the GIR reference and perform enhanced due diligence.",
+						)
+					}
+				}
+			}
+
+			// FATCA warnings (v1.9.1).
+			if fatcaRaw, ok := tax["fatcaStatus"]; ok {
+				if fatca, ok := fatcaRaw.(map[string]any); ok {
+					giinPattern := regexp.MustCompile(`^[0-9A-Z]{6}\.[0-9A-Z]{5}\.[0-9A-Z]{2}\.[0-9A-Z]{3}$`)
+					giin, _ := fatca["giin"].(string)
+					if giin != "" && !giinPattern.MatchString(giin) {
+						warns = append(warns,
+							fmt.Sprintf(
+								"taxStatus.fatcaStatus.giin '%s' does not match the IRS GIIN format "+
+									"(XXXXXX.XXXXX.XX.XXX). Please verify against the IRS FATCA FFI List.",
+								giin,
+							),
+						)
+					}
+					if ch4, _ := fatca["chapter4Classification"].(string); ch4 == "nonParticipatingFFI" {
+						warns = append(warns,
+							"taxStatus.fatcaStatus.chapter4Classification is 'nonParticipatingFFI' — "+
+								"non-participating FFIs are subject to 30% FATCA withholding and represent "+
+								"elevated US tax-risk. EDD is recommended.",
+						)
+					}
+					if tsStr, _ := fatca["ffiListVerificationTimestamp"].(string); tsStr != "" {
+						if ts, err := time.Parse(time.RFC3339, tsStr); err == nil {
+							if time.Since(ts) > 35*24*time.Hour {
+								warns = append(warns,
+									"taxStatus.fatcaStatus.ffiListVerificationTimestamp is more than 35 days old — "+
+										"the IRS FATCA FFI List is updated monthly; please re-verify the GIIN.",
+								)
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	return warns
 }
 
 // ValidateReader validates a JSON payload read from an io.Reader.
@@ -149,6 +243,9 @@ func main() {
 
 	if result.IsValid {
 		fmt.Println("VALID")
+		for _, w := range result.Warnings {
+			fmt.Fprintf(os.Stderr, "  WARNING: %s\n", w)
+		}
 		os.Exit(0)
 	}
 

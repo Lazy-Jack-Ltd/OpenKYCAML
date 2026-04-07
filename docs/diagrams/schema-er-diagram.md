@@ -293,6 +293,22 @@ erDiagram
 
     ExtractedAttribute { string fieldName string value boolean matchesRecord }
     RegistrationAuthorityDetail { string ralCode string authorityName string jurisdiction }
+
+    %% TaxStatus block (v1.9.0-v1.9.1)
+    OpenKYCAMLDocument ||--o| TaxStatus : "taxStatus"
+    TaxStatus ||--o{ TinIdentifier : "tinIdentifiers"
+    TaxStatus ||--o{ IndirectTaxRegistration : "indirectTaxRegistrations"
+    TaxStatus ||--o| EconomicSubstance : "economicSubstance"
+    TaxStatus ||--o| PillarTwo : "pillarTwo"
+    TaxStatus ||--o{ CrsTaxResidency : "crsTaxResidencies"
+    TaxStatus ||--o| FatcaStatus : "fatcaStatus"
+
+    TinIdentifier { string jurisdiction string tinType string tinValue string verificationStatus }
+    IndirectTaxRegistration { string taxType string jurisdiction string registrationNumber string status }
+    EconomicSubstance { string jurisdiction string status boolean coreIncomeGeneratingActivitiesPerformed }
+    PillarTwo { boolean inScopeMNE number consolidatedRevenueEUR string constituentEntityStatus string girFilingReference }
+    CrsTaxResidency { string jurisdiction string tinValue string tinVerificationStatus boolean controllingPersonFlag }
+    FatcaStatus { string giin string chapter4Classification boolean usTinRequired boolean temporaryReliefApplied string ffiListVerificationTimestamp }
 ```
 
 ---
@@ -338,7 +354,14 @@ erDiagram
 | `LegalEntityDocument` | Corporate document (certificate of incorporation, LEI registration, vLEI VC, etc.) with document ID URN (v1.5.0–v1.6.0). |
 | `ExtractedAttribute` | Per-document field extraction result with `matchesRecord` flag (v1.5.0). |
 | `RegistrationAuthorityDetail` | Structured GLEIF RAL reference with `ralCode`, authority name, and jurisdiction (v1.5.0). |
+| `TaxStatus` | Root tax status block (v1.9.0+). Contains tinIdentifiers[], indirectTaxRegistrations[], economicSubstance, pillarTwo, crsTaxResidencies[], and fatcaStatus. |
+| `TinIdentifier` | A single jurisdiction-specific TIN entry (v1.9.0). Supports OECD CRS/CARF, FATCA EIN, and functional equivalents. |
+| `IndirectTaxRegistration` | VAT/GST/PST/HST/salesTax registration entry with status and effectiveFrom date (v1.9.0). |
+| `EconomicSubstance` | ESR status block for BVI/Cayman/UAE/Jersey/Guernsey/IoM entities; `nonCompliant` status triggers EDD warning (v1.9.0). |
+| `PillarTwo` | OECD Pillar 2 GloBE constituent entity block with ETR per jurisdiction and GIR reference (v1.9.0). |
+| `CrsTaxResidency` | Enhanced per-jurisdiction CRS self-certification entry with TIN verification status and controlling-person flag (v1.9.1). |
+| `FatcaStatus` | US FATCA Chapter 4 first-class block: GIIN (19-char IRS regex), Chapter 4 classification, FFI List verification timestamp, Notice 2024-78 relief flag (v1.9.1). |
 
 ---
 
-*Diagram generated from OpenKYCAML schema v1.7.0. Last updated: v1.7.0.*
+*Diagram generated from OpenKYCAML schema v1.9.1. Last updated: v1.9.1.*

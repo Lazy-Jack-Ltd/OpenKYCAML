@@ -31,6 +31,73 @@ For the full project roadmap and planned features, see [ROADMAP.md](ROADMAP.md).
 
 ---
 
+## [1.9.1] — April 2026
+
+### Added
+
+- **`taxStatus.crsTaxResidencies[]`** (`CrsTaxResidency` $def) — First-class OECD CRS per-jurisdiction residency array (v1.9.1). Each entry carries `jurisdiction` (ISO 3166-1 alpha-2), `tinValue`, `tinVerificationStatus` enum (`verified | unverified | relief-applied | not-required` — maps to CRS reason codes A/B/C), `selfCertificationDate` (ISO 8601), and `controllingPersonFlag` (boolean — for Passive NFE controlling persons per OECD CRS Section VIII.D.6). Supersedes flat `tinIdentifiers[]` for AEOI CRS flows; maps directly to OECD CRS XML Schema v2.0 `AccountHolder/ControllingPerson` TIN elements.
+
+- **`taxStatus.fatcaStatus`** (`FatcaStatus` $def) — First-class US FATCA Chapter 4 block (v1.9.1). Fields: `giin` (19-char IRS GIIN, regex-validated `^[0-9A-Z]{6}\.[0-9A-Z]{5}\.[0-9A-Z]{2}\.[0-9A-Z]{3}$`), `chapter4Classification` (8-value enum: `participatingFFI | registeredDeemedCompliantFFI | certifiedDeemedCompliantFFI | sponsoredDirectReportingNFFE | exemptBeneficialOwner | nonFinancialNonReportingEntity | nonParticipatingFFI | other`), `usTinRequired`, `temporaryReliefApplied` (IRS Notice 2024-78, 2025–2027 deferral for Model 1 IGA pre-existing accounts), `ffiListVerificationTimestamp`, `withholdingAgentReference`. Feeds directly into `predictiveAML` risk scoring.
+
+- **1 new example** — `examples/tax/tax-fatca-crs.json`: Irish FFI (registeredDeemedCompliantFFI) with GIIN, dual-jurisdiction CRS residencies (IE + US), and FATCA status block.
+
+- **`docs/mappings/fatca-crs.md`** + **`fatca-crs.yaml`** — New dedicated mapping document covering: §1 Introduction (FATCA/CRS interoperability, tinIdentifiers[] relationship), §2 OECD CRS crsTaxResidencies[] field mapping + TIN reason-code table + Passive NFE controlling person, §3 FATCA fatcaStatus field mapping + GIIN structure + Chapter 4 classification table + IRS Notice 2024-78 relief, §4 PredictiveAML synergy, §5 compliance and backward-compatibility notes.
+
+- **`schema/versions/v1.9.1.json`** — versioned snapshot of canonical schema.
+
+- **`api/openkycaml-v1.9.0.yaml`** — new OpenAPI 3.1.0 spec with `TinIdentifier`, `IndirectTaxRegistration`, `EconomicSubstance`, `PillarTwo`, `CrsTaxResidency`, `FatcaStatus`, and `TaxStatus` component schemas.
+
+- **Validator business warnings** (Python + Node.js + Go):
+  - `taxStatus.fatcaStatus.giin` fails IRS regex → GIIN format warning.
+  - `taxStatus.fatcaStatus.chapter4Classification = "nonParticipatingFFI"` → 30% withholding EDD warning.
+  - `taxStatus.fatcaStatus.ffiListVerificationTimestamp` > 35 days old → stale FFI List warning.
+
+- **ER diagram** (`docs/diagrams/schema-er-diagram.md`) — added `TaxStatus`, `TinIdentifier`, `IndirectTaxRegistration`, `EconomicSubstance`, `PillarTwo`, `CrsTaxResidency`, `FatcaStatus` entities with relationships; footer updated to v1.9.1.
+
+- **Compliance matrix §18** — Expanded from generic TIN rows to explicit FATCA/CRS first-class rows: GIIN, Chapter 4, controlling-person flag, TIN reason codes A/B/C, FATCA/CRS XML Schema v2.0 export, AMLR Art. 22.
+
+### Changed
+
+- `schema/kyc-aml-hybrid-extended.json` — version bumped from `1.9.0` to `1.9.1`; `$id` updated to `https://openkycaml.org/schema/v1.9.1/kyc-aml-hybrid-extended.json`; `TaxStatus.description` updated.
+- `taxStatus` root property description updated to reference v1.9.1 additions.
+
+---
+
+## [1.9.0] — April 2026
+
+### Added
+
+- **`taxStatus` top-level block** — New optional `TaxStatus` $def and root property covering four global tax and economic substance regimes:
+  - **`tinIdentifiers[]`** (`TinIdentifier` $def) — Structured, multi-jurisdiction TIN array. Each entry carries `jurisdiction` (ISO 3166-1 alpha-2), `tinType` enum (`TIN | VAT | GST | PST | EIN | functionalEquivalent | other`), `tinValue`, optional `issuanceDate`, `verificationStatus`, and `verificationSource`. Supersedes and extends IVMS 101 `nationalIdentification.TXID` for OECD CRS/CARF, FATCA, and AMLR Art. 22 tax-residency verification.
+  - **`indirectTaxRegistrations[]`** (`IndirectTaxRegistration` $def) — VAT, GST, PST, HST, and salesTax registration entries per jurisdiction. Each carries `taxType`, `jurisdiction`, `registrationNumber`, `status` (`active | suspended | revoked | exempt`), and `effectiveFrom`. Supports EU VIES, India GSTIN, Australia ABN/GST, Canada HST/PST.
+  - **`economicSubstance`** (`EconomicSubstance` $def) — Economic Substance Regulation (ESR) block for entities in BVI, Cayman Islands, UAE, Jersey, Guernsey, Isle of Man, and other ESR jurisdictions. Fields: `jurisdiction`, `status` (5-value enum: `inScope-RelevantEntity | exempt-TaxResidentElsewhere | exempt-PureEquityHolding | compliant | nonCompliant`), `relevantActivities[]`, `coreIncomeGeneratingActivitiesPerformed`, `lastNotificationDate`, `lastReportReference`.
+  - **`pillarTwo`** (`PillarTwo` $def) — OECD Pillar 2 GloBE (BEPS 2.0) block for MNE constituent entities with consolidated revenue >= EUR 750 million. Fields: `inScopeMNE`, `consolidatedRevenueEUR`, `constituentEntityStatus` (`inScope | excluded | QDMTT`), `etrJurisdictions[]` (`{jurisdiction, etr}` — ETR as decimal), `safeHarbourApplied` (`SimplifiedETR | SubstanceBased | DeMinimis | none`), `girFilingReference`, `lastGIRDate`.
+
+- **4 new examples** in `examples/tax/`:
+  - `tax-individual-tin.json` — natural person with US EIN + UK UTR (`functionalEquivalent`) TIN array.
+  - `tax-corporate-vat-gst.json` — German legal entity with EU VAT and India GSTIN indirect tax registrations plus DE/IN TIN identifiers.
+  - `tax-offshore-esr.json` — Cayman Islands holding company with `economicSubstance` block (`inScope-RelevantEntity` status, relevant activities, notification reference).
+  - `tax-mne-pillar2.json` — Irish MNE constituent entity with full `pillarTwo` block including `etrJurisdictions[]` and `girFilingReference`.
+
+- **`docs/mappings/tax-status-oecd-esr-pillar2.md`** + **`tax-status-oecd-esr-pillar2.yaml`** — new mapping document covering OECD CRS/CARF TIN, EU VAT/GST/PST, ESR, and Pillar 2 GloBE. Includes IVMS 101 TXID migration path (§2.3).
+
+- **`schema/versions/v1.9.0.json`** — versioned copy of updated canonical schema.
+
+- **Compliance matrix §18–§20** — Tax Status (TIN/CRS/CARF), ESR, and Pillar 2 GloBE sections added to `docs/compliance/compliance-matrix.md`.
+
+- **IVMS 101 mapping §11** — TXID → `taxStatus.tinIdentifiers[]` structured migration path added to `docs/mappings/mapping-ivms101-eidas-amlr.md`.
+
+- **Validator business warnings** (Python + Node.js + Go):
+  - `taxStatus.economicSubstance.status = "nonCompliant"` → ESR red-flag warning (EDD + SAR recommendation).
+  - `taxStatus.pillarTwo.inScopeMNE = true` + `girFilingReference` absent → GIR missing warning.
+
+### Changed
+
+- `schema/kyc-aml-hybrid-extended.json` — version bumped from `1.8.0` to `1.9.0`; `$id` updated to `https://openkycaml.org/schema/v1.9.0/kyc-aml-hybrid-extended.json`.
+- `tools/go/validator.go` — `ValidationResult` gains `Warnings []string` field; `businessWarnings()` function added.
+
+---
+
 ## [1.8.0] — April 2026
 
 ### Added

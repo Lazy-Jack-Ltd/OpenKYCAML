@@ -1,9 +1,9 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://openkycaml.org/schema/v1.8.0/kyc-aml-hybrid-extended.json",
+  "$id": "https://openkycaml.org/schema/v1.9.1/kyc-aml-hybrid-extended.json",
   "title": "OpenKYCAML Hybrid KYC/AML Schema",
   "description": "Root OpenKYCAML document. At least one of 'ivms101' or 'verifiableCredential' MUST be present.",
-  "version": "1.8.0",
+  "version": "1.9.1",
   "$defs": {
     "NaturalPersonNameIdentifier": {
       "title": "NaturalPersonNameIdentifier",
@@ -3931,6 +3931,333 @@
           "description": "Reference to the corresponding document record in identityDocuments.legalEntityDocuments[] or identityDocuments.naturalPersonDocuments[] by documentRef URI. Enables full eIDAS triangulation: certificate metadata here links to the document bundle that holds the source credential and its extracted identity attributes."
         }
       }
+    },
+    "TinIdentifier": {
+      "title": "TinIdentifier",
+      "description": "A single Taxpayer Identification Number (TIN) or functional equivalent for one jurisdiction. Supports OECD CRS/CARF, FATCA, and AMLR Art. 22 tax-residency verification. Maps directly to IVMS 101 nationalIdentification.TXID for Travel Rule payloads.",
+      "type": "object",
+      "required": [
+        "jurisdiction",
+        "tinType",
+        "tinValue"
+      ],
+      "properties": {
+        "jurisdiction": {
+          "type": "string",
+          "pattern": "^[A-Z]{2}$",
+          "description": "ISO 3166-1 alpha-2 country code of the issuing tax authority (e.g. 'US', 'GB', 'DE')."
+        },
+        "tinType": {
+          "type": "string",
+          "enum": [
+            "TIN",
+            "VAT",
+            "GST",
+            "PST",
+            "EIN",
+            "functionalEquivalent",
+            "other"
+          ],
+          "description": "Type of tax identifier. Use 'TIN' for OECD CRS/CARF primary TINs. Use 'EIN' for US Employer Identification Numbers. Use 'functionalEquivalent' when the jurisdiction does not issue standard TINs (e.g. UK UTR, Chile RUT). Use 'VAT'/'GST'/'PST' when the VAT/GST/PST registration number doubles as the TIN."
+        },
+        "tinValue": {
+          "type": "string",
+          "description": "The raw TIN string as issued by the tax authority. Format varies by jurisdiction (e.g. US EIN '12-3456789', UK UTR '1234567890', DE TIN '86095742719')."
+        },
+        "issuanceDate": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 date-time when the TIN was issued or last confirmed by the tax authority."
+        },
+        "verificationStatus": {
+          "type": "string",
+          "enum": [
+            "verified",
+            "unverified",
+            "revoked",
+            "suspended"
+          ],
+          "description": "Current verification status of the TIN as at the time of this payload."
+        },
+        "verificationSource": {
+          "type": "string",
+          "description": "Source system or registry used to verify the TIN (e.g. 'OECD-TIN-list', 'VIES', 'GST-portal', 'HMRC-API', 'IRS-TIN-Matching')."
+        }
+      },
+      "additionalProperties": false
+    },
+    "IndirectTaxRegistration": {
+      "title": "IndirectTaxRegistration",
+      "description": "A VAT, GST, PST, HST, or sales-tax registration entry for one jurisdiction. Enables indirect-tax compliance checks during onboarding, source-of-wealth verification, and entity legitimacy screening.",
+      "type": "object",
+      "properties": {
+        "taxType": {
+          "type": "string",
+          "enum": [
+            "VAT",
+            "GST",
+            "PST",
+            "HST",
+            "salesTax"
+          ],
+          "description": "Type of indirect tax registration. 'VAT' = EU/UK Value Added Tax. 'GST' = Goods and Services Tax (India GSTIN, Australia, New Zealand, Singapore, etc.). 'PST' = Provincial Sales Tax (Canada). 'HST' = Harmonised Sales Tax (Canada). 'salesTax' = US state-level sales tax."
+        },
+        "jurisdiction": {
+          "type": "string",
+          "pattern": "^[A-Z]{2}$",
+          "description": "ISO 3166-1 alpha-2 country code of the registering tax authority."
+        },
+        "registrationNumber": {
+          "type": "string",
+          "description": "The registration number as issued (e.g. EU VAT 'DE123456789', India GSTIN '27AAPFU0939F1ZV', Australia ABN '12 345 678 901')."
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "active",
+            "suspended",
+            "revoked",
+            "exempt"
+          ],
+          "description": "Current registration status. 'active' = valid and in good standing. 'suspended' = temporarily inactive by authority. 'revoked' = cancelled (AML red flag). 'exempt' = entity is registered but exempt from charging VAT/GST."
+        },
+        "effectiveFrom": {
+          "type": "string",
+          "format": "date",
+          "description": "ISO 8601 date from which the registration became effective."
+        }
+      },
+      "additionalProperties": false
+    },
+    "EconomicSubstance": {
+      "title": "EconomicSubstance",
+      "description": "Economic Substance Regulation (ESR) classification for offshore or low-tax entities. Required for CDD of entities registered in BVI, Cayman Islands, UAE, Jersey, Guernsey, Isle of Man, and other EU/OECD-monitored jurisdictions. A 'nonCompliant' status is a direct AML red flag under AMLR Art. 26 and EBA Guidelines on ML/TF risk factors.",
+      "type": "object",
+      "properties": {
+        "jurisdiction": {
+          "type": "string",
+          "pattern": "^[A-Z]{2}$",
+          "description": "ISO 3166-1 alpha-2 jurisdiction code in which the ESR assessment applies (e.g. 'KY' = Cayman Islands, 'VG' = BVI, 'AE' = UAE, 'JE' = Jersey, 'GG' = Guernsey, 'IM' = Isle of Man)."
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "inScope-RelevantEntity",
+            "exempt-TaxResidentElsewhere",
+            "exempt-PureEquityHolding",
+            "compliant",
+            "nonCompliant"
+          ],
+          "description": "Current ESR status. 'inScope-RelevantEntity' = entity carries out a relevant activity and must satisfy substance tests. 'exempt-TaxResidentElsewhere' = entity is tax-resident in a non-blacklisted jurisdiction. 'exempt-PureEquityHolding' = pure equity holding with minimal permissible activities only. 'compliant' = passed most recent annual substance assessment. 'nonCompliant' = failed substance test — treat as enhanced due diligence (EDD) trigger."
+        },
+        "relevantActivities": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of relevant activities carried out by the entity as defined by the applicable ESR law (e.g. 'holdingCompany', 'bankingBusiness', 'insuranceBusiness', 'fundManagement', 'financingLeasing', 'headquartersBusiness', 'shippingBusiness', 'distributionServiceCentre', 'intellectualProperty')."
+        },
+        "coreIncomeGeneratingActivitiesPerformed": {
+          "type": "boolean",
+          "description": "Whether the entity performs its Core Income Generating Activities (CIGAs) in the jurisdiction. Must be true for substance test to be satisfied."
+        },
+        "lastNotificationDate": {
+          "type": "string",
+          "format": "date",
+          "description": "ISO 8601 date of the most recent ESR annual notification or filing submitted to the relevant authority."
+        },
+        "lastReportReference": {
+          "type": "string",
+          "description": "Reference number or URI of the most recent ESR annual report or notification acknowledgment."
+        }
+      },
+      "additionalProperties": false
+    },
+    "PillarTwo": {
+      "title": "PillarTwo",
+      "description": "OECD Pillar 2 (GloBE / BEPS 2.0) classification for multinational enterprise (MNE) constituent entities. Applies to MNE groups with consolidated annual revenue exceeding EUR 750 million. GloBE Information Return (GIR) references enable predictive AML base-erosion and profit-shifting (BEPS) risk scoring.",
+      "type": "object",
+      "properties": {
+        "inScopeMNE": {
+          "type": "boolean",
+          "description": "True if the entity is a constituent entity of an MNE group that meets or exceeds the EUR 750 million annual consolidated revenue threshold (OECD Pillar 2 Model Rules Art. 1.1)."
+        },
+        "consolidatedRevenueEUR": {
+          "type": "number",
+          "description": "Annual consolidated group revenue in EUR used to assess whether the EUR 750 million threshold is met. Source: most recent GloBE Information Return or consolidated financial statements."
+        },
+        "constituentEntityStatus": {
+          "type": "string",
+          "enum": [
+            "inScope",
+            "excluded",
+            "QDMTT"
+          ],
+          "description": "GloBE constituent entity status. 'inScope' = subject to top-up tax under IIR/UTPR. 'excluded' = excluded entity (government entity, international organisation, pension/investment fund, etc.). 'QDMTT' = subject to a Qualified Domestic Minimum Top-up Tax in the entity's own jurisdiction."
+        },
+        "etrJurisdictions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "jurisdiction": {
+                "type": "string",
+                "pattern": "^[A-Z]{2}$",
+                "description": "ISO 3166-1 alpha-2 jurisdiction code."
+              },
+              "etr": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1,
+                "description": "Effective Tax Rate (ETR) as a decimal fraction (e.g. 0.15 = 15%). If ETR falls below 0.15 (the GloBE minimum rate), a top-up tax may be levied."
+              }
+            },
+            "required": ["jurisdiction", "etr"],
+            "additionalProperties": false
+          },
+          "description": "Per-jurisdiction effective tax rates for the MNE group. Used to identify low-tax jurisdictions (ETR < 15%) triggering top-up tax obligations under GloBE IIR/UTPR."
+        },
+        "safeHarbourApplied": {
+          "type": "string",
+          "enum": [
+            "SimplifiedETR",
+            "SubstanceBased",
+            "DeMinimis",
+            "none"
+          ],
+          "description": "Safe harbour election applied in the most recent GIR filing period. 'SimplifiedETR' = Transitional CbCR Safe Harbour (simplified ETR test). 'SubstanceBased' = Substance-Based Income Exclusion (payroll + tangible assets carve-out). 'DeMinimis' = De Minimis Exclusion (revenue < EUR 10 m or income < EUR 1 m). 'none' = no safe harbour elected."
+        },
+        "girFilingReference": {
+          "type": "string",
+          "description": "Filing reference number or URI of the most recent GloBE Information Return (GIR) submitted to the lead filing jurisdiction. Enables cross-referencing with tax authority records for predictive AML BEPS risk scoring."
+        },
+        "lastGIRDate": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 date-time of the most recent GloBE Information Return filing."
+        }
+      },
+      "additionalProperties": false
+    },
+    "TaxStatus": {
+      "title": "TaxStatus",
+      "description": "Comprehensive tax status and identification block (v1.9.0+). Covers OECD CRS/CARF TINs, indirect tax registrations (VAT/GST/PST), Economic Substance Regulations (ESR), OECD Pillar 2 GloBE classifications, enhanced CRS multi-residency data (v1.9.1), and FATCA first-class fields including GIIN and Chapter 4 status (v1.9.1). Satisfies AMLR Art. 22 tax-residency verification requirements and provides machine-readable tax transparency data for predictive AML BEPS risk scoring. Fully backward-compatible with v1.8.0 — all sub-properties are optional.",
+      "type": "object",
+      "properties": {
+        "tinIdentifiers": {
+          "type": "array",
+          "description": "Array of TIN entries across one or more jurisdictions. Multi-jurisdiction arrays support CRS/CARF dual-residency and FATCA GIIN/EIN reporting.",
+          "items": {
+            "$ref": "#/$defs/TinIdentifier"
+          },
+          "minItems": 1
+        },
+        "indirectTaxRegistrations": {
+          "type": "array",
+          "description": "Array of VAT/GST/PST/HST/salesTax registrations. Used for entity legitimacy checks, source-of-wealth verification, and VIES validation during onboarding.",
+          "items": {
+            "$ref": "#/$defs/IndirectTaxRegistration"
+          },
+          "minItems": 1
+        },
+        "economicSubstance": {
+          "$ref": "#/$defs/EconomicSubstance",
+          "description": "Economic Substance Regulation (ESR) status block. Include for entities registered in BVI, Cayman Islands, UAE, Jersey, Guernsey, Isle of Man, or any other jurisdiction with an active ESR regime."
+        },
+        "pillarTwo": {
+          "$ref": "#/$defs/PillarTwo",
+          "description": "OECD Pillar 2 GloBE classification block. Include for MNE constituent entities with consolidated group revenue at or approaching EUR 750 million."
+        },
+        "crsTaxResidencies": {
+          "type": "array",
+          "description": "Enhanced OECD CRS per-residency data array (v1.9.1). Supports multi-jurisdiction CRS self-certification, TIN validation metadata, and controlling-person flags. Supersedes the flat tinIdentifiers[] pattern for CRS-specific AEOI reporting flows. Maps directly to OECD CRS XML Schema v2.0 AccountHolder/ControllingPerson TIN elements.",
+          "items": {
+            "$ref": "#/$defs/CrsTaxResidency"
+          },
+          "minItems": 1
+        },
+        "fatcaStatus": {
+          "$ref": "#/$defs/FatcaStatus",
+          "description": "US FATCA Chapter 4 first-class status block (v1.9.1). Carries GIIN (IRS FFI List identifier), Chapter 4 entity classification, US TIN requirement flag, IRS Notice 2024-78 temporary-relief flag, FFI List verification timestamp, and withholding-agent reference. Satisfies FATCA due-diligence requirements under Treasury Regulations §1.1471-3 and §1.1471-4."
+        }
+      },
+      "additionalProperties": false
+    },
+    "CrsTaxResidency": {
+      "title": "CrsTaxResidency",
+      "description": "An enhanced CRS per-jurisdiction tax-residency entry. Each item in crsTaxResidencies[] captures the full OECD CRS self-certification data for one jurisdiction of tax residency, including TIN value, verification status, self-certification date, and controlling-person designation. Supports multi-jurisdiction AEOI reporting under OECD CRS XML Schema v2.0.",
+      "type": "object",
+      "required": ["jurisdiction"],
+      "properties": {
+        "jurisdiction": {
+          "type": "string",
+          "pattern": "^[A-Z]{2}$",
+          "description": "ISO 3166-1 alpha-2 country code of the jurisdiction of tax residency as declared on the CRS self-certification form."
+        },
+        "tinValue": {
+          "type": "string",
+          "description": "TIN issued by the jurisdiction of tax residency. May be absent if the jurisdiction does not issue TINs or if a reason code applies (see tinVerificationStatus)."
+        },
+        "tinVerificationStatus": {
+          "type": "string",
+          "enum": ["verified", "unverified", "relief-applied", "not-required"],
+          "description": "CRS TIN verification status. 'verified' = TIN validated against the OECD TIN list or national registry. 'unverified' = TIN provided but not yet validated. 'relief-applied' = jurisdiction-specific relief or grace period applies (e.g. new-account exemption). 'not-required' = jurisdiction does not issue TINs (e.g. Bahrain) or the account holder is not a tax resident."
+        },
+        "selfCertificationDate": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 date-time when the CRS self-certification form was signed or most recently confirmed by the account holder."
+        },
+        "controllingPersonFlag": {
+          "type": "boolean",
+          "description": "True if this CRS residency record belongs to a Controlling Person (as defined in OECD CRS Section VIII.D.6) rather than the entity account holder itself. Required for Passive NFE accounts where controlling persons must be separately reported."
+        }
+      },
+      "additionalProperties": false
+    },
+    "FatcaStatus": {
+      "title": "FatcaStatus",
+      "description": "US FATCA Chapter 4 status block. Captures all FATCA-specific entity classification and registration data required for Foreign Financial Institution (FFI) onboarding, IRS FFI List validation, withholding compliance, and AEOI reporting under the US Model 1 IGA framework. GIIN regex validates the 19-character IRS format: XXXXXX.XXXXX.XX.XXX.",
+      "type": "object",
+      "properties": {
+        "giin": {
+          "type": "string",
+          "pattern": "^[0-9A-Z]{6}\\.[0-9A-Z]{5}\\.[0-9A-Z]{2}\\.[0-9A-Z]{3}$",
+          "description": "Global Intermediary Identification Number (GIIN) — the 19-character alphanumeric identifier issued by the IRS upon FATCA registration. Format: XXXXXX.XXXXX.XX.XXX where segments are: (1) 6-char FATCA ID, (2) 5-char GIIN suffix for sponsored/branch entities, (3) 2-char category code (e.g. LE=lead FFI, SL=sponsored direct reporting NFFE), (4) 3-char country code (OECD numeric). Validated against the IRS FFI List (published monthly at https://www.irs.gov/businesses/corporations/fatca-foreign-financial-institution-list)."
+        },
+        "chapter4Classification": {
+          "type": "string",
+          "enum": [
+            "participatingFFI",
+            "registeredDeemedCompliantFFI",
+            "certifiedDeemedCompliantFFI",
+            "sponsoredDirectReportingNFFE",
+            "exemptBeneficialOwner",
+            "nonFinancialNonReportingEntity",
+            "nonParticipatingFFI",
+            "other"
+          ],
+          "description": "FATCA Chapter 4 entity classification under Treasury Regulations §1.1471-5. 'participatingFFI' = FFI that has entered into an FFI Agreement with the IRS. 'registeredDeemedCompliantFFI' = FFI registered on the IRS FATCA portal as deemed-compliant. 'certifiedDeemedCompliantFFI' = FFI that self-certifies deemed-compliant status without IRS registration. 'sponsoredDirectReportingNFFE' = NFFE sponsored by a withholding agent for direct reporting to the IRS. 'exemptBeneficialOwner' = government entity, central bank, retirement fund, or international organisation exempt from FATCA. 'nonFinancialNonReportingEntity' = active NFFE, start-up NFFE, or non-profit NFFE. 'nonParticipatingFFI' = FFI that has not registered and is not deemed-compliant (subject to 30% withholding). 'other' = classification not covered by the above."
+        },
+        "usTinRequired": {
+          "type": "boolean",
+          "description": "True if the entity is required to obtain and provide a US TIN (EIN, SSN, or ITIN) under FATCA or Chapter 3 withholding rules. False for entities that are exempt beneficial owners or non-US persons not otherwise required to provide a US TIN."
+        },
+        "temporaryReliefApplied": {
+          "type": "boolean",
+          "description": "True if IRS Notice 2024-78 temporary relief applies — US TIN collection for pre-existing accounts of Model 1 IGA jurisdictions deferred for 2025–2027. Implementers must set this to false once the relief period expires or the TIN is collected."
+        },
+        "ffiListVerificationTimestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 date-time when the GIIN was last verified against the IRS FATCA FFI List. The IRS updates the FFI List monthly; verifications older than 35 days should be refreshed to ensure the FFI has not been removed or suspended."
+        },
+        "withholdingAgentReference": {
+          "type": "string",
+          "description": "Reference identifier of the withholding agent or sponsoring entity responsible for FATCA reporting on behalf of this entity. Relevant for sponsored entities (sponsored direct reporting NFFEs, sponsored FFIs) and Model 2 IGA entities where a US withholding agent assumes reporting obligations."
+        }
+      },
+      "additionalProperties": false
     }
   },
   "type": "object",
@@ -4004,6 +4331,10 @@
     "pkiEvidence": {
       "$ref": "#/$defs/PkiEvidence",
       "description": "Optional X.509 PKI evidence block. Captures certificate metadata (serial number, Subject/Issuer DNs, validity window, QCStatements, CRL/OCSP endpoints, SHA-256 thumbprint) and ASN.1 OIDs from ETSI EN 319 412 profiles. Satisfies AMLR Art. 22 & 56 PKI evidence requirements and enables predictive AML cert-provenance tracking (issuance/revocation timestamps in riskEvolutionHistory)."
+    },
+    "taxStatus": {
+      "$ref": "#/$defs/TaxStatus",
+      "description": "Optional tax status and identification block (v1.9.0+). Covers OECD CRS/CARF TINs (tinIdentifiers[]), indirect tax registrations (indirectTaxRegistrations[]), Economic Substance Regulations (economicSubstance), OECD Pillar 2 GloBE (pillarTwo), enhanced CRS per-residency data (crsTaxResidencies[], v1.9.1), and FATCA Chapter 4 first-class fields including GIIN and entity classification (fatcaStatus, v1.9.1). All sub-properties optional; zero breaking changes for v1.8.0 or v1.9.0 payloads."
     }
   },
   "anyOf": [

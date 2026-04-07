@@ -378,4 +378,73 @@ _✅ = full field mapping. ⬜ = explicitly out of scope. ⭐ = added in v1.8.0.
 
 ---
 
-*Last updated: v1.8.0 — April 2026. Maintained by the OpenKYCAML Technical Working Group.*
+## 18. Tax Status — TIN / OECD CRS / CARF / FATCA (v1.9.0+)
+
+> Full mapping in [tax-status-oecd-esr-pillar2.md](../mappings/tax-status-oecd-esr-pillar2.md), [tax-status-oecd-esr-pillar2.yaml](../mappings/tax-status-oecd-esr-pillar2.yaml), [fatca-crs.md](../mappings/fatca-crs.md), and [fatca-crs.yaml](../mappings/fatca-crs.yaml).
+
+| Standard / Provision | Coverage | OpenKYCAML v1.9.1 Field(s) |
+|---|---|---|
+| **OECD CRS TIN** — account holder TIN (per OECD CRS §IV.C) | ✅ ⭐ | `taxStatus.tinIdentifiers[tinType=TIN].tinValue` |
+| **OECD CRS multi-residency** — enhanced per-jurisdiction CRS data | ✅ ⭐⭐ | `taxStatus.crsTaxResidencies[]` (jurisdiction + tinValue + tinVerificationStatus + selfCertificationDate) |
+| **OECD CRS controlling persons (Passive NFE)** | ✅ ⭐⭐ | `taxStatus.crsTaxResidencies[controllingPersonFlag=true]` |
+| **OECD CRS TIN reason codes A/B/C** | ✅ ⭐⭐ | `taxStatus.crsTaxResidencies[].tinVerificationStatus` (not-required / unverified / relief-applied) |
+| **OECD CARF TIN** — crypto-asset user identifier | ✅ ⭐ | `taxStatus.tinIdentifiers[].tinValue` + `tinType` |
+| **FATCA GIIN** — IRS FFI List identifier (19-char, regex-validated) | ✅ ⭐⭐ | `taxStatus.fatcaStatus.giin` |
+| **FATCA Chapter 4 classification** — participatingFFI, RDCFFI, exemptBeneficialOwner, etc. | ✅ ⭐⭐ | `taxStatus.fatcaStatus.chapter4Classification` |
+| **FATCA US TIN required flag** | ✅ ⭐⭐ | `taxStatus.fatcaStatus.usTinRequired` |
+| **FATCA IRS Notice 2024-78 temporary relief** (2025–2027 deferral) | ✅ ⭐⭐ | `taxStatus.fatcaStatus.temporaryReliefApplied` |
+| **FATCA FFI List verification timestamp** — monthly refresh | ✅ ⭐⭐ | `taxStatus.fatcaStatus.ffiListVerificationTimestamp` |
+| **FATCA withholding agent / sponsored entity reference** | ✅ ⭐⭐ | `taxStatus.fatcaStatus.withholdingAgentReference` |
+| **FATCA EIN** — US Employer Identification Number | ✅ ⭐ | `taxStatus.tinIdentifiers[tinType=EIN].tinValue` |
+| **TIN functional equivalent** — UK UTR, Chile RUT, AU TFN, etc. | ✅ ⭐ | `taxStatus.tinIdentifiers[tinType=functionalEquivalent]` |
+| **FATCA/CRS XML Schema v2.0 export** — entire taxStatus as AEOI payload | ✅ ⭐⭐ | `taxStatus` root block |
+| **IVMS 101 TXID migration** — structured replacement for TXID | ✅ ⭐ | `taxStatus.tinIdentifiers[0]` ↔ `nationalIdentification.TXID` |
+| **AMLR Art. 22 tax-residency verification** | ✅ ⭐ | `taxStatus.tinIdentifiers[]` + `crsTaxResidencies[]` + `verificationSource` |
+
+_✅ = full field mapping. ⭐ = added in v1.9.0. ⭐⭐ = added in v1.9.1._
+
+---
+
+## 19. Economic Substance Regulations — ESR (v1.9.0)
+
+> ESR regimes: BVI (VIBES Act 2019), Cayman Islands (ES Law 2018), UAE (ESR 2019), Jersey (ES (Jersey) Law 2019), Guernsey (ES Regulations 2018), Isle of Man (IOM ES Act 2018/2019 amendments).
+
+| Standard / Provision | Coverage | OpenKYCAML v1.9.0 Field(s) |
+|---|---|---|
+| **ESR jurisdiction classification** — in-scope / exempt / compliant | ✅ ⭐ | `taxStatus.economicSubstance.status` (5-value enum) |
+| **Relevant activities** — holding, IP, banking, fund management, etc. | ✅ ⭐ | `taxStatus.economicSubstance.relevantActivities[]` |
+| **CIGAs performed** — core income generating activities in jurisdiction | ✅ ⭐ | `taxStatus.economicSubstance.coreIncomeGeneratingActivitiesPerformed` |
+| **Annual notification date** | ✅ ⭐ | `taxStatus.economicSubstance.lastNotificationDate` |
+| **Annual report reference** — filing reference / acknowledgment | ✅ ⭐ | `taxStatus.economicSubstance.lastReportReference` |
+| **ESR jurisdiction code** (BVI=VG, Cayman=KY, UAE=AE, Jersey=JE) | ✅ ⭐ | `taxStatus.economicSubstance.jurisdiction` (ISO 3166-1 alpha-2) |
+| **Shell-company red flag** — nonCompliant ESR status | ✅ ⭐ | `taxStatus.economicSubstance.status = "nonCompliant"` → validator warning → EDD |
+| **AMLR Art. 26** — legal entity establishment verification | ✅ ⭐ | `taxStatus.economicSubstance` combined with `identityDocuments.legalEntityDocuments[]` |
+| **FATF Rec. 24** — transparency of legal persons (shell company risk) | ✅ ⭐ | `taxStatus.economicSubstance.status` + `relevantActivities[]` |
+
+_✅ = full field mapping. ⭐ = added in v1.9.0._
+
+---
+
+## 20. OECD Pillar 2 GloBE — BEPS 2.0 (v1.9.0)
+
+> Governing instruments: OECD/G20 Inclusive Framework GloBE Model Rules (December 2021); OECD GloBE Commentary (March 2022); EU Pillar 2 Directive (2022/2523); OECD Agreed Administrative Guidance (2023–2025); GloBE Information Return XML Schema (2024).
+
+| Standard / Provision | Coverage | OpenKYCAML v1.9.0 Field(s) |
+|---|---|---|
+| **In-scope MNE flag** — group revenue >= EUR 750 m threshold | ✅ ⭐ | `taxStatus.pillarTwo.inScopeMNE` |
+| **Consolidated group revenue (EUR)** — GloBE Art. 1.1 threshold test | ✅ ⭐ | `taxStatus.pillarTwo.consolidatedRevenueEUR` |
+| **Constituent entity status** — inScope / excluded / QDMTT | ✅ ⭐ | `taxStatus.pillarTwo.constituentEntityStatus` |
+| **ETR per jurisdiction** — effective tax rate array | ✅ ⭐ | `taxStatus.pillarTwo.etrJurisdictions[]` (`{jurisdiction, etr}`) |
+| **GloBE minimum rate (15%)** — ETR < 0.15 triggers top-up tax | ✅ ⭐ | `taxStatus.pillarTwo.etrJurisdictions[].etr` — validator flags ETR < 0.15 |
+| **Safe harbour election** — Simplified ETR / Substance-Based / De Minimis | ✅ ⭐ | `taxStatus.pillarTwo.safeHarbourApplied` |
+| **GIR filing reference** — GloBE Information Return reference | ✅ ⭐ | `taxStatus.pillarTwo.girFilingReference` |
+| **GIR filing date** | ✅ ⭐ | `taxStatus.pillarTwo.lastGIRDate` |
+| **GIR missing warning** — inScopeMNE=true but girFilingReference absent | ✅ ⭐ | Validator business warning (Python + JS + Go) |
+| **BEPS / profit-shifting predictive AML linkage** | ✅ ⭐ | `taxStatus.pillarTwo.etrJurisdictions[]` → `predictiveAML.predictiveScores` BEPS risk flag |
+| **QDMTT** — Qualified Domestic Minimum Top-up Tax | ✅ ⭐ | `taxStatus.pillarTwo.constituentEntityStatus = "QDMTT"` |
+
+_✅ = full field mapping. ⭐ = added in v1.9.0._
+
+---
+
+*Last updated: v1.9.0 — April 2026. Maintained by the OpenKYCAML Technical Working Group.*
