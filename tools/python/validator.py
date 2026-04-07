@@ -238,7 +238,7 @@ class OpenKYCAMLValidator:
         if predictive:
             model_meta = predictive.get("modelMetadata", {})
             eu_class = model_meta.get("euAiActClassification")
-            if eu_class == "high-risk-aml" and not model_meta.get("conformityAssessmentReference"):
+            if eu_class == "high-risk-aml" and not model_meta.get("conformityAssessmentReference", "").strip():
                 warns.append(
                     "predictiveAML.modelMetadata.conformityAssessmentReference is missing — "
                     "required for EU AI Act Art. 43 conformity assessment when "

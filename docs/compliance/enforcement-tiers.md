@@ -241,8 +241,6 @@ All three tiers satisfy the same regulatory requirements — FATF Recommendation
 
 ---
 
----
-
 ## Part 2: Regulatory Compliance Tiers — Field Enforcement by Obliged Entity Type
 
 The following tiers define which OpenKYCAML fields are mandatory, strongly recommended, or optional for different obliged entity types and regulatory regimes. They complement the three-tier blockchain enforcement model above and support AMLR 2027 compliance programme gap analysis.

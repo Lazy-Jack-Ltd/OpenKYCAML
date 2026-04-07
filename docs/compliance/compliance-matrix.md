@@ -322,10 +322,6 @@ See [wolfsberg-fccq-cbddq.md](../mappings/wolfsberg-fccq-cbddq.md) for the full 
 
 ---
 
-_✅ = full field mapping. 🔄 = conceptual equivalent (see [mapping-xrpl-credentials-mpt.md](../mappings/mapping-xrpl-credentials-mpt.md)). ℹ️ = out of scope. ⭐ = schema extended._
-
----
-
 ## 16. Bitcoin and Lightning Network (Service-Layer Enforcement)
 
 > Bitcoin has no protocol-level compliance framework comparable to ERC-3643 or XRPL's credential system. Compliance on Bitcoin and Lightning is enforced entirely at the service layer. The full mapping is in [mapping-bitcoin-lightning.md](../mappings/mapping-bitcoin-lightning.md).

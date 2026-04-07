@@ -10,7 +10,7 @@ info:
     - Schema and predictive scoring validation
     - Wolfsberg CBDDQ import/export
 
-    **Regulatory alignment:** AMLR 2027, FATF R.10/16/24/25, EU AI Act Art. 13, BCBS 239, FinCEN 314(a)/(b)
+    **Regulatory alignment:** AMLR 2027, FATF R.10/16/24/25, EU AI Act Art. 13, BCBS 239, USA PATRIOT Act Section 314(a)/(b) (31 CFR 1010.520/540)
   contact:
     name: OpenKYCAML Core Maintainers
     url: https://github.com/Lazy-Jack-Ltd/OpenKYCAML

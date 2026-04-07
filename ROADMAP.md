@@ -22,7 +22,7 @@ This document is the **authoritative project roadmap** covering schema features,
 - **OpenAPI 3.1 specification** — `api/openkycaml-v1.7.0.yaml` with 5 endpoints.
 - **Wolfsberg CBDDQ importer tool** — `tools/wolfsberg-importer/wolfsberg_importer.py`.
 - **3 predictiveAML examples** — `examples/predictive/` (static, delta, AI-high-risk).
-- Standalone predictiveAML schema — `schema/predictive-aml/v1.6.0.json`.
+- Standalone predictiveAML schema — `schema/predictive-aml/v1.7.0.json`.
 
 **Previous release highlights (v1.1.0–v1.6.0):**
 - Full IVMS 101 v1.0 payload support (backward-compatible superset).

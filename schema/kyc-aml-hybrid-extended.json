@@ -3788,7 +3788,7 @@
     },
     "InformationSharingFlags": {
       "title": "InformationSharingFlags",
-      "description": "US FinCEN Section 314(a) and 314(b) information sharing flags. Section 314(a) supports mandatory law-enforcement information requests; Section 314(b) enables voluntary institution-to-institution sharing with safe-harbor protection.",
+      "description": "USA PATRIOT Act Section 314(a) (31 CFR 1010.520) and Section 314(b) (31 CFR 1010.540) information sharing flags. Section 314(a) supports mandatory law-enforcement information requests; Section 314(b) enables voluntary institution-to-institution sharing with safe-harbor protection.",
       "type": "object",
       "properties": {
         "section314aRequestId": {
@@ -3869,7 +3869,7 @@
     },
     "informationSharingFlags": {
       "$ref": "#/$defs/InformationSharingFlags",
-      "description": "US FinCEN Section 314(a)/(b) information sharing flags. Optional; include only when a 314(a) request or 314(b) safe-harbor sharing event applies."
+      "description": "USA PATRIOT Act Section 314(a)/(b) (31 CFR 1010.520/540) information sharing flags. Optional; include only when a 314(a) request or 314(b) safe-harbor sharing event applies."
     }
   },
   "anyOf": [
