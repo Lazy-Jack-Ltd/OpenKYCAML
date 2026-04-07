@@ -1,6 +1,6 @@
 # Pydantic Model Documentation
 
-This document describes the Pydantic v2 models in [`tools/python/models.py`](../../tools/python/models.py). These models provide typed Python representations of the OpenKYCAML v1.3.0 schema, along with VC issuance and EUDI Wallet delivery helpers.
+This document describes the Pydantic v2 models in [`tools/python/models.py`](../../tools/python/models.py). These models provide typed Python representations of the OpenKYCAML v1.7.0 schema, along with VC issuance and EUDI Wallet delivery helpers.
 
 > **Requirements:** Python ≥ 3.10, Pydantic v2. Install with:
 > ```bash
@@ -201,6 +201,18 @@ class KYCProfileModel(BaseModel):
 | `onboardingChannel` | `None` | Channel used for onboarding (e.g. `EUDI_WALLET`, `VIDEO_KYC`, `IN_PERSON`). |
 | `kycCompletionDate` | `None` | Date KYC was completed. |
 | `auditMetadata` | auto | Audit trail metadata (auto-populated). |
+
+> **v1.4.0–v1.7.0 additions:** The JSON Schema `KYCProfile` definition has grown since v1.3.0. The following fields are accepted by the schema validator but are not yet modelled as typed Pydantic fields in `models.py` — pass them via `model_config = {"extra": "allow"}` or as keyword arguments:
+>
+> | Field | Version | Type | Description |
+> |---|---|---|---|
+> | `riskRatingDetail` | v1.x | `str` | Narrative risk rating explanation. |
+> | `customerClassification` | v1.x | `str` | Customer segment (RETAIL/PROFESSIONAL/INSTITUTIONAL). |
+> | `isEligible` | v1.2.0 | `bool` | ERC-3643 / XRPL compliance eligibility gate. |
+> | `eligibilityLastConfirmed` | v1.2.0 | `str` | ISO 8601 timestamp of last eligibility check. |
+> | `dueDiligenceRequirements` | v1.2.0 | `dict` | AMLA RTS CDD tier requirements. |
+> | `thirdPartyCDDReliance` | v1.2.0 | `dict` | Third-party CDD reliance record. |
+> | `blockchainAccountIds` | v1.3.0+ | `list[dict]` | Blockchain wallet entries (XRPL, Ethereum, Bitcoin/Lightning). See [TypeScript types](typescript-types.md#4-kyc-profile-types) for the full `BlockchainAccountId` structure. |
 
 ---
 
@@ -591,4 +603,4 @@ print(response)  # {"credential_ids": ["urn:uuid:..."]}
 
 ---
 
-*Pydantic models documented from [`tools/python/models.py`](../../tools/python/models.py) (OpenKYCAML v1.3.0). Last updated: v1.3.0.*
+*Pydantic models documented from [`tools/python/models.py`](../../tools/python/models.py) (OpenKYCAML v1.7.0). Last updated: v1.7.0.*

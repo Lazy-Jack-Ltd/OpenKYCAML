@@ -7,7 +7,7 @@
   "$defs": {
     "NaturalPersonNameIdentifier": {
       "title": "NaturalPersonNameIdentifier",
-      "description": "Structured name components for a natural person (IVMS 101 \u00a73.2).",
+      "description": "Structured name components for a natural person (IVMS 101 §3.2).",
       "type": "object",
       "required": [
         "primaryIdentifier",
@@ -39,7 +39,7 @@
     },
     "Address": {
       "title": "Address",
-      "description": "Structured postal address (IVMS 101 \u00a73.5).",
+      "description": "Structured postal address (IVMS 101 §3.5).",
       "type": "object",
       "required": [
         "country"
@@ -124,7 +124,7 @@
     },
     "NationalIdentification": {
       "title": "NationalIdentification",
-      "description": "National identification document (IVMS 101 \u00a73.6).",
+      "description": "National identification document (IVMS 101 §3.6).",
       "type": "object",
       "required": [
         "nationalIdentifier",
@@ -176,7 +176,7 @@
     },
     "DateAndPlaceOfBirth": {
       "title": "DateAndPlaceOfBirth",
-      "description": "Birth information for a natural person (IVMS 101 \u00a73.3).",
+      "description": "Birth information for a natural person (IVMS 101 §3.3).",
       "type": "object",
       "required": [
         "dateOfBirth",
@@ -190,7 +190,7 @@
         },
         "placeOfBirth": {
           "type": "string",
-          "description": "City or municipality of birth. Maps to eIDAS 2.0 PID attribute 'birth_place' (optional in eIDAS; required by IVMS 101 \u00a73.3).",
+          "description": "City or municipality of birth. Maps to eIDAS 2.0 PID attribute 'birth_place' (optional in eIDAS; required by IVMS 101 §3.3).",
           "maxLength": 70
         }
       }
@@ -267,7 +267,7 @@
     },
     "LegalPersonNameIdentifier": {
       "title": "LegalPersonNameIdentifier",
-      "description": "Structured name identifier for a legal person (IVMS 101 \u00a73.8).",
+      "description": "Structured name identifier for a legal person (IVMS 101 §3.8).",
       "type": "object",
       "required": [
         "legalPersonName",
@@ -340,7 +340,7 @@
         },
         "mandates": {
           "type": "array",
-          "description": "Representation and mandate records \u2014 natural persons authorised to act on behalf of the legal entity. Supports AMLR authorised representative and beneficial owner verification. May be conveyed as QEAAs in EUDI Wallet flows.",
+          "description": "Representation and mandate records — natural persons authorised to act on behalf of the legal entity. Supports AMLR authorised representative and beneficial owner verification. May be conveyed as QEAAs in EUDI Wallet flows.",
           "items": {
             "type": "object",
             "required": [
@@ -435,7 +435,7 @@
         },
         "lpid": {
           "$ref": "#/$defs/LegalPersonIdentificationData",
-          "description": "Optional eIDAS 2.0 Legal Person Identification Data (LPID) block. Carries LPID-specific attributes (current legal name, unique identifier, VAT, EORI, LEI, mandates) for EUDI Wallet and AMLR high-assurance CDD flows. Backward-compatible \u2014 omit for pure IVMS 101 usage."
+          "description": "Optional eIDAS 2.0 Legal Person Identification Data (LPID) block. Carries LPID-specific attributes (current legal name, unique identifier, VAT, EORI, LEI, mandates) for EUDI Wallet and AMLR high-assurance CDD flows. Backward-compatible — omit for pure IVMS 101 usage."
         },
         "legalFormCode": {
           "type": "string",
@@ -851,7 +851,7 @@
     },
     "Originator": {
       "title": "Originator",
-      "description": "IVMS 101 originator \u2014 the sending party in a virtual asset transfer.",
+      "description": "IVMS 101 originator — the sending party in a virtual asset transfer.",
       "type": "object",
       "required": [
         "originatorPersons"
@@ -896,7 +896,7 @@
     },
     "Beneficiary": {
       "title": "Beneficiary",
-      "description": "IVMS 101 beneficiary \u2014 the receiving party in a virtual asset transfer.",
+      "description": "IVMS 101 beneficiary — the receiving party in a virtual asset transfer.",
       "type": "object",
       "required": [
         "beneficiaryPersons"
@@ -941,7 +941,7 @@
     },
     "VASP": {
       "title": "VASP",
-      "description": "Virtual Asset Service Provider identifier (IVMS 101 \u00a73.14).",
+      "description": "Virtual Asset Service Provider identifier (IVMS 101 §3.14).",
       "type": "object",
       "properties": {
         "name": {
@@ -991,7 +991,7 @@
           "items": {
             "$ref": "#/$defs/VASP"
           },
-          "description": "Ordered list of intermediate VASPs in the transfer chain (IVMS 101 \u00a73.15)."
+          "description": "Ordered list of intermediate VASPs in the transfer chain (IVMS 101 §3.15)."
         },
         "payloadMetadata": {
           "type": "object",
@@ -1091,7 +1091,7 @@
     },
     "VerifiableCredentialWrapper": {
       "title": "VerifiableCredentialWrapper",
-      "description": "Optional W3C Verifiable Credential envelope conforming to W3C VC Data Model v1.1 (v2-compatible structure) and eIDAS 2.0 ARF \u00a76.3. When present, the IVMS101 payload and kycProfile are transported as credentialSubject. Note: the @context[0] uses the W3C VC DM v1.1 URL; migration to the v2 URL is planned for v2.0.0.",
+      "description": "Optional W3C Verifiable Credential envelope conforming to W3C VC Data Model v1.1 (v2-compatible structure) and eIDAS 2.0 ARF §6.3. When present, the IVMS101 payload and kycProfile are transported as credentialSubject. Note: the @context[0] uses the W3C VC DM v1.1 URL; migration to the v2 URL is planned for v2.0.0.",
       "type": "object",
       "required": [
         "@context",
@@ -1237,7 +1237,7 @@
         },
         "evidence": {
           "type": "array",
-          "description": "W3C VC \u00a76.4 evidence block. Used in EUDI Wallet flows to reference the source credential(s) \u2014 typically a PID or LPID \u2014 that were presented by the subject and from which the IVMS 101 / kycProfile data was derived. Enables triangulation of the identity chain: PID Issuer \u2192 Subject Wallet \u2192 VASP.",
+          "description": "W3C VC §6.4 evidence block. Used in EUDI Wallet flows to reference the source credential(s) — typically a PID or LPID — that were presented by the subject and from which the IVMS 101 / kycProfile data was derived. Enables triangulation of the identity chain: PID Issuer → Subject Wallet → VASP.",
           "items": {
             "type": "object",
             "required": [
@@ -1306,7 +1306,7 @@
         },
         "selectiveDisclosure": {
           "type": "object",
-          "description": "SD-JWT VC selective disclosure metadata (IETF draft-ietf-oauth-sd-jwt-vc / ARF \u00a76.3.4). Present when this credential is issued or presented as an SD-JWT VC.",
+          "description": "SD-JWT VC selective disclosure metadata (IETF draft-ietf-oauth-sd-jwt-vc / ARF §6.3.4). Present when this credential is issued or presented as an SD-JWT VC.",
           "properties": {
             "_sd_alg": {
               "type": "string",
@@ -1325,7 +1325,7 @@
             },
             "requiredClaimPaths": {
               "type": "array",
-              "description": "JSON Pointer paths always revealed \u2014 never withheld. Includes FATF Travel Rule mandatory fields.",
+              "description": "JSON Pointer paths always revealed — never withheld. Includes FATF Travel Rule mandatory fields.",
               "items": {
                 "type": "string"
               }
@@ -1342,7 +1342,7 @@
                 "properties": {
                   "salt": {
                     "type": "string",
-                    "description": "Random salt value (base64url, \u2265128 bits entropy)."
+                    "description": "Random salt value (base64url, ≥128 bits entropy)."
                   },
                   "claimName": {
                     "type": "string",
@@ -1380,7 +1380,7 @@
         },
         "pepCategory": {
           "type": "string",
-          "description": "PEP classification category aligned to the AMLA draft RTS taxonomy (AMLR Art. 28\u201331). Primary values: DOMESTIC_PEP, FOREIGN_PEP, INTERNATIONAL_ORGANISATION, FAMILY_MEMBER_OF_PEP, CLOSE_ASSOCIATE_OF_PEP, FORMER_PEP, NOT_PEP. Legacy aliases INTERNATIONAL_ORG_PEP and RCA are retained for backward compatibility.",
+          "description": "PEP classification category aligned to the AMLA draft RTS taxonomy (AMLR Art. 28–31). Primary values: DOMESTIC_PEP, FOREIGN_PEP, INTERNATIONAL_ORGANISATION, FAMILY_MEMBER_OF_PEP, CLOSE_ASSOCIATE_OF_PEP, FORMER_PEP, NOT_PEP. Legacy aliases INTERNATIONAL_ORG_PEP and RCA are retained for backward compatibility.",
           "enum": [
             "DOMESTIC_PEP",
             "FOREIGN_PEP",
@@ -1733,7 +1733,7 @@
         },
         "naturalPerson": {
           "$ref": "#/$defs/NaturalPerson",
-          "description": "The beneficial owner as a natural person. Legacy field \u2014 use 'person' when natural or legal person support is needed. Do not use alongside 'person'."
+          "description": "The beneficial owner as a natural person. Legacy field — use 'person' when natural or legal person support is needed. Do not use alongside 'person'."
         },
         "ownershipPercentage": {
           "type": "number",
@@ -2183,7 +2183,7 @@
               },
               "ruleName": {
                 "type": "string",
-                "description": "Human-readable name of the rule (e.g., 'Velocity \u2013 7-day rolling window').",
+                "description": "Human-readable name of the rule (e.g., 'Velocity – 7-day rolling window').",
                 "maxLength": 200
               },
               "ruleCategory": {
@@ -2621,7 +2621,7 @@
               "type": "integer",
               "minimum": 0,
               "maximum": 1000,
-              "description": "Numeric risk score (0\u20131000)."
+              "description": "Numeric risk score (0–1000)."
             },
             "riskRatingDate": {
               "type": "string",
@@ -2882,7 +2882,7 @@
               },
               "xrplCredentialType": {
                 "type": "string",
-                "description": "XRPL on-ledger credential type associated with this wallet, stored as a hexadecimal string (1\u201364 bytes, 2\u2013128 hex characters, case-insensitive). Mirrors the `CredentialType` field of an XRPL `Credential` ledger object (XLS-40d). Enables round-trip reconstruction of the on-ledger XRPL credential without relying on external state. The decoded human-readable equivalent is captured in `verifiableCredential.type[]`. Examples: '4b594343726564656e7469616c' (KYCCredential), '4f70656e4b5943414d4c43726564656e7469616c' (OpenKYCAMLCredential).",
+                "description": "XRPL on-ledger credential type associated with this wallet, stored as a hexadecimal string (1–64 bytes, 2–128 hex characters, case-insensitive). Mirrors the `CredentialType` field of an XRPL `Credential` ledger object (XLS-70). Enables round-trip reconstruction of the on-ledger XRPL credential without relying on external state. The decoded human-readable equivalent is captured in `verifiableCredential.type[]`. Examples: '4b594343726564656e7469616c' (KYCCredential), '4f70656e4b5943414d4c43726564656e7469616c' (OpenKYCAMLCredential).",
                 "pattern": "^[0-9a-fA-F]{2,128}$",
                 "maxLength": 128
               },
@@ -2893,104 +2893,96 @@
               },
               "xrplPermissionedDomainId": {
                 "type": "string",
-                "description": "XRPL Permissioned Domain ledger object ID (XLS-80d). A 64-character hexadecimal identifier (256-bit Hash) referencing a PermissionedDomain object on the XRP Ledger that governs which credential types are required to transact within this domain. Enables account-level KYC gating where only wallets with verified credentials matching the domain's accepted credential set may participate.",
-                "pattern": "^[0-9A-Fa-f]{64}$"
+                "description": "XRPL Permissioned Domain identifier (Hash256) that this wallet is registered or authorised within (XLS-80). Permissioned Domains are controlled environments on the XRP Ledger used to restrict access to Permissioned DEXes, lending protocols, and other compliance-gated services. The domain owner defines which credential types are required for membership. This field links the investor's wallet to the specific on-ledger domain gate, enabling a VASP or asset manager to confirm that the holder satisfies domain-level access controls. Pattern: exactly 64 hex characters (32 bytes, case-insensitive).",
+                "pattern": "^[0-9a-fA-F]{64}$"
               },
               "xrplAuthorizedCredentialTypes": {
                 "type": "array",
-                "description": "List of XRPL credential type authorisations accepted by this wallet's permissioned domain (XLS-80d). Each entry captures the issuer account and credential type that must be presented by counterparties. Mirrors the AcceptedCredentials array in a PermissionedDomain ledger object.",
+                "description": "Array of XRPL credential type hex strings that have been accepted and authorised within the Permissioned Domain identified by `xrplPermissionedDomainId` (XLS-80). Each entry follows the same hex-encoding convention as `xrplCredentialType` (1–64 bytes, 2–128 hex characters). A domain may require holders to satisfy multiple credential types simultaneously (e.g. KYC + AML + AccreditedInvestor) before gaining access. This field records which credential types the issuer has confirmed are satisfied for this wallet in this domain.",
                 "items": {
-                  "type": "object",
-                  "required": [
-                    "issuerAccount",
-                    "credentialType"
-                  ],
-                  "properties": {
-                    "issuerAccount": {
-                      "type": "string",
-                      "description": "XRPL classic address (rAddress) of the credential issuer authorised within this domain.",
-                      "pattern": "^r[1-9A-HJ-NP-Za-km-z]{24,33}$"
-                    },
-                    "credentialType": {
-                      "type": "string",
-                      "description": "Credential type hex string (1\u201364 bytes, 2\u2013128 hex characters) required by the domain for this issuer. Case-insensitive. Must match a CredentialType in an accepted credential.",
-                      "pattern": "^[0-9a-fA-F]{2,128}$",
-                      "maxLength": 128
-                    }
-                  }
+                  "type": "string",
+                  "pattern": "^[0-9a-fA-F]{2,128}$",
+                  "maxLength": 128
                 }
               },
               "xrplConfidentialTransfer": {
                 "type": "object",
-                "description": "XRPL Confidential Transactions metadata (XLS-96d). Captures compliance-relevant properties of a confidential transfer involving this wallet. Confidential transactions use Pedersen commitments and range proofs to hide transfer amounts while retaining on-chain auditability with authorised key disclosure.",
+                "description": "Configuration record for XLS-96 Confidential Transfers applied to the MPT issuance associated with this wallet. XLS-96 encrypts MPT balances and transfer amounts using EC-ElGamal combined with Zero-Knowledge Proofs, so that validators can enforce supply limits and prevent double-spends without seeing actual amounts. Issuers and designated auditors hold decryption keys for selective disclosure; regulators receive visibility only when legally required. This object carries the public-key material and scheme identifier needed to support selective disclosure to authorised parties.",
+                "required": [
+                  "enabled"
+                ],
                 "properties": {
                   "enabled": {
                     "type": "boolean",
-                    "description": "Whether confidential transfer capability is enabled on this wallet/account."
+                    "description": "Whether the MPT issuance associated with this wallet uses XLS-96 confidential transfers. When true, on-ledger balances and transfer amounts are encrypted; the remaining fields in this object carry the selective disclosure key material."
                   },
-                  "authorisedViewingKeys": {
-                    "type": "array",
-                    "description": "Public keys of parties (e.g. regulatory authorities, compliance officers) authorised to decrypt confidential transfer amounts for this wallet. Required for AMLR Art. 21 and FATF Travel Rule compliance when confidential transfers are used.",
-                    "items": {
-                      "type": "string"
-                    }
-                  },
-                  "regulatoryDisclosureRef": {
+                  "encryptionScheme": {
                     "type": "string",
-                    "description": "Reference to the regulatory disclosure arrangement under which viewing key access has been granted (e.g. a court order reference, supervisory authority authorisation ID, or contract URI)."
+                    "description": "Encryption scheme used for confidential transfers. 'EC_ELGAMAL' is the XLS-96 scheme (EC-ElGamal + ZKP). Additional schemes may be defined as the standard evolves.",
+                    "enum": [
+                      "EC_ELGAMAL"
+                    ]
+                  },
+                  "auditorPublicKey": {
+                    "type": "string",
+                    "description": "EC public key of the designated auditor who holds a decryption key for selective disclosure of encrypted MPT balances and transfer amounts. Encoded as a compressed public key in hexadecimal (66 hex characters = 33 bytes for secp256k1/Ed25519) or base58. Required when enabled is true and an auditor has been designated.",
+                    "maxLength": 256
+                  },
+                  "regulatorPublicKey": {
+                    "type": "string",
+                    "description": "EC public key of the designated regulator who may receive selective disclosure of encrypted balances when legally required. Optional — only populated when a specific regulatory authority has been assigned decryption rights for this issuance. Same encoding as auditorPublicKey.",
+                    "maxLength": 256
                   }
                 }
               },
-              "xrplFreezeType": {
-                "type": "string",
-                "enum": [
-                  "global-freeze",
-                  "individual-freeze",
-                  "no-freeze"
-                ],
-                "description": "XRPL freeze state for this wallet/token relationship (XLS-77d / existing XRPL freeze mechanism). 'global-freeze' = issuer has frozen all balances of this token; 'individual-freeze' = this specific wallet is frozen by the token issuer; 'no-freeze' = issuer has permanently renounced freeze rights (lsfNoFreeze flag set). Maps to AMLR Art. 24 targeted financial sanctions enforcement."
-              },
-              "xrplClawbackEnabled": {
-                "type": "boolean",
-                "description": "Whether the XRPL token issuer has enabled clawback capability for this asset (lsfAllowTrustLineClawback / MPT clawback flag). When true, the issuer may reclaim tokens from this holder under regulatory directive (e.g. sanctions enforcement, AML seizure). Maps to AMLR Art. 24 and FinCEN enforcement powers."
-              },
               "mptFlags": {
                 "type": "integer",
+                "description": "Bitmask of MPTIssuance flags from the XLS-33d Multi-Purpose Token standard, reflecting the compliance configuration of the token issuance. Key flag values: lsfMPTCanLock (0x0002) — individual holder balances can be frozen; lsfMPTRequireAuth (0x0004) — holders must be individually authorised (KYC gate); lsfMPTCanEscrow (0x0008) — tokens can be placed in escrow; lsfMPTCanTrade (0x0010) — tokens are tradeable on DEX; lsfMPTCanTransfer (0x0020) — tokens can transfer between non-issuer accounts; lsfMPTCanClawback (0x0040) — issuer can claw back tokens. Recording the flags enables downstream systems to derive the applicable compliance enforcement model without querying the ledger.",
                 "minimum": 0,
-                "description": "Bitfield of MPT (Multi-Purpose Token) flags for this wallet's token relationship (XLS-33d). Combines lsfMPTAuthorized (0x0002), lsfMPTLocked (0x0004), and other per-holder flags from the MPToken ledger object. Supports compliance gating (holder must be authorized) and sanctions enforcement (holder lock)."
+                "maximum": 4294967295
               },
               "mptMetadata": {
                 "type": "string",
-                "description": "MPT issuance metadata URI reference (XLS-33d MPTokenIssuanceCreate Metadata field). Hexadecimal string (up to 1024 bytes / 2048 hex chars) pointing to off-chain token metadata. May reference an OpenKYCAML payload URI, a GLEIF LEI record, or a regulatory prospectus.",
-                "pattern": "^[0-9a-fA-F]*$",
+                "description": "Issuer-defined metadata embedded in the MPTIssuance object (XLS-33d `MPTokenMetadata` field, up to 1024 bytes). Typically carries a URI to the token's prospectus or term sheet, an ISIN, asset class, or a JSON-LD token descriptor that embeds compliance rules directly in the token at the protocol level. May be hex-encoded bytes or a UTF-8 URI string. Mirrors the 'compliance rules in token' pattern described in the Multi-Purpose Token standard for institutional RWA issuance.",
                 "maxLength": 2048
               },
               "mptTransferFee": {
                 "type": "integer",
+                "description": "Transfer fee configured on the MPT issuance, in units of 1/1,000,000 (millionths). For example, a value of 1000 represents a 0.1% transfer fee. Mirrors the `TransferFee` field on the `MPTIssuance` ledger object (XLS-33d). Range: 0 (no fee) to 50000 (5%). Recording this field enables fee-aware compliance calculations in off-chain systems.",
                 "minimum": 0,
-                "maximum": 50000,
-                "description": "MPT transfer fee in millionths (XLS-33d TransferFee). Range 0\u201350000 = 0%\u201350%. A non-zero value indicates the issuer retains a compliance fee on each transfer, which may be relevant to AML typology analysis (fee-based layering detection)."
+                "maximum": 50000
+              },
+              "xrplFreezeType": {
+                "type": "string",
+                "description": "XRPL freeze type applied to this wallet or its token holdings, providing more granular freeze state than the boolean `isFrozen` field. Maps to XRPL's native freeze hierarchy: INDIVIDUAL_FREEZE — only this specific wallet's trustline or MPT holding is frozen (operator or issuer action); GLOBAL_FREEZE — the issuer has frozen all trustlines or MPT holdings for the asset globally; DEEP_FREEZE (XLS-77) — an enhanced freeze that prevents the holder from even receiving tokens or having frozen funds released without issuer action, providing stronger enforcement capability equivalent to ERC-3643 `forcedTransfer()`. When set, `isFrozen` should also be true.",
+                "enum": [
+                  "INDIVIDUAL_FREEZE",
+                  "GLOBAL_FREEZE",
+                  "DEEP_FREEZE"
+                ]
+              },
+              "xrplClawbackEnabled": {
+                "type": "boolean",
+                "description": "Whether the XRPL Clawback amendment is enabled on the issuer account for the trustline or MPT issuance associated with this wallet. When true, the issuer may claw back tokens from this holder using the `Clawback` transaction (native XRPL Clawback amendment) or `MPTokenIssuanceSet` with the clawback flag. This is the XRPL protocol-level equivalent of ERC-3643 `forcedTransfer()`. Recording this flag allows off-chain compliance systems to understand the issuer's enforcement rights without querying ledger state."
               },
               "lightningNodePubkey": {
                 "type": "string",
-                "description": "Lightning Network node public key (33-byte compressed secp256k1 point encoded as 66 hex characters). Identifies the Lightning node operated by or associated with this wallet holder. Required for Travel Rule compliance on Lightning payments under FATF R.16 and TFR 2023/1113 Art. 14.",
-                "pattern": "^(02|03)[0-9a-fA-F]{64}$"
+                "description": "Lightning Network node public key (compressed secp256k1 public key, 33 bytes = 66 hex characters) associated with this wallet entry. Used to bind a KYC identity to a Lightning node for LNURL-auth identity verification or Lightning Service Provider (LSP) compliance workflows. Applicable when `network` is 'lightning' or 'bitcoin'. In the OpenKYCAML three-tier enforcement model, Bitcoin and Lightning compliance is enforced at the service layer (Tier 3) rather than at the protocol or smart contract level.",
+                "pattern": "^[0-9a-fA-F]{66}$"
               },
               "lightningServiceProvider": {
                 "type": "string",
-                "description": "Name or DID of the Lightning Service Provider (LSP) or custodial Lightning wallet provider managing this node or channel. Relevant for Travel Rule intermediary identification under FATF R.16 when the LSP acts as a VASP on behalf of the end customer."
+                "description": "Name or DID of the Lightning Service Provider (LSP) that supplies the compliance wrapper for this Lightning node or Bitcoin wallet. Examples: 'Lightspark' (Lightspark Compliance API), 'Voltage' (Voltage Flow), 'BitGo', 'Coinbase Lightning'. For DID-based LSP references, use a `did:web` or `did:key` URI. This field records which service-layer entity is responsible for AML/KYC enforcement on the Lightning or Bitcoin side, consistent with the OpenKYCAML Tier 3 (service-layer enforcement) model.",
+                "maxLength": 256
               },
               "bitcoinScriptType": {
                 "type": "string",
+                "description": "Bitcoin script type for the address in the `address` field. Used to provide chain analysis context and determine the applicable UTXO model for compliance screening. P2PKH — Pay to Public Key Hash (legacy); P2WPKH — Pay to Witness Public Key Hash (native SegWit); P2TR — Pay to Taproot (Taproot, BIP-341). Applicable when `network` is 'bitcoin' or a Bitcoin Layer-2 network (Liquid, RGB). Not applicable for Lightning channel addresses (use `lightningNodePubkey` instead).",
                 "enum": [
                   "P2PKH",
-                  "P2SH",
                   "P2WPKH",
-                  "P2WSH",
-                  "P2TR",
-                  "OTHER"
-                ],
-                "description": "Bitcoin output script type for this address. P2PKH (Pay-to-Public-Key-Hash), P2SH (Pay-to-Script-Hash), P2WPKH (native SegWit v0), P2WSH (native SegWit v0 multisig), P2TR (Taproot/SegWit v1). Script type aids UTXO-based AML clustering analysis and chain analytics tooling integration."
+                  "P2TR"
+                ]
               }
             }
           }
@@ -3013,7 +3005,7 @@
         },
         "issuerName": {
           "type": "string",
-          "description": "Human-readable name of the issuer organisation (e.g. 'Bundesamt f\u00fcr Sicherheit in der Informationstechnik \u2014 PID Provider').",
+          "description": "Human-readable name of the issuer organisation (e.g. 'Bundesamt für Sicherheit in der Informationstechnik — PID Provider').",
           "maxLength": 256
         },
         "countryCode": {
@@ -3112,7 +3104,7 @@
       "properties": {
         "classification": {
           "type": "string",
-          "description": "Primary sensitivity class. 'standard' \u2014 ordinary personal data (GDPR Art. 6). 'sensitive_personal' \u2014 special-category data requiring Art. 9 safeguards (e.g. biometrics, health). 'criminal_offence' \u2014 data relating to criminal convictions or offences under GDPR Art. 10. 'sar_restricted' \u2014 Suspicious Activity Report or STR material; subject to tipping-off prohibition (AMLR Art. 73 / FATF Rec. 21). 'internal_suspicion' \u2014 internal AML suspicion flag not yet escalated to a formal SAR. 'confidential_aml' \u2014 AML/CFT investigation data protected from broader disclosure.",
+          "description": "Primary sensitivity class. 'standard' — ordinary personal data (GDPR Art. 6). 'sensitive_personal' — special-category data requiring Art. 9 safeguards (e.g. biometrics, health). 'criminal_offence' — data relating to criminal convictions or offences under GDPR Art. 10. 'sar_restricted' — Suspicious Activity Report or STR material; subject to tipping-off prohibition (AMLR Art. 73 / FATF Rec. 21). 'internal_suspicion' — internal AML suspicion flag not yet escalated to a formal SAR. 'confidential_aml' — AML/CFT investigation data protected from broader disclosure.",
           "enum": [
             "standard",
             "sensitive_personal",
@@ -3136,7 +3128,7 @@
         },
         "legalBasis": {
           "type": "string",
-          "description": "Primary legal basis for processing this data. 'GDPR-Art6-1c' \u2014 legal obligation. 'GDPR-Art6-1e' \u2014 public task. 'GDPR-Art9-2g' \u2014 substantial public interest. 'GDPR-Art10' \u2014 criminal-offence data under official authority. 'AMLR-Art55' \u2014 AML data-sharing obligation. 'AMLR-Art73' \u2014 tipping-off prohibition compliance. 'national_AML_law' \u2014 national transposition of AML directives.",
+          "description": "Primary legal basis for processing this data. 'GDPR-Art6-1c' — legal obligation. 'GDPR-Art6-1e' — public task. 'GDPR-Art9-2g' — substantial public interest. 'GDPR-Art10' — criminal-offence data under official authority. 'AMLR-Art55' — AML data-sharing obligation. 'AMLR-Art73' — tipping-off prohibition compliance. 'national_AML_law' — national transposition of AML directives.",
           "enum": [
             "GDPR-Art6-1c",
             "GDPR-Art6-1e",
@@ -3308,7 +3300,7 @@
         },
         "documentTitle": {
           "type": "string",
-          "description": "Human-readable title or local name of the document (e.g. 'Personalausweis', 'Carte nationale d\\'identit\u00e9', 'Biometric Residence Permit').",
+          "description": "Human-readable title or local name of the document (e.g. 'Personalausweis', 'Carte nationale d\\'identité', 'Biometric Residence Permit').",
           "maxLength": 200
         },
         "documentNumber": {
@@ -3470,7 +3462,7 @@
         "expiryDate": {
           "type": "string",
           "format": "date",
-          "description": "ISO 8601 date on which the document or extract expires. Particularly relevant for registry extracts, which typically have a validity window (e.g. 3\u20136 months)."
+          "description": "ISO 8601 date on which the document or extract expires. Particularly relevant for registry extracts, which typically have a validity window (e.g. 3–6 months)."
         },
         "verificationDate": {
           "type": "string",
@@ -3569,7 +3561,7 @@
         },
         "bundleValidatedBy": {
           "type": "string",
-          "description": "Name or DID of the person, team, or automated system that assessed the bundle completeness (e.g. 'Compliance Officer \u2013 Jane Smith', 'AutoKYB v2.1', 'did:web:kyb.provider.example').",
+          "description": "Name or DID of the person, team, or automated system that assessed the bundle completeness (e.g. 'Compliance Officer – Jane Smith', 'AutoKYB v2.1', 'did:web:kyb.provider.example').",
           "maxLength": 200
         },
         "bundleValidationDate": {
@@ -3726,13 +3718,13 @@
                 "type": "number",
                 "minimum": 0,
                 "maximum": 100,
-                "description": "Score value on a 0\u2013100 scale (0 = lowest risk, 100 = highest risk)."
+                "description": "Score value on a 0–100 scale (0 = lowest risk, 100 = highest risk)."
               },
               "confidence": {
                 "type": "number",
                 "minimum": 0,
                 "maximum": 1,
-                "description": "Model confidence in this score (0\u20131). EU AI Act Art. 13(3)(b)(iv) requires confidence or reliability information."
+                "description": "Model confidence in this score (0–1). EU AI Act Art. 13(3)(b)(iv) requires confidence or reliability information."
               },
               "horizonDays": {
                 "type": "integer",

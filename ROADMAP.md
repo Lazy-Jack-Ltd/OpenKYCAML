@@ -46,6 +46,17 @@ This document is the **authoritative project roadmap** covering schema features,
 - **ISO 20022 integration module (v1.3.0)** — complete bridge layer in [`iso20022-integration/`](iso20022-integration/).
 - **ISO 20275 ELF classification (v1.4.0)** — `legalFormCode`, `entityType` enum, typed `TrustDetails`/`FoundationDetails`/`PartnershipDetails` sub-objects, `nationalIdentifierType: ISO_20275_ELF_CODE`.
 - **Verification Document Bundle (v1.5.0)** — new `identityDocuments` root block; 5 new `$defs` (`VerificationDocumentBundle`, `NaturalPersonDocument`, `LegalEntityDocument`, `RegistrationAuthorityDetail`, `ExtractedAttribute`); GLEIF RAL structured reference; vLEI credential hierarchy (QVI/OOR/ECR); cross-reference fields on `LegalPerson`, `NationalIdentification`, `BeneficialOwner`, and `verificationMethods[]`.
+- **Document ID URN scheme (v1.6.0)** — `documentId` on `NaturalPersonDocument` and `LegalEntityDocument`; `docs/reference/document-id-convention.md`.
+- **Full XRPL Compliance Standards (v1.7.0)** — XRPL compliance coverage extended to all live and in-progress standards:
+  - **XLS-70** (renamed from XLS-40d draft) — On-Chain Credentials, live on XRPL mainnet; all references updated
+  - **XLS-80** — Permissioned Domains: `xrplPermissionedDomainId` + `xrplAuthorizedCredentialTypes[]`
+  - **XLS-81d** — Permissioned DEX: documentation and dual-gate model (Authorised Trustlines + domain membership)
+  - **XLS-96** — Confidential Transfers: `xrplConfidentialTransfer` (EC-ElGamal + ZKP keys for auditor/regulator)
+  - **XLS-77** — Deep Freeze: `xrplFreezeType` enum (`INDIVIDUAL_FREEZE` / `GLOBAL_FREEZE` / `DEEP_FREEZE`)
+  - **Native Clawback** — `xrplClawbackEnabled` (XRPL equivalent of ERC-3643 `forcedTransfer()`)
+  - **Enhanced MPT (XLS-33d)** — `mptFlags`, `mptMetadata`, `mptTransferFee` for compliance-in-token pattern
+- **Bitcoin and Lightning Network (v1.7.0)** — Tier 3 service-layer enforcement fields: `lightningNodePubkey`, `lightningServiceProvider`, `bitcoinScriptType`; new `docs/mappings/mapping-bitcoin-lightning.md`
+- **Three-Tier Enforcement Model (v1.7.0)** — `docs/compliance/enforcement-tiers.md` — normative document defining Tier 1 (Ethereum/ERC-3643 smart contract), Tier 2 (XRPL protocol-level), and Tier 3 (Bitcoin/Lightning service-layer) enforcement with field-to-tier mapping and regulatory alignment table
 
 ---
 
@@ -169,6 +180,33 @@ The following issues were identified during a critical review of the full reposi
 
 ---
 
+## v1.7.0 — XRPL Compliance Standards + Bitcoin/Lightning (Complete)
+
+**Theme: Full Multi-Network Compliance — On-Chain, Protocol-Level, and Service-Layer Enforcement**
+
+| Feature | Status |
+|---|---|
+| **XLS-70 rename** — all XLS-40d draft references updated to XLS-70 (final published standard, live on mainnet) | ✅ Complete |
+| `blockchainAccountIds[].xrplPermissionedDomainId` — Hash256 XRPL Permissioned Domain ID (XLS-80) | ✅ Complete |
+| `blockchainAccountIds[].xrplAuthorizedCredentialTypes[]` — credential types satisfied within the domain (XLS-80) | ✅ Complete |
+| `blockchainAccountIds[].xrplConfidentialTransfer` object — XLS-96 EC-ElGamal + ZKP (enabled, encryptionScheme, auditorPublicKey, regulatorPublicKey) | ✅ Complete |
+| `blockchainAccountIds[].mptFlags` — MPTIssuance flags bitmask (XLS-33d) | ✅ Complete |
+| `blockchainAccountIds[].mptMetadata` — ISIN / prospectus URI / compliance rules in token (XLS-33d) | ✅ Complete |
+| `blockchainAccountIds[].mptTransferFee` — transfer fee in millionths (XLS-33d) | ✅ Complete |
+| `blockchainAccountIds[].xrplFreezeType` — INDIVIDUAL_FREEZE / GLOBAL_FREEZE / DEEP_FREEZE (XLS-77) | ✅ Complete |
+| `blockchainAccountIds[].xrplClawbackEnabled` — Native Clawback amendment support | ✅ Complete |
+| `blockchainAccountIds[].lightningNodePubkey` — Lightning node compressed pubkey (66-char hex) | ✅ Complete |
+| `blockchainAccountIds[].lightningServiceProvider` — LSP name or DID | ✅ Complete |
+| `blockchainAccountIds[].bitcoinScriptType` — P2PKH / P2WPKH / P2TR | ✅ Complete |
+| `docs/mappings/mapping-xrpl-credentials-mpt.md` — comprehensive update: XLS-70 rename, §5 XLS-80 Permissioned Domains, §6 XLS-81d Permissioned DEX, §9 Deep Freeze + Clawback, §10 XLS-96 Confidential Transfers, enhanced MPT section | ✅ Complete |
+| `docs/mappings/mapping-bitcoin-lightning.md` — new document: Bitcoin/Lightning service-layer enforcement | ✅ Complete |
+| `docs/compliance/enforcement-tiers.md` — new document: Three-Tier Compliance Enforcement Model | ✅ Complete |
+| `docs/mappings/mapping-erc3643.md` — added `forcedTransfer()` row with XRPL clawback cross-ref, cross-network equivalence table | ✅ Complete |
+| `docs/compliance/compliance-matrix.md` — §12 XRPL updated with all new standards; §13 Bitcoin/Lightning added | ✅ Complete |
+| `schema/versions/v1.7.0.json` — versioned snapshot | ✅ Complete |
+
+---
+
 ## v1.3.0 — ISO 20022 Integration (Complete)
 
 | Feature | Status |
@@ -209,9 +247,11 @@ Planned breaking changes (subject to TWG consensus):
 | v1.0.0 | June 2024 | Initial release — IVMS 101 superset, kycProfile, VC wrapper, CI tooling |
 | v1.1.0 | April 2025 | EUDI Wallet evidence block, LPID + QEAA mandates, DID triangulation examples, `EUDI_WALLET` onboarding channel, ISO 17442 LEI fixes |
 | v1.2.0 | April 2026 | SD-JWT selective disclosure, deep UBO chain, PID/LPID converters, Travel Rule guide, AMLA RTS alignment (`thirdPartyCDDReliance`, `dueDiligenceRequirements`, AMLA PEP taxonomy), AMLR 2027 compliance checklist |
-| v1.3.0 | April 2026 | `gdprSensitivityMetadata` block — SAR/STR tipping-off protection (AMLR Art. 73 / FATF Rec. 21), GDPR Art. 9/10 classification, EUDI Wallet restricted-data handling, SAR-restriction example, updated compliance docs. **ISO 20022 integration** — complete `<SplmtryData>` KYCAMLEnvelope, pacs.008/pain.001/camt.053 profiles, Python + TypeScript bidirectional converters, XML examples, 70-test test suite. **XRPL Credentials, DIDs, and MPTs mapping** — full field-level mapping to XLS-40d `Credential` and `DID` objects, `did:xrpl` DID method, and XLS-33d Multi-Purpose Tokens. **XRPL schema extensions** — `blockchainAccountIds[].xrplCredentialType` (hex CredentialType, XLS-40d) and `blockchainAccountIds[].mptIssuanceId` (MPTokenIssuanceID Hash192, XLS-33d) added to `kycProfile`; see [mapping-xrpl-credentials-mpt.md](docs/mappings/mapping-xrpl-credentials-mpt.md) |
+| v1.3.0 | April 2026 | `gdprSensitivityMetadata` block — SAR/STR tipping-off protection (AMLR Art. 73 / FATF Rec. 21), GDPR Art. 9/10 classification, EUDI Wallet restricted-data handling, SAR-restriction example, updated compliance docs. **ISO 20022 integration** — complete `<SplmtryData>` KYCAMLEnvelope, pacs.008/pain.001/camt.053 profiles, Python + TypeScript bidirectional converters, XML examples, 70-test test suite. **XRPL Credentials, DIDs, and MPTs mapping** — full field-level mapping to XLS-70 `Credential` and `DID` objects (previously referred to as XLS-40d draft), `did:xrpl` DID method, and XLS-33d Multi-Purpose Tokens. **XRPL schema extensions** — `blockchainAccountIds[].xrplCredentialType` (hex CredentialType, XLS-70) and `blockchainAccountIds[].mptIssuanceId` (MPTokenIssuanceID Hash192, XLS-33d) added to `kycProfile`; see [mapping-xrpl-credentials-mpt.md](docs/mappings/mapping-xrpl-credentials-mpt.md) |
 | v1.4.0 | April 2026 | ISO 20275 ELF `legalFormCode` and `entityType` enum on `LegalPerson`; typed `TrustDetails`, `FoundationDetails`, `PartnershipDetails` sub-objects; `nationalIdentifierType: ISO_20275_ELF_CODE`; complex multi-tier group ownership examples; `CHANGELOG.md`; `SECURITY.md` |
 | v1.5.0 | April 2026 | **Verification Document Bundle** — `identityDocuments` root property; 5 new `$defs` (`VerificationDocumentBundle`, `NaturalPersonDocument`, `LegalEntityDocument`, `RegistrationAuthorityDetail`, `ExtractedAttribute`); 11 NP doc types + 16 LE doc types; GLEIF RAL structured reference; vLEI QVI/OOR/ECR hierarchy; cross-reference fields on `LegalPerson`, `NationalIdentification`, `BeneficialOwner`, `verificationMethods[]`; 2 new document bundle examples; docs updated |
+| v1.6.0 | April 2026 | **Document ID URN scheme** — `documentId` on `NaturalPersonDocument` and `LegalEntityDocument`; `docs/reference/document-id-convention.md`; validator warnings for missing/malformed documentId |
+| v1.7.0 | April 2026 | **Full XRPL Compliance Standards** — XLS-70 (renamed from draft XLS-40d; live on mainnet), XLS-80 Permissioned Domains, XLS-81d Permissioned DEX, XLS-96 Confidential Transfers, XLS-77 Deep Freeze, Native Clawback, enhanced MPT (flags/metadata/fee). **Bitcoin/Lightning** — `lightningNodePubkey`, `lightningServiceProvider`, `bitcoinScriptType`. **Three-Tier Enforcement Model** — `enforcement-tiers.md`, `mapping-bitcoin-lightning.md`, ERC-3643 mapping cross-network equivalence table |
 
 ---
 

@@ -31,6 +31,88 @@ For the full project roadmap and planned features, see [ROADMAP.md](ROADMAP.md).
 
 ---
 
+## [1.7.0] — April 2026
+
+### Added
+
+- **XLS-70 Credentials support (rename from XLS-40d draft)** — Updated all references to use the final published standard number. The XRPL On-Chain Credentials standard is now XLS-70 (live on XRPL mainnet), superseding the draft number XLS-40d used in previous versions. All schema field descriptions, mapping documents, and compliance matrix updated.
+
+- **XLS-80: Permissioned Domains** — New fields on `kycProfile.blockchainAccountIds[]`:
+  - `xrplPermissionedDomainId` (string, optional) — Hash256 identifier (64-char hex) of the XRPL Permissioned Domain (XLS-80) that this wallet is authorised within. Links the investor to a specific domain gate controlling access to Permissioned DEXes and lending protocols.
+  - `xrplAuthorizedCredentialTypes[]` (array of strings, optional) — Hex credential type strings that have been accepted within the domain. Records which XLS-70 credential types satisfy the domain's access requirements.
+
+- **XLS-81d: Permissioned DEX coverage** — Documentation in `docs/mappings/mapping-xrpl-credentials-mpt.md` §6 explains how `xrplPermissionedDomainId` gates access to the Permissioned DEX, and how the dual-gate model (Authorised Trustlines + Permissioned Domain) is the XRPL equivalent of ERC-3643's combined `isVerified()` + `canTransfer()` check.
+
+- **XLS-96: Confidential Transfers** — New `xrplConfidentialTransfer` object on `kycProfile.blockchainAccountIds[]`:
+  - `enabled` (boolean, required when present) — Whether the MPT issuance uses XLS-96 confidential transfers (EC-ElGamal + ZKP encrypted balances).
+  - `encryptionScheme` (enum: `"EC_ELGAMAL"`) — Encryption scheme; enum allows future schemes.
+  - `auditorPublicKey` (string, optional) — Compressed EC public key of the designated auditor for selective disclosure.
+  - `regulatorPublicKey` (string, optional) — Regulator's selective disclosure key for legally-required visibility.
+
+- **Enhanced MPT (XLS-33d) coverage** — Three new fields on `kycProfile.blockchainAccountIds[]`:
+  - `mptFlags` (integer, optional) — Bitmask of `MPTIssuance` compliance flags (`lsfMPTCanLock`, `lsfMPTRequireAuth`, `lsfMPTCanEscrow`, `lsfMPTCanTrade`, `lsfMPTCanTransfer`, `lsfMPTCanClawback`). Enables downstream systems to derive the compliance enforcement model without querying the ledger.
+  - `mptMetadata` (string, optional) — Issuer-defined token metadata (ISIN, prospectus URI, asset class, compliance rules embedded in the token at the protocol level). Mirrors the `MPTokenMetadata` field.
+  - `mptTransferFee` (integer 0–50000, optional) — Transfer fee in millionths; mirrors `MPTIssuance.TransferFee`.
+
+- **XRPL Native Clawback and Deep Freeze (XLS-77)** — Two new fields on `kycProfile.blockchainAccountIds[]`:
+  - `xrplFreezeType` (enum, optional) — Granular freeze type: `"INDIVIDUAL_FREEZE"` (single trustline/MPToken), `"GLOBAL_FREEZE"` (all issuance trustlines), `"DEEP_FREEZE"` (XLS-77 enhanced freeze preventing receipt). Supersedes the boolean `isFrozen` for XRPL-specific flows.
+  - `xrplClawbackEnabled` (boolean, optional) — Whether the XRPL Clawback amendment (or `lsfMPTCanClawback`) is enabled for this wallet's trustline/MPT. Protocol-level equivalent of ERC-3643 `forcedTransfer()`.
+
+- **Bitcoin and Lightning Network fields** — Three new fields on `kycProfile.blockchainAccountIds[]`:
+  - `lightningNodePubkey` (string, optional) — Lightning node compressed public key (66-char hex, secp256k1). Links KYC identity to a Lightning node for LNURL-auth or LSP compliance workflows.
+  - `lightningServiceProvider` (string, optional) — Name or DID of the Lightning Service Provider responsible for service-layer compliance enforcement (e.g. Lightspark, Voltage, BitGo).
+  - `bitcoinScriptType` (enum, optional) — Bitcoin script type: `"P2PKH"`, `"P2WPKH"`, `"P2TR"` (Taproot). Provides chain analysis context.
+
+- **`docs/compliance/enforcement-tiers.md`** — New normative document defining the OpenKYCAML Three-Tier Compliance Enforcement Model:
+  - Tier 1: On-chain enforcement (Ethereum / ERC-3643 smart contracts)
+  - Tier 2: Protocol-level enforcement (XRPL / XLS-70/80/81/96/77 + MPTs + Clawback)
+  - Tier 3: Service-layer enforcement (Bitcoin / Lightning / LSPs)
+  - Includes capability comparison table, field-to-tier mapping, regulatory alignment, and multi-tier implementation guidance.
+
+- **`docs/mappings/mapping-bitcoin-lightning.md`** — New comprehensive mapping document covering:
+  - Bitcoin protocol compliance limitations (no on-chain enforcement)
+  - Layer-2 solutions: Lightning Network, Liquid Network, Taproot Assets, RGB Protocol
+  - Bitcoin address type mapping (P2PKH / P2WPKH / P2TR)
+  - Lightning node identity and LNURL-auth binding
+  - Service-layer compliance providers: Lightspark, Voltage, BitGo, Coinbase, Revolut
+  - Travel Rule on Lightning (FATF Rec. 16 at service layer)
+
+- **`schema/versions/v1.7.0.json`** — Versioned snapshot of the schema at v1.7.0.
+
+### Changed
+
+- `docs/mappings/mapping-xrpl-credentials-mpt.md` — Comprehensive update:
+  - Renamed all XLS-40d references to XLS-70 (final published standard)
+  - Added §5 "XLS-80: Permissioned Domains" with architecture, mapping table, and JSON example
+  - Added §6 "XLS-81d: Permissioned DEX" with dual-gate model (Authorised Trustlines + Permissioned Domain)
+  - Added §9 "XLS-77: Deep Freeze and XRPL Native Clawback" with freeze hierarchy table and clawback mapping
+  - Added §10 "XLS-96: Confidential Transfers" with privacy/regulatory balance table, GDPR notes, and JSON example
+  - Enhanced §7 "MPTIssuance Object" to include `mptFlags`, `mptMetadata`, `mptTransferFee` fields
+  - Updated §11 "KYC/AML Gating" table with all new v1.7.0 fields
+  - Updated §12 "Coverage Gap Summary" with v1.7.0 additions
+  - Updated architecture overview diagram and XRPL source references
+  - Document version bumped to v1.7.0
+
+- `docs/compliance/compliance-matrix.md` — Updated:
+  - Section 12 renamed to "XRPL Credentials (XLS-70), DIDs, Permissioned Domains (XLS-80), and Multi-Purpose Tokens (XLS-33d)"
+  - Added rows for XLS-80 Permissioned Domain ID, domain credential requirements, XLS-81d Permissioned DEX, Authorised Trustlines, MPT flags/metadata/fee, Deep Freeze (XLS-77), clawback, XLS-96 confidential transfer fields
+  - Added §13 "Bitcoin and Lightning Network (Service-Layer Enforcement)" with coverage table
+  - Matrix version updated from v1.3.0 to v1.7.0
+
+- `docs/mappings/mapping-erc3643.md` — Added:
+  - `forcedTransfer()` row in §7 Token Contract table with XRPL clawback cross-reference
+  - `isFrozen()` note updated with XLS-77 Deep Freeze cross-reference
+  - New §11 "Cross-Network Equivalence: ERC-3643 vs XRPL vs Bitcoin/Lightning" comparison table
+  - Document version bumped to v1.7.0
+
+- `schema/kyc-aml-hybrid-extended.json` — `$id` and `version` bumped to `v1.7.0`.
+
+### Scope
+
+All v1.7.0 changes are fully additive and backward-compatible with v1.6.0 payloads. No existing required fields or enum values changed.
+
+---
+
 ## [1.6.0] — April 2026
 
 ### Added
@@ -212,7 +294,11 @@ Fully additive and backward-compatible with v1.5.0 payloads. No existing require
 
 ---
 
-[Unreleased]: https://github.com/Lazy-Jack-Ltd/openKYCAML/compare/v1.3.0...HEAD
+[Unreleased]: https://github.com/Lazy-Jack-Ltd/openKYCAML/compare/v1.7.0...HEAD
+[1.7.0]: https://github.com/Lazy-Jack-Ltd/openKYCAML/compare/v1.6.0...v1.7.0
+[1.6.0]: https://github.com/Lazy-Jack-Ltd/openKYCAML/compare/v1.5.0...v1.6.0
+[1.5.0]: https://github.com/Lazy-Jack-Ltd/openKYCAML/compare/v1.4.0...v1.5.0
+[1.4.0]: https://github.com/Lazy-Jack-Ltd/openKYCAML/compare/v1.3.0...v1.4.0
 [1.3.0]: https://github.com/Lazy-Jack-Ltd/openKYCAML/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/Lazy-Jack-Ltd/openKYCAML/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/Lazy-Jack-Ltd/openKYCAML/compare/v1.0.0...v1.1.0

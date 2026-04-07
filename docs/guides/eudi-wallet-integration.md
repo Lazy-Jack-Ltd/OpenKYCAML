@@ -694,7 +694,7 @@ tipping-off flag.
 ---
 
 *This document is part of the [OpenKYCAML](https://openkycaml.org) specification.*
-*For schema details see [`schema/versions/v1.3.0.json`](../../schema/versions/v1.3.0.json).*
+*For schema details see [`schema/versions/v1.7.0.json`](../../schema/versions/v1.7.0.json).*
 
 ---
 

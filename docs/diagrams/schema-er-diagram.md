@@ -1,6 +1,6 @@
 # OpenKYCAML Full Schema — Entity-Relationship Diagram
 
-This document presents a Mermaid entity-relationship diagram of the complete OpenKYCAML v1.3.0 schema. Each box represents a `$defs` entity or top-level object; relationships show `$ref` references and composition.
+This document presents a Mermaid entity-relationship diagram of the complete OpenKYCAML v1.7.0 schema. Each box represents a `$defs` entity or top-level object; relationships show `$ref` references and composition.
 
 ---
 
@@ -225,15 +225,74 @@ erDiagram
     KYCProfile ||--o| SanctionsScreening : "sanctionsScreening"
     KYCProfile ||--o| AdverseMedia : "adverseMedia"
     KYCProfile ||--o| SourceOfFundsWealth : "sourceOfFundsWealth"
-    KYCProfile ||--o{ BeneficialOwner : "beneficialOwners"
+    KYCProfile ||--o{ BeneficialOwner : "beneficialOwnership"
     KYCProfile ||--o| MonitoringInfo : "monitoringInfo"
     KYCProfile ||--o| AuditMetadata : "auditMetadata"
     KYCProfile ||--o| GdprSensitivityMetadata : "gdprSensitivityMetadata"
+    KYCProfile ||--o| DueDiligenceRequirements : "dueDiligenceRequirements"
+    KYCProfile ||--o| ThirdPartyCDDReliance : "thirdPartyCDDReliance"
+    KYCProfile ||--o{ BlockchainAccountId : "blockchainAccountIds"
+
+    %% BlockchainAccountId sub-objects (v1.3.0–v1.7.0)
+    BlockchainAccountId {
+        string address
+        string network
+        string onchainIDAddress
+        string xrplCredentialType
+        string mptIssuanceId
+        string xrplPermissionedDomainId
+        string xrplFreezeType
+        boolean xrplClawbackEnabled
+        integer mptFlags
+        string lightningNodePubkey
+        string bitcoinScriptType
+    }
+    BlockchainAccountId ||--o| XrplConfidentialTransfer : "xrplConfidentialTransfer"
+
+    XrplConfidentialTransfer {
+        boolean enabled
+        string encryptionScheme
+        string auditorPublicKey
+        string regulatorPublicKey
+    }
 
     %% BeneficialOwner references persons
     BeneficialOwner ||--o| NaturalPerson : "person.naturalPerson"
     BeneficialOwner ||--o| LegalPerson : "person.legalPerson"
     BeneficialOwner ||--o{ LegalPerson : "intermediateEntities.legalPerson"
+
+    %% LegalPerson typed sub-objects (v1.4.0)
+    LegalPerson ||--o| TrustDetails : "trustDetails"
+    LegalPerson ||--o| FoundationDetails : "foundationDetails"
+    LegalPerson ||--o| PartnershipDetails : "partnershipDetails"
+
+    TrustDetails { string settlor string trustee string protector }
+    FoundationDetails { string founder string councilMember }
+    PartnershipDetails { string generalPartner string limitedPartner }
+
+    %% VerificationDocumentBundle (v1.5.0)
+    OpenKYCAMLDocument ||--o| VerificationDocumentBundle : "identityDocuments"
+    VerificationDocumentBundle ||--o{ NaturalPersonDocument : "naturalPersonDocuments"
+    VerificationDocumentBundle ||--o{ LegalEntityDocument : "legalEntityDocuments"
+
+    NaturalPersonDocument {
+        string documentType
+        string documentId
+        string issuingCountry
+        string expiryDate
+    }
+    NaturalPersonDocument ||--o{ ExtractedAttribute : "extractedAttributes"
+
+    LegalEntityDocument {
+        string documentType
+        string documentId
+        string issuingAuthority
+    }
+    LegalEntityDocument ||--o| RegistrationAuthorityDetail : "registrationAuthorityDetail"
+    LegalEntityDocument ||--o{ ExtractedAttribute : "extractedAttributes"
+
+    ExtractedAttribute { string fieldName string value boolean matchesRecord }
+    RegistrationAuthorityDetail { string ralCode string authorityName string jurisdiction }
 ```
 
 ---
@@ -248,7 +307,7 @@ erDiagram
 | `Beneficiary` | Receiving party in a virtual asset transfer. |
 | `VASP` | Virtual Asset Service Provider identifier. |
 | `NaturalPerson` | IVMS 101 natural person entity (individual). |
-| `LegalPerson` | IVMS 101 legal person entity (company/organisation). |
+| `LegalPerson` | IVMS 101 legal person entity (company/organisation). Has optional `trustDetails`, `foundationDetails`, and `partnershipDetails` sub-objects (v1.4.0). |
 | `NaturalPersonNameIdentifier` | Structured name for a natural person (family/given names). |
 | `LegalPersonNameIdentifier` | Registered name for a legal person. |
 | `Address` | Structured postal address (IVMS 101 §3.5). |
@@ -258,7 +317,7 @@ erDiagram
 | `VerifiableCredentialWrapper` | W3C Verifiable Credential envelope (VC Data Model v2). |
 | `VerifiableCredentialProof` | Cryptographic proof (Ed25519, JsonWebSignature2020, etc.). |
 | `SelectiveDisclosure` | SD-JWT selective disclosure metadata. |
-| `KYCProfile` | KYC/AML profile — risk rating, screening results, UBO chain. |
+| `KYCProfile` | KYC/AML profile — risk rating, screening results, UBO chain, blockchain wallet identifiers. |
 | `PEPStatus` | Politically Exposed Person screening result. |
 | `SanctionsScreening` | Sanctions list screening result. |
 | `AdverseMedia` | Adverse media / negative news screening result. |
@@ -267,7 +326,19 @@ erDiagram
 | `MonitoringInfo` | Ongoing AML monitoring metadata and alerts. |
 | `AuditMetadata` | Audit trail and provenance metadata. |
 | `GdprSensitivityMetadata` | GDPR/AML sensitivity classification and tipping-off protection. |
+| `DueDiligenceRequirements` | AMLA RTS-aligned CDD tier requirements record (v1.2.0). |
+| `ThirdPartyCDDReliance` | Third-party CDD reliance record with responsible party and SLA (v1.2.0). |
+| `BlockchainAccountId` | Blockchain wallet address entry with network, ONCHAINID, freeze state, XRPL credential type, MPT issuance ID, Permissioned Domain (XLS-80), Confidential Transfer (XLS-96), freeze type (XLS-77), clawback, Lightning/Bitcoin fields (v1.3.0–v1.7.0). |
+| `XrplConfidentialTransfer` | XLS-96 Confidential Transfer configuration — enabled flag, EC-ElGamal scheme, auditor and regulator public keys (v1.7.0). |
+| `TrustDetails` | Typed sub-object for trust entities — settlor, trustee, protector, beneficiary class (v1.4.0). |
+| `FoundationDetails` | Typed sub-object for foundation entities — founders, council members (v1.4.0). |
+| `PartnershipDetails` | Typed sub-object for partnership entities — general and limited partners (v1.4.0). |
+| `VerificationDocumentBundle` | Root container for verification documents associated with the KYC record (v1.5.0). |
+| `NaturalPersonDocument` | Individual identity document (passport, driving licence, PID VC, etc.) with document ID URN (v1.5.0–v1.6.0). |
+| `LegalEntityDocument` | Corporate document (certificate of incorporation, LEI registration, vLEI VC, etc.) with document ID URN (v1.5.0–v1.6.0). |
+| `ExtractedAttribute` | Per-document field extraction result with `matchesRecord` flag (v1.5.0). |
+| `RegistrationAuthorityDetail` | Structured GLEIF RAL reference with `ralCode`, authority name, and jurisdiction (v1.5.0). |
 
 ---
 
-*Diagram generated from OpenKYCAML schema v1.3.0. Last updated: v1.3.0.*
+*Diagram generated from OpenKYCAML schema v1.7.0. Last updated: v1.7.0.*

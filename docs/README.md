@@ -21,7 +21,8 @@ Field-level mapping documents to other standards.
 | [Mapping: IVMS 101 / eIDAS 2.0 / AMLR](mappings/mapping-ivms101-eidas-amlr.md) | Field-level mapping across IVMS 101, eIDAS 2.0 ARF, and EU AMLR |
 | [ERC-3643 (T-REX) Mapping](mappings/mapping-erc3643.md) | Field-level mapping from OpenKYCAML to ERC-3643 on-chain identity and security token standard |
 | [Sovrin / Hyperledger Indy (AnonCreds) Mapping](mappings/mapping-sovrin.md) | Field-level mapping from OpenKYCAML to Sovrin DID Method, Hyperledger Indy ledger transactions, and AnonCreds ZKP credential model |
-| [XRPL Credentials, DIDs, and MPTs Mapping](mappings/mapping-xrpl-credentials-mpt.md) | Field-level mapping from OpenKYCAML to XRPL Credentials (XLS-40d), `did:xrpl` DID method, and Multi-Purpose Tokens (XLS-33d) |
+| [XRPL Credentials, DIDs, MPTs, Permissioned Domains, and Confidential Transfers Mapping](mappings/mapping-xrpl-credentials-mpt.md) | Field-level mapping from OpenKYCAML to XRPL Credentials (XLS-70), `did:xrpl` DID method, MPTs (XLS-33d), Permissioned Domains (XLS-80), Permissioned DEX (XLS-81d), Deep Freeze (XLS-77), Native Clawback, and Confidential Transfers (XLS-96) |
+| [Bitcoin and Lightning Network Mapping](mappings/mapping-bitcoin-lightning.md) | Field-level mapping for Bitcoin and Lightning Network service-layer enforcement (Lightspark, Voltage, BitGo, LNURL-auth, Taproot Assets, RGB Protocol) |
 
 ## Compliance
 
@@ -30,8 +31,9 @@ Regulatory compliance documents and checklists.
 | Document | Description |
 |---|---|
 | [AMLR Requirements Reference](compliance/amlr-requirements.md) | Quick-reference mapping of EU AMLR articles to OpenKYCAML schema fields |
-| [Compliance Matrix](compliance/compliance-matrix.md) | Alignment with FATF, AMLR, ISO 20022, LEI, eIDAS ARF |
+| [Compliance Matrix](compliance/compliance-matrix.md) | Alignment with FATF, AMLR, ISO 20022, LEI, eIDAS ARF, ERC-3643, XRPL (XLS-70/80/81/96/77), Bitcoin/Lightning |
 | [AMLR 2027 Compliance Checklist](compliance/amlr-2027-compliance-checklist.md) | Operational checklist for obliged entities — schema configuration and process obligations |
+| [Three-Tier Enforcement Model](compliance/enforcement-tiers.md) | Normative document defining Tier 1 (Ethereum/ERC-3643 on-chain), Tier 2 (XRPL protocol-level), and Tier 3 (Bitcoin/Lightning service-layer) compliance enforcement with field-to-tier mapping |
 
 ## Reference
 
