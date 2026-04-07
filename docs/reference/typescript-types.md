@@ -885,3 +885,94 @@ const sensitivity: GdprSensitivityMetadata = {
 ---
 
 *Type definitions derived from OpenKYCAML JSON Schema v1.7.0. Last updated: v1.7.0.*
+
+---
+
+## Tax Status Types (v1.9.0)
+
+```typescript
+/** ISO 3166-1 alpha-2 country code. */
+type JurisdictionCode = string;
+
+/** Type of tax identifier. */
+type TinType = 'TIN' | 'VAT' | 'GST' | 'PST' | 'EIN' | 'functionalEquivalent' | 'other';
+
+/** Verification status of a TIN entry. */
+type TinVerificationStatus = 'verified' | 'unverified' | 'revoked' | 'suspended';
+
+/** A single TIN or functional equivalent for one jurisdiction (OECD CRS/CARF, FATCA). */
+interface TinIdentifier {
+  jurisdiction: JurisdictionCode;
+  tinType: TinType;
+  tinValue: string;
+  issuanceDate?: string;           // ISO 8601 date-time
+  verificationStatus?: TinVerificationStatus;
+  verificationSource?: string;     // e.g. 'OECD-TIN-list', 'VIES', 'IRS-TIN-Matching'
+}
+
+/** Type of indirect tax registration. */
+type IndirectTaxType = 'VAT' | 'GST' | 'PST' | 'HST' | 'salesTax';
+
+/** Registration status for an indirect tax. */
+type IndirectTaxStatus = 'active' | 'suspended' | 'revoked' | 'exempt';
+
+/** A VAT/GST/PST/HST/salesTax registration entry for one jurisdiction. */
+interface IndirectTaxRegistration {
+  taxType?: IndirectTaxType;
+  jurisdiction?: JurisdictionCode;
+  registrationNumber?: string;
+  status?: IndirectTaxStatus;
+  effectiveFrom?: string;          // ISO 8601 date
+}
+
+/** ESR status for an entity in an ESR-regime jurisdiction. */
+type EsrStatus =
+  | 'inScope-RelevantEntity'
+  | 'exempt-TaxResidentElsewhere'
+  | 'exempt-PureEquityHolding'
+  | 'compliant'
+  | 'nonCompliant';
+
+/** Economic Substance Regulation (ESR) classification block. */
+interface EconomicSubstance {
+  jurisdiction?: JurisdictionCode;
+  status?: EsrStatus;
+  relevantActivities?: string[];   // e.g. 'holdingCompany', 'intellectualProperty'
+  coreIncomeGeneratingActivitiesPerformed?: boolean;
+  lastNotificationDate?: string;   // ISO 8601 date
+  lastReportReference?: string;
+}
+
+/** GloBE constituent entity status. */
+type ConstituentEntityStatus = 'inScope' | 'excluded' | 'QDMTT';
+
+/** Safe harbour election type. */
+type SafeHarbour = 'SimplifiedETR' | 'SubstanceBased' | 'DeMinimis' | 'none';
+
+/** Effective tax rate entry for one jurisdiction. */
+interface EtrJurisdiction {
+  jurisdiction: JurisdictionCode;
+  etr: number;   // decimal 0–1; e.g. 0.15 = 15%
+}
+
+/** OECD Pillar 2 GloBE (BEPS 2.0) classification block. */
+interface PillarTwo {
+  inScopeMNE?: boolean;
+  consolidatedRevenueEUR?: number;
+  constituentEntityStatus?: ConstituentEntityStatus;
+  etrJurisdictions?: EtrJurisdiction[];
+  safeHarbourApplied?: SafeHarbour;
+  girFilingReference?: string;
+  lastGIRDate?: string;            // ISO 8601 date-time
+}
+
+/** Root taxStatus block (v1.9.0). All sub-properties optional. */
+interface TaxStatus {
+  tinIdentifiers?: TinIdentifier[];
+  indirectTaxRegistrations?: IndirectTaxRegistration[];
+  economicSubstance?: EconomicSubstance;
+  pillarTwo?: PillarTwo;
+}
+```
+
+*Tax status types added in OpenKYCAML v1.9.0. Last updated: v1.9.0.*

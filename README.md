@@ -5,7 +5,7 @@
 **The neutral, open hybrid KYC/AML data standard for the compliant digital economy.**
 
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
-[![Schema Version](https://img.shields.io/badge/schema-v1.8.0-brightgreen.svg)](schema/kyc-aml-hybrid-extended.json)
+[![Schema Version](https://img.shields.io/badge/schema-v1.9.0-brightgreen.svg)](schema/kyc-aml-hybrid-extended.json)
 [![IVMS 101](https://img.shields.io/badge/IVMS%20101-compatible-orange.svg)](docs/mappings/mapping-ivms101-eidas-amlr.md)
 [![eIDAS 2.0](https://img.shields.io/badge/eIDAS%202.0-VC%20ready-blueviolet.svg)](docs/mappings/mapping-ivms101-eidas-amlr.md)
 [![AMLR 2027 Ready](https://img.shields.io/badge/AMLR%202027-ready-red.svg)](docs/compliance/compliance-matrix.md)
@@ -164,7 +164,7 @@ node validator.js ../../examples/full-kyc-profile.json
 
 ```json
 {
-  "$schema": "https://openkycaml.org/schema/v1.8.0/kyc-aml-hybrid-extended.json",
+  "$schema": "https://openkycaml.org/schema/v1.9.0/kyc-aml-hybrid-extended.json",
   "version": "1.8.0",
   "messageId": "550e8400-e29b-41d4-a716-446655440001",
   "messageDateTime": "2024-06-15T09:30:00Z",
@@ -201,7 +201,7 @@ node validator.js ../../examples/full-kyc-profile.json
 
 ```json
 {
-  "$schema": "https://openkycaml.org/schema/v1.8.0/kyc-aml-hybrid-extended.json",
+  "$schema": "https://openkycaml.org/schema/v1.9.0/kyc-aml-hybrid-extended.json",
   "version": "1.8.0",
   "verifiableCredential": {
     "issuer": { "id": "did:web:acme-crypto.example.nl", "name": "Acme Crypto Exchange BV" },
@@ -228,7 +228,7 @@ node validator.js ../../examples/full-kyc-profile.json
 
 > **Fictional data notice:** All names, passport numbers, national identifiers, addresses, entity names, LEIs, DIDs, wallet addresses, and any other personal or entity data in the example payloads are **entirely fictional** and have been created solely for illustrative purposes. Any resemblance to real persons (living or deceased), real legal entities, or real transactions is entirely coincidental. Any names that may coincidentally resemble those of real-world individuals or organisations have been deliberately altered.
 
-There are **27 example payloads** in [`examples/`](examples/) covering the full range of scenarios — from a minimal two-party Travel Rule message to complex 4-tier ownership structures, EUDI Wallet DID triangulation, SD-JWT selective disclosure, v1.5.0 Verification Document Bundles, and v1.8.0 X.509 PKI evidence.
+There are **31 example payloads** in [`examples/`](examples/) covering the full range of scenarios — from a minimal two-party Travel Rule message to complex 4-tier ownership structures, EUDI Wallet DID triangulation, SD-JWT selective disclosure, v1.5.0 Verification Document Bundles, and v1.8.0 X.509 PKI evidence, and v1.9.0 taxStatus examples.
 
 The complete catalogue with per-file descriptions, schema block inventory, and testing guidance is in **[`examples/EXAMPLES.md`](examples/EXAMPLES.md)**.
 
@@ -300,6 +300,7 @@ Each `-eudi-wallet.json` example documents a **trust chain** using W3C VC eviden
 | **XRPL Credentials (XLS-70), DIDs (`did:xrpl`), MPTs (XLS-33d), Permissioned Domains (XLS-80/81d), Confidential Transfers (XLS-96), Deep Freeze (XLS-77)** | ✅ On-ledger `Credential` anchoring W3C VCs (XLS-70, live on mainnet), `did:xrpl` DID method, MPT permissioned tokens, Permissioned Domain + DEX gating (v1.7.0), EC-ElGamal Confidential Transfers with selective disclosure (v1.7.0), Deep Freeze (v1.7.0), Native Clawback (v1.7.0) — see [XRPL mapping](docs/mappings/mapping-xrpl-credentials-mpt.md) |
 | **Bitcoin / Lightning Network** | ✅ v1.7.0 — service-layer enforcement; Lightning node pubkey (`lightningNodePubkey`), LSP identification (`lightningServiceProvider`), Bitcoin script type (`bitcoinScriptType`); Lightspark/Voltage/BitGo compliance wrapper integration — see [Bitcoin/Lightning mapping](docs/mappings/mapping-bitcoin-lightning.md) |
 | **X.500 Distinguished Names / X.509 PKI** | ✅ v1.8.0 — optional `legacyIdentifiers.x500DN` (RFC 4514, regex-validated) for eIDAS QTS certificate Subject/Issuer, SWIFTNet addressing, and LDAP entries; optional `pkiEvidence` block with X.509 metadata (serial number, validity, signature algorithm, ETSI QCStatements[], CRL/OCSP, SHA-256 thumbprint) and OID array — see [X.500/X.400 mapping](docs/mappings/x500-x400-legacy.md) and [X.509 PKI mapping](docs/mappings/x509-pki.md) |
+| **Tax Status / TIN / OECD CRS-CARF / ESR / Pillar 2 GloBE** | ✅ v1.9.0 — optional `taxStatus` block: `tinIdentifiers[]` (OECD CRS/CARF TIN array, multi-jurisdiction, replaces IVMS 101 TXID), `indirectTaxRegistrations[]` (VAT/GST/PST/HST with VIES/GST-portal verification), `economicSubstance` (ESR status for BVI/Cayman/UAE/Jersey/Guernsey/IoM — `nonCompliant` triggers EDD+SAR warning), `pillarTwo` (GloBE ETR per jurisdiction, GIR reference, safe-harbour election) — see [Tax Status mapping](docs/mappings/tax-status-oecd-esr-pillar2.md) |
 
 ---
 
@@ -308,7 +309,7 @@ Each `-eudi-wallet.json` example documents a **trust chain** using W3C VC eviden
 ```
 openKYCAML/
 ├── schema/
-│   ├── kyc-aml-hybrid-extended.json     ← Canonical schema (latest — currently v1.8.0)
+│   ├── kyc-aml-hybrid-extended.json     ← Canonical schema (latest — currently v1.9.0)
 │   └── versions/
 │       ├── v1.0.0.json                  ← v1.0.0 snapshot
 │       ├── v1.1.0.json                  ← v1.1.0 snapshot
@@ -318,13 +319,15 @@ openKYCAML/
 │       ├── v1.5.0.json                  ← v1.5.0 snapshot (Verification Document Bundle)
 │       ├── v1.6.0.json                  ← v1.6.0 snapshot (Document ID URN scheme)
 │       ├── v1.7.0.json                  ← v1.7.0 snapshot (XRPL XLS-70/80/81/96/77, Bitcoin/Lightning)
-│       └── v1.8.0.json                  ← v1.8.0 snapshot (current — X.500 DN, X.509 PKI evidence)
+│       └── v1.8.0.json                  ← v1.8.0 snapshot (X.500 DN, X.509 PKI evidence)
+│       └── v1.9.0.json                  ← v1.9.0 snapshot (current — taxStatus: TIN/ESR/Pillar 2)
 ├── examples/
 │   ├── *-plain.json                     ← Plain IVMS 101 baseline examples
 │   ├── *-wrapped.json                   ← VC-wrapped examples
 │   ├── *-eudi-wallet.json               ← EUDI Wallet / DID triangulation examples
 │   ├── document-bundle-*.json           ← Verification document bundle examples (v1.5.0)
 │   └── evidence/                        ← X.509 PKI evidence examples (v1.8.0)
+│   └── tax/                             ← Tax status examples (v1.9.0)
 ├── iso20022-integration/                ← ISO 20022 bridge module (v1.3.0+)
 │   ├── mapping/                         ← Bidirectional field mapping YAML + gap analysis
 │   ├── supplementary-data/              ← KYCAMLEnvelope JSON Schema + reference instance

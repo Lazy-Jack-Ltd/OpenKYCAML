@@ -31,6 +31,41 @@ For the full project roadmap and planned features, see [ROADMAP.md](ROADMAP.md).
 
 ---
 
+## [1.9.0] — April 2026
+
+### Added
+
+- **`taxStatus` top-level block** — New optional `TaxStatus` $def and root property covering four global tax and economic substance regimes:
+  - **`tinIdentifiers[]`** (`TinIdentifier` $def) — Structured, multi-jurisdiction TIN array. Each entry carries `jurisdiction` (ISO 3166-1 alpha-2), `tinType` enum (`TIN | VAT | GST | PST | EIN | functionalEquivalent | other`), `tinValue`, optional `issuanceDate`, `verificationStatus`, and `verificationSource`. Supersedes and extends IVMS 101 `nationalIdentification.TXID` for OECD CRS/CARF, FATCA, and AMLR Art. 22 tax-residency verification.
+  - **`indirectTaxRegistrations[]`** (`IndirectTaxRegistration` $def) — VAT, GST, PST, HST, and salesTax registration entries per jurisdiction. Each carries `taxType`, `jurisdiction`, `registrationNumber`, `status` (`active | suspended | revoked | exempt`), and `effectiveFrom`. Supports EU VIES, India GSTIN, Australia ABN/GST, Canada HST/PST.
+  - **`economicSubstance`** (`EconomicSubstance` $def) — Economic Substance Regulation (ESR) block for entities in BVI, Cayman Islands, UAE, Jersey, Guernsey, Isle of Man, and other ESR jurisdictions. Fields: `jurisdiction`, `status` (5-value enum: `inScope-RelevantEntity | exempt-TaxResidentElsewhere | exempt-PureEquityHolding | compliant | nonCompliant`), `relevantActivities[]`, `coreIncomeGeneratingActivitiesPerformed`, `lastNotificationDate`, `lastReportReference`.
+  - **`pillarTwo`** (`PillarTwo` $def) — OECD Pillar 2 GloBE (BEPS 2.0) block for MNE constituent entities with consolidated revenue >= EUR 750 million. Fields: `inScopeMNE`, `consolidatedRevenueEUR`, `constituentEntityStatus` (`inScope | excluded | QDMTT`), `etrJurisdictions[]` (`{jurisdiction, etr}` — ETR as decimal), `safeHarbourApplied` (`SimplifiedETR | SubstanceBased | DeMinimis | none`), `girFilingReference`, `lastGIRDate`.
+
+- **4 new examples** in `examples/tax/`:
+  - `tax-individual-tin.json` — natural person with US EIN + UK UTR (`functionalEquivalent`) TIN array.
+  - `tax-corporate-vat-gst.json` — German legal entity with EU VAT and India GSTIN indirect tax registrations plus DE/IN TIN identifiers.
+  - `tax-offshore-esr.json` — Cayman Islands holding company with `economicSubstance` block (`inScope-RelevantEntity` status, relevant activities, notification reference).
+  - `tax-mne-pillar2.json` — Irish MNE constituent entity with full `pillarTwo` block including `etrJurisdictions[]` and `girFilingReference`.
+
+- **`docs/mappings/tax-status-oecd-esr-pillar2.md`** + **`tax-status-oecd-esr-pillar2.yaml`** — new mapping document covering OECD CRS/CARF TIN, EU VAT/GST/PST, ESR, and Pillar 2 GloBE. Includes IVMS 101 TXID migration path (§2.3).
+
+- **`schema/versions/v1.9.0.json`** — versioned copy of updated canonical schema.
+
+- **Compliance matrix §18–§20** — Tax Status (TIN/CRS/CARF), ESR, and Pillar 2 GloBE sections added to `docs/compliance/compliance-matrix.md`.
+
+- **IVMS 101 mapping §11** — TXID → `taxStatus.tinIdentifiers[]` structured migration path added to `docs/mappings/mapping-ivms101-eidas-amlr.md`.
+
+- **Validator business warnings** (Python + Node.js + Go):
+  - `taxStatus.economicSubstance.status = "nonCompliant"` → ESR red-flag warning (EDD + SAR recommendation).
+  - `taxStatus.pillarTwo.inScopeMNE = true` + `girFilingReference` absent → GIR missing warning.
+
+### Changed
+
+- `schema/kyc-aml-hybrid-extended.json` — version bumped from `1.8.0` to `1.9.0`; `$id` updated to `https://openkycaml.org/schema/v1.9.0/kyc-aml-hybrid-extended.json`.
+- `tools/go/validator.go` — `ValidationResult` gains `Warnings []string` field; `businessWarnings()` function added.
+
+---
+
 ## [1.8.0] — April 2026
 
 ### Added
