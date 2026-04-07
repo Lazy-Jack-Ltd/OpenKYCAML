@@ -1,13 +1,13 @@
 # travel-rule-vc-eudi-wallet.json — Structure Diagram
 
 **Scenario:** EUDI Wallet Travel Rule VC — Full VC wrapper with EUDI PID, transaction monitoring and multi-DID triangulation.  
-Satoshi Nakamoto (NL) sends 0.5 BTC to Harold Finney (GB). Satoshi presents his Dutch EUDI Wallet PID at Acme Crypto. The IVMS 101 payload is VC-wrapped, signed by the originating VASP, and acknowledged by the beneficiary VASP via TRP.
+Pieter Jan Van Dijk (NL) sends 0.5 BTC to Thomas James Hargreaves (GB). Pieter Jan presents his Dutch EUDI Wallet PID at Acme Crypto. The IVMS 101 payload is VC-wrapped, signed by the originating VASP, and acknowledged by the beneficiary VASP via TRP.
 
 ```mermaid
 flowchart TD
     subgraph NL_Identity["Identity Chain — Netherlands (Originator)"]
         PID_NL["🏛️ Dutch PID Provider (RVO)\nDID #2: did:web:pid-provider.rvo.example.nl\nIssues NL eIDAS 2.0 PID"]
-        WALLET_S["📱 Satoshi Nakamoto — EUDI Wallet (NL)\nDID #1: did:ebsi:zABkFm2PRPvLxNksMqJdVHK7\nNL Passport: NL-PASSPORT-AB123456"]
+        WALLET_S["📱 Pieter Jan Van Dijk — EUDI Wallet (NL)\nDID #1: did:ebsi:zABkFm2PRPvLxNksMqJdVHK7\nNL Passport: NL-PASSPORT-AB123456"]
         PID_NL -- "Issues eIDAS 2.0 PID VC\n(Dutch National PID via DigiD)" --> WALLET_S
     end
 
@@ -21,7 +21,7 @@ flowchart TD
     end
 
     subgraph UK_Side["Beneficiary Side — United Kingdom"]
-        B["👤 Harold Thomas Finney · GB\nPassport: GB-PASSPORT-HF987654\nWallet: 3J98t1WpEZ73CN..."]
+        B["👤 Thomas James Hargreaves · GB\nPassport: GB-PASSPORT-HF987654\nWallet: 3J98t1WpEZ73CN..."]
     end
 
     WALLET_S -- "Presents PID via OpenID4VP" --> OVASP
@@ -42,7 +42,7 @@ flowchart TD
 
 ```mermaid
 flowchart LR
-    D1["DID #1\nSatoshi's EUDI Wallet\ndid:ebsi:zABkFm2PRPv..."]
+    D1["DID #1\nPieter Jan's EUDI Wallet\ndid:ebsi:zABkFm2PRPv..."]
     D2["DID #2\nDutch PID Provider (RVO)\ndid:web:pid-provider\n.rvo.example.nl"]
     D3["DID #3\nAcme Crypto (Orig. VASP)\ndid:web:acme-crypto\n.example.nl"]
     D4["DID #4\nFinTech Exchange (Ben. VASP)\ndid:web:fintech-exchange\n.example.gb"]
@@ -59,8 +59,8 @@ flowchart LR
 |---|---|
 | Schema | OpenKYCAML v1.3.0 |
 | VC type | TravelRuleAttestation (EUDI Wallet) |
-| Originator | Satoshi Nakamoto (NL) — Dutch EUDI Wallet PID |
-| Beneficiary | Harold Thomas Finney (GB) |
+| Originator | Pieter Jan Van Dijk (NL) — Dutch EUDI Wallet PID |
+| Beneficiary | Thomas James Hargreaves (GB) |
 | Asset / Amount | 0.5 BTC (~46,500 EUR) |
 | Travel Rule | COMPLIANT, threshold 1,000 EUR (NL) |
 | Identity assurance | eIDAS 2.0 LoA High — AMLR Art. 22(5) |

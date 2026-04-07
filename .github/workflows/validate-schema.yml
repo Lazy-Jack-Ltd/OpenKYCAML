@@ -72,24 +72,31 @@ jobs:
           validator = Draft202012Validator(schema)
           failed = 0
 
-          for example in sorted(examples_dir.glob("*.json")):
+          # Validate root examples plus known schema-valid subdirectories.
+          # Non-schema-valid reference dirs (e.g. presentation-definitions/) are excluded.
+          validated_subdirs = ["evidence", "predictive"]
+          example_files = sorted(examples_dir.glob("*.json"))
+          for subdir in validated_subdirs:
+              example_files += sorted((examples_dir / subdir).glob("*.json"))
+
+          for example in example_files:
               with open(example) as f:
                   payload = json.load(f)
               errors = list(validator.iter_errors(payload))
               if errors:
-                  print(f"FAIL: {example.name}")
+                  print(f"FAIL: {example.relative_to(examples_dir)}")
                   for e in errors:
                       path = ".".join(str(p) for p in e.absolute_path)
                       print(f"      [{path or 'root'}] {e.message}")
                   failed += 1
               else:
-                  print(f"PASS: {example.name}")
+                  print(f"PASS: {example.relative_to(examples_dir)}")
 
           if failed:
               print(f"\n{failed} example(s) failed validation.")
               sys.exit(1)
           else:
-              print(f"\nAll {len(list(examples_dir.glob('*.json')))} examples passed.")
+              print(f"\nAll {len(example_files)} examples passed.")
           EOF
 
       - name: Validate versioned schema copy matches canonical schema
@@ -140,15 +147,32 @@ jobs:
           const examplesDir = path.resolve(__dirname, '../../examples');
           const validator = new OpenKYCAMLValidator();
 
-          const files = fs.readdirSync(examplesDir).filter(f => f.endsWith('.json'));
+          // Collect root examples plus known schema-valid subdirectories.
+          // Non-schema-valid reference dirs (e.g. presentation-definitions/) are excluded.
+          const validatedSubdirs = ['evidence', 'predictive'];
+          let files = fs.readdirSync(examplesDir)
+            .filter(f => f.endsWith('.json'))
+            .map(f => path.join(examplesDir, f));
+          for (const sub of validatedSubdirs) {
+            const subDir = path.join(examplesDir, sub);
+            if (fs.existsSync(subDir)) {
+              files = files.concat(
+                fs.readdirSync(subDir)
+                  .filter(f => f.endsWith('.json'))
+                  .map(f => path.join(subDir, f))
+              );
+            }
+          }
+          files.sort();
           let failed = 0;
 
-          for (const file of files.sort()) {
-            const result = validator.validateFile(path.join(examplesDir, file));
+          for (const file of files) {
+            const relPath = path.relative(examplesDir, file);
+            const result = validator.validateFile(file);
             if (result.isValid) {
-              console.log(`PASS: ${file}`);
+              console.log(`PASS: ${relPath}`);
             } else {
-              console.error(`FAIL: ${file}`);
+              console.error(`FAIL: ${relPath}`);
               for (const err of result.errors) {
                 console.error(`      [${err.instancePath}] ${err.message}`);
               }

@@ -19,7 +19,9 @@ Every example is a complete, schema-valid payload that can be used as a starting
 
 ## 1. Overview
 
-There are currently **25 example files** covering eight categories:
+> **Fictional data notice:** All names, passport numbers, national identifiers, addresses, entity names, LEIs, DIDs, wallet addresses, and any other personal or entity data in the example payloads are **entirely fictional** and have been created solely for illustrative purposes. Any resemblance to real persons (living or deceased), real legal entities, or real transactions is entirely coincidental.
+
+There are currently **27 example files** covering nine categories:
 
 | # | Category | Files |
 |---|---|---|
@@ -31,8 +33,9 @@ There are currently **25 example files** covering eight categories:
 | F | Document Bundles (v1.5.0) | 2 |
 | G | Advanced / Compliance Scenarios | 1 |
 | H | Reference / Annotated Tokens | 1 |
+| I | PKI Evidence — X.509 / X.500 (v1.8.0) | 2 |
 
-All files validate against [`schema/kyc-aml-hybrid-extended.json`](../schema/kyc-aml-hybrid-extended.json) (JSON Schema draft 2020-12), with the exception of `sd-jwt-compact-token.json` which is an annotated reference document — see [§6](#6-notes-on-special-files).
+All files in `examples/` and `examples/evidence/` validate against [`schema/kyc-aml-hybrid-extended.json`](../schema/kyc-aml-hybrid-extended.json) (JSON Schema draft 2020-12), with the exception of `sd-jwt-compact-token.json` which is an annotated reference document — see [§6](#6-notes-on-special-files).
 
 ---
 
@@ -122,35 +125,37 @@ Each example targets a specific compliance scenario.  Use the catalogue table in
 ## 4. Example catalogue
 
 > **Column key**  
-> `IVMS` = `ivms101` block present · `VC` = `verifiableCredential` block · `KYC` = `kycProfile` block · `Docs` = `identityDocuments` block · `GDPR` = `gdprSensitivityMetadata` block · `TxMon` = `transactionMonitoring` block
+> `IVMS` = `ivms101` block present · `VC` = `verifiableCredential` block · `KYC` = `kycProfile` block · `Docs` = `identityDocuments` block · `GDPR` = `gdprSensitivityMetadata` block · `TxMon` = `transactionMonitoring` block · `PKI` = `pkiEvidence` / `legacyIdentifiers` blocks
 
-| File | Category | Subject | Ver | IVMS | VC | KYC | Docs | GDPR | TxMon | Scenario |
-|---|---|---|---|:---:|:---:|:---:|:---:|:---:|:---:|---|
-| [`minimal-travel-rule.json`](minimal-travel-rule.json) | A — Baseline | Natural person | 1.3.0 | ✓ | | | | | | Minimum-viable FATF Travel Rule payload: originator + beneficiary, no extras |
-| [`minimal-travel-rule-eudi-wallet.json`](minimal-travel-rule-eudi-wallet.json) | A — Baseline | Natural person | 1.3.0 | ✓ | ✓ | | | | | Travel Rule with EUDI Wallet VC evidence; DID triangulation (JP→BTC→FR) |
-| [`natural-person-plain.json`](natural-person-plain.json) | B — Natural Person | Natural person | 1.3.0 | ✓ | | | | | | Plain IVMS 101 natural person CDD — SDD-level KYC onboarding baseline |
-| [`natural-person-eudi-wallet.json`](natural-person-eudi-wallet.json) | B — Natural Person | Natural person | 1.3.0 | ✓ | ✓ | | | | | EUDI Wallet onboarding (Anna Müller / DE); PID Issuer + VASP DID chain |
-| [`natural-person-sd-jwt-eudi-wallet.json`](natural-person-sd-jwt-eudi-wallet.json) | B — Natural Person | Natural person | 1.3.0 | ✓ | ✓ | | | | | SD-JWT selective disclosure via EUDI Wallet; `_sd` digests for non-revealed claims |
-| [`full-kyc-profile.json`](full-kyc-profile.json) | B — Natural Person | Natural person | 1.3.0 | ✓ | | ✓ | | | | Full KYC profile with EDD, PEP flag, source of wealth, and UBO list |
-| [`full-kyc-profile-eudi-wallet.json`](full-kyc-profile-eudi-wallet.json) | B — Natural Person | Natural person | 1.3.0 | ✓ | ✓ | | | | | EDD / PEP KYC profile via EUDI Wallet (Fatima Al-Rashidi / AE); vLEI chain |
-| [`legal-entity-plain.json`](legal-entity-plain.json) | C — Legal Entity | Legal entity | 1.3.0 | ✓ | | | | | | Plain IVMS 101 legal entity — minimal corporate CDD baseline |
-| [`legal-entity-eudi-wallet.json`](legal-entity-eudi-wallet.json) | C — Legal Entity | Legal entity | 1.3.0 | ✓ | ✓ | | | | | EUDI Wallet LPID onboarding (Global Trade Solutions GmbH / DE) |
-| [`legal-entity-sd-jwt-eudi-wallet.json`](legal-entity-sd-jwt-eudi-wallet.json) | C — Legal Entity | Legal entity | 1.3.0 | ✓ | ✓ | | | | | SD-JWT selective disclosure for LPID credential (Acme Digital Trading BV) |
-| [`legal-entity-trust.json`](legal-entity-trust.json) | C — Legal Entity | Legal entity | 1.4.0 | ✓ | | ✓ | | | | ISO 20275 trust (ELF code `L295`); `trustDetails` sub-object; Cayman Islands discretionary trust |
-| [`legal-entity-partnership.json`](legal-entity-partnership.json) | C — Legal Entity | Legal entity | 1.4.0 | ✓ | | ✓ | | | | ISO 20275 LLP (ELF code `Z13E`); `partnershipDetails` sub-object; Scottish LP |
-| [`legal-entity-deep-ubo.json`](legal-entity-deep-ubo.json) | D — Complex Ownership | Legal entity | 1.3.0 | ✓ | ✓ | | | | | 4-tier corporate UBO chain — AMLR Art. 26 EDD beneficial ownership disclosure |
-| [`complex-group-multi-tier.json`](complex-group-multi-tier.json) | D — Complex Ownership | Legal entity | 1.3.0 | ✓ | ✓ | | | | | 4-layer holding structure with natural person UBOs at every tier |
-| [`foundation-complex-ubo.json`](foundation-complex-ubo.json) | D — Complex Ownership | Legal entity | 1.3.0 | ✓ | ✓ | | | | | Liechtenstein Privatstiftung; `foundationDetails`; settlor + protector + beneficiary roles |
-| [`llp-complex-ubo.json`](llp-complex-ubo.json) | D — Complex Ownership | Legal entity | 1.3.0 | ✓ | ✓ | | | | | UK LLP with corporate general partner; multiple designated member roles |
-| [`trust-complex-ubo.json`](trust-complex-ubo.json) | D — Complex Ownership | Legal entity | 1.3.0 | ✓ | ✓ | | | | | Jersey discretionary trust with corporate trustee and multiple beneficiary classes |
-| [`hybrid-vc-wrapped.json`](hybrid-vc-wrapped.json) | E — VC-Wrapped | Natural person | 1.3.0 | ✓ | ✓ | | | | ✓ | IVMS 101 + `kycProfile` inside a W3C VC; transaction monitoring block |
-| [`hybrid-vc-eudi-wallet.json`](hybrid-vc-eudi-wallet.json) | E — VC-Wrapped | Natural person | 1.3.0 | ✓ | ✓ | | | | ✓ | EUDI Wallet companion to `hybrid-vc-wrapped.json`; full DID triangulation |
-| [`travel-rule-vc-wrapped.json`](travel-rule-vc-wrapped.json) | E — VC-Wrapped | Natural person | 1.3.0 | | ✓ | | | | ✓ | Travel Rule entirely inside a VC — no top-level `ivms101` (VC-only pattern) |
-| [`travel-rule-vc-eudi-wallet.json`](travel-rule-vc-eudi-wallet.json) | E — VC-Wrapped | Natural person | 1.3.0 | ✓ | ✓ | | | | ✓ | EUDI Wallet companion to `travel-rule-vc-wrapped.json` |
-| [`document-bundle-natural-person.json`](document-bundle-natural-person.json) | F — Document Bundles | Natural person | 1.5.0 | ✓ | | ✓ | ✓ | | | German national: Personalausweis + proof of address + eIDAS PID VC; `verifyingDocumentRef` linkage |
-| [`document-bundle-legal-entity.json`](document-bundle-legal-entity.json) | F — Document Bundles | Legal entity | 1.5.0 | ✓ | | ✓ | ✓ | | | UK PLC: Certificate of Incorporation + Companies House extract + LEI + vLEI OOR |
-| [`hybrid-with-sar-restriction.json`](hybrid-with-sar-restriction.json) | G — Advanced | Legal entity | 1.3.0 | ✓ | ✓ | | | ✓ | | SAR filing in progress; `gdprSensitivityMetadata` tipping-off protection; restricted field list |
-| [`sd-jwt-compact-token.json`](sd-jwt-compact-token.json) | H — Reference Token | Natural person | 1.3.0 | | | ✓ | | | | ⚠ Annotated reference — decoded SD-JWT with `compactToken`, `decodedDisclosures`, `verificationSteps`; **not schema-valid** |
+| File | Category | Subject | Ver | IVMS | VC | KYC | Docs | GDPR | TxMon | PKI | Scenario |
+|---|---|---|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|---|
+| [`minimal-travel-rule.json`](minimal-travel-rule.json) | A — Baseline | Natural person | 1.3.0 | ✓ | | | | | | | Minimum-viable FATF Travel Rule payload: originator + beneficiary, no extras |
+| [`minimal-travel-rule-eudi-wallet.json`](minimal-travel-rule-eudi-wallet.json) | A — Baseline | Natural person | 1.3.0 | ✓ | ✓ | | | | | | Travel Rule with EUDI Wallet VC evidence; DID triangulation (JP→BTC→FR) |
+| [`natural-person-plain.json`](natural-person-plain.json) | B — Natural Person | Natural person | 1.3.0 | ✓ | | | | | | | Plain IVMS 101 natural person CDD — SDD-level KYC onboarding baseline |
+| [`natural-person-eudi-wallet.json`](natural-person-eudi-wallet.json) | B — Natural Person | Natural person | 1.3.0 | ✓ | ✓ | | | | | | EUDI Wallet onboarding (Anna Müller / DE); PID Issuer + VASP DID chain |
+| [`natural-person-sd-jwt-eudi-wallet.json`](natural-person-sd-jwt-eudi-wallet.json) | B — Natural Person | Natural person | 1.3.0 | ✓ | ✓ | | | | | | SD-JWT selective disclosure via EUDI Wallet; `_sd` digests for non-revealed claims |
+| [`full-kyc-profile.json`](full-kyc-profile.json) | B — Natural Person | Natural person | 1.3.0 | ✓ | | ✓ | | | | | Full KYC profile with EDD, PEP flag, source of wealth, and UBO list |
+| [`full-kyc-profile-eudi-wallet.json`](full-kyc-profile-eudi-wallet.json) | B — Natural Person | Natural person | 1.3.0 | ✓ | ✓ | | | | | | EDD / PEP KYC profile via EUDI Wallet (Fatima Al-Rashidi / AE); vLEI chain |
+| [`legal-entity-plain.json`](legal-entity-plain.json) | C — Legal Entity | Legal entity | 1.3.0 | ✓ | | | | | | | Plain IVMS 101 legal entity — minimal corporate CDD baseline |
+| [`legal-entity-eudi-wallet.json`](legal-entity-eudi-wallet.json) | C — Legal Entity | Legal entity | 1.3.0 | ✓ | ✓ | | | | | | EUDI Wallet LPID onboarding (Global Trade Solutions GmbH / DE) |
+| [`legal-entity-sd-jwt-eudi-wallet.json`](legal-entity-sd-jwt-eudi-wallet.json) | C — Legal Entity | Legal entity | 1.3.0 | ✓ | ✓ | | | | | | SD-JWT selective disclosure for LPID credential (Acme Digital Trading BV) |
+| [`legal-entity-trust.json`](legal-entity-trust.json) | C — Legal Entity | Legal entity | 1.4.0 | ✓ | | ✓ | | | | | ISO 20275 trust (ELF code `L295`); `trustDetails` sub-object; Cayman Islands discretionary trust |
+| [`legal-entity-partnership.json`](legal-entity-partnership.json) | C — Legal Entity | Legal entity | 1.4.0 | ✓ | | ✓ | | | | | ISO 20275 LLP (ELF code `Z13E`); `partnershipDetails` sub-object; Scottish LP |
+| [`legal-entity-deep-ubo.json`](legal-entity-deep-ubo.json) | D — Complex Ownership | Legal entity | 1.3.0 | ✓ | ✓ | | | | | | 4-tier corporate UBO chain — AMLR Art. 26 EDD beneficial ownership disclosure |
+| [`complex-group-multi-tier.json`](complex-group-multi-tier.json) | D — Complex Ownership | Legal entity | 1.3.0 | ✓ | ✓ | | | | | | 4-layer holding structure with natural person UBOs at every tier |
+| [`foundation-complex-ubo.json`](foundation-complex-ubo.json) | D — Complex Ownership | Legal entity | 1.3.0 | ✓ | ✓ | | | | | | Liechtenstein Privatstiftung; `foundationDetails`; settlor + protector + beneficiary roles |
+| [`llp-complex-ubo.json`](llp-complex-ubo.json) | D — Complex Ownership | Legal entity | 1.3.0 | ✓ | ✓ | | | | | | UK LLP with corporate general partner; multiple designated member roles |
+| [`trust-complex-ubo.json`](trust-complex-ubo.json) | D — Complex Ownership | Legal entity | 1.3.0 | ✓ | ✓ | | | | | | Jersey discretionary trust with corporate trustee and multiple beneficiary classes |
+| [`hybrid-vc-wrapped.json`](hybrid-vc-wrapped.json) | E — VC-Wrapped | Natural person | 1.3.0 | ✓ | ✓ | | | | ✓ | | IVMS 101 + `kycProfile` inside a W3C VC; transaction monitoring block |
+| [`hybrid-vc-eudi-wallet.json`](hybrid-vc-eudi-wallet.json) | E — VC-Wrapped | Natural person | 1.3.0 | ✓ | ✓ | | | | ✓ | | EUDI Wallet companion to `hybrid-vc-wrapped.json`; full DID triangulation |
+| [`travel-rule-vc-wrapped.json`](travel-rule-vc-wrapped.json) | E — VC-Wrapped | Natural person | 1.3.0 | | ✓ | | | | ✓ | | Travel Rule entirely inside a VC — no top-level `ivms101` (VC-only pattern) |
+| [`travel-rule-vc-eudi-wallet.json`](travel-rule-vc-eudi-wallet.json) | E — VC-Wrapped | Natural person | 1.3.0 | ✓ | ✓ | | | | ✓ | | EUDI Wallet companion to `travel-rule-vc-wrapped.json` |
+| [`document-bundle-natural-person.json`](document-bundle-natural-person.json) | F — Document Bundles | Natural person | 1.5.0 | ✓ | | ✓ | ✓ | | | | German national: Personalausweis + proof of address + eIDAS PID VC; `verifyingDocumentRef` linkage |
+| [`document-bundle-legal-entity.json`](document-bundle-legal-entity.json) | F — Document Bundles | Legal entity | 1.5.0 | ✓ | | ✓ | ✓ | | | | UK PLC: Certificate of Incorporation + Companies House extract + LEI + vLEI OOR |
+| [`hybrid-with-sar-restriction.json`](hybrid-with-sar-restriction.json) | G — Advanced | Legal entity | 1.3.0 | ✓ | ✓ | | | ✓ | | | SAR filing in progress; `gdprSensitivityMetadata` tipping-off protection; restricted field list |
+| [`sd-jwt-compact-token.json`](sd-jwt-compact-token.json) | H — Reference Token | Natural person | 1.3.0 | | | ✓ | | | | | ⚠ Annotated reference — decoded SD-JWT with `compactToken`, `decodedDisclosures`, `verificationSteps`; **not schema-valid** |
+| [`evidence/eidas-x509-dn.json`](evidence/eidas-x509-dn.json) | I — PKI Evidence | Legal entity | 1.8.0 | ✓ | | ✓ | ✓ | | | ✓ | Legal entity QSealC certificate: `legacyIdentifiers.x500DN` + `pkiEvidence.x509Certificate` (ETSI EN 319 412 QCStatements, OCSP) |
+| [`evidence/eidas-x509-qeaa.json`](evidence/eidas-x509-qeaa.json) | I — PKI Evidence | Natural person | 1.8.0 | ✓ | ✓ | ✓ | ✓ | | | ✓ | Natural person QEAA + EUDI Wallet triangulation: VC evidence + `pkiEvidence` X.509 metadata + `legacyIdentifiers.x500DN` + OIDs |
 
 ---
 
@@ -187,6 +192,14 @@ Introduced in schema v1.5.0, these two files demonstrate the `identityDocuments`
 ### H — Reference Tokens
 
 `sd-jwt-compact-token.json` is an **annotated reference document**, not a schema-valid payload.  It decodes a compact SD-JWT into its constituent parts — Issuer-JWT, disclosure array, key-binding JWT — and adds human-readable `verificationSteps` annotations.  Use it as a companion when reading the SD-JWT spec or debugging a presentation flow.  It deliberately fails schema validation; see [§6](#6-notes-on-special-files).
+
+### I — PKI Evidence: X.509 / X.500 (v1.8.0)
+
+Two files in `examples/evidence/` demonstrate the new optional `legacyIdentifiers` and `pkiEvidence` blocks introduced in schema v1.8.0.
+
+`eidas-x509-dn.json` shows a legal entity (Acme Bank PLC) with a QSealC (Qualified Electronic Seal Certificate) issued by a UK QTSP.  It populates `legacyIdentifiers.x500DN` (certificateSubject), `pkiEvidence.x509Certificate` with ETSI EN 319 412 QCStatements (`id-etsi-qcs-QcCompliance`, `id-etsi-qcs-QcType-eSeal`, `id-etsi-qcs-QcSSCD`), CRL distribution points, an OCSP responder URL, and an `oids[]` array with the `organizationIdentifier` OID (2.5.4.97) carrying the entity's LEI in LEIX format.
+
+`eidas-x509-qeaa.json` shows a natural person (fictional name) with a QEAA (Qualified Electronic Attestation of Attributes) from a German QTSP, presented via an EUDI Wallet.  It combines three identity layers: a W3C VC `evidence[]` block (EUDI Wallet DID triangulation), a `pkiEvidence.x509Certificate` block (X.509 metadata), and `legacyIdentifiers.x500DN` (certificateSubject).  The `oids[]` array carries the `id-etsi-qcs-QcType-eAttestation` QCStatement OID confirming QEAA status.
 
 ---
 

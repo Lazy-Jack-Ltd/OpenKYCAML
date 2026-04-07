@@ -1,12 +1,12 @@
 # travel-rule-vc-wrapped.json — Structure Diagram
 
 **Scenario:** Travel Rule VC-Wrapped with Transaction Monitoring.  
-Satoshi Nakamoto (NL) sends 0.5 BTC to Harold Finney (GB). The full IVMS 101 payload is wrapped inside a W3C Verifiable Credential, signed by the originating VASP and transmitted to the beneficiary VASP. Transaction monitoring evaluates three rules.
+Pieter Jan Van Dijk (NL) sends 0.5 BTC to Thomas James Hargreaves (GB). The full IVMS 101 payload is wrapped inside a W3C Verifiable Credential, signed by the originating VASP and transmitted to the beneficiary VASP. Transaction monitoring evaluates three rules.
 
 ```mermaid
 flowchart TD
     subgraph Originator_Side["Originating Side — Netherlands"]
-        O["👤 Satoshi Nakamoto\nNaturalPerson · NL\nPassport: NL-PASSPORT-AB123456\nDOB: 1985-04-05, Amsterdam\nWallet: bc1qxy2kgdygjr..."]
+        O["👤 Pieter Jan Van Dijk\nNaturalPerson · NL\nPassport: NL-PASSPORT-AB123456\nDOB: 1985-04-05, Amsterdam\nWallet: bc1qxy2kgdygjr..."]
         OVASP["🏦 Acme Crypto Exchange BV\nOriginating VASP · NL\nDID: did:web:acme-crypto.example.nl\nLEI: 724500VNNHZHYDLFMO70"]
     end
 
@@ -20,7 +20,7 @@ flowchart TD
 
     subgraph Beneficiary_Side["Beneficiary Side — United Kingdom"]
         BVASP["🏦 FinTech Exchange Ltd\nBeneficiary VASP · GB\nLEI: 213800WSGIIZCXF1P572\nVerifies VC signature via TRP"]
-        B["👤 Harold Thomas Finney\nNaturalPerson · GB\nPassport: GB-PASSPORT-HF987654\nWallet: 3J98t1WpEZ73CN..."]
+        B["👤 Thomas James Hargreaves\nNaturalPerson · GB\nPassport: GB-PASSPORT-HF987654\nWallet: 3J98t1WpEZ73CN..."]
     end
 
     O -- "0.5 BTC" --> OVASP
@@ -44,8 +44,8 @@ flowchart TD
 | Schema | OpenKYCAML v1.3.0 |
 | Message type | VC-wrapped IVMS 101 |
 | VC type | TravelRuleAttestation |
-| Originator | Satoshi Nakamoto, NL |
-| Beneficiary | Harold Thomas Finney, GB |
+| Originator | Pieter Jan Van Dijk, NL |
+| Beneficiary | Thomas James Hargreaves, GB |
 | Asset / Amount | 0.5 BTC (~14,750 EUR) |
 | Travel Rule threshold | 1,000 EUR (NL jurisdiction) |
 | Compliance status | COMPLIANT |

@@ -10,7 +10,7 @@ This folder contains one Mermaid diagram per example in the `/examples` director
 
 | Diagram | Example File | Scenario |
 |---|---|---|
-| [natural-person-plain.md](natural-person-plain.md) | `natural-person-plain.json` | Minimal IVMS 101 — Nakamoto (NL) → Finney (GB), 0.5 BTC, no VC wrapper |
+| [natural-person-plain.md](natural-person-plain.md) | `natural-person-plain.json` | Minimal IVMS 101 — Van Dijk (NL) → Hargreaves (GB), 0.5 BTC, no VC wrapper |
 | [natural-person-eudi-wallet.md](natural-person-eudi-wallet.md) | `natural-person-eudi-wallet.json` | EUDI Wallet onboarding — Anna Müller (DE), German PID via OpenID4VP, 3-DID chain |
 | [natural-person-sd-jwt-eudi-wallet.md](natural-person-sd-jwt-eudi-wallet.md) | `natural-person-sd-jwt-eudi-wallet.json` | SD-JWT selective disclosure — name + address revealed, DOB/nationality withheld (GDPR) |
 
@@ -25,7 +25,7 @@ This folder contains one Mermaid diagram per example in the `/examples` director
 
 | Diagram | Example File | Scenario |
 |---|---|---|
-| [travel-rule-vc-wrapped.md](travel-rule-vc-wrapped.md) | `travel-rule-vc-wrapped.json` | VC-wrapped IVMS 101 + Transaction Monitoring — Nakamoto → Finney, 0.5 BTC, TRP |
+| [travel-rule-vc-wrapped.md](travel-rule-vc-wrapped.md) | `travel-rule-vc-wrapped.json` | VC-wrapped IVMS 101 + Transaction Monitoring — Van Dijk → Hargreaves, 0.5 BTC, TRP |
 | [travel-rule-vc-eudi-wallet.md](travel-rule-vc-eudi-wallet.md) | `travel-rule-vc-eudi-wallet.json` | EUDI Wallet + VC-wrapped + TM — Dutch PID from RVO, 4-DID chain, 4 TM rules PASS |
 
 ### Legal Entity KYC / Travel Rule

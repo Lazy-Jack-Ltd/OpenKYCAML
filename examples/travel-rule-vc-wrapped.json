@@ -30,8 +30,8 @@
                 "name": {
                   "nameIdentifier": [
                     {
-                      "primaryIdentifier": "Nakamoto",
-                      "secondaryIdentifier": "Satoshi",
+                      "primaryIdentifier": "Van Dijk",
+                      "secondaryIdentifier": "Pieter Jan",
                       "nameIdentifierType": "LEGL"
                     }
                   ]
@@ -71,8 +71,8 @@
                 "name": {
                   "nameIdentifier": [
                     {
-                      "primaryIdentifier": "Finney",
-                      "secondaryIdentifier": "Harold Thomas",
+                      "primaryIdentifier": "Hargreaves",
+                      "secondaryIdentifier": "Thomas James",
                       "nameIdentifierType": "LEGL"
                     }
                   ]
@@ -80,7 +80,7 @@
                 "geographicAddress": [
                   {
                     "addressType": "HOME",
-                    "streetName": "Satoshi Street",
+                    "streetName": "Pieter Jan Street",
                     "buildingNumber": "10",
                     "townName": "London",
                     "postCode": "EC2V 8RF",
