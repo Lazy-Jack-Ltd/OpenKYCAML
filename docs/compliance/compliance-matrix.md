@@ -343,4 +343,39 @@ _✅ = full field mapping. ⬜ = not in scope / service-layer enforcement only._
 
 ---
 
-*Last updated: v1.7.0 — April 2026. Maintained by the OpenKYCAML Technical Working Group.*
+## 17. X.500 Distinguished Names and X.509 PKI Evidence (v1.8.0)
+
+> X.500 DNs are the canonical Subject/Issuer identifier in X.509 certificates. X.509 PKI certificates underpin eIDAS 2.0 Qualified Trust Services (QES, QSealC, QWAC, QEAA) and SWIFTNet addressing. Full mappings are in [x500-x400-legacy.md](../mappings/x500-x400-legacy.md) and [x509-pki.md](../mappings/x509-pki.md).
+
+| Standard / Provision | Coverage | OpenKYCAML v1.8.0 Field(s) |
+|---|---|---|
+| **X.500 DN — certificate Subject** (ITU-T X.500 / RFC 4514) | ✅ ⭐ | `legacyIdentifiers.x500DN` (`x500DNType: "certificateSubject"`) |
+| **X.500 DN — certificate Issuer** | ✅ ⭐ | `legacyIdentifiers.x500DN` (`x500DNType: "certificateIssuer"`) |
+| **X.500 DN — SWIFTNet technical address** | ✅ ⭐ | `legacyIdentifiers.x500DN` (`x500DNType: "swiftNetAddress"`) |
+| **X.500 DN — LDAP/directory entry** | ✅ ⭐ | `legacyIdentifiers.x500DN` (`x500DNType: "directoryEntry"`) |
+| **X.400 O/R Addresses** (ITU-T X.400) | ⬜ | Not added — no current regulatory mandate; explicitly excluded |
+| **X.509 certificate Subject DN** (RFC 5280 §4.1.2.6) | ✅ ⭐ | `pkiEvidence.x509Certificate.subjectDN` |
+| **X.509 certificate Issuer DN** (RFC 5280 §4.1.2.4) | ✅ ⭐ | `pkiEvidence.x509Certificate.issuerDN` |
+| **X.509 serial number** (RFC 5280 §4.1.2.2) | ✅ ⭐ | `pkiEvidence.x509Certificate.serialNumber` |
+| **X.509 validity period** (RFC 5280 §4.1.2.5) | ✅ ⭐ | `pkiEvidence.x509Certificate.validFrom` + `validTo` |
+| **X.509 signature algorithm** (RFC 5280 §4.1.1.2) | ✅ ⭐ | `pkiEvidence.x509Certificate.signatureAlgorithm` |
+| **eIDAS QCStatements** (ETSI EN 319 412 — id-pe-QCStatements) | ✅ ⭐ | `pkiEvidence.x509Certificate.qcStatements[]` |
+| **OCSP revocation** (RFC 6960) | ✅ ⭐ | `pkiEvidence.x509Certificate.ocspResponderUrl` |
+| **CRL Distribution Points** (RFC 5280 §4.2.1.13) | ✅ ⭐ | `pkiEvidence.x509Certificate.crlDistributionPoints[]` |
+| **SHA-256 cert fingerprint** | ✅ ⭐ | `pkiEvidence.x509Certificate.thumbprintSha256` |
+| **ASN.1 OIDs** (RFC 5280 / ETSI profiles) | ✅ ⭐ | `pkiEvidence.oids[]` (oid + description + value) |
+| **eIDAS 2.0 QES** (Reg. 910/2014 + EU 2024/1183) | ✅ ⭐ | `qcStatements` includes `id-etsi-qcs-QcType-eSign` |
+| **eIDAS 2.0 QSealC** | ✅ ⭐ | `qcStatements` includes `id-etsi-qcs-QcType-eSeal` |
+| **eIDAS 2.0 QWAC** | ✅ ⭐ | `qcStatements` includes `id-etsi-qcs-QcType-Web` |
+| **eIDAS 2.0 QEAA** (Art. 45f) | ✅ ⭐ | `qcStatements` includes `id-etsi-qcs-QcEAA` + `verifiableCredential.evidence[]` |
+| **AMLR 2027 Art. 22(6)** — QC as remote CDD evidence | ✅ ⭐ | `pkiEvidence` + `pkiEvidence.certificateDocumentRef` → `identityDocuments` |
+| **AMLR 2027 Art. 56** — Record keeping (cert fingerprint) | ✅ ⭐ | `pkiEvidence.x509Certificate.thumbprintSha256` + `validFrom/validTo` |
+| **ETSI EN 319 412 series** — QTSP cert profiles | ✅ ⭐ | `pkiEvidence.x509Certificate.*` + `pkiEvidence.oids[]` |
+| **ETSI TS 119 461 v2.1.1** — Identity proofing | ✅ ⭐ | `pkiEvidence` + `identityDocuments` + `certificateDocumentRef` |
+| **Predictive AML cert provenance** | ✅ ⭐ | `validTo` + `ocspResponderUrl` → `predictiveAML.riskEvolutionHistory[]` cert-expiry signals |
+
+_✅ = full field mapping. ⬜ = explicitly out of scope. ⭐ = added in v1.8.0._
+
+---
+
+*Last updated: v1.8.0 — April 2026. Maintained by the OpenKYCAML Technical Working Group.*

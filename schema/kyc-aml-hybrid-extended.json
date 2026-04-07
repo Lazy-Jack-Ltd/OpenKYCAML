@@ -1,13 +1,13 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://openkycaml.org/schema/v1.7.0/kyc-aml-hybrid-extended.json",
+  "$id": "https://openkycaml.org/schema/v1.8.0/kyc-aml-hybrid-extended.json",
   "title": "OpenKYCAML Hybrid KYC/AML Schema",
   "description": "Root OpenKYCAML document. At least one of 'ivms101' or 'verifiableCredential' MUST be present.",
-  "version": "1.7.0",
+  "version": "1.8.0",
   "$defs": {
     "NaturalPersonNameIdentifier": {
       "title": "NaturalPersonNameIdentifier",
-      "description": "Structured name components for a natural person (IVMS 101 §3.2).",
+      "description": "Structured name components for a natural person (IVMS 101 \u00a73.2).",
       "type": "object",
       "required": [
         "primaryIdentifier",
@@ -39,7 +39,7 @@
     },
     "Address": {
       "title": "Address",
-      "description": "Structured postal address (IVMS 101 §3.5).",
+      "description": "Structured postal address (IVMS 101 \u00a73.5).",
       "type": "object",
       "required": [
         "country"
@@ -124,7 +124,7 @@
     },
     "NationalIdentification": {
       "title": "NationalIdentification",
-      "description": "National identification document (IVMS 101 §3.6).",
+      "description": "National identification document (IVMS 101 \u00a73.6).",
       "type": "object",
       "required": [
         "nationalIdentifier",
@@ -176,7 +176,7 @@
     },
     "DateAndPlaceOfBirth": {
       "title": "DateAndPlaceOfBirth",
-      "description": "Birth information for a natural person (IVMS 101 §3.3).",
+      "description": "Birth information for a natural person (IVMS 101 \u00a73.3).",
       "type": "object",
       "required": [
         "dateOfBirth",
@@ -190,7 +190,7 @@
         },
         "placeOfBirth": {
           "type": "string",
-          "description": "City or municipality of birth. Maps to eIDAS 2.0 PID attribute 'birth_place' (optional in eIDAS; required by IVMS 101 §3.3).",
+          "description": "City or municipality of birth. Maps to eIDAS 2.0 PID attribute 'birth_place' (optional in eIDAS; required by IVMS 101 \u00a73.3).",
           "maxLength": 70
         }
       }
@@ -267,7 +267,7 @@
     },
     "LegalPersonNameIdentifier": {
       "title": "LegalPersonNameIdentifier",
-      "description": "Structured name identifier for a legal person (IVMS 101 §3.8).",
+      "description": "Structured name identifier for a legal person (IVMS 101 \u00a73.8).",
       "type": "object",
       "required": [
         "legalPersonName",
@@ -340,7 +340,7 @@
         },
         "mandates": {
           "type": "array",
-          "description": "Representation and mandate records — natural persons authorised to act on behalf of the legal entity. Supports AMLR authorised representative and beneficial owner verification. May be conveyed as QEAAs in EUDI Wallet flows.",
+          "description": "Representation and mandate records \u2014 natural persons authorised to act on behalf of the legal entity. Supports AMLR authorised representative and beneficial owner verification. May be conveyed as QEAAs in EUDI Wallet flows.",
           "items": {
             "type": "object",
             "required": [
@@ -435,7 +435,7 @@
         },
         "lpid": {
           "$ref": "#/$defs/LegalPersonIdentificationData",
-          "description": "Optional eIDAS 2.0 Legal Person Identification Data (LPID) block. Carries LPID-specific attributes (current legal name, unique identifier, VAT, EORI, LEI, mandates) for EUDI Wallet and AMLR high-assurance CDD flows. Backward-compatible — omit for pure IVMS 101 usage."
+          "description": "Optional eIDAS 2.0 Legal Person Identification Data (LPID) block. Carries LPID-specific attributes (current legal name, unique identifier, VAT, EORI, LEI, mandates) for EUDI Wallet and AMLR high-assurance CDD flows. Backward-compatible \u2014 omit for pure IVMS 101 usage."
         },
         "legalFormCode": {
           "type": "string",
@@ -851,7 +851,7 @@
     },
     "Originator": {
       "title": "Originator",
-      "description": "IVMS 101 originator — the sending party in a virtual asset transfer.",
+      "description": "IVMS 101 originator \u2014 the sending party in a virtual asset transfer.",
       "type": "object",
       "required": [
         "originatorPersons"
@@ -896,7 +896,7 @@
     },
     "Beneficiary": {
       "title": "Beneficiary",
-      "description": "IVMS 101 beneficiary — the receiving party in a virtual asset transfer.",
+      "description": "IVMS 101 beneficiary \u2014 the receiving party in a virtual asset transfer.",
       "type": "object",
       "required": [
         "beneficiaryPersons"
@@ -941,7 +941,7 @@
     },
     "VASP": {
       "title": "VASP",
-      "description": "Virtual Asset Service Provider identifier (IVMS 101 §3.14).",
+      "description": "Virtual Asset Service Provider identifier (IVMS 101 \u00a73.14).",
       "type": "object",
       "properties": {
         "name": {
@@ -991,7 +991,7 @@
           "items": {
             "$ref": "#/$defs/VASP"
           },
-          "description": "Ordered list of intermediate VASPs in the transfer chain (IVMS 101 §3.15)."
+          "description": "Ordered list of intermediate VASPs in the transfer chain (IVMS 101 \u00a73.15)."
         },
         "payloadMetadata": {
           "type": "object",
@@ -1091,7 +1091,7 @@
     },
     "VerifiableCredentialWrapper": {
       "title": "VerifiableCredentialWrapper",
-      "description": "Optional W3C Verifiable Credential envelope conforming to W3C VC Data Model v1.1 (v2-compatible structure) and eIDAS 2.0 ARF §6.3. When present, the IVMS101 payload and kycProfile are transported as credentialSubject. Note: the @context[0] uses the W3C VC DM v1.1 URL; migration to the v2 URL is planned for v2.0.0.",
+      "description": "Optional W3C Verifiable Credential envelope conforming to W3C VC Data Model v1.1 (v2-compatible structure) and eIDAS 2.0 ARF \u00a76.3. When present, the IVMS101 payload and kycProfile are transported as credentialSubject. Note: the @context[0] uses the W3C VC DM v1.1 URL; migration to the v2 URL is planned for v2.0.0.",
       "type": "object",
       "required": [
         "@context",
@@ -1237,7 +1237,7 @@
         },
         "evidence": {
           "type": "array",
-          "description": "W3C VC §6.4 evidence block. Used in EUDI Wallet flows to reference the source credential(s) — typically a PID or LPID — that were presented by the subject and from which the IVMS 101 / kycProfile data was derived. Enables triangulation of the identity chain: PID Issuer → Subject Wallet → VASP.",
+          "description": "W3C VC \u00a76.4 evidence block. Used in EUDI Wallet flows to reference the source credential(s) \u2014 typically a PID or LPID \u2014 that were presented by the subject and from which the IVMS 101 / kycProfile data was derived. Enables triangulation of the identity chain: PID Issuer \u2192 Subject Wallet \u2192 VASP.",
           "items": {
             "type": "object",
             "required": [
@@ -1306,7 +1306,7 @@
         },
         "selectiveDisclosure": {
           "type": "object",
-          "description": "SD-JWT VC selective disclosure metadata (IETF draft-ietf-oauth-sd-jwt-vc / ARF §6.3.4). Present when this credential is issued or presented as an SD-JWT VC.",
+          "description": "SD-JWT VC selective disclosure metadata (IETF draft-ietf-oauth-sd-jwt-vc / ARF \u00a76.3.4). Present when this credential is issued or presented as an SD-JWT VC.",
           "properties": {
             "_sd_alg": {
               "type": "string",
@@ -1325,7 +1325,7 @@
             },
             "requiredClaimPaths": {
               "type": "array",
-              "description": "JSON Pointer paths always revealed — never withheld. Includes FATF Travel Rule mandatory fields.",
+              "description": "JSON Pointer paths always revealed \u2014 never withheld. Includes FATF Travel Rule mandatory fields.",
               "items": {
                 "type": "string"
               }
@@ -1342,7 +1342,7 @@
                 "properties": {
                   "salt": {
                     "type": "string",
-                    "description": "Random salt value (base64url, ≥128 bits entropy)."
+                    "description": "Random salt value (base64url, \u2265128 bits entropy)."
                   },
                   "claimName": {
                     "type": "string",
@@ -1380,7 +1380,7 @@
         },
         "pepCategory": {
           "type": "string",
-          "description": "PEP classification category aligned to the AMLA draft RTS taxonomy (AMLR Art. 28–31). Primary values: DOMESTIC_PEP, FOREIGN_PEP, INTERNATIONAL_ORGANISATION, FAMILY_MEMBER_OF_PEP, CLOSE_ASSOCIATE_OF_PEP, FORMER_PEP, NOT_PEP. Legacy aliases INTERNATIONAL_ORG_PEP and RCA are retained for backward compatibility.",
+          "description": "PEP classification category aligned to the AMLA draft RTS taxonomy (AMLR Art. 28\u201331). Primary values: DOMESTIC_PEP, FOREIGN_PEP, INTERNATIONAL_ORGANISATION, FAMILY_MEMBER_OF_PEP, CLOSE_ASSOCIATE_OF_PEP, FORMER_PEP, NOT_PEP. Legacy aliases INTERNATIONAL_ORG_PEP and RCA are retained for backward compatibility.",
           "enum": [
             "DOMESTIC_PEP",
             "FOREIGN_PEP",
@@ -1733,7 +1733,7 @@
         },
         "naturalPerson": {
           "$ref": "#/$defs/NaturalPerson",
-          "description": "The beneficial owner as a natural person. Legacy field — use 'person' when natural or legal person support is needed. Do not use alongside 'person'."
+          "description": "The beneficial owner as a natural person. Legacy field \u2014 use 'person' when natural or legal person support is needed. Do not use alongside 'person'."
         },
         "ownershipPercentage": {
           "type": "number",
@@ -2183,7 +2183,7 @@
               },
               "ruleName": {
                 "type": "string",
-                "description": "Human-readable name of the rule (e.g., 'Velocity – 7-day rolling window').",
+                "description": "Human-readable name of the rule (e.g., 'Velocity \u2013 7-day rolling window').",
                 "maxLength": 200
               },
               "ruleCategory": {
@@ -2621,7 +2621,7 @@
               "type": "integer",
               "minimum": 0,
               "maximum": 1000,
-              "description": "Numeric risk score (0–1000)."
+              "description": "Numeric risk score (0\u20131000)."
             },
             "riskRatingDate": {
               "type": "string",
@@ -2882,7 +2882,7 @@
               },
               "xrplCredentialType": {
                 "type": "string",
-                "description": "XRPL on-ledger credential type associated with this wallet, stored as a hexadecimal string (1–64 bytes, 2–128 hex characters, case-insensitive). Mirrors the `CredentialType` field of an XRPL `Credential` ledger object (XLS-70). Enables round-trip reconstruction of the on-ledger XRPL credential without relying on external state. The decoded human-readable equivalent is captured in `verifiableCredential.type[]`. Examples: '4b594343726564656e7469616c' (KYCCredential), '4f70656e4b5943414d4c43726564656e7469616c' (OpenKYCAMLCredential).",
+                "description": "XRPL on-ledger credential type associated with this wallet, stored as a hexadecimal string (1\u201364 bytes, 2\u2013128 hex characters, case-insensitive). Mirrors the `CredentialType` field of an XRPL `Credential` ledger object (XLS-70). Enables round-trip reconstruction of the on-ledger XRPL credential without relying on external state. The decoded human-readable equivalent is captured in `verifiableCredential.type[]`. Examples: '4b594343726564656e7469616c' (KYCCredential), '4f70656e4b5943414d4c43726564656e7469616c' (OpenKYCAMLCredential).",
                 "pattern": "^[0-9a-fA-F]{2,128}$",
                 "maxLength": 128
               },
@@ -2898,7 +2898,7 @@
               },
               "xrplAuthorizedCredentialTypes": {
                 "type": "array",
-                "description": "Array of XRPL credential type hex strings that have been accepted and authorised within the Permissioned Domain identified by `xrplPermissionedDomainId` (XLS-80). Each entry follows the same hex-encoding convention as `xrplCredentialType` (1–64 bytes, 2–128 hex characters). A domain may require holders to satisfy multiple credential types simultaneously (e.g. KYC + AML + AccreditedInvestor) before gaining access. This field records which credential types the issuer has confirmed are satisfied for this wallet in this domain.",
+                "description": "Array of XRPL credential type hex strings that have been accepted and authorised within the Permissioned Domain identified by `xrplPermissionedDomainId` (XLS-80). Each entry follows the same hex-encoding convention as `xrplCredentialType` (1\u201364 bytes, 2\u2013128 hex characters). A domain may require holders to satisfy multiple credential types simultaneously (e.g. KYC + AML + AccreditedInvestor) before gaining access. This field records which credential types the issuer has confirmed are satisfied for this wallet in this domain.",
                 "items": {
                   "type": "string",
                   "pattern": "^[0-9a-fA-F]{2,128}$",
@@ -2930,14 +2930,14 @@
                   },
                   "regulatorPublicKey": {
                     "type": "string",
-                    "description": "EC public key of the designated regulator who may receive selective disclosure of encrypted balances when legally required. Optional — only populated when a specific regulatory authority has been assigned decryption rights for this issuance. Same encoding as auditorPublicKey.",
+                    "description": "EC public key of the designated regulator who may receive selective disclosure of encrypted balances when legally required. Optional \u2014 only populated when a specific regulatory authority has been assigned decryption rights for this issuance. Same encoding as auditorPublicKey.",
                     "maxLength": 256
                   }
                 }
               },
               "mptFlags": {
                 "type": "integer",
-                "description": "Bitmask of MPTIssuance flags from the XLS-33d Multi-Purpose Token standard, reflecting the compliance configuration of the token issuance. Key flag values: lsfMPTCanLock (0x0002) — individual holder balances can be frozen; lsfMPTRequireAuth (0x0004) — holders must be individually authorised (KYC gate); lsfMPTCanEscrow (0x0008) — tokens can be placed in escrow; lsfMPTCanTrade (0x0010) — tokens are tradeable on DEX; lsfMPTCanTransfer (0x0020) — tokens can transfer between non-issuer accounts; lsfMPTCanClawback (0x0040) — issuer can claw back tokens. Recording the flags enables downstream systems to derive the applicable compliance enforcement model without querying the ledger.",
+                "description": "Bitmask of MPTIssuance flags from the XLS-33d Multi-Purpose Token standard, reflecting the compliance configuration of the token issuance. Key flag values: lsfMPTCanLock (0x0002) \u2014 individual holder balances can be frozen; lsfMPTRequireAuth (0x0004) \u2014 holders must be individually authorised (KYC gate); lsfMPTCanEscrow (0x0008) \u2014 tokens can be placed in escrow; lsfMPTCanTrade (0x0010) \u2014 tokens are tradeable on DEX; lsfMPTCanTransfer (0x0020) \u2014 tokens can transfer between non-issuer accounts; lsfMPTCanClawback (0x0040) \u2014 issuer can claw back tokens. Recording the flags enables downstream systems to derive the applicable compliance enforcement model without querying the ledger.",
                 "minimum": 0,
                 "maximum": 4294967295
               },
@@ -2954,7 +2954,7 @@
               },
               "xrplFreezeType": {
                 "type": "string",
-                "description": "XRPL freeze type applied to this wallet or its token holdings, providing more granular freeze state than the boolean `isFrozen` field. Maps to XRPL's native freeze hierarchy: INDIVIDUAL_FREEZE — only this specific wallet's trustline or MPT holding is frozen (operator or issuer action); GLOBAL_FREEZE — the issuer has frozen all trustlines or MPT holdings for the asset globally; DEEP_FREEZE (XLS-77) — an enhanced freeze that prevents the holder from even receiving tokens or having frozen funds released without issuer action, providing stronger enforcement capability equivalent to ERC-3643 `forcedTransfer()`. When set, `isFrozen` should also be true.",
+                "description": "XRPL freeze type applied to this wallet or its token holdings, providing more granular freeze state than the boolean `isFrozen` field. Maps to XRPL's native freeze hierarchy: INDIVIDUAL_FREEZE \u2014 only this specific wallet's trustline or MPT holding is frozen (operator or issuer action); GLOBAL_FREEZE \u2014 the issuer has frozen all trustlines or MPT holdings for the asset globally; DEEP_FREEZE (XLS-77) \u2014 an enhanced freeze that prevents the holder from even receiving tokens or having frozen funds released without issuer action, providing stronger enforcement capability equivalent to ERC-3643 `forcedTransfer()`. When set, `isFrozen` should also be true.",
                 "enum": [
                   "INDIVIDUAL_FREEZE",
                   "GLOBAL_FREEZE",
@@ -2977,7 +2977,7 @@
               },
               "bitcoinScriptType": {
                 "type": "string",
-                "description": "Bitcoin script type for the address in the `address` field. Used to provide chain analysis context and determine the applicable UTXO model for compliance screening. P2PKH — Pay to Public Key Hash (legacy); P2WPKH — Pay to Witness Public Key Hash (native SegWit); P2TR — Pay to Taproot (Taproot, BIP-341). Applicable when `network` is 'bitcoin' or a Bitcoin Layer-2 network (Liquid, RGB). Not applicable for Lightning channel addresses (use `lightningNodePubkey` instead).",
+                "description": "Bitcoin script type for the address in the `address` field. Used to provide chain analysis context and determine the applicable UTXO model for compliance screening. P2PKH \u2014 Pay to Public Key Hash (legacy); P2WPKH \u2014 Pay to Witness Public Key Hash (native SegWit); P2TR \u2014 Pay to Taproot (Taproot, BIP-341). Applicable when `network` is 'bitcoin' or a Bitcoin Layer-2 network (Liquid, RGB). Not applicable for Lightning channel addresses (use `lightningNodePubkey` instead).",
                 "enum": [
                   "P2PKH",
                   "P2WPKH",
@@ -3005,7 +3005,7 @@
         },
         "issuerName": {
           "type": "string",
-          "description": "Human-readable name of the issuer organisation (e.g. 'Bundesamt für Sicherheit in der Informationstechnik — PID Provider').",
+          "description": "Human-readable name of the issuer organisation (e.g. 'Bundesamt f\u00fcr Sicherheit in der Informationstechnik \u2014 PID Provider').",
           "maxLength": 256
         },
         "countryCode": {
@@ -3104,7 +3104,7 @@
       "properties": {
         "classification": {
           "type": "string",
-          "description": "Primary sensitivity class. 'standard' — ordinary personal data (GDPR Art. 6). 'sensitive_personal' — special-category data requiring Art. 9 safeguards (e.g. biometrics, health). 'criminal_offence' — data relating to criminal convictions or offences under GDPR Art. 10. 'sar_restricted' — Suspicious Activity Report or STR material; subject to tipping-off prohibition (AMLR Art. 73 / FATF Rec. 21). 'internal_suspicion' — internal AML suspicion flag not yet escalated to a formal SAR. 'confidential_aml' — AML/CFT investigation data protected from broader disclosure.",
+          "description": "Primary sensitivity class. 'standard' \u2014 ordinary personal data (GDPR Art. 6). 'sensitive_personal' \u2014 special-category data requiring Art. 9 safeguards (e.g. biometrics, health). 'criminal_offence' \u2014 data relating to criminal convictions or offences under GDPR Art. 10. 'sar_restricted' \u2014 Suspicious Activity Report or STR material; subject to tipping-off prohibition (AMLR Art. 73 / FATF Rec. 21). 'internal_suspicion' \u2014 internal AML suspicion flag not yet escalated to a formal SAR. 'confidential_aml' \u2014 AML/CFT investigation data protected from broader disclosure.",
           "enum": [
             "standard",
             "sensitive_personal",
@@ -3128,7 +3128,7 @@
         },
         "legalBasis": {
           "type": "string",
-          "description": "Primary legal basis for processing this data. 'GDPR-Art6-1c' — legal obligation. 'GDPR-Art6-1e' — public task. 'GDPR-Art9-2g' — substantial public interest. 'GDPR-Art10' — criminal-offence data under official authority. 'AMLR-Art55' — AML data-sharing obligation. 'AMLR-Art73' — tipping-off prohibition compliance. 'national_AML_law' — national transposition of AML directives.",
+          "description": "Primary legal basis for processing this data. 'GDPR-Art6-1c' \u2014 legal obligation. 'GDPR-Art6-1e' \u2014 public task. 'GDPR-Art9-2g' \u2014 substantial public interest. 'GDPR-Art10' \u2014 criminal-offence data under official authority. 'AMLR-Art55' \u2014 AML data-sharing obligation. 'AMLR-Art73' \u2014 tipping-off prohibition compliance. 'national_AML_law' \u2014 national transposition of AML directives.",
           "enum": [
             "GDPR-Art6-1c",
             "GDPR-Art6-1e",
@@ -3300,7 +3300,7 @@
         },
         "documentTitle": {
           "type": "string",
-          "description": "Human-readable title or local name of the document (e.g. 'Personalausweis', 'Carte nationale d\\'identité', 'Biometric Residence Permit').",
+          "description": "Human-readable title or local name of the document (e.g. 'Personalausweis', 'Carte nationale d\\'identit\u00e9', 'Biometric Residence Permit').",
           "maxLength": 200
         },
         "documentNumber": {
@@ -3462,7 +3462,7 @@
         "expiryDate": {
           "type": "string",
           "format": "date",
-          "description": "ISO 8601 date on which the document or extract expires. Particularly relevant for registry extracts, which typically have a validity window (e.g. 3–6 months)."
+          "description": "ISO 8601 date on which the document or extract expires. Particularly relevant for registry extracts, which typically have a validity window (e.g. 3\u20136 months)."
         },
         "verificationDate": {
           "type": "string",
@@ -3561,7 +3561,7 @@
         },
         "bundleValidatedBy": {
           "type": "string",
-          "description": "Name or DID of the person, team, or automated system that assessed the bundle completeness (e.g. 'Compliance Officer – Jane Smith', 'AutoKYB v2.1', 'did:web:kyb.provider.example').",
+          "description": "Name or DID of the person, team, or automated system that assessed the bundle completeness (e.g. 'Compliance Officer \u2013 Jane Smith', 'AutoKYB v2.1', 'did:web:kyb.provider.example').",
           "maxLength": 200
         },
         "bundleValidationDate": {
@@ -3718,13 +3718,13 @@
                 "type": "number",
                 "minimum": 0,
                 "maximum": 100,
-                "description": "Score value on a 0–100 scale (0 = lowest risk, 100 = highest risk)."
+                "description": "Score value on a 0\u2013100 scale (0 = lowest risk, 100 = highest risk)."
               },
               "confidence": {
                 "type": "number",
                 "minimum": 0,
                 "maximum": 1,
-                "description": "Model confidence in this score (0–1). EU AI Act Art. 13(3)(b)(iv) requires confidence or reliability information."
+                "description": "Model confidence in this score (0\u20131). EU AI Act Art. 13(3)(b)(iv) requires confidence or reliability information."
               },
               "horizonDays": {
                 "type": "integer",
@@ -3805,6 +3805,132 @@
           "description": "ISO 8601 date-time when consent for information sharing was obtained or the safe-harbor sharing event occurred."
         }
       }
+    },
+    "LegacyIdentifiers": {
+      "title": "LegacyIdentifiers",
+      "description": "Optional block for legacy PKI and directory identifiers. Carries X.500 Distinguished Names (DNs) used as Subject/Issuer fields in X.509 certificates and as directory / SWIFTNet addresses. X.400 O/R Addresses are explicitly excluded from this schema (see docs/mappings/x500-x400-legacy.md).",
+      "type": "object",
+      "properties": {
+        "x500DN": {
+          "type": "string",
+          "description": "X.500 Distinguished Name in RFC 4514 string representation (e.g. CN=John Doe,OU=Finance,O=AcmeBank,C=GB). Used as the Subject or Issuer of an X.509 certificate, as a SWIFTNet technical address (cn=...,ou=...,o=...,o=swift), or as an LDAP directory entry reference. eIDAS 2.0 QES/QSealC/QWAC/QEAA certificates MUST carry an X.500 DN in the certificate Subject field (ETSI EN 319 412 series).",
+          "pattern": "^(([A-Za-z][A-Za-z0-9]*)=(([^,+=\"<>;\\\\]|\\\\[,+=\"<>;\\\\])+))(,([A-Za-z][A-Za-z0-9]*)=(([^,+=\"<>;\\\\]|\\\\[,+=\"<>;\\\\])+))*$",
+          "examples": [
+            "CN=EntityName,OU=Department,O=LegalEntityName,C=GB,serialNumber=123456789",
+            "CN=John Doe,O=AcmeBank,C=DE",
+            "cn=user1,ou=Finance,o=AcmeBank,o=swift"
+          ]
+        },
+        "x500DNType": {
+          "type": "string",
+          "description": "Context in which the X.500 DN is used. 'certificateSubject' \u2014 DN appears in the Subject field of an X.509 certificate. 'certificateIssuer' \u2014 DN appears in the Issuer field of an X.509 certificate. 'directoryEntry' \u2014 DN identifies an entry in an LDAP/X.500 directory. 'swiftNetAddress' \u2014 DN is a SWIFTNet technical addressing DN (cn=..,o=swift format).",
+          "enum": [
+            "certificateSubject",
+            "certificateIssuer",
+            "directoryEntry",
+            "swiftNetAddress"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "PkiEvidence": {
+      "title": "PkiEvidence",
+      "description": "Optional PKI evidence block. Captures metadata from an X.509 public-key or attribute certificate (ITU-T X.509 / ISO/IEC 9594-8) used to evidence the identity of a natural person or legal entity. Supports eIDAS 2.0 Qualified Electronic Certificates (QES, QSealC, QWAC, QEAA), ETSI EN 319 412 QTSP certificates, and SWIFTNet Identifiers Directory entries. Links to legacyIdentifiers.x500DN for the Subject / Issuer DN and to identityDocuments for the full document bundle.",
+      "type": "object",
+      "properties": {
+        "x509Certificate": {
+          "title": "X509Certificate",
+          "description": "Metadata extracted from an X.509 v3 certificate. All fields are optional; include as many as are available from the certificate. The serialNumber + issuerDN pair uniquely identifies the certificate per RFC 5280.",
+          "type": "object",
+          "properties": {
+            "serialNumber": {
+              "type": "string",
+              "description": "Certificate serial number as a hex string (RFC 5280 \u00a74.1.2.2). Must be unique within the issuer's namespace."
+            },
+            "subjectDN": {
+              "type": "string",
+              "description": "X.500 Distinguished Name of the certificate subject in RFC 4514 string format. SHOULD match legacyIdentifiers.x500DN when x500DNType is 'certificateSubject'."
+            },
+            "issuerDN": {
+              "type": "string",
+              "description": "X.500 Distinguished Name of the certificate issuer (CA / QTSP) in RFC 4514 string format."
+            },
+            "validFrom": {
+              "type": "string",
+              "format": "date-time",
+              "description": "Certificate validity start (notBefore field, RFC 5280 \u00a74.1.2.5) in ISO 8601 format."
+            },
+            "validTo": {
+              "type": "string",
+              "format": "date-time",
+              "description": "Certificate validity end (notAfter field, RFC 5280 \u00a74.1.2.5) in ISO 8601 format. Relying parties MUST reject certificates past this date unless a valid OCSP staple or CRL entry confirms continuation."
+            },
+            "signatureAlgorithm": {
+              "type": "string",
+              "description": "Signature algorithm OID or well-known name (e.g. 'sha256WithRSAEncryption', 'ecdsa-with-SHA256', 'id-RSASSA-PSS'). Corresponds to the certificate signatureAlgorithm field (RFC 5280 \u00a74.1.1.2)."
+            },
+            "qcStatements": {
+              "type": "array",
+              "description": "List of ETSI EN 319 412 / RFC 3739 QCStatement OIDs or well-known short names present in the certificate's id-pe-QCStatements extension (OID 1.3.6.1.5.5.7.1.3). Examples: 'id-etsi-qcs-QcCompliance' (QES), 'id-etsi-qcs-QcSSCD' (QSCD / secure device), 'id-etsi-qcs-QcType-eSign', 'id-etsi-qcs-QcType-eSeal', 'id-etsi-qcs-QcType-Web' (QWAC), 'id-etsi-qcs-QcPDS' (policy disclosure statement URL), 'id-etsi-qcs-QcCClegislation' (jurisdiction of QC).",
+              "items": {
+                "type": "string"
+              }
+            },
+            "crlDistributionPoints": {
+              "type": "array",
+              "description": "URIs of CRL Distribution Points (RFC 5280 \u00a74.2.1.13). Relying parties use these to download the issuer's Certificate Revocation List and confirm the certificate has not been revoked.",
+              "items": {
+                "type": "string",
+                "format": "uri"
+              }
+            },
+            "ocspResponderUrl": {
+              "type": "string",
+              "format": "uri",
+              "description": "URL of the OCSP (Online Certificate Status Protocol, RFC 6960) responder for real-time revocation status checking. Preferred over CRL for eIDAS Qualified Certificates (ETSI EN 319 411)."
+            },
+            "thumbprintSha256": {
+              "type": "string",
+              "description": "SHA-256 fingerprint of the DER-encoded certificate as a lowercase hex string (64 characters). Provides a stable unique identifier for the certificate that is independent of its serial number.",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          }
+        },
+        "oids": {
+          "type": "array",
+          "description": "ASN.1 Object Identifiers (OIDs) extracted from X.509 extensions, ETSI profiles, or other PKI structures. Use to surface policy OIDs, ETSI EN 319 412 QCStatement details, or custom extension values for machine-readable automated validation by relying parties.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "oid": {
+                "type": "string",
+                "pattern": "^[0-9]+(\\.[0-9]+)+$",
+                "description": "Dotted-decimal OID string (e.g. '1.3.6.1.5.5.7.1.3' for id-pe-QCStatements). Must match the ASN.1 object-identifier notation defined in ITU-T X.660."
+              },
+              "description": {
+                "type": "string",
+                "description": "Human-readable name or short description of the OID (e.g. 'id-etsi-qcs-QcCompliance', 'id-pe-subjectInfoAccessSyntax')."
+              },
+              "value": {
+                "type": [
+                  "string",
+                  "object"
+                ],
+                "description": "Optional decoded value of the OID extension. May be a string (for simple text values) or a structured object (for complex ASN.1 sequences). For QCStatements, the value may include policy disclosure statement (PDS) URIs or jurisdiction codes."
+              }
+            },
+            "required": [
+              "oid"
+            ]
+          }
+        },
+        "certificateDocumentRef": {
+          "type": "string",
+          "format": "uri",
+          "description": "Reference to the corresponding document record in identityDocuments.legalEntityDocuments[] or identityDocuments.naturalPersonDocuments[] by documentRef URI. Enables full eIDAS triangulation: certificate metadata here links to the document bundle that holds the source credential and its extracted identity attributes."
+        }
+      }
     }
   },
   "type": "object",
@@ -3870,6 +3996,14 @@
     "informationSharingFlags": {
       "$ref": "#/$defs/InformationSharingFlags",
       "description": "USA PATRIOT Act Section 314(a)/(b) (31 CFR 1010.520/540) information sharing flags. Optional; include only when a 314(a) request or 314(b) safe-harbor sharing event applies."
+    },
+    "legacyIdentifiers": {
+      "$ref": "#/$defs/LegacyIdentifiers",
+      "description": "Optional legacy PKI identifier block. Carries X.500 Distinguished Names used in X.509 certificate Subject/Issuer fields, SWIFTNet technical addresses, and LDAP/X.500 directory entries. Enables direct linkage of identity evidence to eIDAS-compliant Qualified Certificates (AMLR Art. 22(6) & eIDAS Art. 24). X.400 O/R Addresses are explicitly excluded \u2014 see docs/mappings/x500-x400-legacy.md."
+    },
+    "pkiEvidence": {
+      "$ref": "#/$defs/PkiEvidence",
+      "description": "Optional X.509 PKI evidence block. Captures certificate metadata (serial number, Subject/Issuer DNs, validity window, QCStatements, CRL/OCSP endpoints, SHA-256 thumbprint) and ASN.1 OIDs from ETSI EN 319 412 profiles. Satisfies AMLR Art. 22 & 56 PKI evidence requirements and enables predictive AML cert-provenance tracking (issuance/revocation timestamps in riskEvolutionHistory)."
     }
   },
   "anyOf": [
