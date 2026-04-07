@@ -6,11 +6,25 @@ This document is the **authoritative project roadmap** covering schema features,
 
 ---
 
-## Current Version: v1.5.0
+## Current Version: v1.7.0
 
 **Released:** April 2026
 
-**Highlights:**
+**Highlights (v1.7.0):**
+- **PredictiveAML Extension** — new optional `predictiveAML` top-level block with `modelMetadata` (EU AI Act Art. 13 model card), `predictiveScores[]` (typed, confidence-bounded), `explainability` (SHAP/LIME/counterfactual), `riskEvolutionHistory[]` (delta-based cKYC), `alertCorrelationId`, and `dataAggregationMetadata` (BCBS 239).
+- **XRPL Extended Standards** — XLS-80d Permissioned Domains (`xrplPermissionedDomainId`, `xrplAuthorizedCredentialTypes[]`), XLS-96d Confidential Transactions (`xrplConfidentialTransfer`), XLS-77d Freeze types (`xrplFreezeType`), XRPL Clawback (`xrplClawbackEnabled`), MPT extensions (`mptFlags`, `mptMetadata`, `mptTransferFee`). XLS-40d renamed to XLS-70.
+- **Lightning Network and Bitcoin** — `lightningNodePubkey`, `lightningServiceProvider`, `bitcoinScriptType` (P2PKH/P2SH/P2WPKH/P2WSH/P2TR).
+- **FinCEN 314(a)/(b)** — new `informationSharingFlags` top-level block with `section314aRequestId`, `section314bSafeHarbor`, `sharingConsentTimestamp`.
+- **FATF R.24/R.25 (2022)** — `beneficialOwnership[].nomineeFlags` (isNominee, nominatorIdentified, bearerShareFlag), `roleInArrangement`, `trustInstrumentReference`.
+- **Enhanced MonitoringInfo** — `alertFrequency`, `ruleTriggerHistory[]`, `tmModelVersion`.
+- **5 new compliance mapping documents** — Wolfsberg FCCQ/CBDDQ, BCBS 239, FATF R.24/25, EU AI Act (Markdown + machine-readable YAML).
+- **Enforcement Tiers** — new `docs/compliance/enforcement-tiers.md` with 6 enforcement tiers by entity type.
+- **OpenAPI 3.1 specification** — `api/openkycaml-v1.7.0.yaml` with 5 endpoints.
+- **Wolfsberg CBDDQ importer tool** — `tools/wolfsberg-importer/wolfsberg_importer.py`.
+- **3 predictiveAML examples** — `examples/predictive/` (static, delta, AI-high-risk).
+- Standalone predictiveAML schema — `schema/predictive-aml/v1.6.0.json`.
+
+**Previous release highlights (v1.1.0–v1.6.0):**
 - Full IVMS 101 v1.0 payload support (backward-compatible superset).
 - Optional W3C Verifiable Credential wrapper (eIDAS 2.0 / ARF-aligned), with W3C VC `evidence` block for EUDI Wallet source credential attribution.
 - Native **eIDAS 2.0 LPID** (Legal Person Identification Data) support with QEAA mandate/representative fields.

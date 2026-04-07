@@ -1,9 +1,9 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://openkycaml.org/schema/v1.6.0/kyc-aml-hybrid-extended.json",
+  "$id": "https://openkycaml.org/schema/v1.7.0/kyc-aml-hybrid-extended.json",
   "title": "OpenKYCAML Hybrid KYC/AML Schema",
   "description": "Root OpenKYCAML document. At least one of 'ivms101' or 'verifiableCredential' MUST be present.",
-  "version": "1.6.0",
+  "version": "1.7.0",
   "$defs": {
     "NaturalPersonNameIdentifier": {
       "title": "NaturalPersonNameIdentifier",
@@ -2890,6 +2890,107 @@
                 "type": "string",
                 "description": "XRPL Multi-Purpose Token issuance identifier (MPTokenIssuanceID) for which this wallet holds or has been authorised, stored as a 48-character hexadecimal string (case-insensitive; Hash192 = 24 bytes). Mirrors the `MPTokenIssuanceID` field of XRPL `MPTIssuance` and `MPToken` ledger objects (XLS-33d). Useful for multi-issuance scenarios where a single investor holds authorisation for multiple regulated asset pools via separate `MPTokenAuthorize` transactions.",
                 "pattern": "^[0-9a-fA-F]{48}$"
+              },
+              "xrplPermissionedDomainId": {
+                "type": "string",
+                "description": "XRPL Permissioned Domain ledger object ID (XLS-80d). A 64-character hexadecimal identifier (256-bit Hash) referencing a PermissionedDomain object on the XRP Ledger that governs which credential types are required to transact within this domain. Enables account-level KYC gating where only wallets with verified credentials matching the domain's accepted credential set may participate.",
+                "pattern": "^[0-9A-Fa-f]{64}$"
+              },
+              "xrplAuthorizedCredentialTypes": {
+                "type": "array",
+                "description": "List of XRPL credential type authorisations accepted by this wallet's permissioned domain (XLS-80d). Each entry captures the issuer account and credential type that must be presented by counterparties. Mirrors the AcceptedCredentials array in a PermissionedDomain ledger object.",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "issuerAccount",
+                    "credentialType"
+                  ],
+                  "properties": {
+                    "issuerAccount": {
+                      "type": "string",
+                      "description": "XRPL classic address (rAddress) of the credential issuer authorised within this domain.",
+                      "pattern": "^r[1-9A-HJ-NP-Za-km-z]{24,33}$"
+                    },
+                    "credentialType": {
+                      "type": "string",
+                      "description": "Credential type hex string (1\u201364 bytes, 2\u2013128 hex characters) required by the domain for this issuer. Case-insensitive. Must match a CredentialType in an accepted credential.",
+                      "pattern": "^[0-9a-fA-F]{2,128}$",
+                      "maxLength": 128
+                    }
+                  }
+                }
+              },
+              "xrplConfidentialTransfer": {
+                "type": "object",
+                "description": "XRPL Confidential Transactions metadata (XLS-96d). Captures compliance-relevant properties of a confidential transfer involving this wallet. Confidential transactions use Pedersen commitments and range proofs to hide transfer amounts while retaining on-chain auditability with authorised key disclosure.",
+                "properties": {
+                  "enabled": {
+                    "type": "boolean",
+                    "description": "Whether confidential transfer capability is enabled on this wallet/account."
+                  },
+                  "authorisedViewingKeys": {
+                    "type": "array",
+                    "description": "Public keys of parties (e.g. regulatory authorities, compliance officers) authorised to decrypt confidential transfer amounts for this wallet. Required for AMLR Art. 21 and FATF Travel Rule compliance when confidential transfers are used.",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "regulatoryDisclosureRef": {
+                    "type": "string",
+                    "description": "Reference to the regulatory disclosure arrangement under which viewing key access has been granted (e.g. a court order reference, supervisory authority authorisation ID, or contract URI)."
+                  }
+                }
+              },
+              "xrplFreezeType": {
+                "type": "string",
+                "enum": [
+                  "global-freeze",
+                  "individual-freeze",
+                  "no-freeze"
+                ],
+                "description": "XRPL freeze state for this wallet/token relationship (XLS-77d / existing XRPL freeze mechanism). 'global-freeze' = issuer has frozen all balances of this token; 'individual-freeze' = this specific wallet is frozen by the token issuer; 'no-freeze' = issuer has permanently renounced freeze rights (lsfNoFreeze flag set). Maps to AMLR Art. 24 targeted financial sanctions enforcement."
+              },
+              "xrplClawbackEnabled": {
+                "type": "boolean",
+                "description": "Whether the XRPL token issuer has enabled clawback capability for this asset (lsfAllowTrustLineClawback / MPT clawback flag). When true, the issuer may reclaim tokens from this holder under regulatory directive (e.g. sanctions enforcement, AML seizure). Maps to AMLR Art. 24 and FinCEN enforcement powers."
+              },
+              "mptFlags": {
+                "type": "integer",
+                "minimum": 0,
+                "description": "Bitfield of MPT (Multi-Purpose Token) flags for this wallet's token relationship (XLS-33d). Combines lsfMPTAuthorized (0x0002), lsfMPTLocked (0x0004), and other per-holder flags from the MPToken ledger object. Supports compliance gating (holder must be authorized) and sanctions enforcement (holder lock)."
+              },
+              "mptMetadata": {
+                "type": "string",
+                "description": "MPT issuance metadata URI reference (XLS-33d MPTokenIssuanceCreate Metadata field). Hexadecimal string (up to 1024 bytes / 2048 hex chars) pointing to off-chain token metadata. May reference an OpenKYCAML payload URI, a GLEIF LEI record, or a regulatory prospectus.",
+                "pattern": "^[0-9a-fA-F]*$",
+                "maxLength": 2048
+              },
+              "mptTransferFee": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 50000,
+                "description": "MPT transfer fee in millionths (XLS-33d TransferFee). Range 0\u201350000 = 0%\u201350%. A non-zero value indicates the issuer retains a compliance fee on each transfer, which may be relevant to AML typology analysis (fee-based layering detection)."
+              },
+              "lightningNodePubkey": {
+                "type": "string",
+                "description": "Lightning Network node public key (33-byte compressed secp256k1 point encoded as 66 hex characters). Identifies the Lightning node operated by or associated with this wallet holder. Required for Travel Rule compliance on Lightning payments under FATF R.16 and TFR 2023/1113 Art. 14.",
+                "pattern": "^(02|03)[0-9a-fA-F]{64}$"
+              },
+              "lightningServiceProvider": {
+                "type": "string",
+                "description": "Name or DID of the Lightning Service Provider (LSP) or custodial Lightning wallet provider managing this node or channel. Relevant for Travel Rule intermediary identification under FATF R.16 when the LSP acts as a VASP on behalf of the end customer."
+              },
+              "bitcoinScriptType": {
+                "type": "string",
+                "enum": [
+                  "P2PKH",
+                  "P2SH",
+                  "P2WPKH",
+                  "P2WSH",
+                  "P2TR",
+                  "OTHER"
+                ],
+                "description": "Bitcoin output script type for this address. P2PKH (Pay-to-Public-Key-Hash), P2SH (Pay-to-Script-Hash), P2WPKH (native SegWit v0), P2WSH (native SegWit v0 multisig), P2TR (Taproot/SegWit v1). Script type aids UTXO-based AML clustering analysis and chain analytics tooling integration."
               }
             }
           }

@@ -1,0 +1,379 @@
+openapi: "3.1.0"
+info:
+  title: OpenKYCAML API
+  version: "1.7.0"
+  description: |
+    The OpenKYCAML REST API provides endpoints for submitting, retrieving, and validating
+    KYC/AML profiles conforming to the OpenKYCAML v1.7.0 schema. It supports:
+    - Full KYC profile submission with optional predictiveAML extension
+    - Delta-based continuous KYC (cKYC) risk evolution retrieval
+    - Schema and predictive scoring validation
+    - Wolfsberg CBDDQ import/export
+
+    **Regulatory alignment:** AMLR 2027, FATF R.10/16/24/25, EU AI Act Art. 13, BCBS 239, FinCEN 314(a)/(b)
+  contact:
+    name: OpenKYCAML Core Maintainers
+    url: https://github.com/Lazy-Jack-Ltd/OpenKYCAML
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+
+servers:
+  - url: https://api.openkycaml.org/v1
+    description: Production API server
+  - url: https://sandbox.openkycaml.org/v1
+    description: Sandbox / test environment
+
+tags:
+  - name: profiles
+    description: KYC/AML profile management
+  - name: validation
+    description: Schema and compliance validation
+  - name: predictive
+    description: Predictive AML scores and risk evolution
+  - name: wolfsberg
+    description: Wolfsberg FCCQ/CBDDQ import and export
+
+paths:
+  /profiles:
+    post:
+      operationId: submitProfile
+      tags: [profiles]
+      summary: Submit a full KYC + predictiveAML profile
+      description: |
+        Submit a complete OpenKYCAML v1.7.0 envelope containing a KYC profile and optional
+        predictiveAML extension. The payload must conform to the canonical OpenKYCAML JSON Schema.
+        On success, returns the assigned profile ID and validation summary.
+
+        **Regulatory basis:** AMLR Art. 22, FATF R.10, EU AI Act Art. 13 (when predictiveAML present).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OpenKYCAMLEnvelope"
+            examples:
+              static-risk-score:
+                summary: Static predictive risk score
+                externalValue: https://raw.githubusercontent.com/Lazy-Jack-Ltd/OpenKYCAML/main/examples/predictive/predictive-static.json
+              high-risk-ubo:
+                summary: High-risk UBO with AI Act metadata
+                externalValue: https://raw.githubusercontent.com/Lazy-Jack-Ltd/OpenKYCAML/main/examples/predictive/predictive-ai-high-risk.json
+      responses:
+        "201":
+          description: Profile accepted and stored
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProfileSubmissionResponse"
+        "400":
+          description: Schema validation failure
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationError"
+        "422":
+          description: Business logic validation failure (e.g. PEP without EDD)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ComplianceWarning"
+
+  /profiles/{id}:
+    get:
+      operationId: getProfile
+      tags: [profiles]
+      summary: Retrieve a KYC profile by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Profile UUID assigned on submission
+      responses:
+        "200":
+          description: Profile found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OpenKYCAMLEnvelope"
+        "404":
+          description: Profile not found
+
+  /profiles/{id}/delta:
+    get:
+      operationId: getProfileDelta
+      tags: [predictive, profiles]
+      summary: Retrieve risk evolution history (delta-based cKYC)
+      description: |
+        Returns the `predictiveAML.riskEvolutionHistory[]` for the specified profile,
+        enabling delta-based continuous KYC without triggering a full re-KYC.
+        Supports AMLR Art. 22 ongoing monitoring and BCBS 239 P6 (adaptability).
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: from
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date-time
+          description: Filter snapshots after this ISO 8601 timestamp
+        - name: to
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date-time
+          description: Filter snapshots before this ISO 8601 timestamp
+      responses:
+        "200":
+          description: Risk evolution history
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RiskEvolutionResponse"
+        "404":
+          description: Profile not found or no predictiveAML data
+
+  /validate:
+    post:
+      operationId: validatePayload
+      tags: [validation]
+      summary: Validate a payload against the OpenKYCAML schema
+      description: |
+        Validates a JSON payload against the OpenKYCAML v1.7.0 JSON Schema and
+        runs business-logic compliance checks (PEP/EDD consistency, sanctions
+        screening age, tipping-off classification, predictiveAML EU AI Act
+        completeness, documentId URN format). Returns all schema errors and
+        advisory warnings without storing the payload.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OpenKYCAMLEnvelope"
+      responses:
+        "200":
+          description: Validation complete (payload may be valid or invalid — check isValid)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationResponse"
+
+  /wolfsberg/import:
+    post:
+      operationId: importWolfsbergCBDDQ
+      tags: [wolfsberg]
+      summary: Import a Wolfsberg CBDDQ v1.4 questionnaire response
+      description: |
+        Converts a Wolfsberg CBDDQ v1.4 XML or JSON questionnaire response into an
+        OpenKYCAML v1.7.0 envelope. Returns the converted envelope and a gap report
+        listing CBDDQ fields not mappable to OpenKYCAML.
+      requestBody:
+        required: true
+        content:
+          application/xml:
+            schema:
+              type: string
+              description: CBDDQ v1.4 XML payload
+          application/json:
+            schema:
+              type: object
+              description: CBDDQ v1.4 JSON payload
+      responses:
+        "200":
+          description: Conversion successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WolfsbergImportResponse"
+        "400":
+          description: Invalid CBDDQ input
+
+  /wolfsberg/export/{id}:
+    get:
+      operationId: exportWolfsbergCBDDQ
+      tags: [wolfsberg]
+      summary: Export a profile as Wolfsberg CBDDQ v1.4 format
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: format
+          in: query
+          schema:
+            type: string
+            enum: [json, xml]
+            default: json
+      responses:
+        "200":
+          description: CBDDQ export
+          content:
+            application/json:
+              schema:
+                type: object
+            application/xml:
+              schema:
+                type: string
+
+components:
+  schemas:
+    OpenKYCAMLEnvelope:
+      type: object
+      description: |
+        Full OpenKYCAML v1.7.0 envelope. See the canonical JSON Schema at
+        https://schema.openkycaml.org/v1.7.0 for the complete field-level specification.
+      properties:
+        version:
+          type: string
+          example: "1.7.0"
+        messageId:
+          type: string
+          format: uuid
+        messageDateTime:
+          type: string
+          format: date-time
+        ivms101:
+          type: object
+          description: IVMS 101 v1.0 Travel Rule payload
+        kycProfile:
+          type: object
+          description: OpenKYCAML KYC profile
+        predictiveAML:
+          type: object
+          description: Optional predictive AML extension (EU AI Act Art. 13 compliant)
+          properties:
+            modelMetadata:
+              type: object
+              required: [modelId, modelVersion, euAiActClassification]
+            predictiveScores:
+              type: array
+              minItems: 1
+        informationSharingFlags:
+          type: object
+          description: FinCEN 314(a)/(b) information sharing flags
+        gdprSensitivityMetadata:
+          type: object
+          description: GDPR/AML sensitivity classification
+        identityDocuments:
+          type: object
+          description: Verification document bundle
+
+    ProfileSubmissionResponse:
+      type: object
+      required: [profileId, isValid]
+      properties:
+        profileId:
+          type: string
+          format: uuid
+          description: Assigned profile UUID
+        isValid:
+          type: boolean
+        warnings:
+          type: array
+          items:
+            type: string
+        predictiveAMLProcessed:
+          type: boolean
+          description: Whether the predictiveAML block was ingested and scored
+
+    ValidationResponse:
+      type: object
+      required: [isValid]
+      properties:
+        isValid:
+          type: boolean
+        errors:
+          type: array
+          items:
+            $ref: "#/components/schemas/ValidationError"
+        warnings:
+          type: array
+          items:
+            type: string
+        payloadVersion:
+          type: string
+
+    ValidationError:
+      type: object
+      required: [path, message]
+      properties:
+        path:
+          type: string
+          description: JSON path to the field that failed validation
+        message:
+          type: string
+        schemaPath:
+          type: string
+
+    ComplianceWarning:
+      type: object
+      properties:
+        warnings:
+          type: array
+          items:
+            type: string
+
+    RiskEvolutionResponse:
+      type: object
+      properties:
+        profileId:
+          type: string
+          format: uuid
+        snapshots:
+          type: array
+          items:
+            type: object
+            properties:
+              timestamp:
+                type: string
+                format: date-time
+              overallRiskScore:
+                type: number
+                minimum: 0
+                maximum: 100
+              deltaFromPrevious:
+                type: number
+        latestScore:
+          type: number
+          minimum: 0
+          maximum: 100
+        trendDirection:
+          type: string
+          enum: [INCREASING, DECREASING, STABLE]
+
+    WolfsbergImportResponse:
+      type: object
+      properties:
+        envelope:
+          $ref: "#/components/schemas/OpenKYCAMLEnvelope"
+        gapReport:
+          type: array
+          description: CBDDQ fields not mappable to OpenKYCAML
+          items:
+            type: object
+            properties:
+              cbddqField:
+                type: string
+              reason:
+                type: string
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT issued by the OpenKYCAML identity provider
+
+security:
+  - bearerAuth: []

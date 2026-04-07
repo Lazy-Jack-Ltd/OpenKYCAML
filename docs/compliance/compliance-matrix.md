@@ -1,6 +1,6 @@
 # OpenKYCAML Compliance Matrix
 
-This matrix documents the alignment of the OpenKYCAML v1.3.0 schema with major regulatory and technical standards.
+This matrix documents the alignment of the OpenKYCAML v1.7.0 schema with major regulatory and technical standards.
 
 **Legend:**
 - ✅ Full alignment — the standard is directly addressed.
@@ -251,8 +251,76 @@ _✅ = full field mapping. 🔄 = conceptual equivalent (see [mapping-sovrin.md]
 | **Accredited investor type** | ✅ | `kycProfile.customerClassification.accreditedInvestor` + `investorCategoryJurisdiction` |
 | **Travel Rule on XRPL** (FATF Rec 16 / TFR 2023/1113 Art. 14 / MiCA Art. 83) | ✅ | `ivms101` block; `Credential.URI` anchors the IVMS 101 payload on-ledger |
 
-_✅ = full field mapping. 🔄 = conceptual equivalent (see [mapping-xrpl-credentials-mpt.md](../mappings/mapping-xrpl-credentials-mpt.md)). ℹ️ = out of scope. ⭐ = schema extended in v1.3.0._
+_✅ = full field mapping. 🔄 = conceptual equivalent (see [mapping-xrpl-credentials-mpt.md](../mappings/mapping-xrpl-credentials-mpt.md)). ℹ️ = out of scope. ⭐ = schema extended in v1.3.0. 🌟 = schema extended in v1.7.0._
 
 ---
 
-*Last updated: v1.3.0 — April 2026. Maintained by the OpenKYCAML Technical Working Group.*
+*Last updated: v1.7.0 — April 2026. Maintained by the OpenKYCAML Technical Working Group.*
+
+---
+
+## 13. PredictiveAML Extension (v1.7.0)
+
+The `predictiveAML` top-level block is a new optional extension providing ML-ready, explainable, auditable risk scores. It supports EU AI Act Art. 13, AMLR Art. 22, and BCBS 239. Full details in [eu-ai-act.md](../mappings/eu-ai-act.md) and [bcbs239.md](../mappings/bcbs239.md).
+
+| Standard / Requirement | Coverage | PredictiveAML v1.7.0 Field |
+|---|---|---|
+| **EU AI Act Annex III** — High-risk AML AI classification | ✅ | `predictiveAML.modelMetadata.euAiActClassification` |
+| **EU AI Act Art. 13(3)(a)** — Provider identity | ✅ | `predictiveAML.modelMetadata.provider` |
+| **EU AI Act Art. 13(3)(b)(ii)** — Accuracy/confidence | ✅ | `predictiveAML.predictiveScores[].confidence` |
+| **EU AI Act Art. 13(3)(b)(iii)** — Output interpretation | ✅ | `predictiveAML.explainability` (SHAP/LIME/counterfactual) |
+| **EU AI Act Art. 43** — Conformity assessment | ✅ | `predictiveAML.modelMetadata.conformityAssessmentReference` |
+| **AMLR Art. 22(5)** — Third-party reliance with provenance | ✅ | `predictiveAML.modelMetadata.modelId` + `modelVersion` + `trainingDate` |
+| **AMLR Art. 21** — Ongoing monitoring (delta-based cKYC) | ✅ | `predictiveAML.riskEvolutionHistory[]` |
+| **BCBS 239 P2** — Data architecture and lineage | ✅ | `predictiveAML.dataAggregationMetadata.dataLineageReference` |
+| **BCBS 239 P5** — Timeliness | ✅ | `predictiveAML.dataAggregationMetadata.lastAggregationTimestamp` |
+| **BCBS 239 P12** — Supervisory review | ✅ | `predictiveAML.dataAggregationMetadata.bcbs239ComplianceLevel` |
+| Alert closed-loop feedback | ✅ | `predictiveAML.alertCorrelationId` |
+| Transaction anomaly scoring | ✅ | `predictiveAML.predictiveScores[].scoreType` = `transaction_anomaly` |
+| UBO graph risk scoring | ✅ | `predictiveAML.predictiveScores[].scoreType` = `ubo_graph_risk` |
+| Network risk scoring | ✅ | `predictiveAML.predictiveScores[].scoreType` = `network_risk` |
+
+---
+
+## 14. XRPL Extended Standards — XLS-80, XLS-96, XLS-77, Lightning, Bitcoin (v1.7.0)
+
+| Standard | Coverage | OpenKYCAML v1.7.0 Field |
+|---|---|---|
+| **XLS-80d — Permissioned Domains** | ✅ 🌟 | `kycProfile.blockchainAccountIds[].xrplPermissionedDomainId` |
+| **XLS-80d — Domain accepted credentials** | ✅ 🌟 | `kycProfile.blockchainAccountIds[].xrplAuthorizedCredentialTypes[]` |
+| **XLS-96d — Confidential Transactions** | ✅ 🌟 | `kycProfile.blockchainAccountIds[].xrplConfidentialTransfer` |
+| **XLS-77d — Token freeze (global/individual/no-freeze)** | ✅ 🌟 | `kycProfile.blockchainAccountIds[].xrplFreezeType` |
+| **XRPL Clawback** | ✅ 🌟 | `kycProfile.blockchainAccountIds[].xrplClawbackEnabled` |
+| **XLS-33d MPT flags (per-holder bitfield)** | ✅ 🌟 | `kycProfile.blockchainAccountIds[].mptFlags` |
+| **XLS-33d MPT metadata** | ✅ 🌟 | `kycProfile.blockchainAccountIds[].mptMetadata` |
+| **XLS-33d MPT transfer fee** | ✅ 🌟 | `kycProfile.blockchainAccountIds[].mptTransferFee` |
+| **Lightning Network node pubkey** | ✅ 🌟 | `kycProfile.blockchainAccountIds[].lightningNodePubkey` |
+| **Lightning Service Provider** | ✅ 🌟 | `kycProfile.blockchainAccountIds[].lightningServiceProvider` |
+| **Bitcoin script type** (P2PKH/P2SH/P2WPKH/P2WSH/P2TR) | ✅ 🌟 | `kycProfile.blockchainAccountIds[].bitcoinScriptType` |
+
+---
+
+## 15. FinCEN 314(a)/(b) — Information Sharing Flags (v1.7.0)
+
+| FinCEN Provision | Coverage | OpenKYCAML v1.7.0 Field |
+|---|---|---|
+| **Section 314(a)** — Mandatory law enforcement information request | ✅ 🌟 | `informationSharingFlags.section314aRequestId` |
+| **Section 314(b)** — Voluntary institution-to-institution sharing safe-harbor | ✅ 🌟 | `informationSharingFlags.section314bSafeHarbor` |
+| Sharing consent timestamp | ✅ 🌟 | `informationSharingFlags.sharingConsentTimestamp` |
+
+---
+
+## 16. Wolfsberg FCCQ v1.2 / CBDDQ v1.4 (v1.7.0)
+
+See [wolfsberg-fccq-cbddq.md](../mappings/wolfsberg-fccq-cbddq.md) for the full mapping.
+
+| Wolfsberg Section | Coverage | Notes |
+|---|---|---|
+| A — Organisation & Structure | ✅ | `ivms101.originator.originatorPersons[].legalPerson.*` |
+| B — Ownership & Control | ✅ | `kycProfile.beneficialOwnership[]` + v1.7.0 nominee/bearer flags |
+| C — AML/CTF Programme | ✅ | `predictiveAML.modelMetadata` + `monitoringInfo.tmModelVersion` |
+| D — Customer Due Diligence | ✅ | `kycProfile.customerRiskRating` + `dueDiligenceType` |
+| E — Sanctions & PEP | ✅ | `kycProfile.sanctionsScreening` + `pepStatus` |
+| F — Transaction Monitoring | ✅ | `monitoringInfo.ruleTriggerHistory[]` + `predictiveAML.predictiveScores[]` |
+| G — Information Sharing | ✅ | `informationSharingFlags.section314bSafeHarbor` |
+| Products & Services (Q19b) | 🟡 | `productUsage[]` planned |

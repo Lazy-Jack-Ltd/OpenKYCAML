@@ -1,10 +1,15 @@
 # OpenKYCAML ↔ XRPL Credentials, DIDs, and Multi-Purpose Tokens (MPTs) Mapping
 
-This document maps every data point in the **XRP Ledger (XRPL) Credentials** standard (XLS-40d), the **XRPL DID** method, and the **XRPL Multi-Purpose Token (MPT)** standard (XLS-33d) to the corresponding field in the OpenKYCAML schema. It also documents the on-ledger KYC/AML gating pipeline and concludes on schema coverage versus the need for extensions.
+This document maps every data point in the **XRP Ledger (XRPL) Credentials** standard (XLS-70, formerly XLS-40d), the **XRPL DID** method, the **XRPL Multi-Purpose Token (MPT)** standard (XLS-33d), and the newer XLS-80 (Permissioned Domains), XLS-96 (Confidential Transactions), and XLS-77 (enhanced freeze) standards to the corresponding field in the OpenKYCAML schema. It also documents the on-ledger KYC/AML gating pipeline and concludes on schema coverage.
+
+> **Note on standard renaming:** XLS-40d was finalised and merged as **XLS-70** in the XRPL Standards repository. All references to XLS-40d in earlier versions of this document and in schema field descriptions refer to the same standard now tracked as XLS-70.
 
 **XRPL sources used:**
-- [XLS-40d — Credentials amendment](https://github.com/XRPLF/XRPL-Standards/discussions/136) — `Credential` and `DID` ledger objects; `CredentialCreate`, `CredentialAccept`, `CredentialDelete` transactions; `DepositPreauth` with credential gating
+- [XLS-70 — Credentials (formerly XLS-40d)](https://github.com/XRPLF/XRPL-Standards/discussions/136) — `Credential` and `DID` ledger objects; `CredentialCreate`, `CredentialAccept`, `CredentialDelete` transactions; `DepositPreauth` with credential gating
 - [XLS-33d — Multi-Purpose Tokens](https://github.com/XRPLF/XRPL-Standards/discussions/120) — `MPTIssuance` and `MPToken` ledger objects; `MPTokenIssuanceCreate`, `MPTokenIssuanceDestroy`, `MPTokenAuthorize`, `MPTokenIssuanceSet` transactions
+- [XLS-80d — Permissioned Domains](https://github.com/XRPLF/XRPL-Standards/discussions/197) — `PermissionedDomain` ledger objects; domain-level credential gating for accounts and tokens
+- [XLS-96d — Confidential Transactions](https://github.com/XRPLF/XRPL-Standards/discussions/231) — Pedersen commitment-based amount concealment with authorised viewing key disclosure
+- [XLS-77d — Token Freeze Enhancements](https://github.com/XRPLF/XRPL-Standards/discussions/202) — Global freeze, individual freeze, and no-freeze flag standardisation
 - [XRPL DID Method Specification](https://github.com/XRPLF/XRPL-Standards/discussions/140) (`did:xrpl`) — on-ledger `DID` object, DID Document resolution, verification methods
 - [W3C Verifiable Credentials Data Model v2.0](https://www.w3.org/TR/vc-data-model-2.0/)
 - [W3C Decentralized Identifiers (DIDs) v1.0](https://www.w3.org/TR/did-core/)
@@ -13,6 +18,7 @@ This document maps every data point in the **XRP Ledger (XRPL) Credentials** sta
 - ✅ Full coverage — field exists in OpenKYCAML schema
 - 🔄 Conceptual mapping — equivalent concept captured differently (see notes)
 - ⭐ Schema extended — field added to OpenKYCAML v1.3.0 to close the gap
+- 🌟 Schema extended (v1.7.0) — field added to OpenKYCAML v1.7.0
 - ℹ️ Out of scope — on-ledger / runtime state not applicable to an off-chain KYC record
 
 ---
@@ -451,5 +457,75 @@ The `kycProfile.auditMetadata` block (including `dataRetentionDate` and `changeL
 
 ---
 
-*Document version: v1.3.0 — April 2026. Maintained by the OpenKYCAML Technical Working Group.*
-*XRPL references: [XLS-40d Credentials](https://github.com/XRPLF/XRPL-Standards/discussions/136), [XLS-33d MPTs](https://github.com/XRPLF/XRPL-Standards/discussions/120), [did:xrpl](https://github.com/XRPLF/XRPL-Standards/discussions/140), [W3C VC DM v2.0](https://www.w3.org/TR/vc-data-model-2.0/), [W3C DID Core v1.0](https://www.w3.org/TR/did-core/)*
+*Document version: v1.7.0 — April 2026. Maintained by the OpenKYCAML Technical Working Group.*
+*XRPL references: [XLS-70 Credentials (formerly XLS-40d)](https://github.com/XRPLF/XRPL-Standards/discussions/136), [XLS-33d MPTs](https://github.com/XRPLF/XRPL-Standards/discussions/120), [XLS-80d Permissioned Domains](https://github.com/XRPLF/XRPL-Standards/discussions/197), [XLS-96d Confidential Transactions](https://github.com/XRPLF/XRPL-Standards/discussions/231), [XLS-77d Freeze](https://github.com/XRPLF/XRPL-Standards/discussions/202), [did:xrpl](https://github.com/XRPLF/XRPL-Standards/discussions/140), [W3C VC DM v2.0](https://www.w3.org/TR/vc-data-model-2.0/), [W3C DID Core v1.0](https://www.w3.org/TR/did-core/)*
+
+---
+
+## 12. XLS-80 — Permissioned Domains (v1.7.0)
+
+Permissioned Domains (XLS-80d) introduce a new XRPL ledger object (`PermissionedDomain`) that allows issuers to define domain-level credential requirements. Unlike per-account `DepositPreauth` gates, a domain gate applies to all participants in the domain and can be referenced by MPT issuances.
+
+| XLS-80 Data Point | OpenKYCAML v1.7.0 Field | Coverage |
+|---|---|---|
+| `PermissionedDomain.DomainID` (Hash256) | `kycProfile.blockchainAccountIds[].xrplPermissionedDomainId` 🌟 | ✅ Full |
+| `PermissionedDomain.AcceptedCredentials[]` — per-issuer credential types | `kycProfile.blockchainAccountIds[].xrplAuthorizedCredentialTypes[]` 🌟 | ✅ Full |
+| `xrplAuthorizedCredentialTypes[].issuerAccount` | XRPL classic address of credential issuer | ✅ Full |
+| `xrplAuthorizedCredentialTypes[].credentialType` | Hex credential type (matches `xrplCredentialType`) | ✅ Full |
+| Domain-gated MPT (`MPTIssuance.DomainID`) | `kycProfile.blockchainAccountIds[].mptIssuanceId` (v1.3.0) + `xrplPermissionedDomainId` 🌟 | ✅ Full |
+
+### §10 XRPL Domain-Gating Travel Rule Integration
+
+When a VASP uses XLS-80 Permissioned Domains as its KYC gate:
+
+1. The VASP creates a `PermissionedDomain` with accepted credential types (e.g. `KYCCredential`, `OpenKYCAMLCredential`).
+2. For each onboarded customer, the VASP issues an XRPL `Credential` of the accepted type.
+3. The customer's wallet must present the credential to interact with domain-gated MPTs or accounts.
+4. The OpenKYCAML record anchors this via:
+   - `kycProfile.blockchainAccountIds[].xrplPermissionedDomainId` → the domain object ID
+   - `kycProfile.blockchainAccountIds[].xrplAuthorizedCredentialTypes[]` → the accepted credential set
+   - `kycProfile.blockchainAccountIds[].xrplCredentialType` → the specific credential type held by this wallet
+5. For Travel Rule compliance: the IVMS 101 `ivms101.originator` block provides the off-chain identity data backing the on-ledger domain membership.
+
+---
+
+## 13. XLS-96 — Confidential Transactions (v1.7.0)
+
+XLS-96 introduces Pedersen commitment-based amount concealment. Transfer amounts are hidden from public view but can be decrypted by authorised parties holding the viewing key. This creates an AML compliance obligation to maintain auditable decryption capability.
+
+| XLS-96 Data Point | OpenKYCAML v1.7.0 Field | Coverage |
+|---|---|---|
+| Confidential transfer enabled on account | `kycProfile.blockchainAccountIds[].xrplConfidentialTransfer.enabled` 🌟 | ✅ Full |
+| Authorised viewing key holder(s) | `kycProfile.blockchainAccountIds[].xrplConfidentialTransfer.authorisedViewingKeys[]` 🌟 | ✅ Full |
+| Regulatory disclosure arrangement | `kycProfile.blockchainAccountIds[].xrplConfidentialTransfer.regulatoryDisclosureRef` 🌟 | ✅ Full |
+
+**AML Compliance Note:** When `xrplConfidentialTransfer.enabled` = true, obliged entities must:
+- Retain decryption keys for 5 years (AMLR Art. 56)
+- Ensure supervisory authorities can obtain viewing key access on court order or supervisory directive
+- Capture this capability in `regulatoryDisclosureRef`
+
+---
+
+## 14. XLS-77 — Token Freeze Enhancements (v1.7.0)
+
+XLS-77 formalises the XRPL freeze flag semantics, distinguishing global freeze (issuer-wide), individual freeze (per-holder), and no-freeze (permanently waived).
+
+| Freeze State | XRPL Flag | OpenKYCAML v1.7.0 Field | Coverage |
+|---|---|---|---|
+| Global freeze (all holders frozen) | `lsfGlobalFreeze` on issuer account | `kycProfile.blockchainAccountIds[].xrplFreezeType` = `"global-freeze"` 🌟 | ✅ Full |
+| Individual holder freeze | `lsfFreeze` on TrustLine / MPToken | `kycProfile.blockchainAccountIds[].xrplFreezeType` = `"individual-freeze"` 🌟 | ✅ Full |
+| No-freeze (permanently renounced) | `lsfNoFreeze` on issuer account | `kycProfile.blockchainAccountIds[].xrplFreezeType` = `"no-freeze"` 🌟 | ✅ Full |
+| Clawback enabled | `lsfAllowTrustLineClawback` / MPT clawback flag | `kycProfile.blockchainAccountIds[].xrplClawbackEnabled` 🌟 | ✅ Full |
+
+---
+
+## 15. MPT Extensions (v1.7.0)
+
+Additional MPT holder-level fields added in v1.7.0 complement the existing `mptIssuanceId` (v1.3.0):
+
+| MPT Field | Source | OpenKYCAML v1.7.0 Field | Coverage |
+|---|---|---|---|
+| `MPToken.MPTokenFlags` (per-holder bitfield) | XLS-33d | `kycProfile.blockchainAccountIds[].mptFlags` 🌟 | ✅ Full |
+| `MPTIssuance.Metadata` (URI/hex) | XLS-33d | `kycProfile.blockchainAccountIds[].mptMetadata` 🌟 | ✅ Full |
+| `MPTIssuance.TransferFee` | XLS-33d | `kycProfile.blockchainAccountIds[].mptTransferFee` 🌟 | ✅ Full |
+
