@@ -28,6 +28,7 @@ flowchart TD
 
     subgraph Transfer["Travel Rule Transfer — KY → IE"]
         BVASP["🏦 Atlantic Digital Exchange Ltd · Ireland\nBeneficiary VASP · IE\nDID: did:web:atlantic-digital-exchange.example.ie\nLEI: 635400ADXIRL00001IE0\nIssues KYCAttestation VC"]
+        TXNOTE["Transfer: 750,000 ETH\nOpenKYCAML VC"]
     end
 
     UBO1 -- "100% owns" --> T3
@@ -37,7 +38,9 @@ flowchart TD
     T1 -- "100%" --> SUBJECT
     UBO1 -- "75% effective indirect" -.-> SUBJECT
 
-    SUBJECT -- "750,000 ETH<br/>OpenKYCAML VC" --> BVASP
+    SUBJECT --> BVASP
+    SUBJECT -.-> TXNOTE
+    TXNOTE -.-> BVASP
 
     style UBO1 fill:#dbeafe,stroke:#3b82f6
     style UBO2 fill:#dbeafe,stroke:#3b82f6
@@ -46,6 +49,7 @@ flowchart TD
     style T1 fill:#ede9fe,stroke:#7c3aed
     style SUBJECT fill:#fef9c3,stroke:#eab308
     style BVASP fill:#fef9c3,stroke:#eab308
+    style TXNOTE fill:#f8fafc,stroke:#64748b,stroke-dasharray: 4 2
 ```
 
 ## Directors at Each Tier
@@ -64,7 +68,7 @@ flowchart LR
 ## Key Data Points
 
 | Field | Value |
-|---|---|
+| --- | --- |
 | Schema | OpenKYCAML v1.3.0 |
 | Subject VASP | Nexus Global Ventures Ltd (KY) |
 | UBO | Marcus Pieter Van Den Berg (NL) — 75%, 4-tier |

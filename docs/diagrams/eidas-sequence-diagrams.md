@@ -31,12 +31,12 @@ sequenceDiagram
 
     Note over Holder,Verifier: Phase 1 — Issuance (OpenID4VCI)
     Holder->>Issuer: Complete KYC onboarding
-    Issuer->>Issuer: Build + sign OpenKYCAML VC\n(SD-JWT VC / VC-JWT)
-    Issuer-->>Wallet: Deliver credential\n(OpenID4VCI pre-auth or auth flow)
+    Issuer->>Issuer: Build and sign OpenKYCAML VC / (SD-JWT VC / VC-JWT)
+    Issuer-->>Wallet: Deliver credential / (OpenID4VCI pre-auth or auth flow)
     Wallet->>Wallet: Store credential
 
     Note over Holder,Verifier: Phase 2 — Presentation (OpenID4VP)
-    Verifier->>Wallet: Presentation Request\n(select OpenKYCAML VC fields)
+    Verifier->>Wallet: Presentation Request / (select OpenKYCAML VC fields)
     Wallet->>Holder: Consent prompt
     Holder->>Wallet: Approve selective disclosure
     Wallet-->>Verifier: VP Token (SD-JWT VC)
@@ -57,19 +57,19 @@ sequenceDiagram
     participant Issuer as OpenKYCAML Issuer
     participant AuthServer as Authorisation Server
 
-    Issuer->>Issuer: KYC completed; build\nOpenKYCAML payload + sign VC
-    Issuer->>Holder: Credential Offer URI\n(QR code / deep link)\nopenid-credential-offer://?credential_offer=...
+    Issuer->>Issuer: KYC completed then build and sign OpenKYCAML VC
+    Issuer->>Holder: Send credential offer URI by QR code or deep link
     Holder->>Wallet: Open credential offer
-    Wallet->>Issuer: GET /.well-known/openid-credential-issuer\n(fetch issuer metadata)
-    Issuer-->>Wallet: Credential Issuer Metadata\n{credential_configurations_supported, ...}
-    Wallet->>AuthServer: POST /token\n{grant_type: urn:...pre-authorized_code,\npre-authorized_code, tx_code}
-    AuthServer-->>Wallet: Access Token + c_nonce
-    Wallet->>Wallet: Generate key-bound proof\n(JWT with c_nonce)
-    Wallet->>Issuer: POST /credential\n{format: dc+sd-jwt,\ncredential_identifier,\nproof: {jwt}}
-    Issuer->>Issuer: Verify holder key binding;\nbind VC to wallet key (cnf.jwk)
-    Issuer-->>Wallet: Credential Response\n{credential: <SD-JWT VC>}
+    Wallet->>Issuer: Fetch issuer metadata
+    Issuer-->>Wallet: Return issuer metadata and supported credentials
+    Wallet->>AuthServer: Request token with pre authorized code
+    AuthServer-->>Wallet: Access Token and c_nonce
+    Wallet->>Wallet: Generate key bound proof JWT with c_nonce
+    Wallet->>Issuer: Request credential with proof JWT
+    Issuer->>Issuer: Verify holder key binding and bind VC to wallet key
+    Issuer-->>Wallet: Return SD JWT VC credential
     Wallet->>Wallet: Store OpenKYCAML VC
-    Wallet-->>Holder: Credential stored ✓
+    Wallet-->>Holder: Credential stored
 ```
 
 ---
@@ -86,28 +86,28 @@ sequenceDiagram
     participant Issuer as OpenKYCAML Issuer
     participant AuthServer as Authorisation Server
 
-    Holder->>Wallet: Request OpenKYCAML credential\nfrom issuer
-    Wallet->>Issuer: GET /.well-known/openid-credential-issuer
+    Holder->>Wallet: Request OpenKYCAML credential from issuer
+    Wallet->>Issuer: Fetch issuer metadata
     Issuer-->>Wallet: Issuer Metadata
-    Wallet->>AuthServer: Authorisation Request\n{response_type: code,\nclient_id, redirect_uri,\nscope / authorization_details}
-    AuthServer->>Holder: Authentication + consent screen
-    Holder->>AuthServer: Authenticate + approve
-    AuthServer-->>Wallet: Authorisation Code\n(redirect)
-    Wallet->>AuthServer: POST /token\n{grant_type: authorization_code, code}
-    AuthServer-->>Wallet: Access Token + c_nonce
-    Wallet->>Wallet: Generate key-bound proof\n(JWT signed with wallet key)
-    Wallet->>Issuer: POST /credential\n{format: dc+sd-jwt, proof}
-    Issuer->>Issuer: Verify proof; build VC;\nbind to holder key
-    Issuer-->>Wallet: Credential Response\n{credential: <SD-JWT VC>}
+    Wallet->>AuthServer: Send authorisation request
+    AuthServer->>Holder: Authentication and consent screen
+    Holder->>AuthServer: Authenticate and approve
+    AuthServer-->>Wallet: Return authorisation code
+    Wallet->>AuthServer: Exchange authorisation code for token
+    AuthServer-->>Wallet: Access Token and c_nonce
+    Wallet->>Wallet: Generate key bound proof JWT signed with wallet key
+    Wallet->>Issuer: Request credential with proof JWT
+    Issuer->>Issuer: Verify proof then build VC and bind to holder key
+    Issuer-->>Wallet: Return SD JWT VC credential
     Wallet->>Wallet: Store credential
-    Wallet-->>Holder: Credential stored ✓
+    Wallet-->>Holder: Credential stored
 ```
 
 ---
 
 ## 4. VC Presentation — OpenID4VP (Same-Device)
 
-Used when the verifier and the EUDI Wallet are on the same device (e.g., browser + mobile wallet via universal link).
+Used when the verifier and the EUDI Wallet are on the same device (e.g., browser and mobile wallet via universal link).
 
 ```mermaid
 sequenceDiagram
@@ -117,14 +117,14 @@ sequenceDiagram
     participant Verifier as Relying Party (Beneficiary VASP / Bank)
 
     Holder->>Verifier: Access service requiring KYC
-    Verifier->>Verifier: Build Presentation Request\n(select ivms101 / kycProfile fields)
-    Verifier-->>Wallet: Authorization Request\n(openid4vp:// deep link)\n{client_id, response_type: vp_token,\npresentation_definition}
+    Verifier->>Verifier: Build Presentation Request / (select ivms101 / kycProfile fields)
+    Verifier-->>Wallet: Authorization Request / (openid4vp:// deep link) / {client_id, response_type: vp_token, / presentation_definition}
     Wallet->>Wallet: Locate matching OpenKYCAML VC
-    Wallet->>Holder: Consent screen —\nshow requested fields
+    Wallet->>Holder: Consent screen — / show requested fields
     Holder->>Wallet: Approve
-    Wallet->>Wallet: Build VP Token\n(SD-JWT with selected disclosures)
-    Wallet-->>Verifier: POST response_uri\n{vp_token, presentation_submission}
-    Verifier->>Verifier: Verify VP Token:\n1. SD-JWT signature\n2. Holder key binding\n3. Credential status\n4. Issuer trust chain
+    Wallet->>Wallet: Build VP Token / (SD-JWT with selected disclosures)
+    Wallet-->>Verifier: POST response_uri / {vp_token, presentation_submission}
+    Verifier->>Verifier: Verify VP Token: / 1. SD-JWT signature / 2. Holder key binding / 3. Credential status / 4. Issuer trust chain
     Verifier-->>Holder: Access granted ✓
 ```
 
@@ -144,16 +144,16 @@ sequenceDiagram
 
     Holder->>Desktop: Navigate to service requiring KYC
     Desktop->>Verifier: Request Presentation session
-    Verifier-->>Desktop: Presentation Request URI\n+ session_id (display as QR code)
+    Verifier-->>Desktop: Presentation Request URI / and session_id (display as QR code)
     Desktop->>Holder: Show QR code
     Holder->>Mobile: Scan QR code
-    Mobile->>Verifier: GET Presentation Request\n{session_id}
-    Verifier-->>Mobile: Authorization Request\n{presentation_definition, client_id,\nresponse_uri, nonce}
+    Mobile->>Verifier: GET Presentation Request / {session_id}
+    Verifier-->>Mobile: Authorization Request / {presentation_definition, client_id, / response_uri, nonce}
     Mobile->>Mobile: Find matching VC
     Mobile->>Holder: Consent prompt
     Holder->>Mobile: Approve
-    Mobile->>Mobile: Build VP Token\n(SD-JWT + disclosures)
-    Mobile-->>Verifier: POST response_uri\n{vp_token, presentation_submission}
+    Mobile->>Mobile: Build VP Token / (SD-JWT and disclosures)
+    Mobile-->>Verifier: POST response_uri / {vp_token, presentation_submission}
     Verifier->>Verifier: Verify VP Token
     Verifier-->>Desktop: Session complete (SSE / poll)
     Desktop-->>Holder: Access granted ✓
@@ -172,15 +172,15 @@ sequenceDiagram
     participant Wallet as EUDI Wallet
     participant Holder as Holder
 
-    Note over Wallet: Stored SD-JWT VC contains\ndisclosures for all fields:\n- name (required)\n- dateOfBirth\n- nationality\n- kycProfile.customerRiskRating\n- kycProfile.pepStatus\n- kycProfile.sourceOfFunds
+    Note over Wallet: Stored SD-JWT VC contains / disclosures for all fields: / - name (required) / - dateOfBirth / - nationality / - kycProfile.customerRiskRating / - kycProfile.pepStatus / - kycProfile.sourceOfFunds
 
-    Verifier-->>Wallet: Presentation Request\n{fields: [name, dateOfBirth]\n— travel-rule minimum}
-    Wallet->>Holder: Consent: share name + dateOfBirth?
+    Verifier-->>Wallet: Presentation request for name and date of birth only
+    Wallet->>Holder: Consent: share name and dateOfBirth?
     Holder->>Wallet: Approve
-    Wallet->>Wallet: Include ONLY matching disclosures\nin VP Token;\nomit nationality, kycProfile fields
-    Wallet-->>Verifier: VP Token\n(SD-JWT ~ name_disclosure ~ dob_disclosure)
-    Verifier->>Verifier: Hash disclosures;\nmatch _sd digests;\nverify — only disclosed fields visible
-    Note over Verifier: nationality, kycProfile fields\nnot disclosed — GDPR minimisation ✓
+    Wallet->>Wallet: Include only matching disclosures in VP token and omit nationality and kycProfile fields
+    Wallet-->>Verifier: VP Token / (SD-JWT ~ name_disclosure ~ dob_disclosure)
+    Verifier->>Verifier: Hash disclosures then match sd digests then verify only disclosed fields are visible
+    Note over Verifier: nationality, kycProfile fields / not disclosed — GDPR minimisation ✓
 ```
 
 ---
@@ -195,14 +195,14 @@ sequenceDiagram
     participant Verifier as Relying Party
     participant StatusEndpoint as Status List Endpoint
 
-    Verifier->>Verifier: Parse VP Token;\nextract credentialStatus.id\n(e.g. https://issuer.example.com/status/1#42)
-    Verifier->>StatusEndpoint: GET /status/1\n(fetch Status List JWT)
-    StatusEndpoint-->>Verifier: Status List JWT\n(compressed bitstring)
-    Verifier->>Verifier: Decompress bitstring;\ncheck bit at index 42
+    Verifier->>Verifier: Parse VP token and extract credentialStatus id
+    Verifier->>StatusEndpoint: Fetch status list JWT from status endpoint
+    StatusEndpoint-->>Verifier: Return status list JWT with compressed bitstring
+    Verifier->>Verifier: Decompress bitstring and check bit at index 42
     alt Bit = 0 (not revoked)
-        Verifier->>Verifier: Credential is VALID ✓
+        Verifier->>Verifier: Credential is valid
     else Bit = 1 (revoked)
-        Verifier->>Verifier: Credential is REVOKED ✗\nreject presentation
+        Verifier->>Verifier: Credential is revoked and presentation is rejected
     end
 ```
 
@@ -221,24 +221,24 @@ sequenceDiagram
     participant VASP as VASP / Issuer
     participant Blockchain as Blockchain / Registry
 
-    Note over Holder,PIDProvider: Step 1 — PID already in wallet\n(issued by national PID Provider)
-    PIDProvider-->>Wallet: PID SD-JWT VC\n(family_name, given_name, birth_date, etc.)
+    Note over Holder,PIDProvider: Step 1 — PID already in wallet / (issued by national PID Provider)
+    PIDProvider-->>Wallet: PID SD-JWT VC / (family_name, given_name, birth_date, etc.)
 
     Note over Holder,VASP: Step 2 — VASP KYC onboarding
     Holder->>VASP: Begin KYC onboarding
-    VASP->>Wallet: OpenID4VP Presentation Request\n{fields: family_name, given_name,\nbirth_date, nationality, ...}
-    Wallet->>Holder: Consent prompt\n(selective disclosure of PID fields)
+    VASP->>Wallet: OpenID4VP Presentation Request / {fields: family_name, given_name, / birth_date, nationality, ...}
+    Wallet->>Holder: Consent prompt / (selective disclosure of PID fields)
     Holder->>Wallet: Approve
-    Wallet-->>VASP: VP Token containing PID\n(SD-JWT VC with selected disclosures)
-    VASP->>VASP: Verify PID VP Token:\n1. Issuer signature (PID Provider DID)\n2. Holder key binding\n3. Status check
-    VASP->>VASP: Map PID → ivms101 fields\n(family_name → primaryIdentifier\ngiven_name → secondaryIdentifier\nbirth_date → dateOfBirth etc.)
-    VASP->>VASP: Run PEP + sanctions screening
-    VASP->>VASP: Build OpenKYCAML payload with\nevidence block:\n{credentialIssuer: did:web:pid-provider,\nverifier: did:web:vasp,\npresentationMethod: OpenID4VP}
-    VASP->>VASP: Sign OpenKYCAML VC\n(SD-JWT, issuer DID = did:web:vasp)
+    Wallet-->>VASP: VP Token containing PID / (SD-JWT VC with selected disclosures)
+    VASP->>VASP: Verify PID VP Token: / 1. Issuer signature (PID Provider DID) / 2. Holder key binding / 3. Status check
+    VASP->>VASP: Map PID → ivms101 fields / (family_name → primaryIdentifier / given_name → secondaryIdentifier / birth_date → dateOfBirth etc.)
+    VASP->>VASP: Run PEP and sanctions screening
+    VASP->>VASP: Build OpenKYCAML payload with / evidence block: / {credentialIssuer: did:web:pid-provider, / verifier: did:web:vasp, / presentationMethod: OpenID4VP}
+    VASP->>VASP: Sign OpenKYCAML VC / (SD-JWT, issuer DID = did:web:vasp)
 
     Note over VASP,Holder: Step 3 — Deliver OpenKYCAML VC to wallet
-    VASP->>Wallet: Credential Offer\n(OpenID4VCI pre-auth flow)
-    Wallet->>VASP: POST /credential\n{proof: key-bound JWT}
+    VASP->>Wallet: Credential Offer / (OpenID4VCI pre-auth flow)
+    Wallet->>VASP: POST /credential / {proof: key-bound JWT}
     VASP-->>Wallet: OpenKYCAML SD-JWT VC
     Wallet->>Wallet: Store OpenKYCAML VC
     Wallet-->>Holder: Onboarding complete ✓
@@ -248,7 +248,7 @@ sequenceDiagram
     VASP->>Wallet: OpenID4VP — request OpenKYCAML VC
     Wallet-->>VASP: VP Token (OpenKYCAML SD-JWT VC)
     VASP->>VASP: Build Travel Rule payload from VC
-    VASP->>Blockchain: Broadcast transaction\n+ Travel Rule message
+    VASP->>Blockchain: Broadcast transaction / and Travel Rule message
 ```
 
 ---
