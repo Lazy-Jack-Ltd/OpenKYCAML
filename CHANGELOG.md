@@ -31,6 +31,38 @@ For the full project roadmap and planned features, see [ROADMAP.md](ROADMAP.md).
 
 ---
 
+## [1.9.1] — April 2026
+
+### Added
+
+- **`taxStatus.crsTaxResidencies[]`** (`CrsTaxResidency` $def) — First-class OECD CRS per-jurisdiction residency array (v1.9.1). Each entry carries `jurisdiction` (ISO 3166-1 alpha-2), `tinValue`, `tinVerificationStatus` enum (`verified | unverified | relief-applied | not-required` — maps to CRS reason codes A/B/C), `selfCertificationDate` (ISO 8601), and `controllingPersonFlag` (boolean — for Passive NFE controlling persons per OECD CRS Section VIII.D.6). Supersedes flat `tinIdentifiers[]` for AEOI CRS flows; maps directly to OECD CRS XML Schema v2.0 `AccountHolder/ControllingPerson` TIN elements.
+
+- **`taxStatus.fatcaStatus`** (`FatcaStatus` $def) — First-class US FATCA Chapter 4 block (v1.9.1). Fields: `giin` (19-char IRS GIIN, regex-validated `^[0-9A-Z]{6}\.[0-9A-Z]{5}\.[0-9A-Z]{2}\.[0-9A-Z]{3}$`), `chapter4Classification` (8-value enum: `participatingFFI | registeredDeemedCompliantFFI | certifiedDeemedCompliantFFI | sponsoredDirectReportingNFFE | exemptBeneficialOwner | nonFinancialNonReportingEntity | nonParticipatingFFI | other`), `usTinRequired`, `temporaryReliefApplied` (IRS Notice 2024-78, 2025–2027 deferral for Model 1 IGA pre-existing accounts), `ffiListVerificationTimestamp`, `withholdingAgentReference`. Feeds directly into `predictiveAML` risk scoring.
+
+- **1 new example** — `examples/tax/tax-fatca-crs.json`: Irish FFI (registeredDeemedCompliantFFI) with GIIN, dual-jurisdiction CRS residencies (IE + US), and FATCA status block.
+
+- **`docs/mappings/fatca-crs.md`** + **`fatca-crs.yaml`** — New dedicated mapping document covering: §1 Introduction (FATCA/CRS interoperability, tinIdentifiers[] relationship), §2 OECD CRS crsTaxResidencies[] field mapping + TIN reason-code table + Passive NFE controlling person, §3 FATCA fatcaStatus field mapping + GIIN structure + Chapter 4 classification table + IRS Notice 2024-78 relief, §4 PredictiveAML synergy, §5 compliance and backward-compatibility notes.
+
+- **`schema/versions/v1.9.1.json`** — versioned snapshot of canonical schema.
+
+- **`api/openkycaml-v1.9.0.yaml`** — new OpenAPI 3.1.0 spec with `TinIdentifier`, `IndirectTaxRegistration`, `EconomicSubstance`, `PillarTwo`, `CrsTaxResidency`, `FatcaStatus`, and `TaxStatus` component schemas.
+
+- **Validator business warnings** (Python + Node.js + Go):
+  - `taxStatus.fatcaStatus.giin` fails IRS regex → GIIN format warning.
+  - `taxStatus.fatcaStatus.chapter4Classification = "nonParticipatingFFI"` → 30% withholding EDD warning.
+  - `taxStatus.fatcaStatus.ffiListVerificationTimestamp` > 35 days old → stale FFI List warning.
+
+- **ER diagram** (`docs/diagrams/schema-er-diagram.md`) — added `TaxStatus`, `TinIdentifier`, `IndirectTaxRegistration`, `EconomicSubstance`, `PillarTwo`, `CrsTaxResidency`, `FatcaStatus` entities with relationships; footer updated to v1.9.1.
+
+- **Compliance matrix §18** — Expanded from generic TIN rows to explicit FATCA/CRS first-class rows: GIIN, Chapter 4, controlling-person flag, TIN reason codes A/B/C, FATCA/CRS XML Schema v2.0 export, AMLR Art. 22.
+
+### Changed
+
+- `schema/kyc-aml-hybrid-extended.json` — version bumped from `1.9.0` to `1.9.1`; `$id` updated to `https://openkycaml.org/schema/v1.9.1/kyc-aml-hybrid-extended.json`; `TaxStatus.description` updated.
+- `taxStatus` root property description updated to reference v1.9.1 additions.
+
+---
+
 ## [1.9.0] — April 2026
 
 ### Added

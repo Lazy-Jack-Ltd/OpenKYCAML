@@ -976,3 +976,57 @@ interface TaxStatus {
 ```
 
 *Tax status types added in OpenKYCAML v1.9.0. Last updated: v1.9.0.*
+
+---
+
+## FATCA & CRS Types (v1.9.1)
+
+```typescript
+/** OECD CRS TIN verification / reason-code status. */
+type CrsTinVerificationStatus = 'verified' | 'unverified' | 'relief-applied' | 'not-required';
+
+/** Enhanced OECD CRS per-jurisdiction tax-residency entry. */
+interface CrsTaxResidency {
+  jurisdiction: JurisdictionCode;          // required
+  tinValue?: string;
+  tinVerificationStatus?: CrsTinVerificationStatus;
+  selfCertificationDate?: string;          // ISO 8601 date-time
+  controllingPersonFlag?: boolean;         // true for Passive NFE controlling persons
+}
+
+/** US FATCA Chapter 4 entity classification. */
+type Chapter4Classification =
+  | 'participatingFFI'
+  | 'registeredDeemedCompliantFFI'
+  | 'certifiedDeemedCompliantFFI'
+  | 'sponsoredDirectReportingNFFE'
+  | 'exemptBeneficialOwner'
+  | 'nonFinancialNonReportingEntity'
+  | 'nonParticipatingFFI'
+  | 'other';
+
+/**
+ * US FATCA Chapter 4 status block.
+ * GIIN pattern: /^[0-9A-Z]{6}\.[0-9A-Z]{5}\.[0-9A-Z]{2}\.[0-9A-Z]{3}$/
+ */
+interface FatcaStatus {
+  giin?: string;                           // 19-char IRS GIIN, regex-validated
+  chapter4Classification?: Chapter4Classification;
+  usTinRequired?: boolean;
+  temporaryReliefApplied?: boolean;        // IRS Notice 2024-78 relief (2025-2027)
+  ffiListVerificationTimestamp?: string;   // ISO 8601; refresh every 35 days
+  withholdingAgentReference?: string;
+}
+
+/** Updated TaxStatus interface (v1.9.1) — adds crsTaxResidencies[] and fatcaStatus. */
+interface TaxStatus {
+  tinIdentifiers?: TinIdentifier[];
+  indirectTaxRegistrations?: IndirectTaxRegistration[];
+  economicSubstance?: EconomicSubstance;
+  pillarTwo?: PillarTwo;
+  crsTaxResidencies?: CrsTaxResidency[];   // v1.9.1 — enhanced CRS per-residency data
+  fatcaStatus?: FatcaStatus;               // v1.9.1 — FATCA Chapter 4 first-class block
+}
+```
+
+*FATCA & CRS first-class types added in OpenKYCAML v1.9.1. Last updated: v1.9.1.*

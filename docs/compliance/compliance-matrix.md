@@ -378,24 +378,30 @@ _✅ = full field mapping. ⬜ = explicitly out of scope. ⭐ = added in v1.8.0.
 
 ---
 
-## 18. Tax Status — TIN / OECD CRS / CARF / FATCA (v1.9.0)
+## 18. Tax Status — TIN / OECD CRS / CARF / FATCA (v1.9.0+)
 
-> Full mapping in [tax-status-oecd-esr-pillar2.md](../mappings/tax-status-oecd-esr-pillar2.md) and [tax-status-oecd-esr-pillar2.yaml](../mappings/tax-status-oecd-esr-pillar2.yaml).
+> Full mapping in [tax-status-oecd-esr-pillar2.md](../mappings/tax-status-oecd-esr-pillar2.md), [tax-status-oecd-esr-pillar2.yaml](../mappings/tax-status-oecd-esr-pillar2.yaml), [fatca-crs.md](../mappings/fatca-crs.md), and [fatca-crs.yaml](../mappings/fatca-crs.yaml).
 
-| Standard / Provision | Coverage | OpenKYCAML v1.9.0 Field(s) |
+| Standard / Provision | Coverage | OpenKYCAML v1.9.1 Field(s) |
 |---|---|---|
 | **OECD CRS TIN** — account holder TIN (per OECD CRS §IV.C) | ✅ ⭐ | `taxStatus.tinIdentifiers[tinType=TIN].tinValue` |
+| **OECD CRS multi-residency** — enhanced per-jurisdiction CRS data | ✅ ⭐⭐ | `taxStatus.crsTaxResidencies[]` (jurisdiction + tinValue + tinVerificationStatus + selfCertificationDate) |
+| **OECD CRS controlling persons (Passive NFE)** | ✅ ⭐⭐ | `taxStatus.crsTaxResidencies[controllingPersonFlag=true]` |
+| **OECD CRS TIN reason codes A/B/C** | ✅ ⭐⭐ | `taxStatus.crsTaxResidencies[].tinVerificationStatus` (not-required / unverified / relief-applied) |
 | **OECD CARF TIN** — crypto-asset user identifier | ✅ ⭐ | `taxStatus.tinIdentifiers[].tinValue` + `tinType` |
+| **FATCA GIIN** — IRS FFI List identifier (19-char, regex-validated) | ✅ ⭐⭐ | `taxStatus.fatcaStatus.giin` |
+| **FATCA Chapter 4 classification** — participatingFFI, RDCFFI, exemptBeneficialOwner, etc. | ✅ ⭐⭐ | `taxStatus.fatcaStatus.chapter4Classification` |
+| **FATCA US TIN required flag** | ✅ ⭐⭐ | `taxStatus.fatcaStatus.usTinRequired` |
+| **FATCA IRS Notice 2024-78 temporary relief** (2025–2027 deferral) | ✅ ⭐⭐ | `taxStatus.fatcaStatus.temporaryReliefApplied` |
+| **FATCA FFI List verification timestamp** — monthly refresh | ✅ ⭐⭐ | `taxStatus.fatcaStatus.ffiListVerificationTimestamp` |
+| **FATCA withholding agent / sponsored entity reference** | ✅ ⭐⭐ | `taxStatus.fatcaStatus.withholdingAgentReference` |
 | **FATCA EIN** — US Employer Identification Number | ✅ ⭐ | `taxStatus.tinIdentifiers[tinType=EIN].tinValue` |
-| **FATCA GIIN** — Global Intermediary Identification Number | ✅ ⭐ | `taxStatus.tinIdentifiers[tinType=other].tinValue` (verificationSource = "IRS-FATCA-FFI-List") |
 | **TIN functional equivalent** — UK UTR, Chile RUT, AU TFN, etc. | ✅ ⭐ | `taxStatus.tinIdentifiers[tinType=functionalEquivalent]` |
-| **Multi-jurisdiction TIN array** — dual-residency / MNE | ✅ ⭐ | `taxStatus.tinIdentifiers[]` (array — no limit) |
-| **TIN verification status** — verified / unverified / revoked / suspended | ✅ ⭐ | `taxStatus.tinIdentifiers[].verificationStatus` |
-| **TIN verification source** — OECD TIN list, HMRC, IRS TIN Matching | ✅ ⭐ | `taxStatus.tinIdentifiers[].verificationSource` |
+| **FATCA/CRS XML Schema v2.0 export** — entire taxStatus as AEOI payload | ✅ ⭐⭐ | `taxStatus` root block |
 | **IVMS 101 TXID migration** — structured replacement for TXID | ✅ ⭐ | `taxStatus.tinIdentifiers[0]` ↔ `nationalIdentification.TXID` |
-| **AMLR Art. 22 tax-residency verification** | ✅ ⭐ | `taxStatus.tinIdentifiers[]` + `verificationSource` |
+| **AMLR Art. 22 tax-residency verification** | ✅ ⭐ | `taxStatus.tinIdentifiers[]` + `crsTaxResidencies[]` + `verificationSource` |
 
-_✅ = full field mapping. ⭐ = added in v1.9.0._
+_✅ = full field mapping. ⭐ = added in v1.9.0. ⭐⭐ = added in v1.9.1._
 
 ---
 

@@ -313,6 +313,35 @@ class OpenKYCAMLValidator:
                     "Request the GIR reference and perform enhanced due diligence."
                 )
 
+            # FATCA warnings (v1.9.1).
+            fatca = tax.get("fatcaStatus", {})
+            if fatca:
+                import re as _re
+                giin = fatca.get("giin", "")
+                if giin and not _re.match(r'^[0-9A-Z]{6}\.[0-9A-Z]{5}\.[0-9A-Z]{2}\.[0-9A-Z]{3}$', giin):
+                    warns.append(
+                        f"taxStatus.fatcaStatus.giin '{giin}' does not match the IRS GIIN format "
+                        "(XXXXXX.XXXXX.XX.XXX). Please verify against the IRS FATCA FFI List."
+                    )
+                if fatca.get("chapter4Classification") == "nonParticipatingFFI":
+                    warns.append(
+                        "taxStatus.fatcaStatus.chapter4Classification is 'nonParticipatingFFI' — "
+                        "non-participating FFIs are subject to 30% FATCA withholding and represent "
+                        "elevated US tax-risk. EDD is recommended."
+                    )
+                ts_str = fatca.get("ffiListVerificationTimestamp", "")
+                if ts_str:
+                    try:
+                        from datetime import datetime, timezone, timedelta
+                        ts = datetime.fromisoformat(ts_str.replace("Z", "+00:00"))
+                        if datetime.now(timezone.utc) - ts > timedelta(days=35):
+                            warns.append(
+                                "taxStatus.fatcaStatus.ffiListVerificationTimestamp is more than 35 days old — "
+                                "the IRS FATCA FFI List is updated monthly; please re-verify the GIIN."
+                            )
+                    except (ValueError, TypeError):
+                        pass
+
         return warns
 
 

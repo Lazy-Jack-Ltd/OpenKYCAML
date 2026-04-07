@@ -16,8 +16,10 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"regexp"
 	"runtime"
 	"strings"
+	"time"
 
 	"github.com/santhosh-tekuri/jsonschema/v6"
 )
@@ -136,6 +138,40 @@ func businessWarnings(payload any) []string {
 								"in-scope MNEs must file a GloBE Information Return (GIR). "+
 								"Request the GIR reference and perform enhanced due diligence.",
 						)
+					}
+				}
+			}
+
+			// FATCA warnings (v1.9.1).
+			if fatcaRaw, ok := tax["fatcaStatus"]; ok {
+				if fatca, ok := fatcaRaw.(map[string]any); ok {
+					giinPattern := regexp.MustCompile(`^[0-9A-Z]{6}\.[0-9A-Z]{5}\.[0-9A-Z]{2}\.[0-9A-Z]{3}$`)
+					giin, _ := fatca["giin"].(string)
+					if giin != "" && !giinPattern.MatchString(giin) {
+						warns = append(warns,
+							fmt.Sprintf(
+								"taxStatus.fatcaStatus.giin '%s' does not match the IRS GIIN format "+
+									"(XXXXXX.XXXXX.XX.XXX). Please verify against the IRS FATCA FFI List.",
+								giin,
+							),
+						)
+					}
+					if ch4, _ := fatca["chapter4Classification"].(string); ch4 == "nonParticipatingFFI" {
+						warns = append(warns,
+							"taxStatus.fatcaStatus.chapter4Classification is 'nonParticipatingFFI' — "+
+								"non-participating FFIs are subject to 30% FATCA withholding and represent "+
+								"elevated US tax-risk. EDD is recommended.",
+						)
+					}
+					if tsStr, _ := fatca["ffiListVerificationTimestamp"].(string); tsStr != "" {
+						if ts, err := time.Parse(time.RFC3339, tsStr); err == nil {
+							if time.Since(ts) > 35*24*time.Hour {
+								warns = append(warns,
+									"taxStatus.fatcaStatus.ffiListVerificationTimestamp is more than 35 days old — "+
+										"the IRS FATCA FFI List is updated monthly; please re-verify the GIIN.",
+								)
+							}
+						}
 					}
 				}
 			}

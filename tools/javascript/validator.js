@@ -240,6 +240,35 @@ class OpenKYCAMLValidator {
       );
     }
 
+    // FATCA warnings (v1.9.1).
+    const fatca = tax.fatcaStatus || null;
+    if (fatca) {
+      const GIIN_REGEX = /^[0-9A-Z]{6}\.[0-9A-Z]{5}\.[0-9A-Z]{2}\.[0-9A-Z]{3}$/;
+      if (fatca.giin && !GIIN_REGEX.test(fatca.giin)) {
+        warns.push(
+          `taxStatus.fatcaStatus.giin '${fatca.giin}' does not match the IRS GIIN format ` +
+          '(XXXXXX.XXXXX.XX.XXX). Please verify against the IRS FATCA FFI List.'
+        );
+      }
+      if (fatca.chapter4Classification === 'nonParticipatingFFI') {
+        warns.push(
+          "taxStatus.fatcaStatus.chapter4Classification is 'nonParticipatingFFI' — " +
+          'non-participating FFIs are subject to 30% FATCA withholding and represent ' +
+          'elevated US tax-risk. EDD is recommended.'
+        );
+      }
+      if (fatca.ffiListVerificationTimestamp) {
+        const ts = new Date(fatca.ffiListVerificationTimestamp);
+        const ageMs = Date.now() - ts.getTime();
+        if (!isNaN(ageMs) && ageMs > 35 * 24 * 60 * 60 * 1000) {
+          warns.push(
+            'taxStatus.fatcaStatus.ffiListVerificationTimestamp is more than 35 days old — ' +
+            'the IRS FATCA FFI List is updated monthly; please re-verify the GIIN.'
+          );
+        }
+      }
+    }
+
     return warns;
   }
 }
