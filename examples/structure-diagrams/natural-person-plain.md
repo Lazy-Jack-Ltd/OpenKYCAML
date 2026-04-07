@@ -1,18 +1,18 @@
 # natural-person-plain.json — Structure Diagram
 
 **Scenario:** Minimal IVMS 101 Travel Rule — Natural Person to Natural Person (plain JSON, no VC wrapper).  
-Satoshi Nakamoto (NL) sends 0.5 BTC to Harold Finney (GB) via two VASPs.
+Pieter Jan Van Dijk (NL) sends 0.5 BTC to Thomas James Hargreaves (GB) via two VASPs.
 
 ```mermaid
 flowchart TD
     subgraph Originator_Side["Originating Side — Netherlands"]
-        O["👤 Satoshi Nakamoto\nNaturalPerson · NL\nPassport: NL-PASSPORT-AB123456\nDOB: 1985-04-05, Amsterdam\nWallet: bc1qxy2kgdygjr..."]
+        O["👤 Pieter Jan Van Dijk\nNaturalPerson · NL\nPassport: NL-PASSPORT-AB123456\nDOB: 1985-04-05, Amsterdam\nWallet: bc1qxy2kgdygjr..."]
         OVASP["🏦 Acme Crypto Exchange BV\nOriginating VASP · NL\nLEI: 724500VNNHZHYDLFMO70"]
     end
 
     subgraph Beneficiary_Side["Beneficiary Side — United Kingdom"]
         BVASP["🏦 FinTech Exchange Ltd\nBeneficiary VASP · GB\nLEI: 213800WSGIIZCXF1P572"]
-        B["👤 Harold Thomas Finney\nNaturalPerson · GB\nPassport: GB-PASSPORT-HF987654\nWallet: 3J98t1WpEZ73CN..."]
+        B["👤 Thomas James Hargreaves\nNaturalPerson · GB\nPassport: GB-PASSPORT-HF987654\nWallet: 3J98t1WpEZ73CN..."]
     end
 
     O -- "Initiates transfer\n0.5 BTC" --> OVASP
@@ -31,8 +31,8 @@ flowchart TD
 |---|---|
 | Schema | OpenKYCAML v1.3.0 |
 | Message type | IVMS 101 (plain — no VC wrapper) |
-| Originator | Satoshi Nakamoto, NL natural person |
-| Beneficiary | Harold Thomas Finney, GB natural person |
+| Originator | Pieter Jan Van Dijk, NL natural person |
+| Beneficiary | Thomas James Hargreaves, GB natural person |
 | Asset / Amount | 0.5 BTC |
 | Originating VASP | Acme Crypto Exchange BV (NL) |
 | Beneficiary VASP | FinTech Exchange Ltd (GB) |

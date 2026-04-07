@@ -2,7 +2,7 @@
 """
 OpenKYCAML Schema Validator
 ===========================
-Validates JSON payloads against the OpenKYCAML schema (v1.6.0).
+Validates JSON payloads against the OpenKYCAML schema (v1.7.0).
 
 Usage:
     python validator.py <path-to-payload.json>
@@ -232,6 +232,66 @@ class OpenKYCAMLValidator:
                         "OpenKYCAML Document ID URN scheme "
                         "'urn:openkycaml:doc:{{country}}:{{doc-type-code}}:{{subject-ref}}:{{YYYY-MM}}'."
                     )
+
+        # PredictiveAML EU AI Act warnings.
+        predictive = payload.get("predictiveAML", {})
+        if predictive:
+            model_meta = predictive.get("modelMetadata", {})
+            eu_class = model_meta.get("euAiActClassification")
+            if eu_class == "high-risk-aml" and not model_meta.get("conformityAssessmentReference", "").strip():
+                warns.append(
+                    "predictiveAML.modelMetadata.conformityAssessmentReference is missing — "
+                    "required for EU AI Act Art. 43 conformity assessment when "
+                    "euAiActClassification is 'high-risk-aml'."
+                )
+
+            scores = predictive.get("predictiveScores", [])
+            for idx, score in enumerate(scores):
+                if score.get("confidence") is None:
+                    warns.append(
+                        f"predictiveAML.predictiveScores[{idx}].confidence is missing — "
+                        "required for EU AI Act Art. 13(3)(b)(ii) reliability disclosure."
+                    )
+
+            if not predictive.get("explainability"):
+                warns.append(
+                    "predictiveAML.explainability is absent — EU AI Act Art. 13(3)(b)(iii) "
+                    "requires output interpretation guidance for high-risk AML systems."
+                )
+
+            data_agg = predictive.get("dataAggregationMetadata", {})
+            if data_agg.get("bcbs239ComplianceLevel") == "gap-analysis":
+                warns.append(
+                    "predictiveAML.dataAggregationMetadata.bcbs239ComplianceLevel is 'gap-analysis' — "
+                    "BCBS 239 compliance gaps should be remediated before supervisory review (Principle 12)."
+                )
+
+        # Beneficial ownership nominee/bearer-share warnings (FATF R.24 2022 revision).
+        bos = kyc.get("beneficialOwnership", [])
+        for idx, bo in enumerate(bos):
+            nom = bo.get("nomineeFlags", {})
+            location = f"kycProfile.beneficialOwnership[{idx}]"
+            if nom.get("bearerShareFlag") and dd_type and dd_type != "EDD":
+                warns.append(
+                    f"{location}.nomineeFlags.bearerShareFlag is true but dueDiligenceType is "
+                    f"'{dd_type}' — FATF R.24 (2022 revision) requires EDD when bearer shares are in issue."
+                )
+            if nom.get("isNominee") and not nom.get("nominatorIdentified"):
+                warns.append(
+                    f"{location}.nomineeFlags.isNominee is true but nominatorIdentified is false — "
+                    "FATF R.24 (2022 revision) requires the actual owner behind the nominee to be identified."
+                )
+
+        # XRPL confidential transfer compliance warning.
+        blockchain_ids = kyc.get("blockchainAccountIds", [])
+        for idx, acct in enumerate(blockchain_ids):
+            ct = acct.get("xrplConfidentialTransfer", {})
+            if ct.get("enabled") and not ct.get("authorisedViewingKeys"):
+                warns.append(
+                    f"kycProfile.blockchainAccountIds[{idx}].xrplConfidentialTransfer.enabled is true "
+                    "but authorisedViewingKeys is empty — AMLR Art. 21 / FATF R.16 require "
+                    "supervisory viewing key access for confidential transfers (XLS-96d)."
+                )
 
         return warns
 

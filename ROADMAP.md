@@ -6,11 +6,40 @@ This document is the **authoritative project roadmap** covering schema features,
 
 ---
 
-## Current Version: v1.7.0
+## Current Version: v1.8.0
 
 **Released:** April 2026
 
-**Highlights:**
+**Highlights (v1.8.0):**
+- **X.500 Distinguished Names (ITU-T X.500 / RFC 4514)** — New optional `legacyIdentifiers` top-level block with `x500DN` (RFC 4514 string, regex-validated) and `x500DNType` enum (`certificateSubject`, `certificateIssuer`, `directoryEntry`, `swiftNetAddress`). Enables direct linkage of identity evidence to eIDAS-compliant Qualified Certificates (AMLR Art. 22(6) & eIDAS Art. 24) and SWIFTNet technical addresses. X.400 O/R Addresses explicitly excluded.
+- **X.509 PKI Evidence (ITU-T X.509 / ISO/IEC 9594-8 / RFC 5280)** — New optional `pkiEvidence` top-level block with:
+  - `x509Certificate` sub-object — `serialNumber`, `subjectDN`, `issuerDN`, `validFrom`, `validTo`, `signatureAlgorithm`, `qcStatements[]`, `crlDistributionPoints[]`, `ocspResponderUrl`, `thumbprintSha256`.
+  - `oids[]` array — machine-readable ASN.1 Object Identifiers from X.509 extensions and ETSI EN 319 412 profiles (OID + description + optional value).
+  - `certificateDocumentRef` — links to `identityDocuments` for full eIDAS triangulation.
+- **eIDAS 2.0 QES/QSealC/QWAC/QEAA coverage** — `pkiEvidence.x509Certificate.qcStatements[]` carries ETSI EN 319 412 statement types (`id-etsi-qcs-QcCompliance`, `QcType-eSign`, `QcType-eSeal`, `QcType-Web`, `QcSSCD`, `QcCClegislation`, `QcPDS`, `QcEAA`).
+- **2 new examples** — `examples/evidence/eidas-x509-dn.json` (legal entity QSealC) and `examples/evidence/eidas-x509-qeaa.json` (natural person QEAA with EUDI Wallet evidence triangulation).
+- **2 new mapping documents** — `docs/mappings/x500-x400-legacy.md` + `.yaml` (X.500 DN / X.400 scope decision) and `docs/mappings/x509-pki.md` + `.yaml` (full X.509 / OID mapping).
+- **Compliance matrix updated** — §17 added for X.500/X.509 PKI support.
+
+## Previous Version: v1.7.0
+
+**Released:** April 2026
+
+**Highlights (v1.7.0):**
+- **PredictiveAML Extension** — new optional `predictiveAML` top-level block with `modelMetadata` (EU AI Act Art. 13 model card), `predictiveScores[]` (typed, confidence-bounded), `explainability` (SHAP/LIME/counterfactual), `riskEvolutionHistory[]` (delta-based cKYC), `alertCorrelationId`, and `dataAggregationMetadata` (BCBS 239).
+- **XRPL Extended Standards** — XLS-80d Permissioned Domains (`xrplPermissionedDomainId`, `xrplAuthorizedCredentialTypes[]`), XLS-96d Confidential Transactions (`xrplConfidentialTransfer`), XLS-77d Freeze types (`xrplFreezeType`), XRPL Clawback (`xrplClawbackEnabled`), MPT extensions (`mptFlags`, `mptMetadata`, `mptTransferFee`). XLS-40d renamed to XLS-70.
+- **Lightning Network and Bitcoin** — `lightningNodePubkey`, `lightningServiceProvider`, `bitcoinScriptType` (P2PKH/P2SH/P2WPKH/P2WSH/P2TR).
+- **FinCEN 314(a)/(b)** — new `informationSharingFlags` top-level block with `section314aRequestId`, `section314bSafeHarbor`, `sharingConsentTimestamp`.
+- **FATF R.24/R.25 (2022)** — `beneficialOwnership[].nomineeFlags` (isNominee, nominatorIdentified, bearerShareFlag), `roleInArrangement`, `trustInstrumentReference`.
+- **Enhanced MonitoringInfo** — `alertFrequency`, `ruleTriggerHistory[]`, `tmModelVersion`.
+- **5 new compliance mapping documents** — Wolfsberg FCCQ/CBDDQ, BCBS 239, FATF R.24/25, EU AI Act (Markdown + machine-readable YAML).
+- **Enforcement Tiers** — new `docs/compliance/enforcement-tiers.md` with 6 enforcement tiers by entity type.
+- **OpenAPI 3.1 specification** — `api/openkycaml-v1.7.0.yaml` with 5 endpoints.
+- **Wolfsberg CBDDQ importer tool** — `tools/wolfsberg-importer/wolfsberg_importer.py`.
+- **3 predictiveAML examples** — `examples/predictive/` (static, delta, AI-high-risk).
+- Standalone predictiveAML schema — `schema/predictive-aml/v1.7.0.json`.
+
+**Previous release highlights (v1.1.0–v1.6.0):**
 - Full IVMS 101 v1.0 payload support (backward-compatible superset).
 - Optional W3C Verifiable Credential wrapper (eIDAS 2.0 / ARF-aligned), with W3C VC `evidence` block for EUDI Wallet source credential attribution.
 - Native **eIDAS 2.0 LPID** (Legal Person Identification Data) support with QEAA mandate/representative fields.

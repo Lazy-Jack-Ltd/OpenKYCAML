@@ -264,11 +264,65 @@ _✅ = full field mapping. 🔄 = conceptual equivalent (see [mapping-sovrin.md]
 | **Regulator public key** — XLS-96 | ✅ | `kycProfile.blockchainAccountIds[].xrplConfidentialTransfer.regulatorPublicKey` ⭐ (added v1.7.0) |
 | **Travel Rule on XRPL** (FATF Rec 16 / TFR 2023/1113 Art. 14 / MiCA Art. 83) | ✅ | `ivms101` block; `Credential.URI` anchors the IVMS 101 payload on-ledger |
 
-_✅ = full field mapping. 🔄 = conceptual equivalent (see [mapping-xrpl-credentials-mpt.md](../mappings/mapping-xrpl-credentials-mpt.md)). ℹ️ = out of scope. ⭐ = schema extended._
+_✅ = full field mapping. 🔄 = conceptual equivalent (see [mapping-xrpl-credentials-mpt.md](../mappings/mapping-xrpl-credentials-mpt.md)). ℹ️ = out of scope. ⭐ = schema extended in v1.3.0. 🌟 = schema extended in v1.7.0._
 
 ---
 
-## 13. Bitcoin and Lightning Network (Service-Layer Enforcement)
+## 13. PredictiveAML Extension (v1.7.0)
+
+The `predictiveAML` top-level block is a new optional extension providing ML-ready, explainable, auditable risk scores. It supports EU AI Act Art. 13, AMLR Art. 22, and BCBS 239. Full details in [eu-ai-act.md](../mappings/eu-ai-act.md) and [bcbs239.md](../mappings/bcbs239.md).
+
+| Standard / Requirement | Coverage | PredictiveAML v1.7.0 Field |
+|---|---|---|
+| **EU AI Act Annex III** — High-risk AML AI classification | ✅ | `predictiveAML.modelMetadata.euAiActClassification` |
+| **EU AI Act Art. 13(3)(a)** — Provider identity | ✅ | `predictiveAML.modelMetadata.provider` |
+| **EU AI Act Art. 13(3)(b)(ii)** — Accuracy/confidence | ✅ | `predictiveAML.predictiveScores[].confidence` |
+| **EU AI Act Art. 13(3)(b)(iii)** — Output interpretation | ✅ | `predictiveAML.explainability` (SHAP/LIME/counterfactual) |
+| **EU AI Act Art. 43** — Conformity assessment | ✅ | `predictiveAML.modelMetadata.conformityAssessmentReference` |
+| **AMLR Art. 22(5)** — Third-party reliance with provenance | ✅ | `predictiveAML.modelMetadata.modelId` + `modelVersion` + `trainingDate` |
+| **AMLR Art. 21** — Ongoing monitoring (delta-based cKYC) | ✅ | `predictiveAML.riskEvolutionHistory[]` |
+| **BCBS 239 P2** — Data architecture and lineage | ✅ | `predictiveAML.dataAggregationMetadata.dataLineageReference` |
+| **BCBS 239 P5** — Timeliness | ✅ | `predictiveAML.dataAggregationMetadata.lastAggregationTimestamp` |
+| **BCBS 239 P12** — Supervisory review | ✅ | `predictiveAML.dataAggregationMetadata.bcbs239ComplianceLevel` |
+| Alert closed-loop feedback | ✅ | `predictiveAML.alertCorrelationId` |
+| Transaction anomaly scoring | ✅ | `predictiveAML.predictiveScores[].scoreType` = `transaction_anomaly` |
+| UBO graph risk scoring | ✅ | `predictiveAML.predictiveScores[].scoreType` = `ubo_graph_risk` |
+| Network risk scoring | ✅ | `predictiveAML.predictiveScores[].scoreType` = `network_risk` |
+
+---
+
+---
+
+## 14. FinCEN 314(a)/(b) — Information Sharing Flags (v1.7.0)
+
+| FinCEN Provision | Coverage | OpenKYCAML v1.7.0 Field |
+|---|---|---|
+| **Section 314(a)** — Mandatory law enforcement information request | ✅ 🌟 | `informationSharingFlags.section314aRequestId` |
+| **Section 314(b)** — Voluntary institution-to-institution sharing safe-harbor | ✅ 🌟 | `informationSharingFlags.section314bSafeHarbor` |
+| Sharing consent timestamp | ✅ 🌟 | `informationSharingFlags.sharingConsentTimestamp` |
+
+---
+
+---
+
+## 15. Wolfsberg FCCQ v1.2 / CBDDQ v1.4 (v1.7.0)
+
+See [wolfsberg-fccq-cbddq.md](../mappings/wolfsberg-fccq-cbddq.md) for the full mapping.
+
+| Wolfsberg Section | Coverage | Notes |
+|---|---|---|
+| A — Organisation & Structure | ✅ | `ivms101.originator.originatorPersons[].legalPerson.*` |
+| B — Ownership & Control | ✅ | `kycProfile.beneficialOwnership[]` + v1.7.0 nominee/bearer flags |
+| C — AML/CTF Programme | ✅ | `predictiveAML.modelMetadata` + `monitoringInfo.tmModelVersion` |
+| D — Customer Due Diligence | ✅ | `kycProfile.customerRiskRating` + `dueDiligenceType` |
+| E — Sanctions & PEP | ✅ | `kycProfile.sanctionsScreening` + `pepStatus` |
+| F — Transaction Monitoring | ✅ | `monitoringInfo.ruleTriggerHistory[]` + `predictiveAML.predictiveScores[]` |
+| G — Information Sharing | ✅ | `informationSharingFlags.section314bSafeHarbor` |
+| Products & Services (Q19b) | 🟡 | `productUsage[]` planned |
+
+---
+
+## 16. Bitcoin and Lightning Network (Service-Layer Enforcement)
 
 > Bitcoin has no protocol-level compliance framework comparable to ERC-3643 or XRPL's credential system. Compliance on Bitcoin and Lightning is enforced entirely at the service layer. The full mapping is in [mapping-bitcoin-lightning.md](../mappings/mapping-bitcoin-lightning.md).
 
@@ -289,4 +343,39 @@ _✅ = full field mapping. ⬜ = not in scope / service-layer enforcement only._
 
 ---
 
-*Last updated: v1.7.0 — April 2026. Maintained by the OpenKYCAML Technical Working Group.*
+## 17. X.500 Distinguished Names and X.509 PKI Evidence (v1.8.0)
+
+> X.500 DNs are the canonical Subject/Issuer identifier in X.509 certificates. X.509 PKI certificates underpin eIDAS 2.0 Qualified Trust Services (QES, QSealC, QWAC, QEAA) and SWIFTNet addressing. Full mappings are in [x500-x400-legacy.md](../mappings/x500-x400-legacy.md) and [x509-pki.md](../mappings/x509-pki.md).
+
+| Standard / Provision | Coverage | OpenKYCAML v1.8.0 Field(s) |
+|---|---|---|
+| **X.500 DN — certificate Subject** (ITU-T X.500 / RFC 4514) | ✅ ⭐ | `legacyIdentifiers.x500DN` (`x500DNType: "certificateSubject"`) |
+| **X.500 DN — certificate Issuer** | ✅ ⭐ | `legacyIdentifiers.x500DN` (`x500DNType: "certificateIssuer"`) |
+| **X.500 DN — SWIFTNet technical address** | ✅ ⭐ | `legacyIdentifiers.x500DN` (`x500DNType: "swiftNetAddress"`) |
+| **X.500 DN — LDAP/directory entry** | ✅ ⭐ | `legacyIdentifiers.x500DN` (`x500DNType: "directoryEntry"`) |
+| **X.400 O/R Addresses** (ITU-T X.400) | ⬜ | Not added — no current regulatory mandate; explicitly excluded |
+| **X.509 certificate Subject DN** (RFC 5280 §4.1.2.6) | ✅ ⭐ | `pkiEvidence.x509Certificate.subjectDN` |
+| **X.509 certificate Issuer DN** (RFC 5280 §4.1.2.4) | ✅ ⭐ | `pkiEvidence.x509Certificate.issuerDN` |
+| **X.509 serial number** (RFC 5280 §4.1.2.2) | ✅ ⭐ | `pkiEvidence.x509Certificate.serialNumber` |
+| **X.509 validity period** (RFC 5280 §4.1.2.5) | ✅ ⭐ | `pkiEvidence.x509Certificate.validFrom` + `validTo` |
+| **X.509 signature algorithm** (RFC 5280 §4.1.1.2) | ✅ ⭐ | `pkiEvidence.x509Certificate.signatureAlgorithm` |
+| **eIDAS QCStatements** (ETSI EN 319 412 — id-pe-QCStatements) | ✅ ⭐ | `pkiEvidence.x509Certificate.qcStatements[]` |
+| **OCSP revocation** (RFC 6960) | ✅ ⭐ | `pkiEvidence.x509Certificate.ocspResponderUrl` |
+| **CRL Distribution Points** (RFC 5280 §4.2.1.13) | ✅ ⭐ | `pkiEvidence.x509Certificate.crlDistributionPoints[]` |
+| **SHA-256 cert fingerprint** | ✅ ⭐ | `pkiEvidence.x509Certificate.thumbprintSha256` |
+| **ASN.1 OIDs** (RFC 5280 / ETSI profiles) | ✅ ⭐ | `pkiEvidence.oids[]` (oid + description + value) |
+| **eIDAS 2.0 QES** (Reg. 910/2014 + EU 2024/1183) | ✅ ⭐ | `qcStatements` includes `id-etsi-qcs-QcType-eSign` |
+| **eIDAS 2.0 QSealC** | ✅ ⭐ | `qcStatements` includes `id-etsi-qcs-QcType-eSeal` |
+| **eIDAS 2.0 QWAC** | ✅ ⭐ | `qcStatements` includes `id-etsi-qcs-QcType-Web` |
+| **eIDAS 2.0 QEAA** (Art. 45f) | ✅ ⭐ | `qcStatements` includes `id-etsi-qcs-QcEAA` + `verifiableCredential.evidence[]` |
+| **AMLR 2027 Art. 22(6)** — QC as remote CDD evidence | ✅ ⭐ | `pkiEvidence` + `pkiEvidence.certificateDocumentRef` → `identityDocuments` |
+| **AMLR 2027 Art. 56** — Record keeping (cert fingerprint) | ✅ ⭐ | `pkiEvidence.x509Certificate.thumbprintSha256` + `validFrom/validTo` |
+| **ETSI EN 319 412 series** — QTSP cert profiles | ✅ ⭐ | `pkiEvidence.x509Certificate.*` + `pkiEvidence.oids[]` |
+| **ETSI TS 119 461 v2.1.1** — Identity proofing | ✅ ⭐ | `pkiEvidence` + `identityDocuments` + `certificateDocumentRef` |
+| **Predictive AML cert provenance** | ✅ ⭐ | `validTo` + `ocspResponderUrl` → `predictiveAML.riskEvolutionHistory[]` cert-expiry signals |
+
+_✅ = full field mapping. ⬜ = explicitly out of scope. ⭐ = added in v1.8.0._
+
+---
+
+*Last updated: v1.8.0 — April 2026. Maintained by the OpenKYCAML Technical Working Group.*

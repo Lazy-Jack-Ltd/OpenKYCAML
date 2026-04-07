@@ -31,6 +31,36 @@ For the full project roadmap and planned features, see [ROADMAP.md](ROADMAP.md).
 
 ---
 
+## [1.8.0] — April 2026
+
+### Added
+
+- **`legacyIdentifiers` top-level block** — New optional `LegacyIdentifiers` $def and root property for X.500 Distinguished Names:
+  - `x500DN` (string, regex-validated RFC 4514 pattern) — carries the X.500 DN as used in X.509 certificate Subject/Issuer fields, SWIFTNet technical addresses, or LDAP directory entries.
+  - `x500DNType` (enum) — context: `certificateSubject`, `certificateIssuer`, `directoryEntry`, `swiftNetAddress`.
+  - X.400 O/R Addresses explicitly excluded; see `docs/mappings/x500-x400-legacy.md` §3.
+
+- **`pkiEvidence` top-level block** — New optional `PkiEvidence` $def and root property for X.509 PKI certificate metadata:
+  - `x509Certificate` sub-object — `serialNumber`, `subjectDN`, `issuerDN`, `validFrom`, `validTo`, `signatureAlgorithm`, `qcStatements[]` (ETSI EN 319 412 QCStatement OID names), `crlDistributionPoints[]` (URIs), `ocspResponderUrl` (URI), `thumbprintSha256` (lowercase hex, exactly 64 chars, regex-validated).
+  - `oids[]` array — machine-readable ASN.1 Object Identifiers with `oid` (dotted-decimal, regex-validated), `description`, and optional `value`.
+  - `certificateDocumentRef` (URI) — links to `identityDocuments` for full eIDAS triangulation.
+
+- **2 new examples** in `examples/evidence/`:
+  - `eidas-x509-dn.json` — legal entity (Acme Bank PLC) with QSealC `pkiEvidence` and `legacyIdentifiers.x500DN`.
+  - `eidas-x509-qeaa.json` — natural person (Anna Schmidt) with eIDAS 2.0 QEAA evidence triangulation: `verifiableCredential.evidence[]` (EUDI Wallet DID) + `pkiEvidence` (BSI QTSP X.509 cert metadata) + `legacyIdentifiers.x500DN`.
+
+- **`docs/mappings/x500-x400-legacy.md`** + **`x500-x400-legacy.yaml`** — mapping of X.500 DN use cases and X.400 scope exclusion.
+- **`docs/mappings/x509-pki.md`** + **`x509-pki.yaml`** — full X.509 / ETSI QCStatement / ASN.1 OID mapping with compliance alignment table.
+- **`schema/versions/v1.8.0.json`** — versioned copy of updated canonical schema.
+- **Compliance matrix §17** — X.500/X.509 PKI support section added to `docs/compliance/compliance-matrix.md`.
+
+### Changed
+
+- `schema/kyc-aml-hybrid-extended.json` — version bumped from `1.7.0` to `1.8.0`; `$id` updated to `https://openkycaml.org/schema/v1.8.0/kyc-aml-hybrid-extended.json`.
+- `ROADMAP.md` — v1.8.0 milestone added.
+
+---
+
 ## [1.7.0] — April 2026
 
 ### Added

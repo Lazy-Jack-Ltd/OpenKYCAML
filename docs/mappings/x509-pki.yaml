@@ -1,0 +1,134 @@
+standard: "X.509 PKI Certificates and OIDs (ITU-T X.509 / ISO/IEC 9594-8 / RFC 5280)"
+openkycaml_version: "1.8.0"
+last_updated: "2026-04-07"
+description: >
+  Machine-readable mapping of X.509 certificate fields, ETSI EN 319 412
+  QCStatements, and ASN.1 OIDs to OpenKYCAML v1.8.0 schema fields.
+  For the full human-readable narrative and integration guidance see x509-pki.md.
+
+mappings:
+  - standard_field: "Subject DN (RFC 5280 §4.1.2.6)"
+    openkycaml_field: "pkiEvidence.x509Certificate.subjectDN"
+    coverage: full
+    notes: >
+      RFC 4514 string. Should match legacyIdentifiers.x500DN when
+      x500DNType is certificateSubject.
+
+  - standard_field: "Issuer DN (RFC 5280 §4.1.2.4)"
+    openkycaml_field: "pkiEvidence.x509Certificate.issuerDN"
+    coverage: full
+    notes: "RFC 4514 string for the CA or QTSP."
+
+  - standard_field: "Serial number (RFC 5280 §4.1.2.2)"
+    openkycaml_field: "pkiEvidence.x509Certificate.serialNumber"
+    coverage: full
+    notes: "Hex string. Unique within issuer namespace per RFC 5280."
+
+  - standard_field: "notBefore (RFC 5280 §4.1.2.5)"
+    openkycaml_field: "pkiEvidence.x509Certificate.validFrom"
+    coverage: full
+    notes: "ISO 8601 date-time."
+
+  - standard_field: "notAfter (RFC 5280 §4.1.2.5)"
+    openkycaml_field: "pkiEvidence.x509Certificate.validTo"
+    coverage: full
+    notes: "ISO 8601 date-time. Used as cert-expiry risk signal in predictiveAML."
+
+  - standard_field: "signatureAlgorithm (RFC 5280 §4.1.1.2)"
+    openkycaml_field: "pkiEvidence.x509Certificate.signatureAlgorithm"
+    coverage: full
+    notes: "OID name or dotted-decimal string."
+
+  - standard_field: "id-pe-QCStatements (OID 1.3.6.1.5.5.7.1.3, ETSI EN 319 412)"
+    openkycaml_field: "pkiEvidence.x509Certificate.qcStatements[]"
+    coverage: full
+    regulatory_basis:
+      - "eIDAS 2.0 QES, QSealC, QWAC, QEAA"
+      - "ETSI EN 319 412-1 to 412-5"
+    notes: >
+      Well-known values: id-etsi-qcs-QcCompliance, id-etsi-qcs-QcSSCD,
+      id-etsi-qcs-QcType-eSign, id-etsi-qcs-QcType-eSeal, id-etsi-qcs-QcType-Web,
+      id-etsi-qcs-QcCClegislation, id-etsi-qcs-QcPDS, id-etsi-qcs-QcEAA.
+
+  - standard_field: "CRL Distribution Points (RFC 5280 §4.2.1.13)"
+    openkycaml_field: "pkiEvidence.x509Certificate.crlDistributionPoints[]"
+    coverage: full
+    notes: "Array of URI strings."
+
+  - standard_field: "OCSP responder URL (RFC 6960 / AIA extension)"
+    openkycaml_field: "pkiEvidence.x509Certificate.ocspResponderUrl"
+    coverage: full
+    notes: "Preferred revocation method for eIDAS QTS certificates."
+
+  - standard_field: "Certificate SHA-256 fingerprint"
+    openkycaml_field: "pkiEvidence.x509Certificate.thumbprintSha256"
+    coverage: full
+    notes: "Lowercase hex string, exactly 64 characters."
+
+  - standard_field: "ASN.1 OIDs (RFC 5280 extensions and ETSI profiles)"
+    openkycaml_field: "pkiEvidence.oids[]"
+    coverage: full
+    notes: >
+      Dotted-decimal oid + description + optional value. Key OIDs:
+      1.3.6.1.5.5.7.1.3 (QCStatements), 2.5.4.97 (organizationIdentifier),
+      1.3.6.1.5.5.7.48.1 (OCSP), 2.5.29.31 (CRL DP), 2.5.29.32 (Cert Policies).
+
+  - standard_field: "Certificate to document linkage"
+    openkycaml_field: "pkiEvidence.certificateDocumentRef"
+    coverage: full
+    regulatory_basis:
+      - "AMLR 2027 Art. 22 — documentary evidence chain"
+    notes: >
+      URI reference to identityDocuments.naturalPersonDocuments[] or
+      identityDocuments.legalEntityDocuments[] entry. Enables full
+      eIDAS triangulation: DN → Certificate → Document Bundle → Attributes.
+
+compliance_alignment:
+  - regulation: "eIDAS 2.0 QES (Reg. 910/2014 + EU 2024/1183)"
+    openkycaml_field: "pkiEvidence.x509Certificate.qcStatements"
+    coverage: full
+    notes: "qcStatements includes id-etsi-qcs-QcType-eSign"
+
+  - regulation: "eIDAS 2.0 QSealC"
+    openkycaml_field: "pkiEvidence.x509Certificate.qcStatements"
+    coverage: full
+    notes: "qcStatements includes id-etsi-qcs-QcType-eSeal"
+
+  - regulation: "eIDAS 2.0 QWAC"
+    openkycaml_field: "pkiEvidence.x509Certificate.qcStatements"
+    coverage: full
+    notes: "qcStatements includes id-etsi-qcs-QcType-Web"
+
+  - regulation: "eIDAS 2.0 QEAA (Art. 45f)"
+    openkycaml_field: "pkiEvidence.x509Certificate.qcStatements + verifiableCredential.evidence[]"
+    coverage: full
+    notes: "qcStatements includes id-etsi-qcs-QcEAA; EUDI Wallet presentation via evidence block"
+
+  - regulation: "ETSI EN 319 412 series"
+    openkycaml_field: "pkiEvidence.x509Certificate + pkiEvidence.oids[]"
+    coverage: full
+    notes: "Full cert metadata + policy OIDs"
+
+  - regulation: "AMLR 2027 Art. 22(6)"
+    openkycaml_field: "pkiEvidence.x509Certificate.qcStatements + pkiEvidence.certificateDocumentRef"
+    coverage: full
+    notes: "QC as CDD evidence; documentRef links to identityDocuments"
+
+  - regulation: "AMLR 2027 Art. 56 — Record keeping"
+    openkycaml_field: "pkiEvidence.x509Certificate.validFrom + validTo + thumbprintSha256"
+    coverage: full
+    notes: "Fingerprint provides stable cert identifier for 5-year retention"
+
+  - regulation: "RFC 5280 — Internet X.509 PKI"
+    openkycaml_field: "pkiEvidence.x509Certificate.*"
+    coverage: full
+
+out_of_scope:
+  - item: "X.400 O/R Addresses"
+    reason: "No current regulatory mandate; see x500-x400-legacy.md §3"
+  - item: "LDAP protocol (RFC 4511)"
+    reason: "Only the DN string is modelled; LDAP protocol details are out of scope"
+  - item: "SCIM (RFC 7643/7644)"
+    reason: "Enterprise provisioning; no AML evidence value"
+  - item: "Raw DER/PEM certificate bytes"
+    reason: "OpenKYCAML carries metadata only; store raw certs in document bundle"

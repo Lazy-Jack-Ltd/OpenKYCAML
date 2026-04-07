@@ -1,0 +1,115 @@
+standard: "BCBS 239"
+full_name: "Basel Committee Principles for Effective Risk Data Aggregation and Risk Reporting"
+version: "January 2013 (revised guidance 2020)"
+openkycaml_version: "1.7.0"
+last_updated: "2026-04-07"
+
+pillars:
+  - pillar: 1
+    name: "Overarching Governance and Infrastructure"
+    principles:
+      - id: P1
+        name: Governance
+        openkycaml_fields:
+          - "kycProfile.auditMetadata.dataProvider"
+          - "kycProfile.auditMetadata.dataSourceSystem"
+        coverage: full
+
+      - id: P2
+        name: Data Architecture and IT Infrastructure
+        openkycaml_fields:
+          - "predictiveAML.dataAggregationMetadata.dataLineageReference"
+          - "predictiveAML.dataAggregationMetadata.lastAggregationTimestamp"
+          - "predictiveAML.dataAggregationMetadata.bcbs239ComplianceLevel"
+        coverage: full
+
+  - pillar: 2
+    name: Risk Data Aggregation Capabilities
+    principles:
+      - id: P3
+        name: Accuracy and Integrity
+        openkycaml_fields:
+          - "predictiveAML.modelMetadata.modelVersion"
+          - "predictiveAML.predictiveScores[].confidence"
+        coverage: full
+
+      - id: P4
+        name: Completeness
+        openkycaml_fields:
+          - "kycProfile.beneficialOwnership[]"
+          - "identityDocuments"
+        coverage: partial
+        notes: "Product portfolio coverage planned."
+
+      - id: P5
+        name: Timeliness
+        openkycaml_fields:
+          - "predictiveAML.dataAggregationMetadata.lastAggregationTimestamp"
+          - "kycProfile.monitoringInfo.alertFrequency"
+        coverage: full
+
+      - id: P6
+        name: Adaptability
+        openkycaml_fields:
+          - "predictiveAML.predictiveScores[].horizonDays"
+          - "predictiveAML.riskEvolutionHistory[]"
+        coverage: full
+
+  - pillar: 3
+    name: Risk Reporting Practices
+    principles:
+      - id: P7
+        name: Accuracy
+        openkycaml_fields:
+          - "predictiveAML.explainability"
+        coverage: full
+
+      - id: P8
+        name: Comprehensiveness
+        openkycaml_fields:
+          - "kycProfile.beneficialOwnership[].intermediateEntities[]"
+        coverage: full
+
+      - id: P9
+        name: Clarity and Usefulness
+        openkycaml_fields:
+          - "predictiveAML.explainability.method"
+          - "predictiveAML.explainability.values"
+        coverage: full
+
+      - id: P10
+        name: Frequency
+        openkycaml_fields:
+          - "kycProfile.monitoringInfo.reviewFrequency"
+          - "kycProfile.monitoringInfo.alertFrequency"
+        coverage: full
+
+      - id: P11
+        name: Distribution
+        openkycaml_fields:
+          - "gdprSensitivityMetadata.disclosurePolicy"
+        coverage: full
+
+  - pillar: 4
+    name: Supervisory Review, Tools, and Cooperation
+    principles:
+      - id: P12
+        name: Review
+        openkycaml_fields:
+          - "predictiveAML.dataAggregationMetadata.bcbs239ComplianceLevel"
+        coverage: full
+
+      - id: P13
+        name: Remediation
+        openkycaml_fields:
+          - "kycProfile.auditMetadata.recordUpdatedAt"
+          - "kycProfile.auditMetadata.recordVersion"
+        coverage: partial
+        notes: "No formal remediation plan field; version increments track corrections."
+
+      - id: P14
+        name: Home/Host Cooperation
+        openkycaml_fields:
+          - "kycProfile.thirdPartyCDDReliance"
+          - "informationSharingFlags"
+        coverage: full

@@ -5,12 +5,12 @@
 **The neutral, open hybrid KYC/AML data standard for the compliant digital economy.**
 
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
-[![Schema Version](https://img.shields.io/badge/schema-v1.7.0-brightgreen.svg)](schema/kyc-aml-hybrid-extended.json)
+[![Schema Version](https://img.shields.io/badge/schema-v1.8.0-brightgreen.svg)](schema/kyc-aml-hybrid-extended.json)
 [![IVMS 101](https://img.shields.io/badge/IVMS%20101-compatible-orange.svg)](docs/mappings/mapping-ivms101-eidas-amlr.md)
 [![eIDAS 2.0](https://img.shields.io/badge/eIDAS%202.0-VC%20ready-blueviolet.svg)](docs/mappings/mapping-ivms101-eidas-amlr.md)
 [![AMLR 2027 Ready](https://img.shields.io/badge/AMLR%202027-ready-red.svg)](docs/compliance/compliance-matrix.md)
 [![FATF Rec 16](https://img.shields.io/badge/FATF%20Rec%2016-compliant-yellow.svg)](docs/compliance/compliance-matrix.md)
-[![CI](https://github.com/Lazy-Jack-Ltd/openKYCAML/actions/workflows/validate-schema.yml/badge.svg)](https://github.com/Lazy-Jack-Ltd/openKYCAML/actions/workflows/validate-schema.yml)
+[![CI](https://github.com/Lazy-Jack-Ltd/OpenKYCAML/actions/workflows/validate-schema.yml/badge.svg)](https://github.com/Lazy-Jack-Ltd/OpenKYCAML/actions/workflows/validate-schema.yml)
 
 ---
 
@@ -121,6 +121,17 @@ OpenKYCAML payload
     ├── consentRecord             ← Consent given/withdrawn (for consent-based processing)
     ├── disclosurePolicy          ← allowedRecipients / prohibitedRecipients
     └── auditReference            ← Opaque DPO/SAR case reference (hash only, no content)
+
+legacyIdentifiers                ← (optional, v1.8.0+) X.500 DN for eIDAS QTS / SWIFTNet / LDAP
+    ├── x500DN                    ← RFC 4514 Distinguished Name string (regex-validated)
+    └── x500DNType                ← certificateSubject / certificateIssuer / directoryEntry / swiftNetAddress
+
+pkiEvidence                      ← (optional, v1.8.0+) X.509 certificate evidence block
+    ├── x509Certificate           ← serialNumber, subjectDN, issuerDN, validFrom/To,
+    │                                signatureAlgorithm, qcStatements[], crlDistributionPoints[],
+    │                                ocspResponderUrl, thumbprintSha256
+    ├── oids[]                    ← ASN.1 OIDs (dotted-decimal + description + value)
+    └── certificateDocumentRef   ← URI back-link to identityDocuments[]
 ```
 
 ---
@@ -153,8 +164,8 @@ node validator.js ../../examples/full-kyc-profile.json
 
 ```json
 {
-  "$schema": "https://openkycaml.org/schema/v1.7.0/kyc-aml-hybrid-extended.json",
-  "version": "1.7.0",
+  "$schema": "https://openkycaml.org/schema/v1.8.0/kyc-aml-hybrid-extended.json",
+  "version": "1.8.0",
   "messageId": "550e8400-e29b-41d4-a716-446655440001",
   "messageDateTime": "2024-06-15T09:30:00Z",
   "ivms101": {
@@ -163,8 +174,8 @@ node validator.js ../../examples/full-kyc-profile.json
         "naturalPerson": {
           "name": {
             "nameIdentifier": [{
-              "primaryIdentifier": "Nakamoto",
-              "secondaryIdentifier": "Satoshi",
+              "primaryIdentifier": "Van Dijk",
+              "secondaryIdentifier": "Pieter Jan",
               "nameIdentifierType": "LEGL"
             }]
           },
@@ -190,8 +201,8 @@ node validator.js ../../examples/full-kyc-profile.json
 
 ```json
 {
-  "$schema": "https://openkycaml.org/schema/v1.7.0/kyc-aml-hybrid-extended.json",
-  "version": "1.7.0",
+  "$schema": "https://openkycaml.org/schema/v1.8.0/kyc-aml-hybrid-extended.json",
+  "version": "1.8.0",
   "verifiableCredential": {
     "issuer": { "id": "did:web:acme-crypto.example.nl", "name": "Acme Crypto Exchange BV" },
     "credentialSubject": {
@@ -199,7 +210,7 @@ node validator.js ../../examples/full-kyc-profile.json
       "ivms101": { "...": "..." }
     },
     "evidence": [{
-      "id": "urn:uuid:pid-nl-satoshi-nakamoto-2025-12-01",
+      "id": "urn:uuid:pid-nl-pieter-van-dijk-2025-12-01",
       "type": ["PIDCredential", "EUDIWalletPresentationEvidence"],
       "credentialIssuer": "did:web:pid-provider.rvo.example.nl",
       "verifier": "did:web:acme-crypto.example.nl",
@@ -215,7 +226,9 @@ node validator.js ../../examples/full-kyc-profile.json
 
 ## Example Payloads
 
-There are **25 example payloads** in [`examples/`](examples/) covering the full range of scenarios — from a minimal two-party Travel Rule message to complex 4-tier ownership structures, EUDI Wallet DID triangulation, SD-JWT selective disclosure, and v1.5.0 Verification Document Bundles.
+> **Fictional data notice:** All names, passport numbers, national identifiers, addresses, entity names, LEIs, DIDs, wallet addresses, and any other personal or entity data in the example payloads are **entirely fictional** and have been created solely for illustrative purposes. Any resemblance to real persons (living or deceased), real legal entities, or real transactions is entirely coincidental. Any names that may coincidentally resemble those of real-world individuals or organisations have been deliberately altered.
+
+There are **27 example payloads** in [`examples/`](examples/) covering the full range of scenarios — from a minimal two-party Travel Rule message to complex 4-tier ownership structures, EUDI Wallet DID triangulation, SD-JWT selective disclosure, v1.5.0 Verification Document Bundles, and v1.8.0 X.509 PKI evidence.
 
 The complete catalogue with per-file descriptions, schema block inventory, and testing guidance is in **[`examples/EXAMPLES.md`](examples/EXAMPLES.md)**.
 
@@ -229,6 +242,8 @@ The complete catalogue with per-file descriptions, schema block inventory, and t
 | ISO 20275 trust / partnership (ELF codes) | [`legal-entity-trust.json`](examples/legal-entity-trust.json) · [`legal-entity-partnership.json`](examples/legal-entity-partnership.json) | 1.4.0 |
 | Verification Document Bundle | [`document-bundle-natural-person.json`](examples/document-bundle-natural-person.json) · [`document-bundle-legal-entity.json`](examples/document-bundle-legal-entity.json) | 1.5.0 |
 | SAR tipping-off protection | [`hybrid-with-sar-restriction.json`](examples/hybrid-with-sar-restriction.json) | 1.3.0 |
+| eIDAS 2.0 X.509 QSealC cert (legal entity) | [`evidence/eidas-x509-dn.json`](examples/evidence/eidas-x509-dn.json) | 1.8.0 |
+| eIDAS 2.0 QEAA + EUDI Wallet triangulation (natural person) | [`evidence/eidas-x509-qeaa.json`](examples/evidence/eidas-x509-qeaa.json) | 1.8.0 |
 
 ### EUDI Wallet examples — DID triangulation
 
@@ -257,6 +272,8 @@ Each `-eudi-wallet.json` example documents a **trust chain** using W3C VC eviden
 | [Sovrin / Hyperledger Indy (AnonCreds) Mapping](docs/mappings/mapping-sovrin.md) | Field-level mapping from OpenKYCAML to Sovrin DID Method, Indy ledger transactions, and AnonCreds ZKP credentials |
 | [XRPL Credentials, DIDs, MPTs, Permissioned Domains, and Confidential Transfers Mapping](docs/mappings/mapping-xrpl-credentials-mpt.md) | Field-level mapping from OpenKYCAML to XRPL Credentials (XLS-70), `did:xrpl` DID method, Multi-Purpose Tokens (XLS-33d), Permissioned Domains (XLS-80), Permissioned DEX (XLS-81d), Deep Freeze (XLS-77), and Confidential Transfers (XLS-96) |
 | [Bitcoin and Lightning Network Mapping](docs/mappings/mapping-bitcoin-lightning.md) | Service-layer enforcement for Bitcoin/Lightning — Lightspark, Voltage, LNURL-auth, Taproot Assets, RGB, Liquid Network |
+| [X.500 DN / X.400 Legacy Mapping](docs/mappings/x500-x400-legacy.md) | X.500 Distinguished Name use-cases (eIDAS QTS, SWIFTNet, LDAP); X.400 explicitly out-of-scope rationale |
+| [X.509 PKI Evidence Mapping](docs/mappings/x509-pki.md) | Full X.509 certificate metadata, ETSI QCStatements, ASN.1 OID array — eIDAS Qualified Certificates and AMLR Art. 22/56 compliance |
 | [Three-Tier Enforcement Model](docs/compliance/enforcement-tiers.md) | Normative document mapping Tier 1 (Ethereum ERC-3643), Tier 2 (XRPL protocol), and Tier 3 (Bitcoin/Lightning service-layer) compliance enforcement |
 | [Roadmap](ROADMAP.md) | Planned features and upcoming versions |
 | [Contributing](CONTRIBUTING.md) | How to contribute to the standard |
@@ -282,6 +299,7 @@ Each `-eudi-wallet.json` example documents a **trust chain** using W3C VC eviden
 | **Sovrin / Hyperledger Indy (AnonCreds)** | ✅ `did:sov` / `did:indy` DIDs, AnonCreds CL credentials, CLAIM_DEF, REVOC_REG, Rich Schema — see [Sovrin mapping](docs/mappings/mapping-sovrin.md) |
 | **XRPL Credentials (XLS-70), DIDs (`did:xrpl`), MPTs (XLS-33d), Permissioned Domains (XLS-80/81d), Confidential Transfers (XLS-96), Deep Freeze (XLS-77)** | ✅ On-ledger `Credential` anchoring W3C VCs (XLS-70, live on mainnet), `did:xrpl` DID method, MPT permissioned tokens, Permissioned Domain + DEX gating (v1.7.0), EC-ElGamal Confidential Transfers with selective disclosure (v1.7.0), Deep Freeze (v1.7.0), Native Clawback (v1.7.0) — see [XRPL mapping](docs/mappings/mapping-xrpl-credentials-mpt.md) |
 | **Bitcoin / Lightning Network** | ✅ v1.7.0 — service-layer enforcement; Lightning node pubkey (`lightningNodePubkey`), LSP identification (`lightningServiceProvider`), Bitcoin script type (`bitcoinScriptType`); Lightspark/Voltage/BitGo compliance wrapper integration — see [Bitcoin/Lightning mapping](docs/mappings/mapping-bitcoin-lightning.md) |
+| **X.500 Distinguished Names / X.509 PKI** | ✅ v1.8.0 — optional `legacyIdentifiers.x500DN` (RFC 4514, regex-validated) for eIDAS QTS certificate Subject/Issuer, SWIFTNet addressing, and LDAP entries; optional `pkiEvidence` block with X.509 metadata (serial number, validity, signature algorithm, ETSI QCStatements[], CRL/OCSP, SHA-256 thumbprint) and OID array — see [X.500/X.400 mapping](docs/mappings/x500-x400-legacy.md) and [X.509 PKI mapping](docs/mappings/x509-pki.md) |
 
 ---
 
@@ -290,7 +308,7 @@ Each `-eudi-wallet.json` example documents a **trust chain** using W3C VC eviden
 ```
 openKYCAML/
 ├── schema/
-│   ├── kyc-aml-hybrid-extended.json     ← Canonical schema (latest — currently v1.7.0)
+│   ├── kyc-aml-hybrid-extended.json     ← Canonical schema (latest — currently v1.8.0)
 │   └── versions/
 │       ├── v1.0.0.json                  ← v1.0.0 snapshot
 │       ├── v1.1.0.json                  ← v1.1.0 snapshot
@@ -299,12 +317,14 @@ openKYCAML/
 │       ├── v1.4.0.json                  ← v1.4.0 snapshot (ISO 20275 ELF, entity types)
 │       ├── v1.5.0.json                  ← v1.5.0 snapshot (Verification Document Bundle)
 │       ├── v1.6.0.json                  ← v1.6.0 snapshot (Document ID URN scheme)
-│       └── v1.7.0.json                  ← v1.7.0 snapshot (current — XRPL XLS-70/80/81/96/77, Bitcoin/Lightning)
+│       ├── v1.7.0.json                  ← v1.7.0 snapshot (XRPL XLS-70/80/81/96/77, Bitcoin/Lightning)
+│       └── v1.8.0.json                  ← v1.8.0 snapshot (current — X.500 DN, X.509 PKI evidence)
 ├── examples/
 │   ├── *-plain.json                     ← Plain IVMS 101 baseline examples
 │   ├── *-wrapped.json                   ← VC-wrapped examples
 │   ├── *-eudi-wallet.json               ← EUDI Wallet / DID triangulation examples
-│   └── document-bundle-*.json           ← Verification document bundle examples (v1.5.0)
+│   ├── document-bundle-*.json           ← Verification document bundle examples (v1.5.0)
+│   └── evidence/                        ← X.509 PKI evidence examples (v1.8.0)
 ├── iso20022-integration/                ← ISO 20022 bridge module (v1.3.0+)
 │   ├── mapping/                         ← Bidirectional field mapping YAML + gap analysis
 │   ├── supplementary-data/              ← KYCAMLEnvelope JSON Schema + reference instance

@@ -26,8 +26,8 @@ sequenceDiagram
     autonumber
     participant Holder as EUDI Wallet Holder
     participant Wallet as EUDI Wallet
-    participant Issuer as OpenKYCAML Issuer\n(VASP / KYC Utility)
-    participant Verifier as Relying Party\n(Beneficiary VASP / Bank)
+    participant Issuer as OpenKYCAML Issuer (VASP / KYC Utility)
+    participant Verifier as Relying Party (Beneficiary VASP / Bank)
 
     Note over Holder,Verifier: Phase 1 — Issuance (OpenID4VCI)
     Holder->>Issuer: Complete KYC onboarding
@@ -114,7 +114,7 @@ sequenceDiagram
     autonumber
     participant Holder as EUDI Wallet Holder
     participant Wallet as EUDI Wallet
-    participant Verifier as Relying Party\n(Beneficiary VASP / Bank)
+    participant Verifier as Relying Party (Beneficiary VASP / Bank)
 
     Holder->>Verifier: Access service requiring KYC
     Verifier->>Verifier: Build Presentation Request\n(select ivms101 / kycProfile fields)
@@ -138,8 +138,8 @@ Used when the relying party is on a desktop browser and the EUDI Wallet is on th
 sequenceDiagram
     autonumber
     participant Holder as EUDI Wallet Holder
-    participant Mobile as EUDI Wallet\n(Mobile)
-    participant Desktop as Relying Party\n(Desktop Browser)
+    participant Mobile as EUDI Wallet (Mobile)
+    participant Desktop as Relying Party (Desktop Browser)
     participant Verifier as Verifier Backend
 
     Holder->>Desktop: Navigate to service requiring KYC
@@ -193,7 +193,7 @@ Shows the revocation check flow using W3C Status List 2021, which is embedded in
 sequenceDiagram
     autonumber
     participant Verifier as Relying Party
-    participant StatusEndpoint as Status List Endpoint\n(Issuer infrastructure)
+    participant StatusEndpoint as Status List Endpoint
 
     Verifier->>Verifier: Parse VP Token;\nextract credentialStatus.id\n(e.g. https://issuer.example.com/status/1#42)
     Verifier->>StatusEndpoint: GET /status/1\n(fetch Status List JWT)
@@ -217,7 +217,7 @@ sequenceDiagram
     autonumber
     participant Holder as New Customer
     participant Wallet as EUDI Wallet
-    participant PIDProvider as PID Provider\n(Member State)
+    participant PIDProvider as PID Provider
     participant VASP as VASP / Issuer
     participant Blockchain as Blockchain / Registry
 

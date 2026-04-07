@@ -1826,6 +1826,44 @@
             "type": "string",
             "format": "uri"
           }
+        },
+        "roleInArrangement": {
+          "type": "string",
+          "enum": [
+            "SETTLOR",
+            "TRUSTEE",
+            "PROTECTOR",
+            "BENEFICIARY_CLASS",
+            "ENFORCER",
+            "NOMINEE",
+            "FOUNDER",
+            "COUNCIL_MEMBER",
+            "PARTNER",
+            "OTHER"
+          ],
+          "description": "Role of this party within a legal arrangement (trust, foundation, or partnership) as required by FATF R.25 (2023 revision) and AMLR Art. 26. Extends the typed role fields in TrustDetails/FoundationDetails/PartnershipDetails sub-objects."
+        },
+        "nomineeFlags": {
+          "type": "object",
+          "description": "Nominee and transparency flags per FATF R.24/R.25 (2023 revisions) requiring identification of nominees acting on behalf of ultimate beneficial owners.",
+          "properties": {
+            "isNominee": {
+              "type": "boolean",
+              "description": "True when this party is a nominee (acting on behalf of the actual UBO). Triggers enhanced verification requirements under FATF R.24 and AMLR Art. 26."
+            },
+            "nominatorIdentified": {
+              "type": "boolean",
+              "description": "True when the actual person(s) on whose behalf the nominee is acting have been identified and verified."
+            },
+            "bearerShareFlag": {
+              "type": "boolean",
+              "description": "True when the entity has issued bearer shares, creating opacity risk. FATF R.24 requires immobilisation or conversion of bearer shares."
+            }
+          }
+        },
+        "trustInstrumentReference": {
+          "type": "string",
+          "description": "Reference to the trust deed, foundation charter, or equivalent legal instrument (e.g. document URI, notary reference, or documentId URN from identityDocuments.legalEntityDocuments[]). Supports FATF R.25 requirement to identify and verify the legal arrangement instrument."
         }
       }
     },
@@ -1935,6 +1973,58 @@
               }
             }
           }
+        },
+        "alertFrequency": {
+          "type": "string",
+          "enum": [
+            "REAL_TIME",
+            "DAILY",
+            "WEEKLY",
+            "MONTHLY",
+            "ON_TRIGGER"
+          ],
+          "description": "Frequency at which alerts are generated for this customer. REAL_TIME = streaming transaction monitoring; ON_TRIGGER = alerts generated only when a rule fires."
+        },
+        "ruleTriggerHistory": {
+          "type": "array",
+          "description": "History of AML/CTF rule triggers fired for this customer, supporting AMLR Art. 21 ongoing monitoring audit requirements.",
+          "items": {
+            "type": "object",
+            "required": [
+              "ruleId",
+              "triggeredAt"
+            ],
+            "properties": {
+              "ruleId": {
+                "type": "string",
+                "description": "Identifier of the transaction monitoring rule that triggered."
+              },
+              "ruleDescription": {
+                "type": "string",
+                "maxLength": 500,
+                "description": "Human-readable description of the triggered rule."
+              },
+              "triggeredAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "ISO 8601 date-time when the rule triggered."
+              },
+              "outcome": {
+                "type": "string",
+                "enum": [
+                  "ALERT_RAISED",
+                  "FALSE_POSITIVE",
+                  "SAR_FILED",
+                  "NO_ACTION"
+                ],
+                "description": "Disposition outcome for this rule trigger."
+              }
+            }
+          }
+        },
+        "tmModelVersion": {
+          "type": "string",
+          "description": "Version of the transaction monitoring (TM) rule engine or ML model in use when monitoring was last applied. Supports AMLR Art. 21 audit requirements and model lineage tracking for EU AI Act high-risk AML systems."
         }
       }
     },
@@ -2818,7 +2908,9 @@
               "xrplConfidentialTransfer": {
                 "type": "object",
                 "description": "Configuration record for XLS-96 Confidential Transfers applied to the MPT issuance associated with this wallet. XLS-96 encrypts MPT balances and transfer amounts using EC-ElGamal combined with Zero-Knowledge Proofs, so that validators can enforce supply limits and prevent double-spends without seeing actual amounts. Issuers and designated auditors hold decryption keys for selective disclosure; regulators receive visibility only when legally required. This object carries the public-key material and scheme identifier needed to support selective disclosure to authorised parties.",
-                "required": ["enabled"],
+                "required": [
+                  "enabled"
+                ],
                 "properties": {
                   "enabled": {
                     "type": "boolean",
@@ -2827,7 +2919,9 @@
                   "encryptionScheme": {
                     "type": "string",
                     "description": "Encryption scheme used for confidential transfers. 'EC_ELGAMAL' is the XLS-96 scheme (EC-ElGamal + ZKP). Additional schemes may be defined as the standard evolves.",
-                    "enum": ["EC_ELGAMAL"]
+                    "enum": [
+                      "EC_ELGAMAL"
+                    ]
                   },
                   "auditorPublicKey": {
                     "type": "string",
@@ -2861,7 +2955,11 @@
               "xrplFreezeType": {
                 "type": "string",
                 "description": "XRPL freeze type applied to this wallet or its token holdings, providing more granular freeze state than the boolean `isFrozen` field. Maps to XRPL's native freeze hierarchy: INDIVIDUAL_FREEZE — only this specific wallet's trustline or MPT holding is frozen (operator or issuer action); GLOBAL_FREEZE — the issuer has frozen all trustlines or MPT holdings for the asset globally; DEEP_FREEZE (XLS-77) — an enhanced freeze that prevents the holder from even receiving tokens or having frozen funds released without issuer action, providing stronger enforcement capability equivalent to ERC-3643 `forcedTransfer()`. When set, `isFrozen` should also be true.",
-                "enum": ["INDIVIDUAL_FREEZE", "GLOBAL_FREEZE", "DEEP_FREEZE"]
+                "enum": [
+                  "INDIVIDUAL_FREEZE",
+                  "GLOBAL_FREEZE",
+                  "DEEP_FREEZE"
+                ]
               },
               "xrplClawbackEnabled": {
                 "type": "boolean",
@@ -2880,7 +2978,11 @@
               "bitcoinScriptType": {
                 "type": "string",
                 "description": "Bitcoin script type for the address in the `address` field. Used to provide chain analysis context and determine the applicable UTXO model for compliance screening. P2PKH — Pay to Public Key Hash (legacy); P2WPKH — Pay to Witness Public Key Hash (native SegWit); P2TR — Pay to Taproot (Taproot, BIP-341). Applicable when `network` is 'bitcoin' or a Bitcoin Layer-2 network (Liquid, RGB). Not applicable for Lightning channel addresses (use `lightningNodePubkey` instead).",
-                "enum": ["P2PKH", "P2WPKH", "P2TR"]
+                "enum": [
+                  "P2PKH",
+                  "P2WPKH",
+                  "P2TR"
+                ]
               }
             }
           }
@@ -3491,6 +3593,218 @@
           ]
         }
       }
+    },
+    "RiskSnapshot": {
+      "title": "RiskSnapshot",
+      "description": "A point-in-time snapshot of a customer's overall risk score for trend analysis and continuous KYC.",
+      "type": "object",
+      "properties": {
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 date-time when this snapshot was captured."
+        },
+        "overallRiskScore": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Composite risk score at this point in time (0 = lowest risk, 100 = highest risk)."
+        },
+        "deltaFromPrevious": {
+          "type": "number",
+          "description": "Change in overall risk score compared to the immediately prior snapshot. Positive = increased risk, negative = decreased risk."
+        }
+      }
+    },
+    "DataAggregationMetadata": {
+      "title": "DataAggregationMetadata",
+      "description": "BCBS 239 risk data aggregation metadata providing provenance and lineage traceability for regulatory reporting.",
+      "type": "object",
+      "properties": {
+        "bcbs239ComplianceLevel": {
+          "type": "string",
+          "enum": [
+            "full",
+            "partial",
+            "gap-analysis"
+          ],
+          "description": "Self-assessed BCBS 239 compliance level for this data aggregation: 'full' (all 14 principles met), 'partial' (some gaps), 'gap-analysis' (under assessment)."
+        },
+        "lastAggregationTimestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 date-time of the most recent data aggregation run that produced this payload."
+        },
+        "dataLineageReference": {
+          "type": "string",
+          "description": "Opaque reference to the data lineage or provenance record (e.g. a data catalogue entry URI, ETL job ID, or audit log reference). Supports BCBS 239 Principle 2 (Data Architecture and IT Infrastructure) and Principle 3 (Accuracy and Integrity)."
+        }
+      }
+    },
+    "PredictiveAML": {
+      "title": "PredictiveAML",
+      "description": "Predictive AML extension providing ML-ready, explainable, auditable risk scores and model metadata. Supports EU AI Act Art. 13 explainability, AMLR Art. 22(5) third-party reliance with provenance, and BCBS 239 data aggregation. Designed for integration with Fenergo, Actimize/NICE, and graph-based network risk engines.",
+      "type": "object",
+      "required": [
+        "modelMetadata",
+        "predictiveScores"
+      ],
+      "properties": {
+        "modelMetadata": {
+          "type": "object",
+          "description": "EU AI Act-aligned model card metadata (Art. 13 transparency obligations for high-risk AI systems in AML).",
+          "required": [
+            "modelId",
+            "modelVersion",
+            "euAiActClassification"
+          ],
+          "properties": {
+            "modelId": {
+              "type": "string",
+              "description": "Unique identifier for the AML model (e.g. UUID or vendor model reference)."
+            },
+            "modelVersion": {
+              "type": "string",
+              "description": "Semantic version of the model (e.g. '2.3.1')."
+            },
+            "provider": {
+              "type": "string",
+              "description": "Name or DID of the model provider / vendor."
+            },
+            "trainingDate": {
+              "type": "string",
+              "format": "date-time",
+              "description": "ISO 8601 date-time when the model was last trained."
+            },
+            "euAiActClassification": {
+              "type": "string",
+              "enum": [
+                "high-risk-aml",
+                "limited-risk",
+                "minimal-risk"
+              ],
+              "description": "EU AI Act Annex III classification. AML transaction monitoring and customer risk scoring systems are presumed 'high-risk-aml' under Art. 6(2) and Annex III point 5(b)."
+            },
+            "conformityAssessmentReference": {
+              "type": "string",
+              "description": "Reference to the EU AI Act conformity assessment record (Art. 43) or notified body certificate number. Required when euAiActClassification = 'high-risk-aml'."
+            }
+          }
+        },
+        "predictiveScores": {
+          "type": "array",
+          "description": "Array of typed predictive risk scores produced by the model.",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": [
+              "scoreType",
+              "value",
+              "confidence"
+            ],
+            "properties": {
+              "scoreType": {
+                "type": "string",
+                "enum": [
+                  "transaction_anomaly",
+                  "network_risk",
+                  "velocity_fraud",
+                  "ubo_graph_risk",
+                  "customer_lifetime_risk"
+                ],
+                "description": "Type of predictive risk score."
+              },
+              "value": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 100,
+                "description": "Score value on a 0–100 scale (0 = lowest risk, 100 = highest risk)."
+              },
+              "confidence": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1,
+                "description": "Model confidence in this score (0–1). EU AI Act Art. 13(3)(b)(iv) requires confidence or reliability information."
+              },
+              "horizonDays": {
+                "type": "integer",
+                "minimum": 1,
+                "description": "Forward-looking horizon in calendar days over which the score is predictive (e.g. 30 = 30-day anomaly probability)."
+              },
+              "timestamp": {
+                "type": "string",
+                "format": "date-time",
+                "description": "ISO 8601 date-time when this score was computed."
+              }
+            }
+          }
+        },
+        "featureVector": {
+          "type": "object",
+          "description": "Optional hashed or privacy-preserved feature vector used to generate the scores (e.g. velocity_30d, avg_txn_value). Keys are feature names; values are numeric, string, or boolean. Personal data MUST be hashed or pseudonymised before inclusion (GDPR Art. 25 data minimisation).",
+          "additionalProperties": {
+            "type": [
+              "number",
+              "string",
+              "boolean"
+            ]
+          }
+        },
+        "explainability": {
+          "type": "object",
+          "description": "EU AI Act Art. 13 explainability output. Provides human-interpretable reasoning for the predictive scores.",
+          "properties": {
+            "method": {
+              "type": "string",
+              "enum": [
+                "SHAP",
+                "LIME",
+                "counterfactual"
+              ],
+              "description": "Explainability method used. SHAP (SHapley Additive exPlanations) and LIME (Local Interpretable Model-agnostic Explanations) are recommended for AML models."
+            },
+            "values": {
+              "type": "object",
+              "description": "Method-specific explanation output (e.g. SHAP feature importance values keyed by feature name). Structure is method-dependent.",
+              "additionalProperties": {}
+            }
+          }
+        },
+        "riskEvolutionHistory": {
+          "type": "array",
+          "description": "Ordered history of overall risk snapshots enabling delta-based continuous KYC (cKYC). Supports AMLR Art. 22 ongoing monitoring and avoids unnecessary full re-KYC when risk has not materially changed.",
+          "items": {
+            "$ref": "#/$defs/RiskSnapshot"
+          }
+        },
+        "alertCorrelationId": {
+          "type": "string",
+          "description": "Opaque correlation identifier linking this predictive payload to a transaction monitoring alert (e.g. Actimize case ID). Enables closed-loop feedback from alert disposition to model retrain."
+        },
+        "dataAggregationMetadata": {
+          "$ref": "#/$defs/DataAggregationMetadata"
+        }
+      }
+    },
+    "InformationSharingFlags": {
+      "title": "InformationSharingFlags",
+      "description": "USA PATRIOT Act Section 314(a) (31 CFR 1010.520) and Section 314(b) (31 CFR 1010.540) information sharing flags. Section 314(a) supports mandatory law-enforcement information requests; Section 314(b) enables voluntary institution-to-institution sharing with safe-harbor protection.",
+      "type": "object",
+      "properties": {
+        "section314aRequestId": {
+          "type": "string",
+          "description": "FinCEN Section 314(a) request identifier. Presence indicates this customer record is subject to a mandatory FinCEN information request. MUST NOT be disclosed to the data subject (tipping-off prohibition)."
+        },
+        "section314bSafeHarbor": {
+          "type": "boolean",
+          "description": "When true, this record was shared under the FinCEN Section 314(b) voluntary information sharing safe-harbor. The sharing institution must be a Section 314(b) registrant and sharing must be for AML purposes (31 CFR 1010.540)."
+        },
+        "sharingConsentTimestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 date-time when consent for information sharing was obtained or the safe-harbor sharing event occurred."
+        }
+      }
     }
   },
   "type": "object",
@@ -3548,6 +3862,14 @@
     "identityDocuments": {
       "$ref": "#/$defs/VerificationDocumentBundle",
       "description": "Optional verification document bundle. Contains the typed, named set of government-issued documents and digital credentials examined to verify natural person and/or legal entity identity. Satisfies ISO 17442 (LEI), GLEIF LOU documentary evidence requirements, FATF Rec. 10/24/25, and AMLR Art. 22 and 26. All changes are additive; omitting this block does not affect v1.4.0 payload validity."
+    },
+    "predictiveAML": {
+      "$ref": "#/$defs/PredictiveAML",
+      "description": "Optional predictive AML extension providing ML-ready, explainable, auditable risk scores. See PredictiveAML $def for full schema."
+    },
+    "informationSharingFlags": {
+      "$ref": "#/$defs/InformationSharingFlags",
+      "description": "USA PATRIOT Act Section 314(a)/(b) (31 CFR 1010.520/540) information sharing flags. Optional; include only when a 314(a) request or 314(b) safe-harbor sharing event applies."
     }
   },
   "anyOf": [
