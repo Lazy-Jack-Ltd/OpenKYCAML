@@ -62,7 +62,7 @@ OpenKYCAML provides the common language that turns KYC data into an interoperabl
 
 ### Not adopting this is a competitive disadvantage
 
-> By 2027, EU AMLR Articles 22 and 26 will require obliged entities to share CDD data in machine-readable form. VASPs that already speak OpenKYCAML will onboard new correspondents and institutional clients in minutes. Those that don't will face months of integration work — or be unable to onboard at all.
+> By 2027, EU AMLR Articles 22 and 26 will require obliged entities to share CDD data in machine-readable form. FS businesses including VASPs that already speak OpenKYCAML will be able to comtinue to onboard new correspondents and institutional clients in minutes. Those that don't will face months of integration work — or be unable to onboard at all.
 
 ---
 
