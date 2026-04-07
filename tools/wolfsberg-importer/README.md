@@ -1,6 +1,6 @@
 # Wolfsberg CBDDQ Importer
 
-A command-line and programmatic tool for converting **Wolfsberg CBDDQ v1.4** questionnaire responses to and from the **OpenKYCAML v1.7.0** envelope format.
+A command-line and programmatic tool for converting **Wolfsberg CBDDQ v1.4** questionnaire responses to and from the **OpenKYCAML v1.8.0** envelope format.
 
 ## Usage
 

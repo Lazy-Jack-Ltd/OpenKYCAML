@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """
-Wolfsberg CBDDQ v1.4 ↔ OpenKYCAML v1.7.0 Importer/Exporter
+Wolfsberg CBDDQ v1.4 ↔ OpenKYCAML v1.8.0 Importer/Exporter
 ============================================================
 
-Converts Wolfsberg CBDDQ v1.4 questionnaire responses to OpenKYCAML v1.7.0
+Converts Wolfsberg CBDDQ v1.4 questionnaire responses to OpenKYCAML v1.8.0
 envelopes and vice versa. Produces gap reports for unmapped fields.
 
 Usage:
@@ -89,9 +89,9 @@ _GAP_FIELDS: list[dict[str, str]] = [
 # ---------------------------------------------------------------------------
 
 def cbddq_to_openkycaml(cbddq: dict[str, Any]) -> dict[str, Any]:
-    """Convert a flat CBDDQ v1.4 JSON response to an OpenKYCAML v1.7.0 envelope."""
+    """Convert a flat CBDDQ v1.4 JSON response to an OpenKYCAML v1.8.0 envelope."""
     envelope: dict[str, Any] = {
-        "version": "1.7.0",
+        "version": "1.8.0",
         "messageId": str(uuid.uuid4()),
         "messageDateTime": datetime.now(timezone.utc).isoformat(),
         "kycProfile": {
@@ -187,7 +187,7 @@ def cbddq_to_openkycaml(cbddq: dict[str, Any]) -> dict[str, Any]:
 # ---------------------------------------------------------------------------
 
 def openkycaml_to_cbddq(envelope: dict[str, Any]) -> dict[str, Any]:
-    """Convert an OpenKYCAML v1.7.0 envelope to a flat CBDDQ v1.4 JSON representation."""
+    """Convert an OpenKYCAML v1.8.0 envelope to a flat CBDDQ v1.4 JSON representation."""
     cbddq: dict[str, Any] = {}
     kyc = envelope.get("kycProfile", {})
     ivms = envelope.get("ivms101", {})
@@ -262,7 +262,7 @@ def produce_gap_report(cbddq: dict[str, Any]) -> list[dict[str, str]]:
 def _build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(
         prog="wolfsberg_importer",
-        description="Wolfsberg CBDDQ v1.4 ↔ OpenKYCAML v1.7.0 converter",
+        description="Wolfsberg CBDDQ v1.4 ↔ OpenKYCAML v1.8.0 converter",
     )
     sub = p.add_subparsers(dest="command", required=True)
 
