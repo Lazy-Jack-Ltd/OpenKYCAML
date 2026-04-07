@@ -10,7 +10,7 @@
 [![eIDAS 2.0](https://img.shields.io/badge/eIDAS%202.0-VC%20ready-blueviolet.svg)](docs/mappings/mapping-ivms101-eidas-amlr.md)
 [![AMLR 2027 Ready](https://img.shields.io/badge/AMLR%202027-ready-red.svg)](docs/compliance/compliance-matrix.md)
 [![FATF Rec 16](https://img.shields.io/badge/FATF%20Rec%2016-compliant-yellow.svg)](docs/compliance/compliance-matrix.md)
-[![CI](https://github.com/Lazy-Jack-Ltd/openKYCAML/actions/workflows/validate-schema.yml/badge.svg)](https://github.com/Lazy-Jack-Ltd/openKYCAML/actions/workflows/validate-schema.yml)
+[![CI](https://github.com/Lazy-Jack-Ltd/OpenKYCAML/actions/workflows/validate-schema.yml/badge.svg)](https://github.com/Lazy-Jack-Ltd/OpenKYCAML/actions/workflows/validate-schema.yml)
 
 ---
 

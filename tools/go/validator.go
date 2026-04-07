@@ -79,17 +79,9 @@ func (v *OpenKYCAMLValidator) Validate(payload any) ValidationResult {
 
 	var errs []string
 	if ve, ok := err.(*jsonschema.ValidationError); ok {
-		for _, cause := range ve.BasicOutput().Errors {
-			if cause.Error != "" {
-				errs = append(errs, fmt.Sprintf("[%s] %s", cause.InstanceLocation, cause.Error))
-			}
-		}
+		errs = []string{ve.Error()}
 	} else {
-		errs = append(errs, err.Error())
-	}
-
-	if len(errs) == 0 {
-		errs = append(errs, err.Error())
+		errs = []string{err.Error()}
 	}
 
 	return ValidationResult{IsValid: false, Errors: errs}
