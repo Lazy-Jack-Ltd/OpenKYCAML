@@ -80,7 +80,7 @@ _GAP_FIELDS: list[dict[str, str]] = [
     {"cbddqField": "regulatoryLicenceNumber", "reason": "Partial — use nationalIdentification with RAID type"},
     {"cbddqField": "amlAuditReportDate", "reason": "Use kycProfile.auditMetadata.dataSourceSystem as reference"},
     {"cbddqField": "correspondentBankCount", "reason": "Not in scope — operational field"},
-    {"cbddqField": "swiiftBic", "reason": "Not in schema — use ivms101 VASP fields"},
+    {"cbddqField": "swiftBic", "reason": "Not in schema — use ivms101 VASP fields"},
 ]
 
 
