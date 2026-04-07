@@ -60,15 +60,15 @@ sequenceDiagram
     participant BeneVASP as Beneficiary VASP
     participant Blockchain as Blockchain
 
-    Customer->>OrigVASP: Initiate transfer (asset, amount, beneficiary address)
-    OrigVASP->>GDS: Lookup beneficiary VASP\n(address / DID resolution)
-    GDS-->>OrigVASP: Beneficiary VASP endpoint + mTLS certificate
-    OrigVASP->>OrigVASP: Build OpenKYCAML payload;\nextract ivms101 block
-    OrigVASP->>OrigVASP: Encrypt payload in TRISA\nSecureEnvelope (RSA/AES)
-    OrigVASP->>BeneVASP: gRPC Transfer(SecureEnvelope)\nvia mTLS
-    BeneVASP->>BeneVASP: Decrypt SecureEnvelope;\nvalidate ivms101
+    Customer->>OrigVASP: Initiate transfer with asset amount and beneficiary address
+    OrigVASP->>GDS: Lookup beneficiary VASP by address or DID
+    GDS-->>OrigVASP: Return beneficiary VASP endpoint and mTLS certificate
+    OrigVASP->>OrigVASP: Build OpenKYCAML payload and extract ivms101 block
+    OrigVASP->>OrigVASP: Encrypt payload in TRISA SecureEnvelope using RSA AES
+    OrigVASP->>BeneVASP: Send gRPC transfer with SecureEnvelope over mTLS
+    BeneVASP->>BeneVASP: Decrypt SecureEnvelope and validate ivms101
     BeneVASP->>BeneVASP: Screen originator
-    BeneVASP-->>OrigVASP: gRPC Transfer response\n(sealed SecureEnvelope)
+    BeneVASP-->>OrigVASP: Return gRPC transfer response with sealed SecureEnvelope
     OrigVASP->>Blockchain: Broadcast transaction
     Blockchain-->>OrigVASP: Transaction hash confirmed
     OrigVASP-->>Customer: Transfer complete
@@ -90,18 +90,18 @@ sequenceDiagram
     participant Blockchain as Blockchain
 
     Customer->>OrigVASP: Initiate transfer
-    OrigVASP->>EthIndex: Resolve beneficiary VASP\nfrom destination address (VAAN)
-    EthIndex-->>OrigVASP: Beneficiary VASP metadata\n(transport endpoint, signing key)
-    OrigVASP->>OrigVASP: Build OpenKYCAML payload;\nextract ivms101 block
-    OrigVASP->>BeneVASP: Session Request (type 110)\nwith originator ivms101 + VAAN
-    BeneVASP-->>OrigVASP: Session Reply (type 150)\nwith beneficiary ivms101
+    OrigVASP->>EthIndex: Resolve beneficiary VASP from destination address VAAN
+    EthIndex-->>OrigVASP: Return beneficiary VASP metadata with transport endpoint and signing key
+    OrigVASP->>OrigVASP: Build OpenKYCAML payload and extract ivms101 block
+    OrigVASP->>BeneVASP: Send session request type 110 with originator ivms101 and VAAN
+    BeneVASP-->>OrigVASP: Return session reply type 150 with beneficiary ivms101
     OrigVASP->>OrigVASP: Validate beneficiary details
     OrigVASP->>BeneVASP: Transfer Request (type 210)
     BeneVASP-->>OrigVASP: Transfer Reply (type 250) — accept/reject
     alt Transfer accepted
         OrigVASP->>Blockchain: Broadcast transaction
         Blockchain-->>OrigVASP: Confirmation
-        OrigVASP->>BeneVASP: Transfer Dispatch (type 310)\nwith transaction hash
+        OrigVASP->>BeneVASP: Send transfer dispatch type 310 with transaction hash
         BeneVASP-->>OrigVASP: Transfer Confirmation (type 350)
         OrigVASP-->>Customer: Transfer complete
     else Transfer rejected
@@ -125,17 +125,17 @@ sequenceDiagram
     participant Blockchain as Blockchain
 
     Customer->>OrigVASP: Initiate transfer
-    OrigVASP->>OrigVASP: Build OpenKYCAML payload;\nextract ivms101 block
-    OrigVASP->>NotabeneAPI: POST /api/v1/transfers\n{ivms101, origin_address, destination_address, ...}
-    NotabeneAPI->>NotabeneAPI: Resolve beneficiary VASP\nvia Notabene directory / DAP
-    NotabeneAPI->>BeneVASP: Forward Travel Rule request\n(JSON, ivms101)
-    BeneVASP->>BeneVASP: Screen originator; validate data
-    BeneVASP-->>NotabeneAPI: Accept / Reject response
+    OrigVASP->>OrigVASP: Build OpenKYCAML payload and extract ivms101 block
+    OrigVASP->>NotabeneAPI: Post transfer request with ivms101 and origin and destination addresses
+    NotabeneAPI->>NotabeneAPI: Resolve beneficiary VASP via Notabene directory or DAP
+    NotabeneAPI->>BeneVASP: Forward travel rule request with JSON ivms101 payload
+    BeneVASP->>BeneVASP: Screen originator and validate data
+    BeneVASP-->>NotabeneAPI: Return accepted or rejected response
     NotabeneAPI-->>OrigVASP: Transfer status update
     alt Accepted
         OrigVASP->>Blockchain: Broadcast transaction
         Blockchain-->>OrigVASP: Confirmation
-        OrigVASP->>NotabeneAPI: PATCH /api/v1/transfers/{id}\n{transactionHash}
+        OrigVASP->>NotabeneAPI: Patch transfer with transaction hash
         OrigVASP-->>Customer: Transfer complete
     else Rejected
         OrigVASP-->>Customer: Transfer rejected
@@ -160,15 +160,15 @@ sequenceDiagram
     Customer->>OrigVASP: Initiate transfer
     OrigVASP->>TRPDir: Resolve beneficiary VASP endpoint
     TRPDir-->>OrigVASP: Endpoint URL + public key
-    OrigVASP->>OrigVASP: Build OpenKYCAML payload;\nextract ivms101 → ivmsData
-    Note over OrigVASP: Optionally produce\npacs.008 XML via\nISO 20022 converter
-    OrigVASP->>BeneVASP: POST /transfers\n{assetType, ivmsData, originatorRef, beneficiaryRef}
-    BeneVASP->>BeneVASP: Validate ivmsData;\nscreen originator
-    BeneVASP-->>OrigVASP: HTTP 200 OK (accepted)\nor 4xx (rejected)
+    OrigVASP->>OrigVASP: Build OpenKYCAML payload and map ivms101 to ivmsData
+    Note over OrigVASP: Optional pacs.008 XML can be produced via ISO 20022 converter
+    OrigVASP->>BeneVASP: Post transfer with asset type ivmsData originator reference and beneficiary reference
+    BeneVASP->>BeneVASP: Validate ivmsData and screen originator
+    BeneVASP-->>OrigVASP: Return accepted response or rejected response
     alt Accepted
         OrigVASP->>Blockchain: Broadcast transaction
         Blockchain-->>OrigVASP: Confirmation
-        OrigVASP->>BeneVASP: PATCH /transfers/{id}\n{transactionHash, status: "COMPLETED"}
+        OrigVASP->>BeneVASP: Patch transfer with transaction hash and completed status
         OrigVASP-->>Customer: Transfer complete
     else Rejected
         OrigVASP-->>Customer: Transfer rejected
@@ -191,19 +191,19 @@ sequenceDiagram
     participant Blockchain as Blockchain
 
     Customer->>OrigVASP: Initiate transfer
-    OrigVASP->>OrigVASP: Build OpenKYCAML payload;\nextract ivms101;\nconvert camelCase → snake_case
-    OrigVASP->>SygnaAPI: GET /v2/vasp/beneficiary\n(resolve beneficiary VASP ECIES key)
+    OrigVASP->>OrigVASP: Build OpenKYCAML payload extract ivms101 and convert camelCase to snake_case
+    OrigVASP->>SygnaAPI: Get beneficiary VASP ECIES key
     SygnaAPI-->>OrigVASP: Beneficiary VASP public key
-    OrigVASP->>OrigVASP: ECIES-encrypt private_info\n(ivms101 snake_case)
-    OrigVASP->>SygnaAPI: POST /v2/transaction/permission-request\n{private_info (encrypted), data_dt, ...}
+    OrigVASP->>OrigVASP: Encrypt private_info with ECIES using ivms101 snake_case data
+    OrigVASP->>SygnaAPI: Post permission request with encrypted private_info and metadata
     SygnaAPI->>BeneVASP: Forward permission request
-    BeneVASP->>BeneVASP: Decrypt private_info;\nvalidate originator; screen
-    BeneVASP-->>SygnaAPI: POST /v2/transaction/permission\n{permission_status: ACCEPTED/REJECTED}
+    BeneVASP->>BeneVASP: Decrypt private_info then validate and screen originator
+    BeneVASP-->>SygnaAPI: Post permission result accepted or rejected
     SygnaAPI-->>OrigVASP: Permission status
     alt Accepted
         OrigVASP->>Blockchain: Broadcast transaction
         Blockchain-->>OrigVASP: Transaction hash confirmed
-        OrigVASP->>SygnaAPI: POST /v2/transaction/txid\n{txid, signature}
+        OrigVASP->>SygnaAPI: Post txid with signature
         OrigVASP-->>Customer: Transfer complete
     else Rejected
         OrigVASP-->>Customer: Transfer rejected
@@ -226,14 +226,14 @@ sequenceDiagram
     participant Blockchain as Blockchain
 
     Customer->>OrigVASP: Initiate transfer
-    OrigVASP->>EUDIWallet: OpenID4VP Presentation Request\n(request PID attributes)
-    EUDIWallet->>Customer: Consent prompt —\nselective disclosure of PID fields
+    OrigVASP->>EUDIWallet: Send OpenID4VP presentation request for PID attributes
+    EUDIWallet->>Customer: Show consent prompt for selective disclosure of PID fields
     Customer->>EUDIWallet: Approve disclosure
-    EUDIWallet-->>OrigVASP: VP Token (SD-JWT VC)\ncontaining PID attributes
-    OrigVASP->>OrigVASP: Verify VP signature;\nmap PID → ivms101 fields;\nbuild OpenKYCAML payload\nwith evidence block
-    Note over OrigVASP: evidence[] records:\n- PID Issuer DID\n- VASP verifier DID\n- presentationMethod: OpenID4VP\n- presentationDate
-    OrigVASP->>BeneVASP: Transmit OpenKYCAML payload\n(via Travel Rule protocol)
-    BeneVASP->>BeneVASP: Validate payload;\nverify evidence chain;\nscreen originator
+    EUDIWallet-->>OrigVASP: Return VP token containing PID attributes
+    OrigVASP->>OrigVASP: Verify VP signature map PID to ivms101 fields and build OpenKYCAML payload with evidence block
+    Note over OrigVASP: Evidence records include PID issuer DID VASP verifier DID presentation method and presentation date
+    OrigVASP->>BeneVASP: Transmit OpenKYCAML payload via travel rule protocol
+    BeneVASP->>BeneVASP: Validate payload verify evidence chain and screen originator
     BeneVASP-->>OrigVASP: ACK
     OrigVASP->>Blockchain: Broadcast transaction
     Blockchain-->>OrigVASP: Confirmation
