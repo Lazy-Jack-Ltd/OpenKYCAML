@@ -91,23 +91,33 @@ git push origin v1.9.1
 
 ### Catching up on missing historical tags
 
-All versions from v1.0.0 through v1.9.0 are also untagged. To create lightweight tags
-retroactively for all previously released commits, find the merge commit for each release
-using `git log --oneline --merges` and tag them:
+All versions from v1.0.0 through v1.9.0 are also untagged. Before creating historical tags,
+decide whether you want the `release.yml` workflow to re-run for them (it will attempt to
+re-publish to PyPI/npm for each tag that matches `v*.*.*`). There are two safe approaches:
+
+**Option A — Use a non-triggering prefix (recommended for history only):**
 
 ```bash
-# Example: tag the merge commit for v1.8.0
-git log --oneline | grep -i "v1.8"          # find the SHA
-git tag -a v1.8.0 <SHA> -m "OpenKYCAML v1.8.0 — X.500 DN + X.509 PKI Evidence"
-git push origin v1.8.0
+# Use hist/ prefix so release.yml is NOT triggered (it only matches v*.*.*)
+git log --oneline | grep -i "v1.8"   # find the commit SHA
+git tag -a hist/v1.8.0 <SHA> -m "OpenKYCAML v1.8.0 — X.500 DN + X.509 PKI Evidence"
+git push origin hist/v1.8.0
 
-# Repeat for v1.0.0, v1.1.0, v1.2.0, v1.3.0, v1.4.0, v1.5.0, v1.6.0, v1.7.0, v1.9.0
+# Repeat for hist/v1.0.0 through hist/v1.9.0
 ```
 
-> **Important:** Do **not** push these historical tags using `v*.*.*` format if you do not
-> want the release workflow to re-run PyPI/npm publishing for them. Either use a different
-> tag format (e.g. `hist/v1.8.0`) for historical markers, or ensure the packages are not
-> already published at those versions before pushing.
+**Option B — Use standard `v*.*.*` tags (triggers release.yml for each):**
+
+Only safe if the packages at those versions are not already published on PyPI/npm. If they
+are, the publish steps will fail with a "version already exists" error (non-fatal — GitHub
+Release creation will still succeed).
+
+```bash
+git log --oneline | grep -i "v1.8"   # find the SHA
+git tag -a v1.8.0 <SHA> -m "OpenKYCAML v1.8.0 — X.500 DN + X.509 PKI Evidence"
+git push origin v1.8.0
+# Monitor release.yml — expect PyPI/npm steps to fail if packages already exist
+```
 
 ---
 
