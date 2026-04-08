@@ -92,18 +92,16 @@
         "controlMechanism": "SHAREHOLDING",
         "verificationStatus": "VERIFIED",
         "verificationDate": "2026-03-01",
-        "isPEP": false,
-        "roleInArrangement": "SHAREHOLDER"
+        "isPEP": false
       },
       {
         "fullLegalName": "Jonathan P. Harrington",
         "ownershipPercentage": 20,
-        "controlMechanism": "DIRECT_OWNERSHIP",
+        "controlMechanism": "SHAREHOLDING",
         "verificationStatus": "VERIFIED",
         "verificationDate": "2026-03-01",
         "isPEP": true,
-        "pepCategory": "FOREIGN_PEP",
-        "roleInArrangement": "DIRECTOR"
+        "pepCategory": "FOREIGN_PEP"
       }
     ],
     "sanctionsScreening": {
