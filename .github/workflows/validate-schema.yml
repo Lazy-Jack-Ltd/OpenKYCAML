@@ -272,7 +272,7 @@ jobs:
           ROOT_EXEMPT = {
               "README.md", "CHANGELOG.md", "CONTRIBUTING.md", "GOVERNANCE.md",
               "LICENSE", "SECURITY.md", "ROADMAP.md", "CODE_OF_CONDUCT.md", "NOTICE",
-              "CERTIFICATION.md",
+              "CERTIFICATION.md", "TODO.md",
               "pyproject.toml", ".gitignore", ".namingignore",
           }
 
