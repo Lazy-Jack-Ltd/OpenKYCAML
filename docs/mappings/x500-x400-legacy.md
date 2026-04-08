@@ -100,4 +100,30 @@ X.400 O/R Address format for reference: `G=John; S=Doe; O=AcmeBank; P=Finance; A
 
 ---
 
-*Last updated: v1.8.0 — April 2026. Maintained by the OpenKYCAML Technical Working Group.*
+## 6. Deprecation Policy — `legacyIdentifiers.X400` (Not Applicable)
+
+X.400 O/R Addresses were **never added to the schema** and therefore have no deprecation lifecycle. This section exists to formally document that decision and close any future scope-creep requests.
+
+### 6.1 Policy Statement
+
+> **OpenKYCAML does not and will not add a `legacyIdentifiers.x400OR` (or equivalent) field to any published release of the schema, including v2.0.0, unless a binding regulatory mandate (AMLR, MiCA, eIDAS, FATF R.16, or equivalent) explicitly requires machine-readable X.400 O/R Address exchange.**
+
+This policy is **permanent and not subject to community override** without a formal TWG RFC and documented evidence of a regulatory or production adoption requirement.
+
+### 6.2 Rationale (Summary)
+
+- No AMLR 2027, eIDAS 2.0, FATF, Wolfsberg, BCBS 239, or ISO 20022 obligation references X.400.
+- No active production Travel Rule protocol (TRISA, OpenVASP, Notabene, TRP, Sygna Bridge) uses X.400 transport.
+- Every real-world adopter that needs to carry a legacy X.400 address can do so via `kycProfile.auditMetadata.dataSourceSystem` or a root-level `additionalProperties` extension (see §3.2 above).
+
+### 6.3 Guidance for Mapping Docs and Downstream Tools
+
+Any compliance mapping document, converter tool, or validator that currently includes a row or field referencing `legacyIdentifiers.x400OR` or `x400Address` MUST:
+
+1. Remove the row/field reference.
+2. Replace with a footnote: *"X.400 O/R Addresses are explicitly excluded from OpenKYCAML. See `docs/mappings/x500-x400-legacy.md` §6 for the formal deprecation policy."*
+3. Log a `WARNING`-level message if a submitted payload contains any key matching `x400*` at the root level.
+
+---
+
+*Last updated: v1.9.1 — April 2026. Maintained by the OpenKYCAML Technical Working Group.*

@@ -75,3 +75,21 @@ This page tracks documentation-specific improvements planned for upcoming releas
 - [x] Update Pydantic models (`pydantic-models.md`) — add note on v1.4.0–v1.7.0 additions not yet in `models.py` generated stubs.
 - [x] Update ER diagram to include v1.4.0–v1.7.0 entities (TrustDetails, FoundationDetails, PartnershipDetails, BlockchainAccountId, XrplConfidentialTransfer, VerificationDocumentBundle, and supporting types).
 - [x] Update all diagram and document version footers to v1.7.0.
+
+### v1.8
+- [x] Add `docs/mappings/x500-x400-legacy.md` + `.yaml` — X.500 DN field mapping, `x500DNType` enum, eIDAS triangulation pattern, and formal X.400 exclusion scope decision.
+- [x] Add `docs/mappings/x509-pki.md` + `.yaml` — X.509 PKI Evidence field mapping: `pkiEvidence.x509Certificate`, `oids[]`, ETSI EN 319 412 QC statement types, OCSP/CRL, and `certificateDocumentRef` linkage.
+- [x] Add compliance matrix §17 — X.500/X.509 PKI evidence (QES, QSealC, QWAC, QEAA).
+- [x] Add `examples/evidence/eidas-x509-dn.json` (legal entity QSealC) and `examples/evidence/eidas-x509-qeaa.json` (natural person QEAA + EUDI Wallet triangulation).
+- [x] Update all document version footers to v1.8.0.
+
+### v1.9
+- [x] Add `docs/mappings/tax-status-oecd-esr-pillar2.md` + `.yaml` — TIN/CRS/CARF field mapping, EU VAT/GST indirect tax registrations, Economic Substance Regulations (ESR) across BVI/Cayman/UAE/Jersey/IoM/Guernsey, OECD Pillar 2 GloBE ETR jurisdictions and safe harbour types.
+- [x] Add `docs/mappings/fatca-crs.md` + `.yaml` (v1.9.1) — US FATCA Chapter 4 (`fatcaStatus`) and OECD CRS (`crsTaxResidencies[]`) first-class field mapping; GIIN structure, Chapter 4 classification enum, IRS Notice 2024-78 temporary relief, controlling-person flag.
+- [x] Add compliance matrix §18 (TIN/CRS/FATCA), §19 (ESR/Economic Substance), §20 (Pillar 2 GloBE).
+- [x] Add `examples/tax/` — five tax status examples: `tax-individual-tin`, `tax-corporate-vat-gst`, `tax-fatca-crs`, `tax-mne-pillar2`, `tax-offshore-esr`.
+- [x] Add `docs/diagrams/tax-status-diagrams.md` — Mermaid sequence diagrams for all five tax scenarios.
+- [x] Add `examples/amlr2027-fatca-ai-act.json` — end-to-end reference payload combining predictiveAML (EU AI Act), taxStatus (FATCA/CRS/Pillar 2), pkiEvidence (X.509 QSealC), legacyIdentifiers (X.500 DN), and full EDD kycProfile.
+- [x] Add `api/openkycaml-v1.9.1.yaml` — OpenAPI 3.1 specification reflecting all v1.9.1 components (`TaxStatus`, `CrsTaxResidency`, `FatcaStatus`, `legacyIdentifiers`, `pkiEvidence`).
+- [x] Add §6 formal X.400 deprecation policy to `docs/mappings/x500-x400-legacy.md`.
+- [x] Update all document version footers to v1.9.1.

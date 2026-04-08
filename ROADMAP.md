@@ -6,7 +6,30 @@ This document is the **authoritative project roadmap** covering schema features,
 
 ---
 
-## Current Version: v1.8.0
+## Current Version: v1.9.1
+
+**Released:** April 2026
+
+**Highlights (v1.9.1):**
+- **CRS Tax Residency** — New `taxStatus.crsTaxResidencies[]` array for enhanced per-jurisdiction CRS self-certification data: `jurisdiction`, `tinValue`, `tinVerificationStatus` (`verified` / `unverified` / `relief-applied` / `not-required`), `selfCertificationDate`, `controllingPersonFlag`. Covers OECD CRS §IV.C and Passive NFE controlling-person reporting.
+- **FATCA Status (first-class)** — New `taxStatus.fatcaStatus` object with `giin` (regex-validated 19-char GIIN `^[0-9A-Z]{6}\.[0-9A-Z]{5}\.[0-9A-Z]{2}\.[0-9A-Z]{3}$`), `chapter4Classification` enum (8 FATCA Chapter 4 categories), `usTinRequired`, `temporaryReliefApplied` (IRS Notice 2024-78), `ffiListVerificationTimestamp`, and `withholdingAgentReference`.
+- **5 new tax examples** — `examples/tax/` covering `tax-individual-tin`, `tax-corporate-vat-gst`, `tax-fatca-crs`, `tax-mne-pillar2`, `tax-offshore-esr`.
+- **2 new mapping documents** — `docs/mappings/fatca-crs.md` + `.yaml` and `docs/mappings/tax-status-oecd-esr-pillar2.md` + `.yaml`.
+- **Compliance matrix** — §18 (Tax Status/TIN/FATCA/CRS), §19 (ESR/Economic Substance), §20 (Pillar 2 GloBE) added.
+- **Tax status Mermaid diagrams** — `docs/diagrams/tax-status-diagrams.md` with sequence diagrams for all 5 tax scenarios.
+- **OpenAPI updated** — `api/openkycaml-v1.9.1.yaml` fully reflecting `taxStatus`, `crsTaxResidencies[]`, and `fatcaStatus`.
+- **Fully backward-compatible** — existing v1.9.0, v1.8.0, and earlier payloads require no changes.
+
+## Previous Version: v1.9.0
+
+**Released:** April 2026
+
+**Highlights (v1.9.0):**
+- **Tax Status block** — New optional `taxStatus` root property with four sub-components: `tinIdentifiers[]` (structured multi-jurisdiction TIN array replacing IVMS 101 `TXID`), `indirectTaxRegistrations[]` (EU VAT / GST / PST / HST), `economicSubstance` (BVI, Cayman, UAE, Jersey, Isle of Man, Guernsey ESR compliance), `pillarTwo` (OECD Pillar 2 GloBE BEPS 2.0 — `inScopeMNE`, `consolidatedRevenueEUR`, `etrJurisdictions[]`, `safeHarbourApplied`, `girFilingReference`).
+- **OECD CRS / CARF / FATCA alignment** — `tinIdentifiers[]` replaces IVMS 101 `nationalIdentification.TXID` for multi-jurisdiction scenarios; full OECD TIN type coverage (`TIN`, `EIN`, `VAT`, `GST`, `functionalEquivalent`).
+- **Versioned snapshot** — `schema/versions/v1.9.0.json`.
+
+## Previous Version: v1.8.0
 
 **Released:** April 2026
 
@@ -78,6 +101,19 @@ This document is the **authoritative project roadmap** covering schema features,
 ## Issues & Technical Debt — Found in April 2026 Repository Review
 
 The following issues were identified during a critical review of the full repository in April 2026. They are grouped by priority and type. All are candidates for the v1.3.x patch stream or v1.4.0 depending on severity.
+
+---
+
+### 🔴 Blocker — Release & Packaging Hygiene
+
+> These issues block production adoption and should be addressed before any v1.9.x → v2.x promotion.
+
+| # | Issue | Location | Notes |
+|---|---|---|---|
+| 31 | **No GitHub Releases or tags created for any version** | Repository root | Schema files reference v1.9.1 but there is no `v1.9.1` git tag or GitHub Release with schema assets attached. Implementers cannot pin a stable release URL. Create annotated tags (`v1.0.0` through `v1.9.1`) and GitHub Releases with schema JSON and OpenAPI YAML as release assets. |
+| 32 | **No published packages** | `pyproject.toml`, `tools/javascript/package.json` | `pyproject.toml` exists but the package is not on PyPI (`pip install openkycaml` fails). `tools/javascript/package.json` uses `@openkycaml/tools` as the scope but the package is not on npm. Implementers are forced to vendor-copy tooling rather than declare a dependency. Publish to PyPI and npm as part of the v2.0.0 release cadence. |
+| 33 | **Semantic versioning drift** | `schema/kyc-aml-hybrid-extended.json`, CI | `schema/versions/` contains historical snapshots but there is no CI check that `kyc-aml-hybrid-extended.json` declares the same version as the latest versioned snapshot. Add a CI step that asserts `canonical_version == max(schema/versions/)`. |
+| 34 | **GitHub Pages / schema URL not configured** | `.github/`, `schema/` | All examples and the canonical schema use `https://schema.openkycaml.org/v1.9.1/…` as `$schema`, but GitHub Pages is not configured to serve these URLs. Either configure GitHub Pages to serve `schema/` at this URL, or document the fallback raw GitHub URL. |
 
 ---
 
@@ -154,7 +190,7 @@ The following issues were identified during a critical review of the full reposi
 | OpenID4VP presentation request / response cookbook | Planned | — |
 | Correspondent banking extension fields | Planned | — |
 | Multi-jurisdiction risk model fields | Planned | — |
-| FATCA / CRS tax residency extension | Planned | — |
+| FATCA / CRS tax residency extension | ✅ Completed in v1.9.0 / v1.9.1 | — |
 | ISO 20022 pain.001 full serialiser (Python) | ✅ Completed in v1.3.0 | — |
 | XRPL schema fields: `blockchainAccountIds[].xrplCredentialType` (hex CredentialType) and `blockchainAccountIds[].mptIssuanceId` (MPTokenIssuanceID) | ✅ Completed in v1.3.0 | — |
 | Typed trust/foundation/LLP sub-objects in `LegalPerson` — `TrustDetails`, `FoundationDetails`, `PartnershipDetails` | ✅ Completed in v1.4.0 | — |
@@ -222,6 +258,63 @@ The following issues were identified during a critical review of the full reposi
 
 ---
 
+## v1.8.0 — X.500 DN + X.509 PKI Evidence (Complete)
+
+**Theme: eIDAS 2.0 Qualified Trust Services, SWIFTNet PKI, and Certificate-Backed Identity Evidence**
+
+| Feature | Status |
+|---|---|
+| `legacyIdentifiers.x500DN` (RFC 4514 string, regex-validated) | ✅ Complete |
+| `legacyIdentifiers.x500DNType` enum — `certificateSubject`, `certificateIssuer`, `directoryEntry`, `swiftNetAddress` | ✅ Complete |
+| `pkiEvidence.x509Certificate` — full RFC 5280 metadata (serial, subject/issuer DN, validity, algorithm, `qcStatements[]`, CRL, OCSP, thumbprint) | ✅ Complete |
+| `pkiEvidence.oids[]` — ASN.1 OIDs from X.509 extensions and ETSI EN 319 412 | ✅ Complete |
+| `pkiEvidence.certificateDocumentRef` — cross-reference to `identityDocuments` for eIDAS triangulation | ✅ Complete |
+| eIDAS 2.0 QES/QSealC/QWAC/QEAA statement types in `qcStatements[]` | ✅ Complete |
+| `examples/evidence/eidas-x509-dn.json` — legal entity QSealC | ✅ Complete |
+| `examples/evidence/eidas-x509-qeaa.json` — natural person QEAA + EUDI Wallet evidence | ✅ Complete |
+| `docs/mappings/x500-x400-legacy.md` + `.yaml` | ✅ Complete |
+| `docs/mappings/x509-pki.md` + `.yaml` | ✅ Complete |
+| `docs/compliance/compliance-matrix.md` §17 — X.500/X.509 | ✅ Complete |
+| `schema/versions/v1.8.0.json` — versioned snapshot | ✅ Complete |
+
+---
+
+## v1.9.0 — Tax Status: TIN / VAT / GST / ESR / Pillar 2 GloBE (Complete)
+
+**Theme: Global Tax Compliance — OECD CRS/CARF, FATCA, EU VAT, Economic Substance, BEPS 2.0**
+
+| Feature | Status |
+|---|---|
+| `taxStatus.tinIdentifiers[]` — multi-jurisdiction TIN array (replaces IVMS 101 `TXID`); `tinType` enum: `TIN`, `EIN`, `VAT`, `GST`, `functionalEquivalent` | ✅ Complete |
+| `taxStatus.indirectTaxRegistrations[]` — VAT/GST/PST/HST registration numbers with VIES/portal verification status | ✅ Complete |
+| `taxStatus.economicSubstance` — ESR jurisdiction, status (`inScope-RelevantEntity`, `exempt-*`), `relevantActivities[]`, `coreIncomeGeneratingActivitiesPerformed`, notification/report references | ✅ Complete |
+| `taxStatus.pillarTwo` — OECD GloBE: `inScopeMNE`, `consolidatedRevenueEUR`, `etrJurisdictions[]`, `safeHarbourApplied`, `girFilingReference`, `lastGIRDate` | ✅ Complete |
+| `examples/tax/tax-individual-tin.json` | ✅ Complete |
+| `examples/tax/tax-corporate-vat-gst.json` | ✅ Complete |
+| `examples/tax/tax-mne-pillar2.json` | ✅ Complete |
+| `examples/tax/tax-offshore-esr.json` | ✅ Complete |
+| `docs/mappings/tax-status-oecd-esr-pillar2.md` + `.yaml` | ✅ Complete |
+| `docs/compliance/compliance-matrix.md` §18 (TIN/CRS/CARF), §19 (ESR), §20 (Pillar 2) | ✅ Complete |
+| `schema/versions/v1.9.0.json` — versioned snapshot | ✅ Complete |
+
+---
+
+## v1.9.1 — FATCA/CRS First-Class Fields (Complete)
+
+**Theme: FATCA Chapter 4 and OECD CRS Automatic Exchange — Machine-Readable Compliance**
+
+| Feature | Status |
+|---|---|
+| `taxStatus.crsTaxResidencies[]` — per-jurisdiction CRS self-certification: `jurisdiction`, `tinValue`, `tinVerificationStatus` (reason codes A/B/C: `not-required`, `unverified`, `relief-applied`), `selfCertificationDate`, `controllingPersonFlag` (Passive NFE) | ✅ Complete |
+| `taxStatus.fatcaStatus` — FATCA GIIN (19-char, regex-validated), `chapter4Classification` (8-value enum), `usTinRequired`, `temporaryReliefApplied` (IRS Notice 2024-78), `ffiListVerificationTimestamp`, `withholdingAgentReference` | ✅ Complete |
+| `examples/tax/tax-fatca-crs.json` | ✅ Complete |
+| `docs/mappings/fatca-crs.md` + `.yaml` | ✅ Complete |
+| `docs/diagrams/tax-status-diagrams.md` — Mermaid sequence diagrams for all 5 tax scenarios | ✅ Complete |
+| `api/openkycaml-v1.9.1.yaml` — OpenAPI 3.1 specification fully reflecting `taxStatus`, `crsTaxResidencies[]`, `fatcaStatus` | ✅ Complete |
+| `schema/versions/v1.9.1.json` — versioned snapshot | ✅ Complete |
+
+---
+
 ## v1.3.0 — ISO 20022 Integration (Complete)
 
 | Feature | Status |
@@ -267,6 +360,9 @@ Planned breaking changes (subject to TWG consensus):
 | v1.5.0 | April 2026 | **Verification Document Bundle** — `identityDocuments` root property; 5 new `$defs` (`VerificationDocumentBundle`, `NaturalPersonDocument`, `LegalEntityDocument`, `RegistrationAuthorityDetail`, `ExtractedAttribute`); 11 NP doc types + 16 LE doc types; GLEIF RAL structured reference; vLEI QVI/OOR/ECR hierarchy; cross-reference fields on `LegalPerson`, `NationalIdentification`, `BeneficialOwner`, `verificationMethods[]`; 2 new document bundle examples; docs updated |
 | v1.6.0 | April 2026 | **Document ID URN scheme** — `documentId` on `NaturalPersonDocument` and `LegalEntityDocument`; `docs/reference/document-id-convention.md`; validator warnings for missing/malformed documentId |
 | v1.7.0 | April 2026 | **Full XRPL Compliance Standards** — XLS-70 (renamed from draft XLS-40d; live on mainnet), XLS-80 Permissioned Domains, XLS-81d Permissioned DEX, XLS-96 Confidential Transfers, XLS-77 Deep Freeze, Native Clawback, enhanced MPT (flags/metadata/fee). **Bitcoin/Lightning** — `lightningNodePubkey`, `lightningServiceProvider`, `bitcoinScriptType`. **Three-Tier Enforcement Model** — `enforcement-tiers.md`, `mapping-bitcoin-lightning.md`, ERC-3643 mapping cross-network equivalence table |
+| v1.8.0 | April 2026 | **X.500 Distinguished Names** — `legacyIdentifiers.x500DN` + `x500DNType` enum (RFC 4514). **X.509 PKI Evidence** — `pkiEvidence.x509Certificate` (serial, subject/issuer DN, validity, algorithm, `qcStatements[]`, CRL, OCSP, thumbprint), `oids[]` (ETSI EN 319 412 ASN.1 OIDs), `certificateDocumentRef`. eIDAS 2.0 QES/QSealC/QWAC/QEAA coverage. 2 new examples, 2 new mapping docs, compliance matrix §17 |
+| v1.9.0 | April 2026 | **Tax Status block** — `taxStatus` root property with `tinIdentifiers[]` (multi-jurisdiction TIN; replaces IVMS 101 TXID), `indirectTaxRegistrations[]` (VAT/GST/PST/HST), `economicSubstance` (ESR — Cayman, BVI, UAE, Jersey, IoM, Guernsey), `pillarTwo` (OECD GloBE BEPS 2.0 — ETR jurisdictions, safe harbour, GIR filing). 5 new tax examples. 2 new mapping docs. Compliance matrix §18–§20 |
+| v1.9.1 | April 2026 | **FATCA/CRS first-class fields** — `taxStatus.crsTaxResidencies[]` (per-jurisdiction CRS self-certification with TIN verification status and controlling-person flag) and `taxStatus.fatcaStatus` (GIIN with regex validation, Chapter 4 classification enum, IRS Notice 2024-78 temporary relief, FFI List verification timestamp, withholding agent reference). FATCA/CRS mapping docs. Compliance matrix §18 extended. OpenAPI v1.9.1 |
 
 ---
 
