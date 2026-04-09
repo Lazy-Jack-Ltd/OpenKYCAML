@@ -124,6 +124,14 @@ export interface NaturalPerson {
   countryOfResidence?: string;
   /** ISO 3166-1 alpha-2 nationality */
   nationality?: string;
+  /** RFC 5321 email address (v1.10.0) */
+  emailAddress?: string;
+  /** E.164 international phone number, e.g. '+447911123456' (v1.10.0) */
+  phoneNumber?: string;
+  /** E.164 mobile/cell number for mTAN/OTP delivery (v1.10.0) */
+  mobileNumber?: string;
+  /** Verified banking account details — IBAN, BIC, account type (v1.10.0) */
+  bankingDetails?: BankingDetails[];
 }
 
 export interface NaturalPersonName {
@@ -152,6 +160,14 @@ export interface LegalPerson {
   countryOfRegistration?: string;
   /** eIDAS 2.0 LPID block (optional — omit for pure IVMS 101 usage) */
   lpid?: LegalPersonIdentificationData;
+  /** RFC 5321 business email address (v1.10.0) */
+  emailAddress?: string;
+  /** E.164 international business phone number (v1.10.0) */
+  phoneNumber?: string;
+  /** E.164 mobile contact for authorised representative (v1.10.0) */
+  mobileNumber?: string;
+  /** Verified banking account details — IBAN, BIC, account type (v1.10.0) */
+  bankingDetails?: BankingDetails[];
 }
 
 export interface LegalPersonName {
@@ -165,7 +181,29 @@ export interface LegalPersonNameIdentifier {
   legalPersonNameIdentifierType: 'LEGL' | 'SHRT' | 'TRAD';
 }
 
-/** Structured postal address (IVMS 101 §3.5). */
+/**
+ * Validated banking account details — IBAN, BIC, currency, account type (v1.10.0).
+ * Wired as bankingDetails[] on NaturalPerson and LegalPerson.
+ *
+ * IBAN pattern:  /^[A-Z]{2}[0-9]{2}[A-Z0-9]{4,30}$/ (ISO 13616 structural)
+ * BIC pattern:   /^[A-Z]{6}[A-Z0-9]{2}([A-Z0-9]{3})?$/ (ISO 9362, 8/11-char)
+ */
+export interface BankingDetails {
+  /** ISO 13616 IBAN — structural pattern (modulo-97 checksum is a runtime concern) */
+  iban?: string;
+  /** ISO 9362 BIC/SWIFT code — 8-char or 11-char */
+  bic?: string;
+  /** Full legal name of the financial institution */
+  bankName?: string;
+  /** ISO 4217 three-letter currency code, e.g. 'EUR', 'GBP' */
+  accountCurrency?: string;
+  /** Account classification */
+  accountType?: 'CURRENT' | 'SAVINGS' | 'CORRESPONDENT' | 'CRYPTO_FIAT_GATEWAY' | 'OTHER';
+  /** ISO 3166-1 alpha-2 country of the holding bank */
+  bankingCountry?: string;
+}
+
+
 export interface Address {
   country: string;
   addressType?: 'HOME' | 'BIZZ' | 'GEOG';
@@ -1030,3 +1068,45 @@ interface TaxStatus {
 ```
 
 *FATCA & CRS first-class types added in OpenKYCAML v1.9.1. Last updated: v1.9.1.*
+
+---
+
+## Contact and Banking Types (v1.10.0)
+
+```typescript
+/**
+ * Validated banking account details per ISO 13616 (IBAN) and ISO 9362 (BIC).
+ * Wired as bankingDetails[] on NaturalPerson and LegalPerson (v1.10.0).
+ *
+ * Validation:
+ *   iban:            /^[A-Z]{2}[0-9]{2}[A-Z0-9]{4,30}$/  (ISO 13616 structural)
+ *   bic:             /^[A-Z]{6}[A-Z0-9]{2}([A-Z0-9]{3})?$/  (ISO 9362, 8/11-char)
+ *   accountCurrency: /^[A-Z]{3}$/                            (ISO 4217)
+ *   bankingCountry:  /^[A-Z]{2}$/                            (ISO 3166-1 alpha-2)
+ */
+export interface BankingDetails {
+  iban?: string;
+  bic?: string;
+  bankName?: string;
+  accountCurrency?: string;
+  accountType?: 'CURRENT' | 'SAVINGS' | 'CORRESPONDENT' | 'CRYPTO_FIAT_GATEWAY' | 'OTHER';
+  bankingCountry?: string;
+}
+
+/**
+ * NaturalPerson and LegalPerson updated interfaces (v1.10.0 additions only).
+ * Contact fields use format: "email" and E.164 pattern for guaranteed interoperability.
+ */
+interface PersonContactExtension {
+  /** RFC 5321 email address (format: "email", maxLength: 254) */
+  emailAddress?: string;
+  /** E.164 phone number, e.g. '+447911123456' (pattern: /^\+[1-9]\d{1,14}$/) */
+  phoneNumber?: string;
+  /** E.164 mobile number for mTAN/OTP (pattern: /^\+[1-9]\d{1,14}$/) */
+  mobileNumber?: string;
+  /** Verified banking accounts — IBAN, BIC, account classification */
+  bankingDetails?: BankingDetails[];
+}
+```
+
+*Contact and banking types added in OpenKYCAML v1.10.0. Last updated: v1.10.0.*

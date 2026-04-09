@@ -269,6 +269,50 @@ class OpenKYCAMLValidator {
       }
     }
 
+    // EDD contact data warnings (v1.10.0).
+    const ddTypeOuter = kyc.dueDiligenceType;
+    if (ddTypeOuter === 'ENHANCED') {
+      const originatorPersons = (ivms.originator || {}).originatorPersons || [];
+      for (let idx = 0; idx < originatorPersons.length; idx++) {
+        const np = originatorPersons[idx].naturalPerson;
+        if (np && !np.emailAddress && !np.phoneNumber) {
+          warns.push(
+            `ivms101.originator.originatorPersons[${idx}].naturalPerson has neither ` +
+            'emailAddress nor phoneNumber — FATF Rec. 16 / AMLR Art. 22 require ' +
+            'verified contact data for Enhanced Due Diligence customers.'
+          );
+        }
+      }
+    }
+
+    // IBAN without BIC warnings (v1.10.0).
+    const partyChecks = [
+      { partyKey: 'originator', personsKey: 'originatorPersons' },
+      { partyKey: 'beneficiary', personsKey: 'beneficiaryPersons' },
+    ];
+    for (const { partyKey, personsKey } of partyChecks) {
+      const persons = ((ivms[partyKey] || {})[personsKey]) || [];
+      for (let idx = 0; idx < persons.length; idx++) {
+        for (const personType of ['naturalPerson', 'legalPerson']) {
+          const person = persons[idx][personType];
+          if (person) {
+            const bankingDetails = person.bankingDetails || [];
+            for (let bidx = 0; bidx < bankingDetails.length; bidx++) {
+              const bd = bankingDetails[bidx];
+              if (bd.iban && !bd.bic) {
+                warns.push(
+                  `ivms101.${partyKey}.${personsKey}[${idx}].${personType}` +
+                  `.bankingDetails[${bidx}].iban is present but bic is absent — ` +
+                  'BIC is required for SEPA credit transfers and correspondent ' +
+                  'banking identification (ISO 9362 / FATF Rec. 16).'
+                );
+              }
+            }
+          }
+        }
+      }
+    }
+
     return warns;
   }
 }

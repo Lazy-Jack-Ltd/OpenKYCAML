@@ -447,4 +447,62 @@ _✅ = full field mapping. ⭐ = added in v1.9.0._
 
 ---
 
-*Last updated: v1.9.0 — April 2026. Maintained by the OpenKYCAML Technical Working Group.*
+---
+
+## 21. Format and Pattern Completeness — Contact, Financial Identifiers, and Validation Strength (v1.10.0)
+
+> Full mapping in [contact-financial-identifiers.md](../mappings/contact-financial-identifiers.md).
+
+This section documents the format/pattern coverage added in v1.10.0 to achieve comprehensive machine-enforceable validation across internal systems, suppliers, clients, and regulatory counterparties. All additions are strictly additive and backward-compatible.
+
+### 21.1 Contact Fields — FATF Rec. 16 / AMLR Art. 22
+
+| Field | $def | Format / Pattern | Standard Reference |
+|---|---|---|---|
+| `emailAddress` | `NaturalPerson`, `LegalPerson` | ✅ ⭐ `format: "email"` (RFC 5321, max 254 chars) | FATF Rec. 16 counterparty contact data; AMLR Art. 22 CDD |
+| `phoneNumber` | `NaturalPerson`, `LegalPerson` | ✅ ⭐ E.164 pattern `^\+[1-9]\d{1,14}$` | FATF Rec. 16; AMLR Art. 22(5) remote CDD; ITU-T E.164 |
+| `mobileNumber` | `NaturalPerson`, `LegalPerson` | ✅ ⭐ E.164 pattern `^\+[1-9]\d{1,14}$` | AMLR Art. 22(5) remote CDD; EUDI Wallet mTAN/OTP notification |
+
+### 21.2 Banking Identifiers — ISO 13616 IBAN / ISO 9362 BIC
+
+| Field | $def | Format / Pattern | Standard Reference |
+|---|---|---|---|
+| `iban` | `BankingDetails` | ✅ ⭐ `^[A-Z]{2}[0-9]{2}[A-Z0-9]{4,30}$` (ISO 13616 structural) | ISO 13616:2020; SEPA; FATF Rec. 16 correspondent banking due diligence |
+| `bic` | `BankingDetails` | ✅ ⭐ `^[A-Z]{6}[A-Z0-9]{2}([A-Z0-9]{3})?$` (ISO 9362, 8/11-char) | ISO 9362:2022; SWIFT; SEPA; FATF Rec. 16 |
+| `accountCurrency` | `BankingDetails` | ✅ ⭐ `^[A-Z]{3}$` (ISO 4217) | ISO 4217; IVMS 101 §4 |
+| `bankingCountry` | `BankingDetails` | ✅ ⭐ `^[A-Z]{2}$` (ISO 3166-1 alpha-2) | ISO 3166-1; AMLR Art. 22 |
+
+### 21.3 Regulatory Identifiers — EU VAT, EORI, EUID
+
+| Field | $def | Pattern Added | Standard Reference |
+|---|---|---|---|
+| `vatRegistrationNumber` | `LegalPersonIdentificationData` | ✅ ⭐ `^[A-Z]{2}[A-Z0-9]{2,12}$` | EU VAT Directive 2006/112/EC; eIDAS 2.0 LPID optional attribute |
+| `eoriNumber` | `LegalPersonIdentificationData` | ✅ ⭐ `^[A-Z]{2}[A-Z0-9]{1,15}$` | EU Reg. 952/2013 (Union Customs Code); eIDAS 2.0 LPID optional attribute |
+| `europeanUniqueIdentifier` | `LegalPersonIdentificationData` | ✅ ⭐ `^[A-Z]{2}-[A-Za-z0-9.\-]{6,40}$` | Directive (EU) 2017/1132 Art. 16; eIDAS EUID (CC-RA-RN format) |
+| `registrationNumber` | `IndirectTaxRegistration` | ✅ ⭐ `^[A-Z0-9\-\/]{2,30}$` | EU VIES; India GSTIN; Australia ABN; Canada HST/PST |
+| `tinValue` | `TinIdentifier` | ✅ ⭐ `^[A-Z0-9\-\/]{5,20}$` | OECD CRS §IV.C; FATCA; AMLR Art. 22 |
+| `withholdingAgentReference` | `FatcaStatus` | ✅ ⭐ `^[A-Z0-9\-]{1,30}$` | IRS FATCA withholding agent obligations |
+
+### 21.4 Document Number Fields
+
+| Field | $def | Pattern Added | Notes |
+|---|---|---|---|
+| `documentNumber` | `NaturalPersonDocument` | ✅ ⭐ `^[A-Z0-9\-\/ ]{1,50}$` | Global passport / national ID formats; rejects control characters |
+| `documentNumber` | `LegalEntityDocument` | ✅ ⭐ `^[A-Z0-9\-\/ ]{1,100}$` | Company document reference numbers |
+| `registrationNumber` | `LegalEntityDocument` | ✅ ⭐ `^[A-Z0-9\-\/ ]{1,100}$` | Company registration numbers across jurisdictions |
+
+### 21.5 Miscellaneous Field Tightening
+
+| Field | $def | Change | Standard Reference |
+|---|---|---|---|
+| `accountNumber` items | `Originator`, `Beneficiary` | ✅ ⭐ `^[A-Za-z0-9\-\/.]{1,100}$` | IVMS 101 §4; Ethereum 0x, Bitcoin bech32, IBAN formats |
+| `registrationAuthority` | `NationalIdentification` | ✅ ⭐ `^RA[0-9]{6}$` | GLEIF Registration Authority List (RAL) code format |
+| `currency` (TM threshold) | `TransactionMonitoring` | ✅ ⭐ `^[A-Z]{3}$` | ISO 4217 |
+| `assetType` | `IVMS101Payload` | ✅ ⭐ `^[A-Z]{3,10}$` | ISO 4217 + crypto-asset tickers (IVMS 101 §4) |
+| `postCode` | `Address` | ✅ ⭐ `^[A-Z0-9\- ]{2,10}$` | Generic postal code structural validation; IVMS 101 §3.5 |
+
+_✅ = full field mapping. ⭐ = added in v1.10.0. All additions backward-compatible._
+
+---
+
+*Last updated: v1.10.0 — April 2026. Maintained by the OpenKYCAML Technical Working Group.*

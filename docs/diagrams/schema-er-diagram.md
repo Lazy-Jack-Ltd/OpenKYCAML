@@ -39,12 +39,18 @@ erDiagram
         string customerIdentification
         string countryOfResidence
         string nationality
+        string emailAddress
+        string phoneNumber
+        string mobileNumber
     }
 
     LegalPerson {
         string customerNumber
         string lei
         string countryOfRegistration
+        string emailAddress
+        string phoneNumber
+        string mobileNumber
     }
 
     NaturalPersonNameIdentifier {
@@ -309,6 +315,12 @@ erDiagram
     PillarTwo { boolean inScopeMNE number consolidatedRevenueEUR string constituentEntityStatus string girFilingReference }
     CrsTaxResidency { string jurisdiction string tinValue string tinVerificationStatus boolean controllingPersonFlag }
     FatcaStatus { string giin string chapter4Classification boolean usTinRequired boolean temporaryReliefApplied string ffiListVerificationTimestamp }
+
+    %% BankingDetails (v1.10.0)
+    NaturalPerson ||--o{ BankingDetails : "bankingDetails"
+    LegalPerson ||--o{ BankingDetails : "bankingDetails"
+
+    BankingDetails { string iban string bic string bankName string accountCurrency string accountType string bankingCountry }
 ```
 
 ---
@@ -361,7 +373,8 @@ erDiagram
 | `PillarTwo` | OECD Pillar 2 GloBE constituent entity block with ETR per jurisdiction and GIR reference (v1.9.0). |
 | `CrsTaxResidency` | Enhanced per-jurisdiction CRS self-certification entry with TIN verification status and controlling-person flag (v1.9.1). |
 | `FatcaStatus` | US FATCA Chapter 4 first-class block: GIIN (19-char IRS regex), Chapter 4 classification, FFI List verification timestamp, Notice 2024-78 relief flag (v1.9.1). |
+| `BankingDetails` | Validated banking account details — IBAN (ISO 13616), BIC (ISO 9362), account currency (ISO 4217), account type classification, and banking country. Wired as `bankingDetails[]` on both `NaturalPerson` and `LegalPerson` (v1.10.0). |
 
 ---
 
-*Diagram generated from OpenKYCAML schema v1.9.1. Last updated: v1.9.1.*
+*Diagram generated from OpenKYCAML schema v1.10.0. Last updated: v1.10.0.*

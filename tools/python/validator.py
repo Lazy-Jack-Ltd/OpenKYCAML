@@ -342,6 +342,38 @@ class OpenKYCAMLValidator:
                     except (ValueError, TypeError):
                         pass
 
+        # EDD contact data warnings (v1.10.0).
+        dd_type_outer = kyc.get("dueDiligenceType")
+        if dd_type_outer == "ENHANCED":
+            for idx, person_wrapper in enumerate(
+                (ivms.get("originator") or {}).get("originatorPersons", [])
+            ):
+                np = person_wrapper.get("naturalPerson")
+                if np and not np.get("emailAddress") and not np.get("phoneNumber"):
+                    warns.append(
+                        f"ivms101.originator.originatorPersons[{idx}].naturalPerson has neither "
+                        "emailAddress nor phoneNumber — FATF Rec. 16 / AMLR Art. 22 require "
+                        "verified contact data for Enhanced Due Diligence customers."
+                    )
+
+        # IBAN without BIC warnings (v1.10.0).
+        for person_key in ("originator", "beneficiary"):
+            persons_key = "originatorPersons" if person_key == "originator" else "beneficiaryPersons"
+            for idx, person_wrapper in enumerate(
+                (ivms.get(person_key) or {}).get(persons_key, [])
+            ):
+                for person_type in ("naturalPerson", "legalPerson"):
+                    person = person_wrapper.get(person_type)
+                    if person:
+                        for bidx, bd in enumerate(person.get("bankingDetails") or []):
+                            if bd.get("iban") and not bd.get("bic"):
+                                warns.append(
+                                    f"ivms101.{person_key}.{persons_key}[{idx}].{person_type}"
+                                    f".bankingDetails[{bidx}].iban is present but bic is absent — "
+                                    "BIC is required for SEPA credit transfers and correspondent "
+                                    "banking identification (ISO 9362 / FATF Rec. 16)."
+                                )
+
         return warns
 
 

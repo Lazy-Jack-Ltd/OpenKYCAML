@@ -15,6 +15,65 @@ For the full project roadmap and planned features, see [ROADMAP.md](ROADMAP.md).
 
 - `docs/naming-convention.md` — new document defining the repository-wide file and directory naming convention (lowercase kebab-case, sub-folder organisation for docs, pattern rules for examples, schema versions, and versioned artefacts).
 
+---
+
+## [1.10.0] — April 2026
+
+### Added — Enhanced Validation: Format and Pattern Completeness
+
+#### New `BankingDetails` $def — IBAN / BIC / account data
+- **`BankingDetails` $def** — New reusable financial account definition wired as `bankingDetails[]` arrays on both `NaturalPerson` and `LegalPerson`. Fields:
+  - `iban` — `type: string`, ISO 13616 structural pattern `^[A-Z]{2}[0-9]{2}[A-Z0-9]{4,30}$`, `maxLength: 34`.
+  - `bic` — `type: string`, ISO 9362 pattern `^[A-Z]{6}[A-Z0-9]{2}([A-Z0-9]{3})?$` (8-char and 11-char BIC), `maxLength: 11`.
+  - `bankName` — `type: string`, `maxLength: 140`.
+  - `accountCurrency` — `type: string`, ISO 4217 pattern `^[A-Z]{3}$`, `maxLength: 3`.
+  - `accountType` — `enum: ["CURRENT", "SAVINGS", "CORRESPONDENT", "CRYPTO_FIAT_GATEWAY", "OTHER"]`.
+  - `bankingCountry` — `type: string`, pattern `^[A-Z]{2}$`.
+
+#### Contact fields on `NaturalPerson` and `LegalPerson`
+- **`emailAddress`** — `type: string`, `format: "email"`, `maxLength: 254` (RFC 5321). Added to both `NaturalPerson` and `LegalPerson`. Addresses the most impactful format gap for B2B data exchange; aligns with FATF Rec. 16 counterparty contact requirements and AMLR Art. 22 CDD.
+- **`phoneNumber`** — `type: string`, E.164 pattern `^\+[1-9]\d{1,14}$`, `maxLength: 16`. Added to both `NaturalPerson` and `LegalPerson`.
+- **`mobileNumber`** — `type: string`, same E.164 pattern, `maxLength: 16`. Added to both `NaturalPerson` and `LegalPerson`. Separate field for mTAN/OTP delivery in remote CDD (AMLR Art. 22(5)) and EUDI Wallet notification flows.
+
+#### Patterns on existing regulatory identifier fields
+- **`LegalPersonIdentificationData.vatRegistrationNumber`** — pattern `^[A-Z]{2}[A-Z0-9]{2,12}$` (EU VAT structural form: 2-char country prefix + 2–12 alphanumeric).
+- **`LegalPersonIdentificationData.eoriNumber`** — pattern `^[A-Z]{2}[A-Z0-9]{1,15}$` (EU/UK EORI: country prefix + up to 15 alphanumeric).
+- **`LegalPersonIdentificationData.europeanUniqueIdentifier`** — pattern `^[A-Z]{2}-[A-Za-z0-9.\-]{6,40}$` (eIDAS EUID: CC-RegistrationAuthority-RegistrationNumber format per Directive (EU) 2017/1132).
+- **`IndirectTaxRegistration.registrationNumber`** — pattern `^[A-Z0-9\-\/]{2,30}$` (generic: 2–30 uppercase alphanumeric with hyphens/slashes; covers EU VAT, India GSTIN, Australia ABN, Canada HST/PST).
+- **`TinIdentifier.tinValue`** — pattern `^[A-Z0-9\-\/]{5,20}$` (5–20 uppercase alphanumeric with hyphens/slashes; intentionally loose to cover global TIN formats; jurisdiction-specific validation is a runtime concern).
+- **`FatcaStatus.withholdingAgentReference`** — pattern `^[A-Z0-9\-]{1,30}$`, `maxLength: 30`.
+
+#### Patterns on document number fields
+- **`NaturalPersonDocument.documentNumber`** — pattern `^[A-Z0-9\-\/ ]{1,50}$` (allows standard global passport and national ID formats; rejects control characters).
+- **`LegalEntityDocument.documentNumber`** — pattern `^[A-Z0-9\-\/ ]{1,100}$`.
+- **`LegalEntityDocument.registrationNumber`** — pattern `^[A-Z0-9\-\/ ]{1,100}$`.
+
+#### Miscellaneous field tightening
+- **`Originator.accountNumber` items**, **`Beneficiary.accountNumber` items** — pattern `^[A-Za-z0-9\-\/.]{1,100}$` (mixed-case to support Ethereum 0x hex, Bitcoin bech32, IBANs, and proprietary identifiers).
+- **`NationalIdentification.registrationAuthority`** — pattern `^RA[0-9]{6}$` (GLEIF RAL code format; aligns with `RegistrationAuthorityDetail.ralCode`).
+- **`TransactionMonitoring` currency sub-fields** (`jurisdictionThreshold.currency`, `reportingThreshold.currency`) — pattern `^[A-Z]{3}$` (ISO 4217).
+- **`IVMS101Payload.transferredAmount.assetType`** — pattern `^[A-Z]{3,10}$` (ISO 4217 currency codes and crypto-asset tickers 3–10 uppercase chars).
+- **`Address.postCode`** — pattern `^[A-Z0-9\- ]{2,10}$` (generic: 2–10 uppercase alphanumeric with hyphens and spaces; country-specific validation is a runtime concern).
+
+#### Documentation
+- **`schema/versions/v1.10.0.json`** — versioned snapshot of canonical schema.
+- **`docs/mappings/contact-financial-identifiers.md`** + **`.yaml`** — new mapping document covering email/phone/IBAN/BIC alignment with IVMS 101, FATF Rec. 16, ISO 13616/9362, and eIDAS contact field requirements.
+- **`docs/compliance/compliance-matrix.md §21`** — Format and Pattern Completeness section.
+- **`docs/diagrams/schema-er-diagram.md`** — `BankingDetails` entity added with relationships to `NaturalPerson` and `LegalPerson`; footer updated to v1.10.0.
+- **`docs/reference/typescript-types.md`** — `BankingDetails` interface added.
+
+#### Validator business warnings (Python + Node.js)
+- Missing `emailAddress` or `phoneNumber` on a natural person with `dueDiligenceType: ENHANCED` — FATF Rec. 16 / AMLR Art. 22 contact requirement advisory.
+- `bankingDetails` entry with `iban` present but no `bic` — SEPA/correspondent banking reconciliation advisory.
+
+#### New examples
+- `examples/contact-banking/natural-person-with-contact.json` — natural person with email, E.164 phone, and IBAN/BIC banking details.
+- `examples/contact-banking/legal-entity-with-banking.json` — legal entity with contact fields and full `BankingDetails` entry.
+
+### Changed
+- `schema/kyc-aml-hybrid-extended.json` — version bumped from `1.9.1` to `1.10.0`; `$id` updated to `https://openkycaml.org/schema/v1.10.0/kyc-aml-hybrid-extended.json`.
+- All new fields are **strictly additive and backward-compatible** — no existing required fields changed; no existing patterns modified.
+
 ### Changed (naming/organisation — no schema changes)
 
 - `docs/` reorganised into sub-folders by type: `guides/`, `mappings/`, `compliance/`, `reference/` (existing `diagrams/` and `versions/` unchanged). All cross-references updated.
