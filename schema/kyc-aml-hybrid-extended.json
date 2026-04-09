@@ -1,9 +1,9 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://openkycaml.org/schema/v1.10.0/kyc-aml-hybrid-extended.json",
+  "$id": "https://openkycaml.org/schema/v1.11.0/kyc-aml-hybrid-extended.json",
   "title": "OpenKYCAML Hybrid KYC/AML Schema",
   "description": "Root OpenKYCAML document. At least one of 'ivms101' or 'verifiableCredential' MUST be present.",
-  "version": "1.10.0",
+  "version": "1.11.0",
   "$defs": {
     "NaturalPersonNameIdentifier": {
       "title": "NaturalPersonNameIdentifier",
@@ -535,6 +535,26 @@
           "items": {
             "$ref": "#/$defs/BankingDetails"
           }
+        },
+        "cellCompanyDetails": {
+          "$ref": "#/$defs/CellCompanyDetails",
+          "description": "Cell structure classification and metadata. Absent for ordinary non-cell companies (cellCompanyType: NONE implied). Present whenever this LegalPerson is a PCC Core, PCC Cell, ICC Core, or ICC Cell."
+        },
+        "parentCellCompanyReference": {
+          "$ref": "#/$defs/ParentCellCompanyReference",
+          "description": "Reference to the parent PCC or ICC Core. Should be present whenever cellCompanyDetails.cellCompanyType is PCC_CELL or ICC_CELL. Validators emit a warning if this field is absent for a cell."
+        },
+        "cellRiskProfileOverride": {
+          "$ref": "#/$defs/RiskSnapshot",
+          "description": "Cell-specific risk snapshot overriding or supplementing the Core-level risk rating. Allows granular cell-level risk assessment without modifying the Core KYC profile. Relevant for cells with materially different risk exposures (e.g. a high-risk jurisdiction cell within a low-risk Core structure)."
+        },
+        "cellSourceOfFundsWealth": {
+          "$ref": "#/$defs/SourceOfFundsWealth",
+          "description": "Cell-specific source of funds and wealth declaration. Where a cell has assets or funding sources that differ from the Core, this field provides the cell-level EDD data required by AMLR Art. 29 and FATF Rec. 12."
+        },
+        "cellAuditMetadata": {
+          "$ref": "#/$defs/AuditMetadata",
+          "description": "Cell-specific audit and provenance metadata. Separate from the Core audit trail to enable per-cell record keeping (AMLR Art. 56 — 5-year minimum retention) and change tracking for cell-level compliance events."
         }
       },
       "if": {
@@ -4383,6 +4403,101 @@
           "type": "string",
           "description": "ISO 3166-1 alpha-2 country code of the bank where the account is held.",
           "pattern": "^[A-Z]{2}$"
+        }
+      },
+      "additionalProperties": false
+    },
+    "CellCompanyType": {
+      "title": "CellCompanyType",
+      "description": "Indicates whether the LegalPerson is a non-cell entity (NONE), the Core of a Protected Cell Company (PCC_CORE), a cell within a PCC (PCC_CELL), the Core of an Incorporated Cell Company (ICC_CORE), or a cell within an ICC (ICC_CELL). PCC cells share the legal personality of the PCC Core; ICC cells have independent legal personality.",
+      "type": "string",
+      "enum": [
+        "NONE",
+        "PCC_CORE",
+        "PCC_CELL",
+        "ICC_CORE",
+        "ICC_CELL"
+      ]
+    },
+    "CellCompanyDetails": {
+      "title": "CellCompanyDetails",
+      "description": "Detailed metadata for a LegalPerson that is either the Core or a Cell of a Protected Cell Company (PCC) or Incorporated Cell Company (ICC). Used for insurance-linked securities (ILS), catastrophe bonds, securitisation vehicles, and regulated cell structures in Guernsey, Jersey, Isle of Man, Cayman Islands, Malta, and other PCC/ICC jurisdictions. Enables cell-level granularity for FATF, AMLR, IVMS 101, and eIDAS KYC/AML flows.",
+      "type": "object",
+      "required": [
+        "cellCompanyType"
+      ],
+      "properties": {
+        "cellCompanyType": {
+          "$ref": "#/$defs/CellCompanyType"
+        },
+        "cellIdentifier": {
+          "type": "string",
+          "description": "Unique cell number or designator assigned by the PCC/ICC (e.g. 'CELL-007', 'IC-003'). Used to distinguish cells within the same parent structure.",
+          "maxLength": 64,
+          "pattern": "^[A-Za-z0-9 \\-]{1,64}$"
+        },
+        "cellName": {
+          "type": "string",
+          "description": "Human-readable name of this cell (e.g. 'Cell 7 - Property Catastrophe Series 2026'). May coincide with cellIdentifier for simple structures.",
+          "maxLength": 128
+        },
+        "cellRegistrationNumber": {
+          "type": "string",
+          "description": "Cell-specific registration number issued by the incorporating authority. Applicable to ICC cells (which have independent legal personality and their own registration). Not applicable to PCC cells.",
+          "maxLength": 35,
+          "pattern": "^[A-Z0-9]{1,35}$"
+        },
+        "hasIndependentLegalPersonality": {
+          "type": "boolean",
+          "description": "True for ICC cells (each cell is a separate incorporated entity with its own registration number, LEI, and full contracting capacity). False for PCC cells (which transact through the PCC as the single legal entity). Absent or null for Core entities."
+        },
+        "isCellCompanyIssuer": {
+          "type": "boolean",
+          "description": "True when this cell is used as a securities issuer or issuance vehicle (e.g. for ILS, catastrophe bonds, structured notes). When true, issuancePurpose and cellSpecificInstrumentReference should be populated."
+        },
+        "issuancePurpose": {
+          "type": "string",
+          "description": "Purpose of issuance when this cell is used as an issuer vehicle. Required when isCellCompanyIssuer is true.",
+          "enum": [
+            "INSURANCE_LINKED_SECURITY",
+            "CATASTROPHE_BOND",
+            "STRUCTURED_NOTE",
+            "DEBT_INSTRUMENT",
+            "OTHER"
+          ]
+        },
+        "cellSpecificInstrumentReference": {
+          "type": "string",
+          "format": "uri",
+          "description": "URI reference to the specific security, ILS instrument, or programme document issued by this cell (e.g. a link to the prospectus or term sheet on a regulatory filing system)."
+        }
+      },
+      "additionalProperties": false
+    },
+    "ParentCellCompanyReference": {
+      "title": "ParentCellCompanyReference",
+      "description": "Reference to the parent PCC or ICC Core entity. Mandatory when the LegalPerson represents a cell (cellCompanyType is PCC_CELL or ICC_CELL). Provides the link required for FATF beneficial-ownership tracing, AMLR Art. 26 entity verification, and IVMS 101 counterparty identification across the Core/Cell structure. Prevents orphan cell records that cannot be linked to a legal person hierarchy.",
+      "type": "object",
+      "required": [
+        "legalEntityIdentifier",
+        "jurisdiction"
+      ],
+      "properties": {
+        "legalEntityIdentifier": {
+          "type": "string",
+          "description": "LEI (ISO 17442, 20-char) or registration number of the parent PCC/ICC Core. Use the LEI where available for unambiguous cross-border identification.",
+          "maxLength": 35,
+          "pattern": "^[A-Z0-9]{1,35}$"
+        },
+        "jurisdiction": {
+          "type": "string",
+          "description": "ISO 3166-1 alpha-2 country code of the jurisdiction in which the parent PCC/ICC Core is incorporated (e.g. 'GG' for Guernsey, 'JE' for Jersey, 'KY' for Cayman Islands).",
+          "pattern": "^[A-Z]{2}$"
+        },
+        "parentName": {
+          "type": "string",
+          "description": "Registered legal name of the parent PCC/ICC Core. Informational — the legalEntityIdentifier is the authoritative reference.",
+          "maxLength": 128
         }
       },
       "additionalProperties": false

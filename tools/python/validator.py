@@ -374,6 +374,28 @@ class OpenKYCAMLValidator:
                                     "banking identification (ISO 9362 / FATF Rec. 16)."
                                 )
 
+        # Cell company warnings (v1.11.0).
+        for party_key, persons_key in [("originator", "originatorPersons"), ("beneficiary", "beneficiaryPersons")]:
+            for idx, pw in enumerate((ivms.get(party_key) or {}).get(persons_key, [])):
+                lp = pw.get("legalPerson")
+                if lp:
+                    ccd = lp.get("cellCompanyDetails", {})
+                    cell_type = ccd.get("cellCompanyType") if ccd else None
+                    if cell_type in ("PCC_CELL", "ICC_CELL") and not lp.get("parentCellCompanyReference"):
+                        warns.append(
+                            f"ivms101.{party_key}.{persons_key}[{idx}].legalPerson has "
+                            f"cellCompanyDetails.cellCompanyType '{cell_type}' but no "
+                            "parentCellCompanyReference — FATF beneficial-ownership tracing and "
+                            "AMLR Art. 26 entity verification require an explicit link to the parent "
+                            "PCC/ICC Core."
+                        )
+                    if ccd and ccd.get("isCellCompanyIssuer") and not ccd.get("issuancePurpose"):
+                        warns.append(
+                            f"ivms101.{party_key}.{persons_key}[{idx}].legalPerson "
+                            "cellCompanyDetails.isCellCompanyIssuer is true but issuancePurpose is "
+                            "absent — populate issuancePurpose for instrument-level classification."
+                        )
+
         return warns
 
 

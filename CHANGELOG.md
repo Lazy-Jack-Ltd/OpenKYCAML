@@ -13,6 +13,54 @@ For the full project roadmap and planned features, see [ROADMAP.md](ROADMAP.md).
 
 ### Added
 
+---
+
+## [1.11.0] — April 2026
+
+### Added — Cell Company Support (PCC / ICC)
+
+#### New $defs
+- **`CellCompanyType`** — string enum `["NONE", "PCC_CORE", "PCC_CELL", "ICC_CORE", "ICC_CELL"]` for precise classification of cell-structured entities.
+- **`CellCompanyDetails`** — structured metadata for PCC/ICC cells and cores:
+  - `cellCompanyType` (required, `$ref: CellCompanyType`)
+  - `cellIdentifier` — unique cell number/name, pattern `^[A-Za-z0-9 \-]{1,64}$`
+  - `cellName` — human-readable cell description, `maxLength: 128`
+  - `cellRegistrationNumber` — ICC cell registration number, pattern `^[A-Z0-9]{1,35}$` (ICC cells only)
+  - `hasIndependentLegalPersonality` — boolean; `true` for ICC cells (independent legal personality), `false` for PCC cells
+  - `isCellCompanyIssuer` — boolean; `true` when cell is a securities/ILS issuer vehicle
+  - `issuancePurpose` — enum `["INSURANCE_LINKED_SECURITY", "CATASTROPHE_BOND", "STRUCTURED_NOTE", "DEBT_INSTRUMENT", "OTHER"]`
+  - `cellSpecificInstrumentReference` — `format: "uri"` link to instrument/prospectus
+- **`ParentCellCompanyReference`** — required parent link for any cell:
+  - `legalEntityIdentifier` (required) — LEI or registration number of parent Core, pattern `^[A-Z0-9]{1,35}$`
+  - `jurisdiction` (required) — ISO 3166-1 alpha-2 of parent Core's incorporation jurisdiction
+  - `parentName` — registered name of parent Core, `maxLength: 128`
+
+#### `LegalPerson` extensions (all optional, backward-compatible)
+- `cellCompanyDetails` — `$ref: CellCompanyDetails`
+- `parentCellCompanyReference` — `$ref: ParentCellCompanyReference`
+- `cellRiskProfileOverride` — `$ref: RiskSnapshot` — cell-level risk snapshot where cell risk differs from Core
+- `cellSourceOfFundsWealth` — `$ref: SourceOfFundsWealth` — cell-level source of funds (AMLR Art. 29, FATF Rec. 12)
+- `cellAuditMetadata` — `$ref: AuditMetadata` — per-cell audit trail (AMLR Art. 56 5-year retention)
+
+#### Documentation
+- **`schema/versions/v1.11.0.json`** — versioned snapshot.
+- **`docs/mappings/cell-company.md`** + **`.yaml`** — new mapping document covering PCC/ICC structures, field rationale, KYC/AML obligations, and regulatory jurisdictions.
+- **`docs/compliance/compliance-matrix.md §22`** — Cell Company and Special Purpose Vehicle section.
+- **`docs/diagrams/schema-er-diagram.md`** — `CellCompanyDetails`, `CellCompanyType`, `ParentCellCompanyReference` entities with relationships; footer updated to v1.11.0.
+- **`docs/reference/typescript-types.md`** — `CellCompanyDetails`, `CellCompanyType`, `ParentCellCompanyReference` interfaces.
+
+#### Validator business warnings (Python + Node.js)
+- `legalPerson.cellCompanyDetails.cellCompanyType` is `PCC_CELL` or `ICC_CELL` but `parentCellCompanyReference` is absent → FATF beneficial-ownership tracing / AMLR Art. 26 advisory.
+- `cellCompanyDetails.isCellCompanyIssuer` is `true` but `issuancePurpose` is absent → instrument-level classification advisory.
+
+#### New examples
+- `examples/cell-company/pcc-cell.json` — Guernsey PCC Cell 7 (catastrophe bond issuer, no independent legal personality).
+- `examples/cell-company/icc-cell.json` — Jersey ICC Cell 3 (marine ILS, independent legal personality, `cellRegistrationNumber`, `cellSourceOfFundsWealth`).
+
+### Changed
+- `schema/kyc-aml-hybrid-extended.json` — version bumped from `1.10.0` to `1.11.0`; `$id` updated.
+- All additions are strictly additive and backward-compatible with v1.10.x and earlier payloads.
+
 - `docs/naming-convention.md` — new document defining the repository-wide file and directory naming convention (lowercase kebab-case, sub-folder organisation for docs, pattern rules for examples, schema versions, and versioned artefacts).
 
 ---

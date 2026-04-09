@@ -505,4 +505,58 @@ _✅ = full field mapping. ⭐ = added in v1.10.0. All additions backward-compat
 
 ---
 
-*Last updated: v1.10.0 — April 2026. Maintained by the OpenKYCAML Technical Working Group.*
+## 22. Cell Company Structures — PCC and ICC KYC/AML Support (v1.11.0)
+
+> Full mapping in [cell-company.md](../mappings/cell-company.md).
+
+Cell companies (Protected Cell Companies and Incorporated Cell Companies) are specialised corporate vehicles used in insurance, reinsurance, securitisation, and alternative investment markets. They require explicit schema support because risk, sanctions/PEP exposure, beneficial ownership, and source-of-funds can differ materially between cells within the same parent structure.
+
+### 22.1 Cell Company Type Classification
+
+| `cellCompanyType` Value | Legal Structure | Independent Legal Personality | Typical Jurisdiction |
+|---|---|---|---|
+| `NONE` | Ordinary company (no cells) | Yes | All |
+| `PCC_CORE` | PCC overarching entity | Yes (single entity for all cells) | GG, JE, IM, KY, MT, GI |
+| `PCC_CELL` | Cell within a PCC | No (transacts through PCC) | GG, JE, IM, KY, MT, GI |
+| `ICC_CORE` | ICC coordinating core | Yes | GG, JE, IM, KY |
+| `ICC_CELL` | Incorporated cell (own legal entity) | Yes (own registration, LEI) | GG, JE, IM, KY |
+
+### 22.2 CellCompanyDetails Field Mapping
+
+| Field | Format / Pattern | Regulatory Basis |
+|---|---|---|
+| `cellCompanyType` | ✅ ⭐ Enum (5 values) | FATF Rec. 24/25 legal arrangement disclosure; AMLR Art. 26(2)(b) |
+| `cellIdentifier` | ✅ ⭐ `^[A-Za-z0-9 \-]{1,64}$` | Cell register identifier (jurisdiction-specific) |
+| `cellRegistrationNumber` | ✅ ⭐ `^[A-Z0-9]{1,35}$` | ICC cell company registration; own LEI eligibility |
+| `hasIndependentLegalPersonality` | ✅ ⭐ boolean | Determines whether cell can hold own LEI, file own returns, contract independently |
+| `isCellCompanyIssuer` | ✅ ⭐ boolean | ILS/cat bond issuer identification for IVMS 101 / FATF Rec. 16 |
+| `issuancePurpose` | ✅ ⭐ Enum (5 values) | Instrument classification for AML/CFT risk assessment |
+| `cellSpecificInstrumentReference` | ✅ ⭐ `format: "uri"` | Prospectus/term sheet link for EDD file evidence |
+
+### 22.3 ParentCellCompanyReference Field Mapping
+
+| Field | Format / Pattern | Regulatory Basis |
+|---|---|---|
+| `legalEntityIdentifier` | ✅ ⭐ `^[A-Z0-9]{1,35}$` | FATF beneficial-ownership chain; AMLR Art. 26 parent entity verification |
+| `jurisdiction` | ✅ ⭐ `^[A-Z]{2}$` (ISO 3166-1) | Cross-border legal hierarchy identification |
+
+### 22.4 Cell-Level Risk and Audit Fields (LegalPerson extensions)
+
+| Field | $ref | Regulatory Basis |
+|---|---|---|
+| `cellRiskProfileOverride` | `RiskSnapshot` | Cell-level risk granularity; FATF Rec. 1 risk-based approach |
+| `cellSourceOfFundsWealth` | `SourceOfFundsWealth` | AMLR Art. 29; FATF Rec. 12 higher-risk countries |
+| `cellAuditMetadata` | `AuditMetadata` | AMLR Art. 56 5-year record retention per cell |
+
+### 22.5 Validator Business Warnings
+
+| Condition | Warning |
+|---|---|
+| `cellCompanyType` is PCC_CELL/ICC_CELL + no `parentCellCompanyReference` | FATF beneficial-ownership tracing requires parent link (AMLR Art. 26) |
+| `isCellCompanyIssuer: true` + no `issuancePurpose` | Instrument-level classification required for risk assessment |
+
+_✅ = full field mapping. ⭐ = added in v1.11.0. All additions backward-compatible._
+
+---
+
+*Last updated: v1.11.0 — April 2026. Maintained by the OpenKYCAML Technical Working Group.*

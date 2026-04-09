@@ -321,6 +321,13 @@ erDiagram
     LegalPerson ||--o{ BankingDetails : "bankingDetails"
 
     BankingDetails { string iban string bic string bankName string accountCurrency string accountType string bankingCountry }
+
+    %% Cell Company structures (v1.11.0)
+    LegalPerson ||--o| CellCompanyDetails : "cellCompanyDetails"
+    LegalPerson ||--o| ParentCellCompanyReference : "parentCellCompanyReference"
+
+    CellCompanyDetails { string cellCompanyType string cellIdentifier string cellName string cellRegistrationNumber boolean hasIndependentLegalPersonality boolean isCellCompanyIssuer string issuancePurpose }
+    ParentCellCompanyReference { string legalEntityIdentifier string jurisdiction string parentName }
 ```
 
 ---
@@ -374,7 +381,10 @@ erDiagram
 | `CrsTaxResidency` | Enhanced per-jurisdiction CRS self-certification entry with TIN verification status and controlling-person flag (v1.9.1). |
 | `FatcaStatus` | US FATCA Chapter 4 first-class block: GIIN (19-char IRS regex), Chapter 4 classification, FFI List verification timestamp, Notice 2024-78 relief flag (v1.9.1). |
 | `BankingDetails` | Validated banking account details — IBAN (ISO 13616), BIC (ISO 9362), account currency (ISO 4217), account type classification, and banking country. Wired as `bankingDetails[]` on both `NaturalPerson` and `LegalPerson` (v1.10.0). |
+| `CellCompanyType` | Enum classifying a LegalPerson as a non-cell entity (NONE), PCC Core, PCC Cell, ICC Core, or ICC Cell (v1.11.0). |
+| `CellCompanyDetails` | Structured metadata for PCC/ICC cells: cell type, identifier, name, registration number (ICC cells), legal personality flag, issuer flag, issuance purpose, and instrument URI (v1.11.0). |
+| `ParentCellCompanyReference` | Mandatory parent link for any cell — LEI or registration number + jurisdiction of the parent PCC/ICC Core (v1.11.0). |
 
 ---
 
-*Diagram generated from OpenKYCAML schema v1.10.0. Last updated: v1.10.0.*
+*Diagram generated from OpenKYCAML schema v1.11.0. Last updated: v1.11.0.*

@@ -1110,3 +1110,72 @@ interface PersonContactExtension {
 ```
 
 *Contact and banking types added in OpenKYCAML v1.10.0. Last updated: v1.10.0.*
+
+---
+
+## Cell Company Types (v1.11.0)
+
+```typescript
+/** PCC/ICC cell classification. */
+export type CellCompanyType = 'NONE' | 'PCC_CORE' | 'PCC_CELL' | 'ICC_CORE' | 'ICC_CELL';
+
+/**
+ * Metadata for a LegalPerson that is a Core or Cell of a PCC or ICC (v1.11.0).
+ * Present on LegalPerson when cellCompanyType != 'NONE'.
+ */
+export interface CellCompanyDetails {
+  /** Required — cell structure classification */
+  cellCompanyType: CellCompanyType;
+  /** Unique cell number/designator within the parent structure (e.g. 'CELL-007') */
+  cellIdentifier?: string;
+  /** Human-readable cell name */
+  cellName?: string;
+  /**
+   * ICC cell-specific registration number (pattern: /^[A-Z0-9]{1,35}$/).
+   * Only for ICC cells (hasIndependentLegalPersonality: true).
+   */
+  cellRegistrationNumber?: string;
+  /**
+   * true = ICC cell (own legal entity, own registration, full contracting capacity).
+   * false = PCC cell (transacts through PCC as single legal entity).
+   */
+  hasIndependentLegalPersonality?: boolean;
+  /** true when this cell is a securities/ILS/cat bond issuer vehicle */
+  isCellCompanyIssuer?: boolean;
+  /** Required when isCellCompanyIssuer is true */
+  issuancePurpose?: 'INSURANCE_LINKED_SECURITY' | 'CATASTROPHE_BOND' | 'STRUCTURED_NOTE' | 'DEBT_INSTRUMENT' | 'OTHER';
+  /** URI link to prospectus / instrument document (format: "uri") */
+  cellSpecificInstrumentReference?: string;
+}
+
+/**
+ * Link to the parent PCC or ICC Core (v1.11.0).
+ * Required when cellCompanyDetails.cellCompanyType is PCC_CELL or ICC_CELL.
+ * Enables FATF beneficial-ownership tracing and AMLR Art. 26 entity verification.
+ */
+export interface ParentCellCompanyReference {
+  /** LEI (20-char) or registration number of parent Core (pattern: /^[A-Z0-9]{1,35}$/) */
+  legalEntityIdentifier: string;
+  /** ISO 3166-1 alpha-2 incorporation jurisdiction of parent Core */
+  jurisdiction: string;
+  /** Registered legal name of parent Core */
+  parentName?: string;
+}
+
+/**
+ * LegalPerson cell company extensions (v1.11.0 additions only).
+ * All optional — absent for ordinary non-cell companies.
+ */
+interface LegalPersonCellExtension {
+  cellCompanyDetails?: CellCompanyDetails;
+  parentCellCompanyReference?: ParentCellCompanyReference;
+  /** Cell-level risk snapshot (overrides Core risk where cell risk differs) */
+  cellRiskProfileOverride?: RiskSnapshot;
+  /** Cell-level source of funds/wealth for AMLR Art. 29 / FATF Rec. 12 EDD */
+  cellSourceOfFundsWealth?: SourceOfFundsWealth;
+  /** Per-cell audit trail for AMLR Art. 56 5-year retention */
+  cellAuditMetadata?: AuditMetadata;
+}
+```
+
+*Cell company types added in OpenKYCAML v1.11.0. Last updated: v1.11.0.*
