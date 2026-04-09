@@ -101,7 +101,6 @@
     },
     "transferredAmount": {
       "amount": "50000.00",
-      "currency": "EUR",
       "assetType": "FIAT"
     },
     "originatingVASP": {
