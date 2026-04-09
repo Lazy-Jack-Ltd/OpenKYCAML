@@ -49,7 +49,7 @@ Without explicit schema support, cells are often described using ad-hoc fields, 
 | Field | Type | Pattern / Format | Required | Notes |
 |---|---|---|---|---|
 | `cellCompanyType` | string (enum) | `CellCompanyType` | Yes | Core classification field |
-| `cellIdentifier` | string | `^[A-Za-z0-9 \-]{1,64}$` | No | Unique cell number/designator |
+| `cellIdentifier` | string | `^[A-Za-z0-9 \-]{1,64}$` | No | Unique cell number/designator. **This is the sole cell identifier field; do not use `cellCompanyIdentifier` (historical draft name, never adopted).** |
 | `cellName` | string | — | No | Human-readable cell name, max 128 chars |
 | `cellRegistrationNumber` | string | `^[A-Z0-9]{1,35}$` | No | ICC cells only — registration number issued by authority |
 | `hasIndependentLegalPersonality` | boolean | — | No | `true` for ICC cells, `false` for PCC cells |
@@ -73,6 +73,8 @@ Without explicit schema support, cells are often described using ad-hoc fields, 
 
 Mandatory for any cell (`PCC_CELL` or `ICC_CELL`). Provides the link required for FATF beneficial-ownership chain tracing and AMLR Art. 26 legal entity verification.
 
+> **Recursion-depth guidance (v1.11.2):** Use `legalEntityIdentifier` + `jurisdiction` as the primary reference link. For performance-critical or deeply-nested cell-of-cell payloads, avoid embedding full parent objects — reference by identifier only.
+
 | Field | Type | Pattern | Required | Notes |
 |---|---|---|---|---|
 | `legalEntityIdentifier` | string | `^[A-Z0-9]{1,35}$` | Yes | LEI (20-char) preferred; registration number also accepted |
@@ -92,6 +94,23 @@ All optional. Absent for ordinary non-cell companies.
 | `cellRiskProfileOverride` | `RiskSnapshot` | Cell-level risk where cell risk differs from Core |
 | `cellSourceOfFundsWealth` | `SourceOfFundsWealth` | Cell-specific SoF/SoW for AMLR Art. 29 / FATF Rec. 12 EDD |
 | `cellAuditMetadata` | `AuditMetadata` | Per-cell audit trail — AMLR Art. 56 5-year retention |
+
+### 5.1 Predictive AML — Cell-Level Scores (v1.11.2)
+
+The optional `predictiveAML.cellLevelPredictiveScores[]` array inside the `PredictiveAML` block allows per-cell predictive risk scoring for PCC/ICC structures. Each entry references a cell by its `cellIdentifier` and carries one or more scores.
+
+Use this in conjunction with `cellRiskProfileOverride` (a `RiskSnapshot` on `LegalPerson`) when individual cells exhibit materially different risk profiles from the parent Core.
+
+| Field | Type | Required | Notes |
+|---|---|---|---|
+| `cellIdentifier` | string | Yes | References `CellCompanyDetails.cellIdentifier` on the target `LegalPerson` record |
+| `scores[].scoreType` | enum | Yes | `transaction_anomaly`, `network_risk`, `velocity_fraud`, `ubo_graph_risk`, `customer_lifetime_risk` |
+| `scores[].value` | number 0–100 | Yes | Risk score (0 = lowest, 100 = highest) |
+| `scores[].confidence` | number 0–1 | Yes | Model confidence (EU AI Act Art. 13(3)(b)(iv)) |
+| `scores[].horizonDays` | integer | No | Forward-looking prediction window (days) |
+| `scores[].timestamp` | date-time | No | When this score was computed |
+
+**Example:** See `examples/cell-company/pcc-cell-predictive-aml.json` for a PCC cell with both `cellRiskProfileOverride` and a `predictiveAML.cellLevelPredictiveScores` entry.
 
 ---
 
@@ -131,4 +150,4 @@ All additions in v1.11.0 are strictly additive:
 
 ---
 
-*Added in OpenKYCAML v1.11.0 — April 2026. Maintained by the OpenKYCAML Technical Working Group.*
+*Added in OpenKYCAML v1.11.0 — April 2026. Updated v1.11.1 (hard constraints), v1.11.2 (cellIdentifier disambiguation, recursion-depth guidance, cellLevelPredictiveScores). Maintained by the OpenKYCAML Technical Working Group.*

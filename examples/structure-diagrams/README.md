@@ -66,6 +66,74 @@ This folder contains one Mermaid diagram per example in the `/examples` director
 | [trust-complex-ubo.md](trust-complex-ubo.md) | `trust-complex-ubo.json` | Jersey discretionary trust — settlor + life beneficiary (Sir James Hartley), corporate trustee (2 directors), protector, 3 beneficiaries |
 | [foundation-complex-ubo.md](foundation-complex-ubo.md) | `foundation-complex-ubo.json` | Liechtenstein Privatstiftung — Heinrich Steinberg UBO (founder), 3-person foundation council, PGR Art. 552 §29 reservation powers |
 | [llp-complex-ubo.md](llp-complex-ubo.md) | `llp-complex-ubo.json` | UK LLP — Priya Sharma UBO via GP control, corporate GP + 2 corporate LPs + 2 individual LPs, no LP management rights |
+| [legal-entity-partnership.md](legal-entity-partnership.md) | `legal-entity-partnership.json` | UK LLP — Cairn Digital Ventures LLP, 2 designated members + 1 corporate member, 120,000 BTC |
+| [legal-entity-trust.md](legal-entity-trust.md) | `legal-entity-trust.json` | Cayman discretionary trust — Harbour Gate Trust (KY), settlor + corporate trustee + 2 beneficiaries, 85,000 USDC |
+
+### v1.12.0 — Gender, Occupation, EntityGovernance, ReviewLifecycle
+
+| Diagram | Example File | Scenario |
+|---|---|---|
+| [natural-person-gender-occupation.md](natural-person-gender-occupation.md) | `natural-person-gender-occupation.json` | Gender (FEMALE) + occupation (SELF_EMPLOYED) on NaturalPerson — Anna Müller (DE), reviewLifecycle state machine |
+| [legal-entity-governance.md](legal-entity-governance.md) | `legal-entity-governance.json` | EntityGovernance — Acme Financial Services GmbH (DE), dual-regulated (BaFin + FCA), XETR-listed, majority-owned subsidiary |
+
+### Cell Company Structures (v1.11.0+)
+
+| Diagram | Example File | Scenario |
+|---|---|---|
+| [cell-company/pcc-cell.md](cell-company/pcc-cell.md) | `cell-company/pcc-cell.json` | PCC Cell — Guernsey Re PCC Cell 7 (CELL-007), catastrophe bond, no independent legal personality, 5M USD |
+| [cell-company/icc-cell.md](cell-company/icc-cell.md) | `cell-company/icc-cell.json` | ICC Cell — Jersey ICC Cell 3 Marine ILS (IC-003), independent legal personality, 10M USD |
+| [cell-company/pcc-cell-predictive-aml.md](cell-company/pcc-cell-predictive-aml.md) | `cell-company/pcc-cell-predictive-aml.json` | PCC Cell + cell-level predictive AML scores (v1.11.2) — CELL-007, transaction_anomaly 72, network_risk 65 |
+
+### Contact Details and Banking
+
+| Diagram | Example File | Scenario |
+|---|---|---|
+| [contact-banking/natural-person-with-contact.md](contact-banking/natural-person-with-contact.md) | `contact-banking/natural-person-with-contact.json` | Natural person with email + phone + DE IBAN — Anna Mueller (DE), 1,500 EUR |
+| [contact-banking/legal-entity-with-banking.md](contact-banking/legal-entity-with-banking.md) | `contact-banking/legal-entity-with-banking.json` | Legal entity with 2 bank accounts — Nordvik Shipping AS (NO), NO + NL IBANs, 250,000 EUR |
+
+### Verification Document Bundles (v1.6.0)
+
+| Diagram | Example File | Scenario |
+|---|---|---|
+| [document-bundle-natural-person.md](document-bundle-natural-person.md) | `document-bundle-natural-person.json` | Document bundle — Andreas Schmidt (DE), NID + proof of address + eIDAS PID, COMPLETE |
+| [document-bundle-legal-entity.md](document-bundle-legal-entity.md) | `document-bundle-legal-entity.json` | Document bundle — Acme Global Trading PLC (GB), 6 corporate docs (cert. of incorp. → PSC register), COMPLETE |
+
+### X.500 / X.509 PKI Evidence (v1.8.0)
+
+| Diagram | Example File | Scenario |
+|---|---|---|
+| [evidence/eidas-x509-dn.md](evidence/eidas-x509-dn.md) | `evidence/eidas-x509-dn.json` | QSeal X.509 + X.500 DN — Acme Bank PLC (GB), LEI in Subject DN via organizationIdentifier OID |
+| [evidence/eidas-x509-qeaa.md](evidence/eidas-x509-qeaa.md) | `evidence/eidas-x509-qeaa.json` | QEAA X.509 + X.500 DN — Anna Schmidt (DE), BSI-issued, QcCClegislation, certificateDocumentRef |
+
+### Predictive AML (v1.7.0)
+
+| Diagram | Example File | Scenario |
+|---|---|---|
+| [predictive/predictive-static.md](predictive/predictive-static.md) | `predictive/predictive-static.json` | Static snapshot — txn-risk-model-v3, transaction_anomaly 72.5 + customer_lifetime_risk 65.0, SHAP explainability |
+| [predictive/predictive-delta.md](predictive/predictive-delta.md) | `predictive/predictive-delta.json` | Delta monitoring — network_risk 45 + velocity_fraud 38.5, rising trend Jan→Apr (30→45), ACTIMIZE-CASE-2026-00441 |
+| [predictive/predictive-ai-high-risk.md](predictive/predictive-ai-high-risk.md) | `predictive/predictive-ai-high-risk.json` | EU AI Act high-risk — ubo-graph-risk-model-v1, all 3 scores VERY_HIGH (89/84.5/77), steep escalation Nov 2025→Apr 2026 |
+
+### Tax Status (v1.9.0 / v1.9.1)
+
+| Diagram | Example File | Scenario |
+|---|---|---|
+| [tax/tax-individual-tin.md](tax/tax-individual-tin.md) | `tax/tax-individual-tin.json` | Individual dual-country TINs — Robert Johnson (US), EIN (IRS) + functional-equivalent (HMRC) |
+| [tax/tax-corporate-vat-gst.md](tax/tax-corporate-vat-gst.md) | `tax/tax-corporate-vat-gst.json` | Corporate VAT + GST — TechGlobal Solutions GmbH (DE), DE VAT + IN GST registrations |
+| [tax/tax-fatca-crs.md](tax/tax-fatca-crs.md) | `tax/tax-fatca-crs.json` | FATCA GIIN + CRS residencies — Atlantic Asset Management Ltd (IE), `registeredDeemedCompliantFFI` |
+| [tax/tax-offshore-esr.md](tax/tax-offshore-esr.md) | `tax/tax-offshore-esr.json` | Economic Substance — Meridian Holdings Ltd (KY), holding + financing activities, CIMA ESR report |
+| [tax/tax-mne-pillar2.md](tax/tax-mne-pillar2.md) | `tax/tax-mne-pillar2.json` | Pillar Two GloBE — Apex Ireland Operations Ltd (IE), revenue €2.1B, IE ETR 12.5% below 15% floor |
+
+### Full-Stack Compliance Showcase
+
+| Diagram | Example File | Scenario |
+|---|---|---|
+| [amlr2027-fatca-ai-act.md](amlr2027-fatca-ai-act.md) | `amlr2027-fatca-ai-act.json` | All extensions active — Nexus Capital (IE), FATCA GIIN + CRS + Pillar Two + QSeal + predictive AML + FinCEN 314(b) |
+
+### OpenID4VP Presentation Definitions
+
+| Diagram | Example File | Scenario |
+|---|---|---|
+| [presentation-definitions/travel-rule-minimum.md](presentation-definitions/travel-rule-minimum.md) | `presentation-definitions/travel-rule-minimum.json` | W3C PE 2.0 Presentation Definition — FATF Rec 16 minimum claims via OpenID4VP |
 
 ---
 
