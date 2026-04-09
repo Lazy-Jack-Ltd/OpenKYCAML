@@ -1,9 +1,9 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://openkycaml.org/schema/v1.11.1/kyc-aml-hybrid-extended.json",
+  "$id": "https://openkycaml.org/schema/v1.11.2/kyc-aml-hybrid-extended.json",
   "title": "OpenKYCAML Hybrid KYC/AML Schema",
   "description": "Root OpenKYCAML document. At least one of 'ivms101' or 'verifiableCredential' MUST be present.",
-  "version": "1.11.1",
+  "version": "1.11.2",
   "$defs": {
     "NaturalPersonNameIdentifier": {
       "title": "NaturalPersonNameIdentifier",
@@ -3907,6 +3907,73 @@
         },
         "dataAggregationMetadata": {
           "$ref": "#/$defs/DataAggregationMetadata"
+        },
+        "cellLevelPredictiveScores": {
+          "type": "array",
+          "description": "Optional array of per-cell predictive AML scores for cell-structured entities (PCC/ICC). Each entry references a specific cell by its cellIdentifier and carries one or more risk scores. Enables cell-level predictive scoring where individual cells carry materially different risk profiles from the parent Core.",
+          "items": {
+            "type": "object",
+            "required": [
+              "cellIdentifier",
+              "scores"
+            ],
+            "properties": {
+              "cellIdentifier": {
+                "type": "string",
+                "description": "The cellIdentifier of the target cell (references CellCompanyDetails.cellIdentifier on the corresponding LegalPerson record).",
+                "maxLength": 64,
+                "pattern": "^[A-Za-z0-9 \\-]{1,64}$"
+              },
+              "scores": {
+                "type": "array",
+                "description": "One or more risk scores for this cell.",
+                "minItems": 1,
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "scoreType",
+                    "value",
+                    "confidence"
+                  ],
+                  "properties": {
+                    "scoreType": {
+                      "type": "string",
+                      "enum": [
+                        "transaction_anomaly",
+                        "network_risk",
+                        "velocity_fraud",
+                        "ubo_graph_risk",
+                        "customer_lifetime_risk"
+                      ],
+                      "description": "Type of predictive risk score."
+                    },
+                    "value": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 100,
+                      "description": "Score value on a 0–100 scale (0 = lowest risk, 100 = highest risk)."
+                    },
+                    "confidence": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 1,
+                      "description": "Model confidence in this score (0–1)."
+                    },
+                    "horizonDays": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "description": "Forward-looking horizon in calendar days over which the score is predictive."
+                    },
+                    "timestamp": {
+                      "type": "string",
+                      "format": "date-time",
+                      "description": "ISO 8601 date-time when this score was computed."
+                    }
+                  }
+                }
+              }
+            }
+          }
         }
       }
     },
@@ -4469,7 +4536,7 @@
         },
         "cellIdentifier": {
           "type": "string",
-          "description": "Unique cell number or designator assigned by the PCC/ICC (e.g. 'CELL-007', 'IC-003'). Used to distinguish cells within the same parent structure.",
+          "description": "Unique cell number or designator assigned by the PCC/ICC (e.g. 'CELL-007', 'IC-003'). This is the sole cell identifier field — do not use any historical draft name such as cellCompanyIdentifier (never adopted). Used to distinguish cells within the same parent structure.",
           "maxLength": 64,
           "pattern": "^[A-Za-z0-9 \\-]{1,64}$"
         },
@@ -4528,7 +4595,7 @@
     },
     "ParentCellCompanyReference": {
       "title": "ParentCellCompanyReference",
-      "description": "Reference to the parent PCC or ICC Core entity. Mandatory when the LegalPerson represents a cell (cellCompanyType is PCC_CELL or ICC_CELL). Provides the link required for FATF beneficial-ownership tracing, AMLR Art. 26 entity verification, and IVMS 101 counterparty identification across the Core/Cell structure. Prevents orphan cell records that cannot be linked to a legal person hierarchy.",
+      "description": "Reference to the parent PCC or ICC Core entity. Mandatory when the LegalPerson represents a cell (cellCompanyType is PCC_CELL or ICC_CELL). Provides the link required for FATF beneficial-ownership tracing, AMLR Art. 26 entity verification, and IVMS 101 counterparty identification across the Core/Cell structure. Prevents orphan cell records that cannot be linked to a legal person hierarchy. Use legalEntityIdentifier + jurisdiction as the primary reference link. For performance-critical or deeply-nested cell-of-cell payloads, avoid embedding full parent objects — reference by identifier only.",
       "type": "object",
       "required": [
         "legalEntityIdentifier",

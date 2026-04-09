@@ -15,6 +15,43 @@ For the full project roadmap and planned features, see [ROADMAP.md](ROADMAP.md).
 
 ---
 
+## [1.11.2] — April 2026
+
+### Fixed — v1.11.2 Polish (cell identifier disambiguation, recursion-depth guidance, predictive AML cell scores, compliance matrix)
+
+#### 1. Field-name disambiguation — `cellIdentifier` (Low)
+
+- **`schema/kyc-aml-hybrid-extended.json`** (`$defs` → `CellCompanyDetails`): clarified `cellIdentifier` description to explicitly state it is the sole cell identifier field; added note that the historical draft name `cellCompanyIdentifier` was never adopted.
+- **`docs/mappings/cell-company.md`** §3 table: added note to `cellIdentifier` row — *"This is the sole cell identifier field; do not use `cellCompanyIdentifier` (historical draft name, never adopted)."*
+
+#### 2. `ParentCellCompanyReference` recursion-depth guidance (Medium)
+
+- **`schema/kyc-aml-hybrid-extended.json`** (`$defs` → `ParentCellCompanyReference`): appended sentence — *"Use `legalEntityIdentifier` + `jurisdiction` as the primary reference link. For performance-critical or deeply-nested cell-of-cell payloads, avoid embedding full parent objects — reference by identifier only."*
+- **`docs/mappings/cell-company.md`** §4: mirrored the recursion-depth guidance as a blockquote.
+
+#### 3. Predictive AML — cell-level scores (Low)
+
+- **`schema/kyc-aml-hybrid-extended.json`** (`$defs` → `PredictiveAML`): added optional `cellLevelPredictiveScores[]` array. Each item has `cellIdentifier` (string, required) + `scores[]` (array with `scoreType`, `value`, `confidence`, optional `horizonDays` and `timestamp`).
+- **`schema/predictive-aml/v1.11.2.json`**: new versioned standalone PredictiveAML schema including `cellLevelPredictiveScores`.
+- **`docs/mappings/cell-company.md`** §5.1: new sub-section documenting `predictiveAML.cellLevelPredictiveScores[]` with field reference table.
+- **`examples/cell-company/pcc-cell-predictive-aml.json`**: new example showing a PCC cell with both `kycProfile.cellRiskProfileOverride` and `predictiveAML.cellLevelPredictiveScores`.
+
+#### 4. Compliance matrix — Cell structures row (Documentation)
+
+- **`docs/compliance/compliance-matrix.md`** §1 (FATF Rec. 24 and Rec. 25 rows): added explicit Cell structures (PCC/ICC) references to `cellCompanyDetails`, `parentCellCompanyReference`, `cellRiskProfileOverride` with cross-reference to §22.
+- **`docs/compliance/compliance-matrix.md`** §2 (AMLR Art. 26 row): added Cell structures cross-reference to §22.
+- Document footer updated to v1.11.2.
+
+#### 5. Version bump and snapshot
+
+- `schema/kyc-aml-hybrid-extended.json`: `$id` and `version` bumped to `v1.11.2`.
+- `schema/versions/v1.11.2.json`: versioned snapshot created.
+- `README.md`: schema version badge updated to `v1.11.2`.
+
+**No breaking changes.** All schema additions are optional properties; all documentation changes are additive.
+
+---
+
 ## [1.11.1] — April 2026
 
 ### Changed — Cell Company Constraints Promoted to Schema-Enforced Rules

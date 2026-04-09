@@ -1,0 +1,249 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schema.openkycaml.org/predictive-aml/v1.11.2.json",
+  "title": "OpenKYCAML PredictiveAML Extension v1.11.2",
+  "description": "Standalone predictive AML extension schema. Defines the PredictiveAML object for use as an optional top-level sibling to kycProfile in an OpenKYCAML envelope. Provides ML-ready, explainable, auditable risk payloads compliant with EU AI Act Art. 13 (high-risk AML system transparency), AMLR Art. 22(5) (third-party reliance with provenance), and BCBS 239 (risk data aggregation). v1.11.2 adds optional cellLevelPredictiveScores[] for per-cell scoring in PCC/ICC structures. For integration instructions see docs/guides/adoption-guide.md.",
+  "type": "object",
+  "required": [
+    "modelMetadata",
+    "predictiveScores"
+  ],
+  "properties": {
+    "modelMetadata": {
+      "type": "object",
+      "description": "EU AI Act-aligned model card metadata (Art. 13 transparency obligations for high-risk AI systems in AML).",
+      "required": [
+        "modelId",
+        "modelVersion",
+        "euAiActClassification"
+      ],
+      "properties": {
+        "modelId": {
+          "type": "string",
+          "description": "Unique identifier for the AML model (e.g. UUID or vendor model reference)."
+        },
+        "modelVersion": {
+          "type": "string",
+          "description": "Semantic version of the model (e.g. '2.3.1')."
+        },
+        "provider": {
+          "type": "string",
+          "description": "Name or DID of the model provider / vendor."
+        },
+        "trainingDate": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 date-time when the model was last trained."
+        },
+        "euAiActClassification": {
+          "type": "string",
+          "enum": [
+            "high-risk-aml",
+            "limited-risk",
+            "minimal-risk"
+          ],
+          "description": "EU AI Act Annex III classification. AML transaction monitoring and customer risk scoring systems are presumed 'high-risk-aml' under Art. 6(2) and Annex III point 5(b)."
+        },
+        "conformityAssessmentReference": {
+          "type": "string",
+          "description": "Reference to the EU AI Act conformity assessment record (Art. 43) or notified body certificate number. Required when euAiActClassification = 'high-risk-aml'."
+        }
+      }
+    },
+    "predictiveScores": {
+      "type": "array",
+      "description": "Array of typed predictive risk scores produced by the model.",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "scoreType",
+          "value",
+          "confidence"
+        ],
+        "properties": {
+          "scoreType": {
+            "type": "string",
+            "enum": [
+              "transaction_anomaly",
+              "network_risk",
+              "velocity_fraud",
+              "ubo_graph_risk",
+              "customer_lifetime_risk"
+            ],
+            "description": "Type of predictive risk score."
+          },
+          "value": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100,
+            "description": "Score value on a 0-100 scale (0 = lowest risk, 100 = highest risk)."
+          },
+          "confidence": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "description": "Model confidence in this score (0-1). EU AI Act Art. 13(3)(b)(iv) requires confidence or reliability information."
+          },
+          "horizonDays": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Forward-looking horizon in calendar days (e.g. 30 = 30-day anomaly probability)."
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "description": "ISO 8601 date-time when this score was computed."
+          }
+        }
+      }
+    },
+    "featureVector": {
+      "type": "object",
+      "description": "Optional hashed or privacy-preserved feature vector used to generate the scores. Keys are feature names; values are numeric, string, or boolean. Personal data MUST be hashed or pseudonymised before inclusion (GDPR Art. 25 data minimisation).",
+      "additionalProperties": {
+        "type": [
+          "number",
+          "string",
+          "boolean"
+        ]
+      }
+    },
+    "explainability": {
+      "type": "object",
+      "description": "EU AI Act Art. 13 explainability output.",
+      "properties": {
+        "method": {
+          "type": "string",
+          "enum": [
+            "SHAP",
+            "LIME",
+            "counterfactual"
+          ],
+          "description": "Explainability method used."
+        },
+        "values": {
+          "type": "object",
+          "description": "Method-specific explanation output (e.g. SHAP feature importance values keyed by feature name).",
+          "additionalProperties": {}
+        }
+      }
+    },
+    "riskEvolutionHistory": {
+      "type": "array",
+      "description": "Ordered history of overall risk snapshots enabling delta-based continuous KYC (cKYC).",
+      "items": {
+        "type": "object",
+        "properties": {
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "overallRiskScore": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "deltaFromPrevious": {
+            "type": "number"
+          }
+        }
+      }
+    },
+    "alertCorrelationId": {
+      "type": "string",
+      "description": "Opaque correlation identifier linking this predictive payload to a transaction monitoring alert. Enables closed-loop feedback from alert disposition to model retrain."
+    },
+    "dataAggregationMetadata": {
+      "type": "object",
+      "description": "BCBS 239 risk data aggregation metadata.",
+      "properties": {
+        "bcbs239ComplianceLevel": {
+          "type": "string",
+          "enum": [
+            "full",
+            "partial",
+            "gap-analysis"
+          ],
+          "description": "Self-assessed BCBS 239 compliance level for this data aggregation."
+        },
+        "lastAggregationTimestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 date-time of the most recent data aggregation run."
+        },
+        "dataLineageReference": {
+          "type": "string",
+          "description": "Opaque reference to the data lineage or provenance record."
+        }
+      }
+    },
+    "cellLevelPredictiveScores": {
+      "type": "array",
+      "description": "Optional array of per-cell predictive AML scores for cell-structured entities (PCC/ICC). Each entry references a specific cell by its cellIdentifier and carries one or more risk scores. Enables cell-level predictive scoring where individual cells carry materially different risk profiles from the parent Core.",
+      "items": {
+        "type": "object",
+        "required": [
+          "cellIdentifier",
+          "scores"
+        ],
+        "properties": {
+          "cellIdentifier": {
+            "type": "string",
+            "description": "The cellIdentifier of the target cell (references CellCompanyDetails.cellIdentifier on the corresponding LegalPerson record).",
+            "maxLength": 64,
+            "pattern": "^[A-Za-z0-9 \\-]{1,64}$"
+          },
+          "scores": {
+            "type": "array",
+            "description": "One or more risk scores for this cell.",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "required": [
+                "scoreType",
+                "value",
+                "confidence"
+              ],
+              "properties": {
+                "scoreType": {
+                  "type": "string",
+                  "enum": [
+                    "transaction_anomaly",
+                    "network_risk",
+                    "velocity_fraud",
+                    "ubo_graph_risk",
+                    "customer_lifetime_risk"
+                  ],
+                  "description": "Type of predictive risk score."
+                },
+                "value": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 100,
+                  "description": "Score value on a 0–100 scale (0 = lowest risk, 100 = highest risk)."
+                },
+                "confidence": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1,
+                  "description": "Model confidence in this score (0–1)."
+                },
+                "horizonDays": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "description": "Forward-looking horizon in calendar days over which the score is predictive."
+                },
+                "timestamp": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "ISO 8601 date-time when this score was computed."
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
