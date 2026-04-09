@@ -15,6 +15,34 @@ For the full project roadmap and planned features, see [ROADMAP.md](ROADMAP.md).
 
 ---
 
+## [1.11.1] — April 2026
+
+### Changed — Cell Company Constraints Promoted to Schema-Enforced Rules
+
+Both cell company conditions that were previously advisory business warnings in the Python and Node.js validators have been promoted to hard JSON Schema `if`/`then` constraints. Payloads that violate them now fail schema validation rather than producing warnings.
+
+#### Schema changes (`$defs`)
+
+**`CellCompanyDetails`** — new `if`/`then` at the object level:
+- If `isCellCompanyIssuer` is `true` → `issuancePurpose` is **required**.
+- Prevents issuer vehicles from omitting instrument-level classification (previously a soft advisory).
+
+**`LegalPerson`** — existing `if`/`then`/`else` chain (entityType → typed sub-object) restructured into `allOf` to support multiple independent conditionals; new constraint added:
+- If `cellCompanyDetails.cellCompanyType` is `PCC_CELL` or `ICC_CELL` → `parentCellCompanyReference` is **required**.
+- Prevents orphan cell records that cannot be linked to a PCC/ICC Core (previously a soft advisory; now a schema validation error).
+
+#### Validator changes
+
+- **Python validator** (`tools/python/validator.py`) — cell company advisory warning blocks removed; conditions are now enforced by the schema itself.
+- **Node.js validator** (`tools/javascript/validator.js`) — same removal.
+
+#### Backward compatibility
+
+- Payloads that previously satisfied both conditions (cell with parent ref; issuer with purpose) are unaffected — they still validate correctly.
+- Payloads that previously triggered warnings will now fail schema validation. This is the intended behaviour: the conditions represent genuine compliance requirements (FATF Rec. 24, AMLR Art. 26) that must be enforced, not just advised upon.
+
+---
+
 ## [1.11.0] — April 2026
 
 ### Added — Cell Company Support (PCC / ICC)

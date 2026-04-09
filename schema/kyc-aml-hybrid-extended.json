@@ -1,9 +1,9 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://openkycaml.org/schema/v1.11.0/kyc-aml-hybrid-extended.json",
+  "$id": "https://openkycaml.org/schema/v1.11.1/kyc-aml-hybrid-extended.json",
   "title": "OpenKYCAML Hybrid KYC/AML Schema",
   "description": "Root OpenKYCAML document. At least one of 'ivms101' or 'verifiableCredential' MUST be present.",
-  "version": "1.11.0",
+  "version": "1.11.1",
   "$defs": {
     "NaturalPersonNameIdentifier": {
       "title": "NaturalPersonNameIdentifier",
@@ -542,7 +542,7 @@
         },
         "parentCellCompanyReference": {
           "$ref": "#/$defs/ParentCellCompanyReference",
-          "description": "Reference to the parent PCC or ICC Core. Should be present whenever cellCompanyDetails.cellCompanyType is PCC_CELL or ICC_CELL. Validators emit a warning if this field is absent for a cell."
+          "description": "Required (schema-enforced) when cellCompanyDetails.cellCompanyType is PCC_CELL or ICC_CELL. References the parent PCC/ICC Core for FATF beneficial-ownership tracing and AMLR Art. 26 entity verification. Optional (and ignored) for PCC_CORE, ICC_CORE, and NONE types."
         },
         "cellRiskProfileOverride": {
           "$ref": "#/$defs/RiskSnapshot",
@@ -557,42 +557,12 @@
           "description": "Cell-specific audit and provenance metadata. Separate from the Core audit trail to enable per-cell record keeping (AMLR Art. 56 — 5-year minimum retention) and change tracking for cell-level compliance events."
         }
       },
-      "if": {
-        "properties": {
-          "entityType": {
-            "const": "TRUST"
-          }
-        },
-        "required": [
-          "entityType"
-        ]
-      },
-      "then": {
-        "required": [
-          "trustDetails"
-        ]
-      },
-      "else": {
-        "if": {
-          "properties": {
-            "entityType": {
-              "const": "FOUNDATION"
-            }
-          },
-          "required": [
-            "entityType"
-          ]
-        },
-        "then": {
-          "required": [
-            "foundationDetails"
-          ]
-        },
-        "else": {
+      "allOf": [
+        {
           "if": {
             "properties": {
               "entityType": {
-                "const": "PARTNERSHIP"
+                "const": "TRUST"
               }
             },
             "required": [
@@ -601,11 +571,78 @@
           },
           "then": {
             "required": [
-              "partnershipDetails"
+              "trustDetails"
             ]
+          },
+          "else": {
+            "if": {
+              "properties": {
+                "entityType": {
+                  "const": "FOUNDATION"
+                }
+              },
+              "required": [
+                "entityType"
+              ]
+            },
+            "then": {
+              "required": [
+                "foundationDetails"
+              ]
+            },
+            "else": {
+              "if": {
+                "properties": {
+                  "entityType": {
+                    "const": "PARTNERSHIP"
+                  }
+                },
+                "required": [
+                  "entityType"
+                ]
+              },
+              "then": {
+                "required": [
+                  "partnershipDetails"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "cellCompanyDetails": {
+                "properties": {
+                  "cellCompanyType": {
+                    "enum": [
+                      "PCC_CELL",
+                      "ICC_CELL"
+                    ]
+                  }
+                },
+                "required": [
+                  "cellCompanyType"
+                ]
+              }
+            },
+            "required": [
+              "cellCompanyDetails"
+            ]
+          },
+          "then": {
+            "required": [
+              "parentCellCompanyReference"
+            ],
+            "properties": {
+              "parentCellCompanyReference": {
+                "$ref": "#/$defs/ParentCellCompanyReference",
+                "description": "Required (schema-enforced) when cellCompanyDetails.cellCompanyType is PCC_CELL or ICC_CELL. References the parent PCC/ICC Core for FATF beneficial-ownership tracing and AMLR Art. 26 entity verification."
+              }
+            }
           }
         }
-      }
+      ]
     },
     "TrustDetails": {
       "title": "TrustDetails",
@@ -4453,11 +4490,11 @@
         },
         "isCellCompanyIssuer": {
           "type": "boolean",
-          "description": "True when this cell is used as a securities issuer or issuance vehicle (e.g. for ILS, catastrophe bonds, structured notes). When true, issuancePurpose and cellSpecificInstrumentReference should be populated."
+          "description": "True when this cell is used as a securities issuer or issuance vehicle (e.g. for ILS, catastrophe bonds, structured notes). When true, issuancePurpose is required."
         },
         "issuancePurpose": {
           "type": "string",
-          "description": "Purpose of issuance when this cell is used as an issuer vehicle. Required when isCellCompanyIssuer is true.",
+          "description": "Purpose of issuance when this cell is used as an issuer vehicle. Required (schema-enforced) when isCellCompanyIssuer is true.",
           "enum": [
             "INSURANCE_LINKED_SECURITY",
             "CATASTROPHE_BOND",
@@ -4472,7 +4509,22 @@
           "description": "URI reference to the specific security, ILS instrument, or programme document issued by this cell (e.g. a link to the prospectus or term sheet on a regulatory filing system)."
         }
       },
-      "additionalProperties": false
+      "additionalProperties": false,
+      "if": {
+        "properties": {
+          "isCellCompanyIssuer": {
+            "const": true
+          }
+        },
+        "required": [
+          "isCellCompanyIssuer"
+        ]
+      },
+      "then": {
+        "required": [
+          "issuancePurpose"
+        ]
+      }
     },
     "ParentCellCompanyReference": {
       "title": "ParentCellCompanyReference",

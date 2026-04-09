@@ -548,15 +548,17 @@ Cell companies (Protected Cell Companies and Incorporated Cell Companies) are sp
 | `cellSourceOfFundsWealth` | `SourceOfFundsWealth` | AMLR Art. 29; FATF Rec. 12 higher-risk countries |
 | `cellAuditMetadata` | `AuditMetadata` | AMLR Art. 56 5-year record retention per cell |
 
-### 22.5 Validator Business Warnings
+### 22.5 Schema-Enforced Constraints (v1.11.1)
 
-| Condition | Warning |
-|---|---|
-| `cellCompanyType` is PCC_CELL/ICC_CELL + no `parentCellCompanyReference` | FATF beneficial-ownership tracing requires parent link (AMLR Art. 26) |
-| `isCellCompanyIssuer: true` + no `issuancePurpose` | Instrument-level classification required for risk assessment |
+The following conditions were originally validator business warnings (v1.11.0) and were promoted to hard JSON Schema `if`/`then` constraints in v1.11.1. Payloads that violate them **fail schema validation**.
 
-_✅ = full field mapping. ⭐ = added in v1.11.0. All additions backward-compatible._
+| Condition | Enforcement mechanism | Regulatory basis |
+|---|---|---|
+| `cellCompanyType` is PCC_CELL/ICC_CELL + no `parentCellCompanyReference` | `LegalPerson` `allOf` `if`/`then` | FATF Rec. 24; AMLR Art. 26 |
+| `isCellCompanyIssuer: true` + no `issuancePurpose` | `CellCompanyDetails` `if`/`then` | AML/CFT instrument-level risk classification |
+
+_✅ = full field mapping. ⭐ = added in v1.11.0. ⭐⭐ = promoted to hard constraint in v1.11.1. All additions backward-compatible._
 
 ---
 
-*Last updated: v1.11.0 — April 2026. Maintained by the OpenKYCAML Technical Working Group.*
+*Last updated: v1.11.1 — April 2026. Maintained by the OpenKYCAML Technical Working Group.*

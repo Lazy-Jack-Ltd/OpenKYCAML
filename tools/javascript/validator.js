@@ -313,37 +313,6 @@ class OpenKYCAMLValidator {
       }
     }
 
-    // Cell company warnings (v1.11.0).
-    const cellPartyChecks = [
-      { partyKey: 'originator', personsKey: 'originatorPersons' },
-      { partyKey: 'beneficiary', personsKey: 'beneficiaryPersons' },
-    ];
-    for (const { partyKey, personsKey } of cellPartyChecks) {
-      const persons = ((ivms[partyKey] || {})[personsKey]) || [];
-      for (let idx = 0; idx < persons.length; idx++) {
-        const lp = persons[idx].legalPerson;
-        if (lp) {
-          const ccd = lp.cellCompanyDetails || {};
-          const cellType = ccd.cellCompanyType;
-          if ((cellType === 'PCC_CELL' || cellType === 'ICC_CELL') && !lp.parentCellCompanyReference) {
-            warns.push(
-              `ivms101.${partyKey}.${personsKey}[${idx}].legalPerson has ` +
-              `cellCompanyDetails.cellCompanyType '${cellType}' but no ` +
-              'parentCellCompanyReference — FATF beneficial-ownership tracing and ' +
-              'AMLR Art. 26 entity verification require an explicit link to the parent PCC/ICC Core.'
-            );
-          }
-          if (ccd.isCellCompanyIssuer && !ccd.issuancePurpose) {
-            warns.push(
-              `ivms101.${partyKey}.${personsKey}[${idx}].legalPerson ` +
-              'cellCompanyDetails.isCellCompanyIssuer is true but issuancePurpose is ' +
-              'absent — populate issuancePurpose for instrument-level classification.'
-            );
-          }
-        }
-      }
-    }
-
     return warns;
   }
 }

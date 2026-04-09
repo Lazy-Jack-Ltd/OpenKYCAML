@@ -1,6 +1,6 @@
 # Cell Company Structures — PCC and ICC KYC/AML Mapping
 
-This document describes the cell company support added in **OpenKYCAML v1.11.0**, covering Protected Cell Companies (PCC) and Incorporated Cell Companies (ICC). It explains the legal structures, field-level schema design, regulatory rationale, and alignment with FATF, AMLR 2024, IVMS 101, and eIDAS.
+This document describes the cell company support added in **OpenKYCAML v1.11.0** and updated in **v1.11.1**, covering Protected Cell Companies (PCC) and Incorporated Cell Companies (ICC). It explains the legal structures, field-level schema design, regulatory rationale, and alignment with FATF, AMLR 2024, IVMS 101, and eIDAS.
 
 ---
 
@@ -11,7 +11,7 @@ This document describes the cell company support added in **OpenKYCAML v1.11.0**
 3. [CellCompanyDetails Field Reference](#3-cellcompanydetails)
 4. [ParentCellCompanyReference](#4-parentcellcompanyreference)
 5. [LegalPerson Cell Extensions](#5-legalperson-extensions)
-6. [Validator Business Warnings](#6-validator-warnings)
+6. [Schema-Enforced Constraints](#6-schema-enforced-constraints)
 7. [Regulatory Alignment](#7-regulatory-alignment)
 8. [Backward Compatibility](#8-backward-compatibility)
 
@@ -95,15 +95,16 @@ All optional. Absent for ordinary non-cell companies.
 
 ---
 
-## 6. Validator Business Warnings
+## 6. Schema-Enforced Constraints (v1.11.1)
 
-Validators emit advisory warnings (not schema errors) for:
+The following conditions are enforced as hard JSON Schema `if`/`then` rules. Payloads that violate them **fail schema validation** — they do not produce soft warnings.
 
-1. **Orphan cell**: `cellCompanyType` is `PCC_CELL` or `ICC_CELL` but `parentCellCompanyReference` is absent.
-   > FATF beneficial-ownership tracing and AMLR Art. 26 entity verification require an explicit link to the parent PCC/ICC Core.
+| Condition | Schema mechanism | Regulatory basis |
+|---|---|---|
+| `cellCompanyType` is `PCC_CELL` or `ICC_CELL` → `parentCellCompanyReference` **required** | `LegalPerson` `allOf` `if`/`then` | FATF Rec. 24; AMLR Art. 26(2)(b) — beneficial-ownership chain tracing requires an explicit parent link |
+| `isCellCompanyIssuer: true` → `issuancePurpose` **required** | `CellCompanyDetails` `if`/`then` | AML/CFT risk classification; instrument-type disclosure for EDD |
 
-2. **Issuer without purpose**: `isCellCompanyIssuer: true` but `issuancePurpose` is absent.
-   > Populate `issuancePurpose` for instrument-level AML/CFT risk classification.
+> **Note (v1.11.0 → v1.11.1):** Both of these were originally implemented as soft validator advisories in v1.11.0. They were promoted to hard schema constraints in v1.11.1 because both conditions represent genuine regulatory requirements that must be enforced at the data level, not merely advised upon. The validator business-warning code blocks were removed in the same patch.
 
 ---
 
