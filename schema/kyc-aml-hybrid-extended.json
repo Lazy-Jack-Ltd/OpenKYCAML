@@ -1,13 +1,13 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://openkycaml.org/schema/v1.9.1/kyc-aml-hybrid-extended.json",
+  "$id": "https://openkycaml.org/schema/v1.10.0/kyc-aml-hybrid-extended.json",
   "title": "OpenKYCAML Hybrid KYC/AML Schema",
   "description": "Root OpenKYCAML document. At least one of 'ivms101' or 'verifiableCredential' MUST be present.",
-  "version": "1.9.1",
+  "version": "1.10.0",
   "$defs": {
     "NaturalPersonNameIdentifier": {
       "title": "NaturalPersonNameIdentifier",
-      "description": "Structured name components for a natural person (IVMS 101 \u00a73.2).",
+      "description": "Structured name components for a natural person (IVMS 101 §3.2).",
       "type": "object",
       "required": [
         "primaryIdentifier",
@@ -39,7 +39,7 @@
     },
     "Address": {
       "title": "Address",
-      "description": "Structured postal address (IVMS 101 \u00a73.5).",
+      "description": "Structured postal address (IVMS 101 §3.5).",
       "type": "object",
       "required": [
         "country"
@@ -88,7 +88,9 @@
         },
         "postCode": {
           "type": "string",
-          "maxLength": 16
+          "maxLength": 16,
+          "pattern": "^[A-Z0-9\\- ]{2,10}$",
+          "description": "Postal code / ZIP code. Structurally validated: 2–10 uppercase alphanumeric characters with hyphens and spaces. Country-specific format validation is a runtime concern (e.g. UK postcode: SW1A 2AA, US ZIP: 10001, DE PLZ: 10115)."
         },
         "townName": {
           "type": "string",
@@ -124,7 +126,7 @@
     },
     "NationalIdentification": {
       "title": "NationalIdentification",
-      "description": "National identification document (IVMS 101 \u00a73.6).",
+      "description": "National identification document (IVMS 101 §3.6).",
       "type": "object",
       "required": [
         "nationalIdentifier",
@@ -160,8 +162,9 @@
         },
         "registrationAuthority": {
           "type": "string",
-          "description": "Registration authority (required when nationalIdentifierType is LEIX).",
-          "maxLength": 8
+          "description": "Registration authority (required when nationalIdentifierType is LEIX). Pattern-validated: GLEIF Registration Authority List (RAL) code format RA followed by 6 digits (e.g. RA000585 = UK Companies House). Aligns with RegistrationAuthorityDetail.ralCode.",
+          "maxLength": 8,
+          "pattern": "^RA[0-9]{6}$"
         },
         "verifyingDocumentRef": {
           "type": "string",
@@ -176,7 +179,7 @@
     },
     "DateAndPlaceOfBirth": {
       "title": "DateAndPlaceOfBirth",
-      "description": "Birth information for a natural person (IVMS 101 \u00a73.3).",
+      "description": "Birth information for a natural person (IVMS 101 §3.3).",
       "type": "object",
       "required": [
         "dateOfBirth",
@@ -190,7 +193,7 @@
         },
         "placeOfBirth": {
           "type": "string",
-          "description": "City or municipality of birth. Maps to eIDAS 2.0 PID attribute 'birth_place' (optional in eIDAS; required by IVMS 101 \u00a73.3).",
+          "description": "City or municipality of birth. Maps to eIDAS 2.0 PID attribute 'birth_place' (optional in eIDAS; required by IVMS 101 §3.3).",
           "maxLength": 70
         }
       }
@@ -262,12 +265,37 @@
           "type": "string",
           "description": "ISO 3166-1 alpha-2 nationality of the natural person. Maps to eIDAS 2.0 PID attribute 'nationality'. Use when nationality differs from country of residence.",
           "pattern": "^[A-Z]{2}$"
+        },
+        "emailAddress": {
+          "type": "string",
+          "format": "email",
+          "description": "Primary email address of the natural person. RFC 5321 format-validated. Used in FATF Rec. 16 contact data requirements, AMLR Art. 22 CDD verification, and eIDAS onboarding notification flows.",
+          "maxLength": 254
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "Primary telephone number in E.164 international format (e.g. '+447911123456'). Format: '+' followed by country code and subscriber number, 2–15 digits total.",
+          "pattern": "^\\+[1-9]\\d{1,14}$",
+          "maxLength": 16
+        },
+        "mobileNumber": {
+          "type": "string",
+          "description": "Mobile / cell phone number in E.164 international format. Used for mTAN/OTP delivery in remote CDD flows (AMLR Art. 22(5)) and EUDI Wallet notification. Separate from phoneNumber to support voice + SMS differentiation.",
+          "pattern": "^\\+[1-9]\\d{1,14}$",
+          "maxLength": 16
+        },
+        "bankingDetails": {
+          "type": "array",
+          "description": "Verified banking account details for this natural person. Supports IBAN/BIC-validated account records for FATF Rec. 16 correspondent banking checks, AMLR Art. 22 source-of-funds verification, and ISO 20022 payment instruction pre-population.",
+          "items": {
+            "$ref": "#/$defs/BankingDetails"
+          }
         }
       }
     },
     "LegalPersonNameIdentifier": {
       "title": "LegalPersonNameIdentifier",
-      "description": "Structured name identifier for a legal person (IVMS 101 \u00a73.8).",
+      "description": "Structured name identifier for a legal person (IVMS 101 §3.8).",
       "type": "object",
       "required": [
         "legalPersonName",
@@ -315,8 +343,9 @@
         },
         "vatRegistrationNumber": {
           "type": "string",
-          "description": "VAT registration number of the legal entity. Optional LPID attribute.",
-          "maxLength": 50
+          "description": "VAT registration number of the legal entity. Optional LPID attribute. Structurally validated: 2-char ISO 3166-1 country prefix + 2–12 alphanumeric characters covering EU VAT format (e.g. GB123456789, DE123456789).",
+          "maxLength": 50,
+          "pattern": "^[A-Z]{2}[A-Z0-9]{2,12}$"
         },
         "taxReferenceNumber": {
           "type": "string",
@@ -325,8 +354,9 @@
         },
         "europeanUniqueIdentifier": {
           "type": "string",
-          "description": "European Unique Identifier (EUID) per Directive (EU) 2017/1132 (company register cross-border identifier). Optional LPID attribute.",
-          "maxLength": 50
+          "description": "European Unique Identifier (EUID) per Directive (EU) 2017/1132 (company register cross-border identifier). Optional LPID attribute. Structurally validated: CC-RegistrationAuthority-RegistrationNumber (eIDAS EUID format per Directive (EU) 2017/1132).",
+          "maxLength": 50,
+          "pattern": "^[A-Z]{2}-[A-Za-z0-9.\\-]{6,40}$"
         },
         "lei": {
           "type": "string",
@@ -335,12 +365,13 @@
         },
         "eoriNumber": {
           "type": "string",
-          "description": "Economic Operators Registration and Identification (EORI) number. Optional LPID attribute used for customs and trade identification.",
-          "maxLength": 50
+          "description": "Economic Operators Registration and Identification (EORI) number. Optional LPID attribute used for customs and trade identification. Structurally validated: 2-char ISO 3166-1 country prefix + 1–15 alphanumeric characters (EU/UK EORI format).",
+          "maxLength": 50,
+          "pattern": "^[A-Z]{2}[A-Z0-9]{1,15}$"
         },
         "mandates": {
           "type": "array",
-          "description": "Representation and mandate records \u2014 natural persons authorised to act on behalf of the legal entity. Supports AMLR authorised representative and beneficial owner verification. May be conveyed as QEAAs in EUDI Wallet flows.",
+          "description": "Representation and mandate records — natural persons authorised to act on behalf of the legal entity. Supports AMLR authorised representative and beneficial owner verification. May be conveyed as QEAAs in EUDI Wallet flows.",
           "items": {
             "type": "object",
             "required": [
@@ -435,7 +466,7 @@
         },
         "lpid": {
           "$ref": "#/$defs/LegalPersonIdentificationData",
-          "description": "Optional eIDAS 2.0 Legal Person Identification Data (LPID) block. Carries LPID-specific attributes (current legal name, unique identifier, VAT, EORI, LEI, mandates) for EUDI Wallet and AMLR high-assurance CDD flows. Backward-compatible \u2014 omit for pure IVMS 101 usage."
+          "description": "Optional eIDAS 2.0 Legal Person Identification Data (LPID) block. Carries LPID-specific attributes (current legal name, unique identifier, VAT, EORI, LEI, mandates) for EUDI Wallet and AMLR high-assurance CDD flows. Backward-compatible — omit for pure IVMS 101 usage."
         },
         "legalFormCode": {
           "type": "string",
@@ -479,6 +510,31 @@
           "type": "string",
           "format": "uri",
           "description": "Reference to the LegalEntityDocument record (by documentRef URI) in identityDocuments.legalEntityDocuments[] that confirmed the legalFormCode via the GLEIF RAL. Typically a REGISTRY_EXTRACT or CERTIFICATE_OF_INCORPORATION record."
+        },
+        "emailAddress": {
+          "type": "string",
+          "format": "email",
+          "description": "Primary business email address of the legal person. RFC 5321 format-validated. Used in FATF Rec. 16 counterparty contact requirements and AMLR Art. 22 legal entity CDD.",
+          "maxLength": 254
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "Primary business telephone number in E.164 international format (e.g. '+4930123456'). Format: '+' followed by country code and subscriber number, 2–15 digits total.",
+          "pattern": "^\\+[1-9]\\d{1,14}$",
+          "maxLength": 16
+        },
+        "mobileNumber": {
+          "type": "string",
+          "description": "Mobile contact number for authorised representative or compliance contact, in E.164 international format. Used for OTP/notification delivery in remote CDD and EUDI Wallet mandate verification.",
+          "pattern": "^\\+[1-9]\\d{1,14}$",
+          "maxLength": 16
+        },
+        "bankingDetails": {
+          "type": "array",
+          "description": "Verified banking account details for this legal entity. Supports IBAN/BIC-validated account records for correspondent banking due diligence (FATF Rec. 16), AMLR Art. 22 source-of-funds verification, and ISO 20022 payment instruction pre-population.",
+          "items": {
+            "$ref": "#/$defs/BankingDetails"
+          }
         }
       },
       "if": {
@@ -851,7 +907,7 @@
     },
     "Originator": {
       "title": "Originator",
-      "description": "IVMS 101 originator \u2014 the sending party in a virtual asset transfer.",
+      "description": "IVMS 101 originator — the sending party in a virtual asset transfer.",
       "type": "object",
       "required": [
         "originatorPersons"
@@ -888,7 +944,9 @@
           "type": "array",
           "items": {
             "type": "string",
-            "maxLength": 100
+            "maxLength": 100,
+            "pattern": "^[A-Za-z0-9\\-\\/.]{1,100}$",
+            "description": "Account number or virtual asset wallet address. Structurally validated: 1–100 alphanumeric characters (mixed case) with hyphens, slashes, and periods (covers IBANs, BICs, crypto addresses — Ethereum 0x hex, Bitcoin bech32 — and proprietary account identifiers)."
           },
           "description": "Account numbers or virtual asset wallet addresses of the originator."
         }
@@ -896,7 +954,7 @@
     },
     "Beneficiary": {
       "title": "Beneficiary",
-      "description": "IVMS 101 beneficiary \u2014 the receiving party in a virtual asset transfer.",
+      "description": "IVMS 101 beneficiary — the receiving party in a virtual asset transfer.",
       "type": "object",
       "required": [
         "beneficiaryPersons"
@@ -933,7 +991,9 @@
           "type": "array",
           "items": {
             "type": "string",
-            "maxLength": 100
+            "maxLength": 100,
+            "pattern": "^[A-Za-z0-9\\-\\/.]{1,100}$",
+            "description": "Account number or virtual asset wallet address. Structurally validated: 1–100 alphanumeric characters (mixed case) with hyphens, slashes, and periods (covers IBANs, BICs, crypto addresses — Ethereum 0x hex, Bitcoin bech32 — and proprietary account identifiers)."
           },
           "description": "Account numbers or virtual asset wallet addresses of the beneficiary."
         }
@@ -941,7 +1001,7 @@
     },
     "VASP": {
       "title": "VASP",
-      "description": "Virtual Asset Service Provider identifier (IVMS 101 \u00a73.14).",
+      "description": "Virtual Asset Service Provider identifier (IVMS 101 §3.14).",
       "type": "object",
       "properties": {
         "name": {
@@ -991,7 +1051,7 @@
           "items": {
             "$ref": "#/$defs/VASP"
           },
-          "description": "Ordered list of intermediate VASPs in the transfer chain (IVMS 101 \u00a73.15)."
+          "description": "Ordered list of intermediate VASPs in the transfer chain (IVMS 101 §3.15)."
         },
         "payloadMetadata": {
           "type": "object",
@@ -1029,8 +1089,9 @@
             },
             "assetType": {
               "type": "string",
-              "description": "Asset type code (e.g., BTC, ETH, USD, EUR).",
-              "maxLength": 20
+              "description": "Asset type code. ISO 4217 currency code (3 chars) or crypto-asset ticker (3–10 uppercase chars), e.g. 'BTC', 'ETH', 'EUR', 'USDT'.",
+              "maxLength": 20,
+              "pattern": "^[A-Z]{3,10}$"
             }
           }
         }
@@ -1091,7 +1152,7 @@
     },
     "VerifiableCredentialWrapper": {
       "title": "VerifiableCredentialWrapper",
-      "description": "Optional W3C Verifiable Credential envelope conforming to W3C VC Data Model v1.1 (v2-compatible structure) and eIDAS 2.0 ARF \u00a76.3. When present, the IVMS101 payload and kycProfile are transported as credentialSubject. Note: the @context[0] uses the W3C VC DM v1.1 URL; migration to the v2 URL is planned for v2.0.0.",
+      "description": "Optional W3C Verifiable Credential envelope conforming to W3C VC Data Model v1.1 (v2-compatible structure) and eIDAS 2.0 ARF §6.3. When present, the IVMS101 payload and kycProfile are transported as credentialSubject. Note: the @context[0] uses the W3C VC DM v1.1 URL; migration to the v2 URL is planned for v2.0.0.",
       "type": "object",
       "required": [
         "@context",
@@ -1237,7 +1298,7 @@
         },
         "evidence": {
           "type": "array",
-          "description": "W3C VC \u00a76.4 evidence block. Used in EUDI Wallet flows to reference the source credential(s) \u2014 typically a PID or LPID \u2014 that were presented by the subject and from which the IVMS 101 / kycProfile data was derived. Enables triangulation of the identity chain: PID Issuer \u2192 Subject Wallet \u2192 VASP.",
+          "description": "W3C VC §6.4 evidence block. Used in EUDI Wallet flows to reference the source credential(s) — typically a PID or LPID — that were presented by the subject and from which the IVMS 101 / kycProfile data was derived. Enables triangulation of the identity chain: PID Issuer → Subject Wallet → VASP.",
           "items": {
             "type": "object",
             "required": [
@@ -1306,7 +1367,7 @@
         },
         "selectiveDisclosure": {
           "type": "object",
-          "description": "SD-JWT VC selective disclosure metadata (IETF draft-ietf-oauth-sd-jwt-vc / ARF \u00a76.3.4). Present when this credential is issued or presented as an SD-JWT VC.",
+          "description": "SD-JWT VC selective disclosure metadata (IETF draft-ietf-oauth-sd-jwt-vc / ARF §6.3.4). Present when this credential is issued or presented as an SD-JWT VC.",
           "properties": {
             "_sd_alg": {
               "type": "string",
@@ -1325,7 +1386,7 @@
             },
             "requiredClaimPaths": {
               "type": "array",
-              "description": "JSON Pointer paths always revealed \u2014 never withheld. Includes FATF Travel Rule mandatory fields.",
+              "description": "JSON Pointer paths always revealed — never withheld. Includes FATF Travel Rule mandatory fields.",
               "items": {
                 "type": "string"
               }
@@ -1342,7 +1403,7 @@
                 "properties": {
                   "salt": {
                     "type": "string",
-                    "description": "Random salt value (base64url, \u2265128 bits entropy)."
+                    "description": "Random salt value (base64url, ≥128 bits entropy)."
                   },
                   "claimName": {
                     "type": "string",
@@ -1380,7 +1441,7 @@
         },
         "pepCategory": {
           "type": "string",
-          "description": "PEP classification category aligned to the AMLA draft RTS taxonomy (AMLR Art. 28\u201331). Primary values: DOMESTIC_PEP, FOREIGN_PEP, INTERNATIONAL_ORGANISATION, FAMILY_MEMBER_OF_PEP, CLOSE_ASSOCIATE_OF_PEP, FORMER_PEP, NOT_PEP. Legacy aliases INTERNATIONAL_ORG_PEP and RCA are retained for backward compatibility.",
+          "description": "PEP classification category aligned to the AMLA draft RTS taxonomy (AMLR Art. 28–31). Primary values: DOMESTIC_PEP, FOREIGN_PEP, INTERNATIONAL_ORGANISATION, FAMILY_MEMBER_OF_PEP, CLOSE_ASSOCIATE_OF_PEP, FORMER_PEP, NOT_PEP. Legacy aliases INTERNATIONAL_ORG_PEP and RCA are retained for backward compatibility.",
           "enum": [
             "DOMESTIC_PEP",
             "FOREIGN_PEP",
@@ -1733,7 +1794,7 @@
         },
         "naturalPerson": {
           "$ref": "#/$defs/NaturalPerson",
-          "description": "The beneficial owner as a natural person. Legacy field \u2014 use 'person' when natural or legal person support is needed. Do not use alongside 'person'."
+          "description": "The beneficial owner as a natural person. Legacy field — use 'person' when natural or legal person support is needed. Do not use alongside 'person'."
         },
         "ownershipPercentage": {
           "type": "number",
@@ -2183,7 +2244,7 @@
               },
               "ruleName": {
                 "type": "string",
-                "description": "Human-readable name of the rule (e.g., 'Velocity \u2013 7-day rolling window').",
+                "description": "Human-readable name of the rule (e.g., 'Velocity – 7-day rolling window').",
                 "maxLength": 200
               },
               "ruleCategory": {
@@ -2336,8 +2397,9 @@
                 },
                 "currency": {
                   "type": "string",
-                  "description": "ISO 4217 currency code or virtual asset code.",
-                  "maxLength": 10
+                  "description": "ISO 4217 three-letter currency code for the reporting threshold (e.g. 'EUR', 'USD', 'GBP').",
+                  "maxLength": 10,
+                  "pattern": "^[A-Z]{3}$"
                 },
                 "jurisdiction": {
                   "type": "string",
@@ -2410,7 +2472,9 @@
                   },
                   "currency": {
                     "type": "string",
-                    "maxLength": 10
+                    "maxLength": 10,
+                    "pattern": "^[A-Z]{3}$",
+                    "description": "ISO 4217 three-letter currency code for the reporting threshold (e.g. 'EUR', 'USD', 'GBP')."
                   }
                 }
               },
@@ -2621,7 +2685,7 @@
               "type": "integer",
               "minimum": 0,
               "maximum": 1000,
-              "description": "Numeric risk score (0\u20131000)."
+              "description": "Numeric risk score (0–1000)."
             },
             "riskRatingDate": {
               "type": "string",
@@ -2882,7 +2946,7 @@
               },
               "xrplCredentialType": {
                 "type": "string",
-                "description": "XRPL on-ledger credential type associated with this wallet, stored as a hexadecimal string (1\u201364 bytes, 2\u2013128 hex characters, case-insensitive). Mirrors the `CredentialType` field of an XRPL `Credential` ledger object (XLS-70). Enables round-trip reconstruction of the on-ledger XRPL credential without relying on external state. The decoded human-readable equivalent is captured in `verifiableCredential.type[]`. Examples: '4b594343726564656e7469616c' (KYCCredential), '4f70656e4b5943414d4c43726564656e7469616c' (OpenKYCAMLCredential).",
+                "description": "XRPL on-ledger credential type associated with this wallet, stored as a hexadecimal string (1–64 bytes, 2–128 hex characters, case-insensitive). Mirrors the `CredentialType` field of an XRPL `Credential` ledger object (XLS-70). Enables round-trip reconstruction of the on-ledger XRPL credential without relying on external state. The decoded human-readable equivalent is captured in `verifiableCredential.type[]`. Examples: '4b594343726564656e7469616c' (KYCCredential), '4f70656e4b5943414d4c43726564656e7469616c' (OpenKYCAMLCredential).",
                 "pattern": "^[0-9a-fA-F]{2,128}$",
                 "maxLength": 128
               },
@@ -2898,7 +2962,7 @@
               },
               "xrplAuthorizedCredentialTypes": {
                 "type": "array",
-                "description": "Array of XRPL credential type hex strings that have been accepted and authorised within the Permissioned Domain identified by `xrplPermissionedDomainId` (XLS-80). Each entry follows the same hex-encoding convention as `xrplCredentialType` (1\u201364 bytes, 2\u2013128 hex characters). A domain may require holders to satisfy multiple credential types simultaneously (e.g. KYC + AML + AccreditedInvestor) before gaining access. This field records which credential types the issuer has confirmed are satisfied for this wallet in this domain.",
+                "description": "Array of XRPL credential type hex strings that have been accepted and authorised within the Permissioned Domain identified by `xrplPermissionedDomainId` (XLS-80). Each entry follows the same hex-encoding convention as `xrplCredentialType` (1–64 bytes, 2–128 hex characters). A domain may require holders to satisfy multiple credential types simultaneously (e.g. KYC + AML + AccreditedInvestor) before gaining access. This field records which credential types the issuer has confirmed are satisfied for this wallet in this domain.",
                 "items": {
                   "type": "string",
                   "pattern": "^[0-9a-fA-F]{2,128}$",
@@ -2930,14 +2994,14 @@
                   },
                   "regulatorPublicKey": {
                     "type": "string",
-                    "description": "EC public key of the designated regulator who may receive selective disclosure of encrypted balances when legally required. Optional \u2014 only populated when a specific regulatory authority has been assigned decryption rights for this issuance. Same encoding as auditorPublicKey.",
+                    "description": "EC public key of the designated regulator who may receive selective disclosure of encrypted balances when legally required. Optional — only populated when a specific regulatory authority has been assigned decryption rights for this issuance. Same encoding as auditorPublicKey.",
                     "maxLength": 256
                   }
                 }
               },
               "mptFlags": {
                 "type": "integer",
-                "description": "Bitmask of MPTIssuance flags from the XLS-33d Multi-Purpose Token standard, reflecting the compliance configuration of the token issuance. Key flag values: lsfMPTCanLock (0x0002) \u2014 individual holder balances can be frozen; lsfMPTRequireAuth (0x0004) \u2014 holders must be individually authorised (KYC gate); lsfMPTCanEscrow (0x0008) \u2014 tokens can be placed in escrow; lsfMPTCanTrade (0x0010) \u2014 tokens are tradeable on DEX; lsfMPTCanTransfer (0x0020) \u2014 tokens can transfer between non-issuer accounts; lsfMPTCanClawback (0x0040) \u2014 issuer can claw back tokens. Recording the flags enables downstream systems to derive the applicable compliance enforcement model without querying the ledger.",
+                "description": "Bitmask of MPTIssuance flags from the XLS-33d Multi-Purpose Token standard, reflecting the compliance configuration of the token issuance. Key flag values: lsfMPTCanLock (0x0002) — individual holder balances can be frozen; lsfMPTRequireAuth (0x0004) — holders must be individually authorised (KYC gate); lsfMPTCanEscrow (0x0008) — tokens can be placed in escrow; lsfMPTCanTrade (0x0010) — tokens are tradeable on DEX; lsfMPTCanTransfer (0x0020) — tokens can transfer between non-issuer accounts; lsfMPTCanClawback (0x0040) — issuer can claw back tokens. Recording the flags enables downstream systems to derive the applicable compliance enforcement model without querying the ledger.",
                 "minimum": 0,
                 "maximum": 4294967295
               },
@@ -2954,7 +3018,7 @@
               },
               "xrplFreezeType": {
                 "type": "string",
-                "description": "XRPL freeze type applied to this wallet or its token holdings, providing more granular freeze state than the boolean `isFrozen` field. Maps to XRPL's native freeze hierarchy: INDIVIDUAL_FREEZE \u2014 only this specific wallet's trustline or MPT holding is frozen (operator or issuer action); GLOBAL_FREEZE \u2014 the issuer has frozen all trustlines or MPT holdings for the asset globally; DEEP_FREEZE (XLS-77) \u2014 an enhanced freeze that prevents the holder from even receiving tokens or having frozen funds released without issuer action, providing stronger enforcement capability equivalent to ERC-3643 `forcedTransfer()`. When set, `isFrozen` should also be true.",
+                "description": "XRPL freeze type applied to this wallet or its token holdings, providing more granular freeze state than the boolean `isFrozen` field. Maps to XRPL's native freeze hierarchy: INDIVIDUAL_FREEZE — only this specific wallet's trustline or MPT holding is frozen (operator or issuer action); GLOBAL_FREEZE — the issuer has frozen all trustlines or MPT holdings for the asset globally; DEEP_FREEZE (XLS-77) — an enhanced freeze that prevents the holder from even receiving tokens or having frozen funds released without issuer action, providing stronger enforcement capability equivalent to ERC-3643 `forcedTransfer()`. When set, `isFrozen` should also be true.",
                 "enum": [
                   "INDIVIDUAL_FREEZE",
                   "GLOBAL_FREEZE",
@@ -2977,7 +3041,7 @@
               },
               "bitcoinScriptType": {
                 "type": "string",
-                "description": "Bitcoin script type for the address in the `address` field. Used to provide chain analysis context and determine the applicable UTXO model for compliance screening. P2PKH \u2014 Pay to Public Key Hash (legacy); P2WPKH \u2014 Pay to Witness Public Key Hash (native SegWit); P2TR \u2014 Pay to Taproot (Taproot, BIP-341). Applicable when `network` is 'bitcoin' or a Bitcoin Layer-2 network (Liquid, RGB). Not applicable for Lightning channel addresses (use `lightningNodePubkey` instead).",
+                "description": "Bitcoin script type for the address in the `address` field. Used to provide chain analysis context and determine the applicable UTXO model for compliance screening. P2PKH — Pay to Public Key Hash (legacy); P2WPKH — Pay to Witness Public Key Hash (native SegWit); P2TR — Pay to Taproot (Taproot, BIP-341). Applicable when `network` is 'bitcoin' or a Bitcoin Layer-2 network (Liquid, RGB). Not applicable for Lightning channel addresses (use `lightningNodePubkey` instead).",
                 "enum": [
                   "P2PKH",
                   "P2WPKH",
@@ -3005,7 +3069,7 @@
         },
         "issuerName": {
           "type": "string",
-          "description": "Human-readable name of the issuer organisation (e.g. 'Bundesamt f\u00fcr Sicherheit in der Informationstechnik \u2014 PID Provider').",
+          "description": "Human-readable name of the issuer organisation (e.g. 'Bundesamt für Sicherheit in der Informationstechnik — PID Provider').",
           "maxLength": 256
         },
         "countryCode": {
@@ -3104,7 +3168,7 @@
       "properties": {
         "classification": {
           "type": "string",
-          "description": "Primary sensitivity class. 'standard' \u2014 ordinary personal data (GDPR Art. 6). 'sensitive_personal' \u2014 special-category data requiring Art. 9 safeguards (e.g. biometrics, health). 'criminal_offence' \u2014 data relating to criminal convictions or offences under GDPR Art. 10. 'sar_restricted' \u2014 Suspicious Activity Report or STR material; subject to tipping-off prohibition (AMLR Art. 73 / FATF Rec. 21). 'internal_suspicion' \u2014 internal AML suspicion flag not yet escalated to a formal SAR. 'confidential_aml' \u2014 AML/CFT investigation data protected from broader disclosure.",
+          "description": "Primary sensitivity class. 'standard' — ordinary personal data (GDPR Art. 6). 'sensitive_personal' — special-category data requiring Art. 9 safeguards (e.g. biometrics, health). 'criminal_offence' — data relating to criminal convictions or offences under GDPR Art. 10. 'sar_restricted' — Suspicious Activity Report or STR material; subject to tipping-off prohibition (AMLR Art. 73 / FATF Rec. 21). 'internal_suspicion' — internal AML suspicion flag not yet escalated to a formal SAR. 'confidential_aml' — AML/CFT investigation data protected from broader disclosure.",
           "enum": [
             "standard",
             "sensitive_personal",
@@ -3128,7 +3192,7 @@
         },
         "legalBasis": {
           "type": "string",
-          "description": "Primary legal basis for processing this data. 'GDPR-Art6-1c' \u2014 legal obligation. 'GDPR-Art6-1e' \u2014 public task. 'GDPR-Art9-2g' \u2014 substantial public interest. 'GDPR-Art10' \u2014 criminal-offence data under official authority. 'AMLR-Art55' \u2014 AML data-sharing obligation. 'AMLR-Art73' \u2014 tipping-off prohibition compliance. 'national_AML_law' \u2014 national transposition of AML directives.",
+          "description": "Primary legal basis for processing this data. 'GDPR-Art6-1c' — legal obligation. 'GDPR-Art6-1e' — public task. 'GDPR-Art9-2g' — substantial public interest. 'GDPR-Art10' — criminal-offence data under official authority. 'AMLR-Art55' — AML data-sharing obligation. 'AMLR-Art73' — tipping-off prohibition compliance. 'national_AML_law' — national transposition of AML directives.",
           "enum": [
             "GDPR-Art6-1c",
             "GDPR-Art6-1e",
@@ -3300,13 +3364,14 @@
         },
         "documentTitle": {
           "type": "string",
-          "description": "Human-readable title or local name of the document (e.g. 'Personalausweis', 'Carte nationale d\\'identit\u00e9', 'Biometric Residence Permit').",
+          "description": "Human-readable title or local name of the document (e.g. 'Personalausweis', 'Carte nationale d\\'identité', 'Biometric Residence Permit').",
           "maxLength": 200
         },
         "documentNumber": {
           "type": "string",
-          "description": "The document number or serial identifier as printed on the document (e.g. passport number, ID card number).",
-          "maxLength": 50
+          "description": "The document number or serial identifier as printed on the document (e.g. passport number, ID card number). Structurally validated: 1–50 uppercase alphanumeric characters with hyphens, slashes, and spaces (covers global passport and national ID formats; rejects control characters).",
+          "maxLength": 50,
+          "pattern": "^[A-Z0-9\\-\\/ ]{1,50}$"
         },
         "issuingCountry": {
           "type": "string",
@@ -3432,13 +3497,15 @@
         },
         "documentNumber": {
           "type": "string",
-          "description": "Document-level reference number or certificate number (e.g. a Companies House certificate number).",
-          "maxLength": 100
+          "description": "Document-level reference number or certificate number (e.g. a Companies House certificate number). Structurally validated: 1–100 uppercase alphanumeric characters with hyphens, slashes, and spaces.",
+          "maxLength": 100,
+          "pattern": "^[A-Z0-9\\-\\/ ]{1,100}$"
         },
         "registrationNumber": {
           "type": "string",
-          "description": "The entity's registration number as recorded in the issuing registry (e.g. '12345678' for UK Companies House). Distinct from documentNumber.",
-          "maxLength": 100
+          "description": "The entity's registration number as recorded in the issuing registry (e.g. '12345678' for UK Companies House). Distinct from documentNumber. Structurally validated: 1–100 uppercase alphanumeric characters with hyphens, slashes, and spaces.",
+          "maxLength": 100,
+          "pattern": "^[A-Z0-9\\-\\/ ]{1,100}$"
         },
         "issuingCountry": {
           "type": "string",
@@ -3462,7 +3529,7 @@
         "expiryDate": {
           "type": "string",
           "format": "date",
-          "description": "ISO 8601 date on which the document or extract expires. Particularly relevant for registry extracts, which typically have a validity window (e.g. 3\u20136 months)."
+          "description": "ISO 8601 date on which the document or extract expires. Particularly relevant for registry extracts, which typically have a validity window (e.g. 3–6 months)."
         },
         "verificationDate": {
           "type": "string",
@@ -3561,7 +3628,7 @@
         },
         "bundleValidatedBy": {
           "type": "string",
-          "description": "Name or DID of the person, team, or automated system that assessed the bundle completeness (e.g. 'Compliance Officer \u2013 Jane Smith', 'AutoKYB v2.1', 'did:web:kyb.provider.example').",
+          "description": "Name or DID of the person, team, or automated system that assessed the bundle completeness (e.g. 'Compliance Officer – Jane Smith', 'AutoKYB v2.1', 'did:web:kyb.provider.example').",
           "maxLength": 200
         },
         "bundleValidationDate": {
@@ -3718,13 +3785,13 @@
                 "type": "number",
                 "minimum": 0,
                 "maximum": 100,
-                "description": "Score value on a 0\u2013100 scale (0 = lowest risk, 100 = highest risk)."
+                "description": "Score value on a 0–100 scale (0 = lowest risk, 100 = highest risk)."
               },
               "confidence": {
                 "type": "number",
                 "minimum": 0,
                 "maximum": 1,
-                "description": "Model confidence in this score (0\u20131). EU AI Act Art. 13(3)(b)(iv) requires confidence or reliability information."
+                "description": "Model confidence in this score (0–1). EU AI Act Art. 13(3)(b)(iv) requires confidence or reliability information."
               },
               "horizonDays": {
                 "type": "integer",
@@ -3823,7 +3890,7 @@
         },
         "x500DNType": {
           "type": "string",
-          "description": "Context in which the X.500 DN is used. 'certificateSubject' \u2014 DN appears in the Subject field of an X.509 certificate. 'certificateIssuer' \u2014 DN appears in the Issuer field of an X.509 certificate. 'directoryEntry' \u2014 DN identifies an entry in an LDAP/X.500 directory. 'swiftNetAddress' \u2014 DN is a SWIFTNet technical addressing DN (cn=..,o=swift format).",
+          "description": "Context in which the X.500 DN is used. 'certificateSubject' — DN appears in the Subject field of an X.509 certificate. 'certificateIssuer' — DN appears in the Issuer field of an X.509 certificate. 'directoryEntry' — DN identifies an entry in an LDAP/X.500 directory. 'swiftNetAddress' — DN is a SWIFTNet technical addressing DN (cn=..,o=swift format).",
           "enum": [
             "certificateSubject",
             "certificateIssuer",
@@ -3846,7 +3913,7 @@
           "properties": {
             "serialNumber": {
               "type": "string",
-              "description": "Certificate serial number as a hex string (RFC 5280 \u00a74.1.2.2). Must be unique within the issuer's namespace."
+              "description": "Certificate serial number as a hex string (RFC 5280 §4.1.2.2). Must be unique within the issuer's namespace."
             },
             "subjectDN": {
               "type": "string",
@@ -3859,16 +3926,16 @@
             "validFrom": {
               "type": "string",
               "format": "date-time",
-              "description": "Certificate validity start (notBefore field, RFC 5280 \u00a74.1.2.5) in ISO 8601 format."
+              "description": "Certificate validity start (notBefore field, RFC 5280 §4.1.2.5) in ISO 8601 format."
             },
             "validTo": {
               "type": "string",
               "format": "date-time",
-              "description": "Certificate validity end (notAfter field, RFC 5280 \u00a74.1.2.5) in ISO 8601 format. Relying parties MUST reject certificates past this date unless a valid OCSP staple or CRL entry confirms continuation."
+              "description": "Certificate validity end (notAfter field, RFC 5280 §4.1.2.5) in ISO 8601 format. Relying parties MUST reject certificates past this date unless a valid OCSP staple or CRL entry confirms continuation."
             },
             "signatureAlgorithm": {
               "type": "string",
-              "description": "Signature algorithm OID or well-known name (e.g. 'sha256WithRSAEncryption', 'ecdsa-with-SHA256', 'id-RSASSA-PSS'). Corresponds to the certificate signatureAlgorithm field (RFC 5280 \u00a74.1.1.2)."
+              "description": "Signature algorithm OID or well-known name (e.g. 'sha256WithRSAEncryption', 'ecdsa-with-SHA256', 'id-RSASSA-PSS'). Corresponds to the certificate signatureAlgorithm field (RFC 5280 §4.1.1.2)."
             },
             "qcStatements": {
               "type": "array",
@@ -3879,7 +3946,7 @@
             },
             "crlDistributionPoints": {
               "type": "array",
-              "description": "URIs of CRL Distribution Points (RFC 5280 \u00a74.2.1.13). Relying parties use these to download the issuer's Certificate Revocation List and confirm the certificate has not been revoked.",
+              "description": "URIs of CRL Distribution Points (RFC 5280 §4.2.1.13). Relying parties use these to download the issuer's Certificate Revocation List and confirm the certificate has not been revoked.",
               "items": {
                 "type": "string",
                 "format": "uri"
@@ -3962,7 +4029,8 @@
         },
         "tinValue": {
           "type": "string",
-          "description": "The raw TIN string as issued by the tax authority. Format varies by jurisdiction (e.g. US EIN '12-3456789', UK UTR '1234567890', DE TIN '86095742719')."
+          "description": "The raw TIN string as issued by the tax authority. Format varies by jurisdiction (e.g. US EIN '12-3456789', UK UTR '1234567890', DE TIN '86095742719'). Structurally validated: 5–20 uppercase alphanumeric characters with hyphens and slashes (covers US EIN '12-3456789', UK UTR '1234567890', DE TIN '86095742719' formats; jurisdiction-specific validation is a runtime concern).",
+          "pattern": "^[A-Z0-9\\-\\/]{5,20}$"
         },
         "issuanceDate": {
           "type": "string",
@@ -4009,7 +4077,8 @@
         },
         "registrationNumber": {
           "type": "string",
-          "description": "The registration number as issued (e.g. EU VAT 'DE123456789', India GSTIN '27AAPFU0939F1ZV', Australia ABN '12 345 678 901')."
+          "description": "The registration number as issued (e.g. EU VAT 'DE123456789', India GSTIN '27AAPFU0939F1ZV', Australia ABN '12 345 678 901'). Structurally validated: 2–30 uppercase alphanumeric characters with hyphens and slashes permitted (covers EU VAT, India GSTIN, Australia ABN, Canada HST/PST formats).",
+          "pattern": "^[A-Z0-9\\-\\/]{2,30}$"
         },
         "status": {
           "type": "string",
@@ -4112,7 +4181,10 @@
                 "description": "Effective Tax Rate (ETR) as a decimal fraction (e.g. 0.15 = 15%). If ETR falls below 0.15 (the GloBE minimum rate), a top-up tax may be levied."
               }
             },
-            "required": ["jurisdiction", "etr"],
+            "required": [
+              "jurisdiction",
+              "etr"
+            ],
             "additionalProperties": false
           },
           "description": "Per-jurisdiction effective tax rates for the MNE group. Used to identify low-tax jurisdictions (ETR < 15%) triggering top-up tax obligations under GloBE IIR/UTPR."
@@ -4187,7 +4259,9 @@
       "title": "CrsTaxResidency",
       "description": "An enhanced CRS per-jurisdiction tax-residency entry. Each item in crsTaxResidencies[] captures the full OECD CRS self-certification data for one jurisdiction of tax residency, including TIN value, verification status, self-certification date, and controlling-person designation. Supports multi-jurisdiction AEOI reporting under OECD CRS XML Schema v2.0.",
       "type": "object",
-      "required": ["jurisdiction"],
+      "required": [
+        "jurisdiction"
+      ],
       "properties": {
         "jurisdiction": {
           "type": "string",
@@ -4200,7 +4274,12 @@
         },
         "tinVerificationStatus": {
           "type": "string",
-          "enum": ["verified", "unverified", "relief-applied", "not-required"],
+          "enum": [
+            "verified",
+            "unverified",
+            "relief-applied",
+            "not-required"
+          ],
           "description": "CRS TIN verification status. 'verified' = TIN validated against the OECD TIN list or national registry. 'unverified' = TIN provided but not yet validated. 'relief-applied' = jurisdiction-specific relief or grace period applies (e.g. new-account exemption). 'not-required' = jurisdiction does not issue TINs (e.g. Bahrain) or the account holder is not a tax resident."
         },
         "selfCertificationDate": {
@@ -4254,7 +4333,56 @@
         },
         "withholdingAgentReference": {
           "type": "string",
-          "description": "Reference identifier of the withholding agent or sponsoring entity responsible for FATCA reporting on behalf of this entity. Relevant for sponsored entities (sponsored direct reporting NFFEs, sponsored FFIs) and Model 2 IGA entities where a US withholding agent assumes reporting obligations."
+          "description": "IRS-assigned or internal reference identifying the withholding agent or sponsoring entity responsible for FATCA reporting obligations for this FFI.",
+          "pattern": "^[A-Z0-9\\-]{1,30}$",
+          "maxLength": 30
+        }
+      },
+      "additionalProperties": false
+    },
+    "BankingDetails": {
+      "title": "BankingDetails",
+      "description": "Structured banking and financial account details for a natural or legal person. Enables IBAN/BIC-validated cross-border account identification aligned with ISO 13616 (IBAN), ISO 9362 (BIC/SWIFT), and ISO 4217 (currency). Supports SEPA, FATF Rec. 16 correspondent banking due diligence, and AMLR Art. 22 financial relationship verification.",
+      "type": "object",
+      "properties": {
+        "iban": {
+          "type": "string",
+          "description": "International Bank Account Number (IBAN) per ISO 13616. Structural pattern validated (2-char country code + 2-digit check digits + up to 30 alphanumeric BBAN). Full Luhn-style modulo-97 checksum verification is performed at runtime.",
+          "pattern": "^[A-Z]{2}[0-9]{2}[A-Z0-9]{4,30}$",
+          "maxLength": 34
+        },
+        "bic": {
+          "type": "string",
+          "description": "Bank Identifier Code (BIC / SWIFT code) per ISO 9362. Accepts both 8-character (institution + country + location) and 11-character (institution + country + location + branch) formats.",
+          "pattern": "^[A-Z]{6}[A-Z0-9]{2}([A-Z0-9]{3})?$",
+          "maxLength": 11
+        },
+        "bankName": {
+          "type": "string",
+          "description": "Full legal name of the financial institution.",
+          "maxLength": 140
+        },
+        "accountCurrency": {
+          "type": "string",
+          "description": "ISO 4217 three-letter currency code for the account (e.g. 'EUR', 'GBP', 'USD').",
+          "pattern": "^[A-Z]{3}$",
+          "maxLength": 3
+        },
+        "accountType": {
+          "type": "string",
+          "description": "Classification of the bank account type.",
+          "enum": [
+            "CURRENT",
+            "SAVINGS",
+            "CORRESPONDENT",
+            "CRYPTO_FIAT_GATEWAY",
+            "OTHER"
+          ]
+        },
+        "bankingCountry": {
+          "type": "string",
+          "description": "ISO 3166-1 alpha-2 country code of the bank where the account is held.",
+          "pattern": "^[A-Z]{2}$"
         }
       },
       "additionalProperties": false
@@ -4326,7 +4454,7 @@
     },
     "legacyIdentifiers": {
       "$ref": "#/$defs/LegacyIdentifiers",
-      "description": "Optional legacy PKI identifier block. Carries X.500 Distinguished Names used in X.509 certificate Subject/Issuer fields, SWIFTNet technical addresses, and LDAP/X.500 directory entries. Enables direct linkage of identity evidence to eIDAS-compliant Qualified Certificates (AMLR Art. 22(6) & eIDAS Art. 24). X.400 O/R Addresses are explicitly excluded \u2014 see docs/mappings/x500-x400-legacy.md."
+      "description": "Optional legacy PKI identifier block. Carries X.500 Distinguished Names used in X.509 certificate Subject/Issuer fields, SWIFTNet technical addresses, and LDAP/X.500 directory entries. Enables direct linkage of identity evidence to eIDAS-compliant Qualified Certificates (AMLR Art. 22(6) & eIDAS Art. 24). X.400 O/R Addresses are explicitly excluded — see docs/mappings/x500-x400-legacy.md."
     },
     "pkiEvidence": {
       "$ref": "#/$defs/PkiEvidence",
