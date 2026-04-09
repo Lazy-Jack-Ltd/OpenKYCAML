@@ -447,4 +447,118 @@ _✅ = full field mapping. ⭐ = added in v1.9.0._
 
 ---
 
-*Last updated: v1.9.0 — April 2026. Maintained by the OpenKYCAML Technical Working Group.*
+---
+
+## 21. Format and Pattern Completeness — Contact, Financial Identifiers, and Validation Strength (v1.10.0)
+
+> Full mapping in [contact-financial-identifiers.md](../mappings/contact-financial-identifiers.md).
+
+This section documents the format/pattern coverage added in v1.10.0 to achieve comprehensive machine-enforceable validation across internal systems, suppliers, clients, and regulatory counterparties. All additions are strictly additive and backward-compatible.
+
+### 21.1 Contact Fields — FATF Rec. 16 / AMLR Art. 22
+
+| Field | $def | Format / Pattern | Standard Reference |
+|---|---|---|---|
+| `emailAddress` | `NaturalPerson`, `LegalPerson` | ✅ ⭐ `format: "email"` (RFC 5321, max 254 chars) | FATF Rec. 16 counterparty contact data; AMLR Art. 22 CDD |
+| `phoneNumber` | `NaturalPerson`, `LegalPerson` | ✅ ⭐ E.164 pattern `^\+[1-9]\d{1,14}$` | FATF Rec. 16; AMLR Art. 22(5) remote CDD; ITU-T E.164 |
+| `mobileNumber` | `NaturalPerson`, `LegalPerson` | ✅ ⭐ E.164 pattern `^\+[1-9]\d{1,14}$` | AMLR Art. 22(5) remote CDD; EUDI Wallet mTAN/OTP notification |
+
+### 21.2 Banking Identifiers — ISO 13616 IBAN / ISO 9362 BIC
+
+| Field | $def | Format / Pattern | Standard Reference |
+|---|---|---|---|
+| `iban` | `BankingDetails` | ✅ ⭐ `^[A-Z]{2}[0-9]{2}[A-Z0-9]{4,30}$` (ISO 13616 structural) | ISO 13616:2020; SEPA; FATF Rec. 16 correspondent banking due diligence |
+| `bic` | `BankingDetails` | ✅ ⭐ `^[A-Z]{6}[A-Z0-9]{2}([A-Z0-9]{3})?$` (ISO 9362, 8/11-char) | ISO 9362:2022; SWIFT; SEPA; FATF Rec. 16 |
+| `accountCurrency` | `BankingDetails` | ✅ ⭐ `^[A-Z]{3}$` (ISO 4217) | ISO 4217; IVMS 101 §4 |
+| `bankingCountry` | `BankingDetails` | ✅ ⭐ `^[A-Z]{2}$` (ISO 3166-1 alpha-2) | ISO 3166-1; AMLR Art. 22 |
+
+### 21.3 Regulatory Identifiers — EU VAT, EORI, EUID
+
+| Field | $def | Pattern Added | Standard Reference |
+|---|---|---|---|
+| `vatRegistrationNumber` | `LegalPersonIdentificationData` | ✅ ⭐ `^[A-Z]{2}[A-Z0-9]{2,12}$` | EU VAT Directive 2006/112/EC; eIDAS 2.0 LPID optional attribute |
+| `eoriNumber` | `LegalPersonIdentificationData` | ✅ ⭐ `^[A-Z]{2}[A-Z0-9]{1,15}$` | EU Reg. 952/2013 (Union Customs Code); eIDAS 2.0 LPID optional attribute |
+| `europeanUniqueIdentifier` | `LegalPersonIdentificationData` | ✅ ⭐ `^[A-Z]{2}-[A-Za-z0-9.\-]{6,40}$` | Directive (EU) 2017/1132 Art. 16; eIDAS EUID (CC-RA-RN format) |
+| `registrationNumber` | `IndirectTaxRegistration` | ✅ ⭐ `^[A-Z0-9\-\/]{2,30}$` | EU VIES; India GSTIN; Australia ABN; Canada HST/PST |
+| `tinValue` | `TinIdentifier` | ✅ ⭐ `^[A-Z0-9\-\/]{5,20}$` | OECD CRS §IV.C; FATCA; AMLR Art. 22 |
+| `withholdingAgentReference` | `FatcaStatus` | ✅ ⭐ `^[A-Z0-9\-]{1,30}$` | IRS FATCA withholding agent obligations |
+
+### 21.4 Document Number Fields
+
+| Field | $def | Pattern Added | Notes |
+|---|---|---|---|
+| `documentNumber` | `NaturalPersonDocument` | ✅ ⭐ `^[A-Z0-9\-\/ ]{1,50}$` | Global passport / national ID formats; rejects control characters |
+| `documentNumber` | `LegalEntityDocument` | ✅ ⭐ `^[A-Z0-9\-\/ ]{1,100}$` | Company document reference numbers |
+| `registrationNumber` | `LegalEntityDocument` | ✅ ⭐ `^[A-Z0-9\-\/ ]{1,100}$` | Company registration numbers across jurisdictions |
+
+### 21.5 Miscellaneous Field Tightening
+
+| Field | $def | Change | Standard Reference |
+|---|---|---|---|
+| `accountNumber` items | `Originator`, `Beneficiary` | ✅ ⭐ `^[A-Za-z0-9\-\/.]{1,100}$` | IVMS 101 §4; Ethereum 0x, Bitcoin bech32, IBAN formats |
+| `registrationAuthority` | `NationalIdentification` | ✅ ⭐ `^RA[0-9]{6}$` | GLEIF Registration Authority List (RAL) code format |
+| `currency` (TM threshold) | `TransactionMonitoring` | ✅ ⭐ `^[A-Z]{3}$` | ISO 4217 |
+| `assetType` | `IVMS101Payload` | ✅ ⭐ `^[A-Z]{3,10}$` | ISO 4217 + crypto-asset tickers (IVMS 101 §4) |
+| `postCode` | `Address` | ✅ ⭐ `^[A-Z0-9\- ]{2,10}$` | Generic postal code structural validation; IVMS 101 §3.5 |
+
+_✅ = full field mapping. ⭐ = added in v1.10.0. All additions backward-compatible._
+
+---
+
+## 22. Cell Company Structures — PCC and ICC KYC/AML Support (v1.11.0)
+
+> Full mapping in [cell-company.md](../mappings/cell-company.md).
+
+Cell companies (Protected Cell Companies and Incorporated Cell Companies) are specialised corporate vehicles used in insurance, reinsurance, securitisation, and alternative investment markets. They require explicit schema support because risk, sanctions/PEP exposure, beneficial ownership, and source-of-funds can differ materially between cells within the same parent structure.
+
+### 22.1 Cell Company Type Classification
+
+| `cellCompanyType` Value | Legal Structure | Independent Legal Personality | Typical Jurisdiction |
+|---|---|---|---|
+| `NONE` | Ordinary company (no cells) | Yes | All |
+| `PCC_CORE` | PCC overarching entity | Yes (single entity for all cells) | GG, JE, IM, KY, MT, GI |
+| `PCC_CELL` | Cell within a PCC | No (transacts through PCC) | GG, JE, IM, KY, MT, GI |
+| `ICC_CORE` | ICC coordinating core | Yes | GG, JE, IM, KY |
+| `ICC_CELL` | Incorporated cell (own legal entity) | Yes (own registration, LEI) | GG, JE, IM, KY |
+
+### 22.2 CellCompanyDetails Field Mapping
+
+| Field | Format / Pattern | Regulatory Basis |
+|---|---|---|
+| `cellCompanyType` | ✅ ⭐ Enum (5 values) | FATF Rec. 24/25 legal arrangement disclosure; AMLR Art. 26(2)(b) |
+| `cellIdentifier` | ✅ ⭐ `^[A-Za-z0-9 \-]{1,64}$` | Cell register identifier (jurisdiction-specific) |
+| `cellRegistrationNumber` | ✅ ⭐ `^[A-Z0-9]{1,35}$` | ICC cell company registration; own LEI eligibility |
+| `hasIndependentLegalPersonality` | ✅ ⭐ boolean | Determines whether cell can hold own LEI, file own returns, contract independently |
+| `isCellCompanyIssuer` | ✅ ⭐ boolean | ILS/cat bond issuer identification for IVMS 101 / FATF Rec. 16 |
+| `issuancePurpose` | ✅ ⭐ Enum (5 values) | Instrument classification for AML/CFT risk assessment |
+| `cellSpecificInstrumentReference` | ✅ ⭐ `format: "uri"` | Prospectus/term sheet link for EDD file evidence |
+
+### 22.3 ParentCellCompanyReference Field Mapping
+
+| Field | Format / Pattern | Regulatory Basis |
+|---|---|---|
+| `legalEntityIdentifier` | ✅ ⭐ `^[A-Z0-9]{1,35}$` | FATF beneficial-ownership chain; AMLR Art. 26 parent entity verification |
+| `jurisdiction` | ✅ ⭐ `^[A-Z]{2}$` (ISO 3166-1) | Cross-border legal hierarchy identification |
+
+### 22.4 Cell-Level Risk and Audit Fields (LegalPerson extensions)
+
+| Field | $ref | Regulatory Basis |
+|---|---|---|
+| `cellRiskProfileOverride` | `RiskSnapshot` | Cell-level risk granularity; FATF Rec. 1 risk-based approach |
+| `cellSourceOfFundsWealth` | `SourceOfFundsWealth` | AMLR Art. 29; FATF Rec. 12 higher-risk countries |
+| `cellAuditMetadata` | `AuditMetadata` | AMLR Art. 56 5-year record retention per cell |
+
+### 22.5 Schema-Enforced Constraints (v1.11.1)
+
+The following conditions were originally validator business warnings (v1.11.0) and were promoted to hard JSON Schema `if`/`then` constraints in v1.11.1. Payloads that violate them **fail schema validation**.
+
+| Condition | Enforcement mechanism | Regulatory basis |
+|---|---|---|
+| `cellCompanyType` is PCC_CELL/ICC_CELL + no `parentCellCompanyReference` | `LegalPerson` `allOf` `if`/`then` | FATF Rec. 24; AMLR Art. 26 |
+| `isCellCompanyIssuer: true` + no `issuancePurpose` | `CellCompanyDetails` `if`/`then` | AML/CFT instrument-level risk classification |
+
+_✅ = full field mapping. ⭐ = added in v1.11.0. ⭐⭐ = promoted to hard constraint in v1.11.1. All additions backward-compatible._
+
+---
+
+*Last updated: v1.11.1 — April 2026. Maintained by the OpenKYCAML Technical Working Group.*

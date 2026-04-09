@@ -124,6 +124,14 @@ export interface NaturalPerson {
   countryOfResidence?: string;
   /** ISO 3166-1 alpha-2 nationality */
   nationality?: string;
+  /** RFC 5321 email address (v1.10.0) */
+  emailAddress?: string;
+  /** E.164 international phone number, e.g. '+447911123456' (v1.10.0) */
+  phoneNumber?: string;
+  /** E.164 mobile/cell number for mTAN/OTP delivery (v1.10.0) */
+  mobileNumber?: string;
+  /** Verified banking account details — IBAN, BIC, account type (v1.10.0) */
+  bankingDetails?: BankingDetails[];
 }
 
 export interface NaturalPersonName {
@@ -152,6 +160,14 @@ export interface LegalPerson {
   countryOfRegistration?: string;
   /** eIDAS 2.0 LPID block (optional — omit for pure IVMS 101 usage) */
   lpid?: LegalPersonIdentificationData;
+  /** RFC 5321 business email address (v1.10.0) */
+  emailAddress?: string;
+  /** E.164 international business phone number (v1.10.0) */
+  phoneNumber?: string;
+  /** E.164 mobile contact for authorised representative (v1.10.0) */
+  mobileNumber?: string;
+  /** Verified banking account details — IBAN, BIC, account type (v1.10.0) */
+  bankingDetails?: BankingDetails[];
 }
 
 export interface LegalPersonName {
@@ -165,7 +181,29 @@ export interface LegalPersonNameIdentifier {
   legalPersonNameIdentifierType: 'LEGL' | 'SHRT' | 'TRAD';
 }
 
-/** Structured postal address (IVMS 101 §3.5). */
+/**
+ * Validated banking account details — IBAN, BIC, currency, account type (v1.10.0).
+ * Wired as bankingDetails[] on NaturalPerson and LegalPerson.
+ *
+ * IBAN pattern:  /^[A-Z]{2}[0-9]{2}[A-Z0-9]{4,30}$/ (ISO 13616 structural)
+ * BIC pattern:   /^[A-Z]{6}[A-Z0-9]{2}([A-Z0-9]{3})?$/ (ISO 9362, 8/11-char)
+ */
+export interface BankingDetails {
+  /** ISO 13616 IBAN — structural pattern (modulo-97 checksum is a runtime concern) */
+  iban?: string;
+  /** ISO 9362 BIC/SWIFT code — 8-char or 11-char */
+  bic?: string;
+  /** Full legal name of the financial institution */
+  bankName?: string;
+  /** ISO 4217 three-letter currency code, e.g. 'EUR', 'GBP' */
+  accountCurrency?: string;
+  /** Account classification */
+  accountType?: 'CURRENT' | 'SAVINGS' | 'CORRESPONDENT' | 'CRYPTO_FIAT_GATEWAY' | 'OTHER';
+  /** ISO 3166-1 alpha-2 country of the holding bank */
+  bankingCountry?: string;
+}
+
+
 export interface Address {
   country: string;
   addressType?: 'HOME' | 'BIZZ' | 'GEOG';
@@ -1030,3 +1068,114 @@ interface TaxStatus {
 ```
 
 *FATCA & CRS first-class types added in OpenKYCAML v1.9.1. Last updated: v1.9.1.*
+
+---
+
+## Contact and Banking Types (v1.10.0)
+
+```typescript
+/**
+ * Validated banking account details per ISO 13616 (IBAN) and ISO 9362 (BIC).
+ * Wired as bankingDetails[] on NaturalPerson and LegalPerson (v1.10.0).
+ *
+ * Validation:
+ *   iban:            /^[A-Z]{2}[0-9]{2}[A-Z0-9]{4,30}$/  (ISO 13616 structural)
+ *   bic:             /^[A-Z]{6}[A-Z0-9]{2}([A-Z0-9]{3})?$/  (ISO 9362, 8/11-char)
+ *   accountCurrency: /^[A-Z]{3}$/                            (ISO 4217)
+ *   bankingCountry:  /^[A-Z]{2}$/                            (ISO 3166-1 alpha-2)
+ */
+export interface BankingDetails {
+  iban?: string;
+  bic?: string;
+  bankName?: string;
+  accountCurrency?: string;
+  accountType?: 'CURRENT' | 'SAVINGS' | 'CORRESPONDENT' | 'CRYPTO_FIAT_GATEWAY' | 'OTHER';
+  bankingCountry?: string;
+}
+
+/**
+ * NaturalPerson and LegalPerson updated interfaces (v1.10.0 additions only).
+ * Contact fields use format: "email" and E.164 pattern for guaranteed interoperability.
+ */
+interface PersonContactExtension {
+  /** RFC 5321 email address (format: "email", maxLength: 254) */
+  emailAddress?: string;
+  /** E.164 phone number, e.g. '+447911123456' (pattern: /^\+[1-9]\d{1,14}$/) */
+  phoneNumber?: string;
+  /** E.164 mobile number for mTAN/OTP (pattern: /^\+[1-9]\d{1,14}$/) */
+  mobileNumber?: string;
+  /** Verified banking accounts — IBAN, BIC, account classification */
+  bankingDetails?: BankingDetails[];
+}
+```
+
+*Contact and banking types added in OpenKYCAML v1.10.0. Last updated: v1.10.0.*
+
+---
+
+## Cell Company Types (v1.11.0)
+
+```typescript
+/** PCC/ICC cell classification. */
+export type CellCompanyType = 'NONE' | 'PCC_CORE' | 'PCC_CELL' | 'ICC_CORE' | 'ICC_CELL';
+
+/**
+ * Metadata for a LegalPerson that is a Core or Cell of a PCC or ICC (v1.11.0).
+ * Present on LegalPerson when cellCompanyType != 'NONE'.
+ */
+export interface CellCompanyDetails {
+  /** Required — cell structure classification */
+  cellCompanyType: CellCompanyType;
+  /** Unique cell number/designator within the parent structure (e.g. 'CELL-007') */
+  cellIdentifier?: string;
+  /** Human-readable cell name */
+  cellName?: string;
+  /**
+   * ICC cell-specific registration number (pattern: /^[A-Z0-9]{1,35}$/).
+   * Only for ICC cells (hasIndependentLegalPersonality: true).
+   */
+  cellRegistrationNumber?: string;
+  /**
+   * true = ICC cell (own legal entity, own registration, full contracting capacity).
+   * false = PCC cell (transacts through PCC as single legal entity).
+   */
+  hasIndependentLegalPersonality?: boolean;
+  /** true when this cell is a securities/ILS/cat bond issuer vehicle */
+  isCellCompanyIssuer?: boolean;
+  /** Required when isCellCompanyIssuer is true */
+  issuancePurpose?: 'INSURANCE_LINKED_SECURITY' | 'CATASTROPHE_BOND' | 'STRUCTURED_NOTE' | 'DEBT_INSTRUMENT' | 'OTHER';
+  /** URI link to prospectus / instrument document (format: "uri") */
+  cellSpecificInstrumentReference?: string;
+}
+
+/**
+ * Link to the parent PCC or ICC Core (v1.11.0).
+ * Required when cellCompanyDetails.cellCompanyType is PCC_CELL or ICC_CELL.
+ * Enables FATF beneficial-ownership tracing and AMLR Art. 26 entity verification.
+ */
+export interface ParentCellCompanyReference {
+  /** LEI (20-char) or registration number of parent Core (pattern: /^[A-Z0-9]{1,35}$/) */
+  legalEntityIdentifier: string;
+  /** ISO 3166-1 alpha-2 incorporation jurisdiction of parent Core */
+  jurisdiction: string;
+  /** Registered legal name of parent Core */
+  parentName?: string;
+}
+
+/**
+ * LegalPerson cell company extensions (v1.11.0 additions only).
+ * All optional — absent for ordinary non-cell companies.
+ */
+interface LegalPersonCellExtension {
+  cellCompanyDetails?: CellCompanyDetails;
+  parentCellCompanyReference?: ParentCellCompanyReference;
+  /** Cell-level risk snapshot (overrides Core risk where cell risk differs) */
+  cellRiskProfileOverride?: RiskSnapshot;
+  /** Cell-level source of funds/wealth for AMLR Art. 29 / FATF Rec. 12 EDD */
+  cellSourceOfFundsWealth?: SourceOfFundsWealth;
+  /** Per-cell audit trail for AMLR Art. 56 5-year retention */
+  cellAuditMetadata?: AuditMetadata;
+}
+```
+
+*Cell company types added in OpenKYCAML v1.11.0. Last updated: v1.11.0.*

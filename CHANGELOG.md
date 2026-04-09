@@ -13,7 +13,142 @@ For the full project roadmap and planned features, see [ROADMAP.md](ROADMAP.md).
 
 ### Added
 
+---
+
+## [1.11.1] — April 2026
+
+### Changed — Cell Company Constraints Promoted to Schema-Enforced Rules
+
+Both cell company conditions that were previously advisory business warnings in the Python and Node.js validators have been promoted to hard JSON Schema `if`/`then` constraints. Payloads that violate them now fail schema validation rather than producing warnings.
+
+#### Schema changes (`$defs`)
+
+**`CellCompanyDetails`** — new `if`/`then` at the object level:
+- If `isCellCompanyIssuer` is `true` → `issuancePurpose` is **required**.
+- Prevents issuer vehicles from omitting instrument-level classification (previously a soft advisory).
+
+**`LegalPerson`** — existing `if`/`then`/`else` chain (entityType → typed sub-object) restructured into `allOf` to support multiple independent conditionals; new constraint added:
+- If `cellCompanyDetails.cellCompanyType` is `PCC_CELL` or `ICC_CELL` → `parentCellCompanyReference` is **required**.
+- Prevents orphan cell records that cannot be linked to a PCC/ICC Core (previously a soft advisory; now a schema validation error).
+
+#### Validator changes
+
+- **Python validator** (`tools/python/validator.py`) — cell company advisory warning blocks removed; conditions are now enforced by the schema itself.
+- **Node.js validator** (`tools/javascript/validator.js`) — same removal.
+
+#### Backward compatibility
+
+- Payloads that previously satisfied both conditions (cell with parent ref; issuer with purpose) are unaffected — they still validate correctly.
+- Payloads that previously triggered warnings will now fail schema validation. This is the intended behaviour: the conditions represent genuine compliance requirements (FATF Rec. 24, AMLR Art. 26) that must be enforced, not just advised upon.
+
+---
+
+## [1.11.0] — April 2026
+
+### Added — Cell Company Support (PCC / ICC)
+
+#### New $defs
+- **`CellCompanyType`** — string enum `["NONE", "PCC_CORE", "PCC_CELL", "ICC_CORE", "ICC_CELL"]` for precise classification of cell-structured entities.
+- **`CellCompanyDetails`** — structured metadata for PCC/ICC cells and cores:
+  - `cellCompanyType` (required, `$ref: CellCompanyType`)
+  - `cellIdentifier` — unique cell number/name, pattern `^[A-Za-z0-9 \-]{1,64}$`
+  - `cellName` — human-readable cell description, `maxLength: 128`
+  - `cellRegistrationNumber` — ICC cell registration number, pattern `^[A-Z0-9]{1,35}$` (ICC cells only)
+  - `hasIndependentLegalPersonality` — boolean; `true` for ICC cells (independent legal personality), `false` for PCC cells
+  - `isCellCompanyIssuer` — boolean; `true` when cell is a securities/ILS issuer vehicle
+  - `issuancePurpose` — enum `["INSURANCE_LINKED_SECURITY", "CATASTROPHE_BOND", "STRUCTURED_NOTE", "DEBT_INSTRUMENT", "OTHER"]`
+  - `cellSpecificInstrumentReference` — `format: "uri"` link to instrument/prospectus
+- **`ParentCellCompanyReference`** — required parent link for any cell:
+  - `legalEntityIdentifier` (required) — LEI or registration number of parent Core, pattern `^[A-Z0-9]{1,35}$`
+  - `jurisdiction` (required) — ISO 3166-1 alpha-2 of parent Core's incorporation jurisdiction
+  - `parentName` — registered name of parent Core, `maxLength: 128`
+
+#### `LegalPerson` extensions (all optional, backward-compatible)
+- `cellCompanyDetails` — `$ref: CellCompanyDetails`
+- `parentCellCompanyReference` — `$ref: ParentCellCompanyReference`
+- `cellRiskProfileOverride` — `$ref: RiskSnapshot` — cell-level risk snapshot where cell risk differs from Core
+- `cellSourceOfFundsWealth` — `$ref: SourceOfFundsWealth` — cell-level source of funds (AMLR Art. 29, FATF Rec. 12)
+- `cellAuditMetadata` — `$ref: AuditMetadata` — per-cell audit trail (AMLR Art. 56 5-year retention)
+
+#### Documentation
+- **`schema/versions/v1.11.0.json`** — versioned snapshot.
+- **`docs/mappings/cell-company.md`** + **`.yaml`** — new mapping document covering PCC/ICC structures, field rationale, KYC/AML obligations, and regulatory jurisdictions.
+- **`docs/compliance/compliance-matrix.md §22`** — Cell Company and Special Purpose Vehicle section.
+- **`docs/diagrams/schema-er-diagram.md`** — `CellCompanyDetails`, `CellCompanyType`, `ParentCellCompanyReference` entities with relationships; footer updated to v1.11.0.
+- **`docs/reference/typescript-types.md`** — `CellCompanyDetails`, `CellCompanyType`, `ParentCellCompanyReference` interfaces.
+
+#### Validator business warnings (Python + Node.js)
+- `legalPerson.cellCompanyDetails.cellCompanyType` is `PCC_CELL` or `ICC_CELL` but `parentCellCompanyReference` is absent → FATF beneficial-ownership tracing / AMLR Art. 26 advisory.
+- `cellCompanyDetails.isCellCompanyIssuer` is `true` but `issuancePurpose` is absent → instrument-level classification advisory.
+
+#### New examples
+- `examples/cell-company/pcc-cell.json` — Guernsey PCC Cell 7 (catastrophe bond issuer, no independent legal personality).
+- `examples/cell-company/icc-cell.json` — Jersey ICC Cell 3 (marine ILS, independent legal personality, `cellRegistrationNumber`, `cellSourceOfFundsWealth`).
+
+### Changed
+- `schema/kyc-aml-hybrid-extended.json` — version bumped from `1.10.0` to `1.11.0`; `$id` updated.
+- All additions are strictly additive and backward-compatible with v1.10.x and earlier payloads.
+
 - `docs/naming-convention.md` — new document defining the repository-wide file and directory naming convention (lowercase kebab-case, sub-folder organisation for docs, pattern rules for examples, schema versions, and versioned artefacts).
+
+---
+
+## [1.10.0] — April 2026
+
+### Added — Enhanced Validation: Format and Pattern Completeness
+
+#### New `BankingDetails` $def — IBAN / BIC / account data
+- **`BankingDetails` $def** — New reusable financial account definition wired as `bankingDetails[]` arrays on both `NaturalPerson` and `LegalPerson`. Fields:
+  - `iban` — `type: string`, ISO 13616 structural pattern `^[A-Z]{2}[0-9]{2}[A-Z0-9]{4,30}$`, `maxLength: 34`.
+  - `bic` — `type: string`, ISO 9362 pattern `^[A-Z]{6}[A-Z0-9]{2}([A-Z0-9]{3})?$` (8-char and 11-char BIC), `maxLength: 11`.
+  - `bankName` — `type: string`, `maxLength: 140`.
+  - `accountCurrency` — `type: string`, ISO 4217 pattern `^[A-Z]{3}$`, `maxLength: 3`.
+  - `accountType` — `enum: ["CURRENT", "SAVINGS", "CORRESPONDENT", "CRYPTO_FIAT_GATEWAY", "OTHER"]`.
+  - `bankingCountry` — `type: string`, pattern `^[A-Z]{2}$`.
+
+#### Contact fields on `NaturalPerson` and `LegalPerson`
+- **`emailAddress`** — `type: string`, `format: "email"`, `maxLength: 254` (RFC 5321). Added to both `NaturalPerson` and `LegalPerson`. Addresses the most impactful format gap for B2B data exchange; aligns with FATF Rec. 16 counterparty contact requirements and AMLR Art. 22 CDD.
+- **`phoneNumber`** — `type: string`, E.164 pattern `^\+[1-9]\d{1,14}$`, `maxLength: 16`. Added to both `NaturalPerson` and `LegalPerson`.
+- **`mobileNumber`** — `type: string`, same E.164 pattern, `maxLength: 16`. Added to both `NaturalPerson` and `LegalPerson`. Separate field for mTAN/OTP delivery in remote CDD (AMLR Art. 22(5)) and EUDI Wallet notification flows.
+
+#### Patterns on existing regulatory identifier fields
+- **`LegalPersonIdentificationData.vatRegistrationNumber`** — pattern `^[A-Z]{2}[A-Z0-9]{2,12}$` (EU VAT structural form: 2-char country prefix + 2–12 alphanumeric).
+- **`LegalPersonIdentificationData.eoriNumber`** — pattern `^[A-Z]{2}[A-Z0-9]{1,15}$` (EU/UK EORI: country prefix + up to 15 alphanumeric).
+- **`LegalPersonIdentificationData.europeanUniqueIdentifier`** — pattern `^[A-Z]{2}-[A-Za-z0-9.\-]{6,40}$` (eIDAS EUID: CC-RegistrationAuthority-RegistrationNumber format per Directive (EU) 2017/1132).
+- **`IndirectTaxRegistration.registrationNumber`** — pattern `^[A-Z0-9\-\/]{2,30}$` (generic: 2–30 uppercase alphanumeric with hyphens/slashes; covers EU VAT, India GSTIN, Australia ABN, Canada HST/PST).
+- **`TinIdentifier.tinValue`** — pattern `^[A-Z0-9\-\/]{5,20}$` (5–20 uppercase alphanumeric with hyphens/slashes; intentionally loose to cover global TIN formats; jurisdiction-specific validation is a runtime concern).
+- **`FatcaStatus.withholdingAgentReference`** — pattern `^[A-Z0-9\-]{1,30}$`, `maxLength: 30`.
+
+#### Patterns on document number fields
+- **`NaturalPersonDocument.documentNumber`** — pattern `^[A-Z0-9\-\/ ]{1,50}$` (allows standard global passport and national ID formats; rejects control characters).
+- **`LegalEntityDocument.documentNumber`** — pattern `^[A-Z0-9\-\/ ]{1,100}$`.
+- **`LegalEntityDocument.registrationNumber`** — pattern `^[A-Z0-9\-\/ ]{1,100}$`.
+
+#### Miscellaneous field tightening
+- **`Originator.accountNumber` items**, **`Beneficiary.accountNumber` items** — pattern `^[A-Za-z0-9\-\/.]{1,100}$` (mixed-case to support Ethereum 0x hex, Bitcoin bech32, IBANs, and proprietary identifiers).
+- **`NationalIdentification.registrationAuthority`** — pattern `^RA[0-9]{6}$` (GLEIF RAL code format; aligns with `RegistrationAuthorityDetail.ralCode`).
+- **`TransactionMonitoring` currency sub-fields** (`jurisdictionThreshold.currency`, `reportingThreshold.currency`) — pattern `^[A-Z]{3}$` (ISO 4217).
+- **`IVMS101Payload.transferredAmount.assetType`** — pattern `^[A-Z]{3,10}$` (ISO 4217 currency codes and crypto-asset tickers 3–10 uppercase chars).
+- **`Address.postCode`** — pattern `^[A-Z0-9\- ]{2,10}$` (generic: 2–10 uppercase alphanumeric with hyphens and spaces; country-specific validation is a runtime concern).
+
+#### Documentation
+- **`schema/versions/v1.10.0.json`** — versioned snapshot of canonical schema.
+- **`docs/mappings/contact-financial-identifiers.md`** + **`.yaml`** — new mapping document covering email/phone/IBAN/BIC alignment with IVMS 101, FATF Rec. 16, ISO 13616/9362, and eIDAS contact field requirements.
+- **`docs/compliance/compliance-matrix.md §21`** — Format and Pattern Completeness section.
+- **`docs/diagrams/schema-er-diagram.md`** — `BankingDetails` entity added with relationships to `NaturalPerson` and `LegalPerson`; footer updated to v1.10.0.
+- **`docs/reference/typescript-types.md`** — `BankingDetails` interface added.
+
+#### Validator business warnings (Python + Node.js)
+- Missing `emailAddress` or `phoneNumber` on a natural person with `dueDiligenceType: ENHANCED` — FATF Rec. 16 / AMLR Art. 22 contact requirement advisory.
+- `bankingDetails` entry with `iban` present but no `bic` — SEPA/correspondent banking reconciliation advisory.
+
+#### New examples
+- `examples/contact-banking/natural-person-with-contact.json` — natural person with email, E.164 phone, and IBAN/BIC banking details.
+- `examples/contact-banking/legal-entity-with-banking.json` — legal entity with contact fields and full `BankingDetails` entry.
+
+### Changed
+- `schema/kyc-aml-hybrid-extended.json` — version bumped from `1.9.1` to `1.10.0`; `$id` updated to `https://openkycaml.org/schema/v1.10.0/kyc-aml-hybrid-extended.json`.
+- All new fields are **strictly additive and backward-compatible** — no existing required fields changed; no existing patterns modified.
 
 ### Changed (naming/organisation — no schema changes)
 
