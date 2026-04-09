@@ -15,6 +15,52 @@ For the full project roadmap and planned features, see [ROADMAP.md](ROADMAP.md).
 
 ---
 
+## [1.12.0] — April 2026
+
+### Added — v1.12.0: Natural-person completeness, entity governance flags, and review lifecycle state machine
+
+Three independent optional extensions that close CDD data gaps identified in the v1.11.2 compliance gap analysis. All additions are backward-compatible; no existing required fields changed.
+
+#### 1. Natural-person completeness — `gender` and `occupation` (IVMS 101 / eIDAS 2.0 alignment)
+
+- **`schema/kyc-aml-hybrid-extended.json`** (`$defs` → `NaturalPerson`): added two optional properties:
+  - `gender` (string enum: `MALE`, `FEMALE`, `NON_BINARY`, `OTHER`, `PREFER_NOT_TO_SAY`). Maps to eIDAS 2.0 PID `gender` attribute (ISO/IEC 5218). GDPR Art. 9 special-category data — collect only where lawfully required.
+  - `occupation` (object with `occupationCode` enum (`EMPLOYED`, `SELF_EMPLOYED`, `BUSINESS_OWNER`, `STUDENT`, `RETIRED`, `UNEMPLOYED`, `PUBLIC_OFFICIAL`, `OTHER`) and free-text `occupationDescription` max 200). Aligned with ILO/ISCO-08 broad categories, IVMS 101 extended CDD, and eIDAS 2.0 PID `occupation` attribute. Complements — does not replace — the existing `kycProfile.customerClassification.occupationOrPurpose` free-text field.
+- **`docs/mappings/natural-person-governance.md`**: new mapping document covering `gender` and `occupation`, eIDAS PID / IVMS 101 alignment, GDPR Art. 9 guidance, and JSON examples.
+- **`examples/natural-person-gender-occupation.json`**: new example showing a natural person with `gender: FEMALE`, `occupation.occupationCode: SELF_EMPLOYED`, and `reviewLifecycle` state history.
+
+#### 2. Legal-entity governance flags — `EntityGovernance` $def + `LegalPerson.entityGovernance`
+
+- **`schema/kyc-aml-hybrid-extended.json`** (`$defs`): added new `EntityGovernance` $def with all properties optional:
+  - `regulatoryStatus` (enum: `REGULATED`, `RECOGNISED`, `UNREGULATED`, `EXEMPT`) — fills "no top-level regulatoryStatus" gap.
+  - `regulators[]` (array of `regulatorName` / `jurisdiction` / `licenceNumber` objects) — fills "no array for multiple regulators" gap; critical for cross-border CDD reliance (AMLR Art. 48).
+  - `listedStatus` (inline object: `isListed` boolean, `marketIdentifier` ISO 10383 MIC, `recognisedMarket` boolean) — fills "entity is listed / listed on a recognised market" gaps.
+  - `parentCompany` (`$ref: ParentCellCompanyReference`) — reuses existing $def for non-cell entity parent linkage.
+  - `parentRegulated` (boolean) — fills "parent is regulated" gap.
+  - `parentListed` (boolean) — fills "parent is listed" gap.
+  - `majorityOwnedSubsidiary` (boolean) — fills "majority owned subsidiary" gap.
+  - `stateOwned` (boolean) — fills "state owned" gap.
+  - `governmentOwnershipPercentage` (number 0–100) — fills "government ownership percentage" gap.
+- **`schema/kyc-aml-hybrid-extended.json`** (`$defs` → `LegalPerson`): added optional `entityGovernance` property (`$ref: EntityGovernance`).
+- **`docs/mappings/entity-governance.md`**: new mapping document covering all `EntityGovernance` fields, regulatory basis (FATF Rec. 24/25, AMLR Art. 26/48, MAR), and full JSON example.
+- **`examples/legal-entity-governance.json`**: new example showing a dual-regulated, exchange-listed subsidiary with full `entityGovernance` block and `reviewLifecycle` state history.
+
+#### 3. Review lifecycle state machine — `ReviewLifecycle` $def + `MonitoringInfo.reviewLifecycle`
+
+- **`schema/kyc-aml-hybrid-extended.json`** (`$defs`): added new `ReviewLifecycle` $def:
+  - `currentState` (string enum: `ONBOARDING`, `INITIAL_REVIEW`, `PERIODIC_REVIEW`, `TRIGGERED_REVIEW`, `OFFBOARDING`, `TERMINATED`) — fills "no formal state machine" gap.
+  - `stateHistory[]` (array with required `state` enum + `enteredAt` date-time, optional `exitedAt`, `triggeredBy`, `notes` max 500) — full timestamped audit trail.
+- **`schema/kyc-aml-hybrid-extended.json`** (`$defs` → `MonitoringInfo`): added optional `reviewLifecycle` property (`$ref: ReviewLifecycle`). Complements existing `monitoringStatus` with structured history for AMLR Art. 21 auditability.
+
+#### 4. Version bump, snapshot, and documentation
+
+- `schema/kyc-aml-hybrid-extended.json`: `$id` and `version` bumped to `v1.12.0`.
+- `schema/versions/v1.12.0.json`: versioned snapshot created.
+- `docs/compliance/compliance-matrix.md` §23: new section covering all three extensions with full regulatory mapping.
+- `README.md`: schema version badge updated to `v1.12.0`.
+
+---
+
 ## [1.11.2] — April 2026
 
 ### Fixed — v1.11.2 Polish (cell identifier disambiguation, recursion-depth guidance, predictive AML cell scores, compliance matrix)

@@ -561,4 +561,75 @@ _✅ = full field mapping. ⭐ = added in v1.11.0. ⭐⭐ = promoted to hard con
 
 ---
 
-*Last updated: v1.11.2 — April 2026. Maintained by the OpenKYCAML Technical Working Group.*
+## 23. Natural-Person Governance, Entity Governance, and Review Lifecycle (v1.12.0)
+
+> Three independent optional extensions that close the remaining CDD data gaps identified in the v1.11.2 compliance gap analysis. All additions are backward-compatible.
+
+### 23.1 Natural-Person Completeness — `gender` and `occupation` (v1.12.0)
+
+Fields added to `NaturalPerson` $def. Both are optional.
+
+| Field | Schema path | Standard alignment | Regulatory basis |
+|---|---|---|---|
+| `gender` ⭐⭐⭐ | `NaturalPerson.gender` | eIDAS 2.0 PID `gender` (ISO/IEC 5218); IVMS 101 extended CDD | AMLR Art. 22 CDD data; IVMS 101 §3; jurisdictional KYC rules requiring sex/gender |
+| `occupation.occupationCode` ⭐⭐⭐ | `NaturalPerson.occupation.occupationCode` | ILO/ISCO-08 broad category; eIDAS 2.0 PID `occupation`; IVMS 101 extended CDD | AMLR Art. 22 source-of-wealth/funds CDD; FATF Rec. 12 (PUBLIC_OFFICIAL triggers PEP screening) |
+| `occupation.occupationDescription` ⭐⭐⭐ | `NaturalPerson.occupation.occupationDescription` | Free-text complement to occupationCode | AMLR Art. 22 CDD data; IVMS 101 extended CDD |
+
+**GDPR note:** `gender` is a special-category personal data element under GDPR Art. 9. Collect only where lawfully required; document legal basis in ROPA (Art. 30).
+
+**Relationship to `occupationOrPurpose`:** `kycProfile.customerClassification.occupationOrPurpose` (free-text, natural persons and legal entities) is **not deprecated**. `NaturalPerson.occupation` provides a structured, person-level complement for IVMS 101 and eIDAS PID interoperability.
+
+See [docs/mappings/natural-person-governance.md](../mappings/natural-person-governance.md) for full field mapping and GDPR guidance.
+
+### 23.2 Legal-Entity Governance Flags — `EntityGovernance` (v1.12.0)
+
+New `EntityGovernance` $def, exposed as optional `LegalPerson.entityGovernance`. All sub-fields are optional.
+
+| Field | Type / Enum | Regulatory basis |
+|---|---|---|
+| `regulatoryStatus` ⭐⭐⭐ | `REGULATED`, `RECOGNISED`, `UNREGULATED`, `EXEMPT` | AMLR Art. 48 CDD reliance; FATF Rec. 17 (third-party reliance) |
+| `regulators[]` ⭐⭐⭐ | Array: `regulatorName`, `jurisdiction` (`^[A-Z]{2}$`), `licenceNumber` | AMLR Art. 48; FATF Rec. 17; Wolfsberg CBDDQ §3 — multi-regulator cross-border CDD reliance |
+| `listedStatus.isListed` ⭐⭐⭐ | boolean | AMLR Art. 22 (SDD for listed entities); MAR (market-abuse risk) |
+| `listedStatus.marketIdentifier` ⭐⭐⭐ | ISO 10383 MIC code | MiFID II Art. 4(1)(21); MAR insider-dealing risk scoring |
+| `listedStatus.recognisedMarket` ⭐⭐⭐ | boolean | AMLR Art. 22 SDD eligibility; MiFID II regulated market definition |
+| `parentCompany` ⭐⭐⭐ | `$ref: ParentCellCompanyReference` | FATF Rec. 24; AMLR Art. 26 (group beneficial ownership chain) |
+| `parentRegulated` ⭐⭐⭐ | boolean | AMLR Art. 48 intra-group reliance; Wolfsberg CBDDQ §3.3 |
+| `parentListed` ⭐⭐⭐ | boolean | AMLR Art. 22 SDD conditions for listed-group subsidiaries; MAR |
+| `majorityOwnedSubsidiary` ⭐⭐⭐ | boolean | FATF Rec. 24; AMLR Art. 26 (ownership chain); AMLR Art. 48 intra-group reliance |
+| `stateOwned` ⭐⭐⭐ | boolean | FATF PEP Guidance; AMLR Art. 28–31 (PEP adjacency for SOEs) |
+| `governmentOwnershipPercentage` ⭐⭐⭐ | number 0–100 | FATF Rec. 12; AMLR Art. 28–31; IMF/OECD SOE governance frameworks |
+
+See [docs/mappings/entity-governance.md](../mappings/entity-governance.md) for full field reference and JSON example.
+
+### 23.3 Review Lifecycle State Machine — `ReviewLifecycle` (v1.12.0)
+
+New `ReviewLifecycle` $def, exposed as optional `MonitoringInfo.reviewLifecycle`. Provides an explicit, timestamped audit trail of lifecycle transitions.
+
+| Field | Type / Enum | Regulatory basis |
+|---|---|---|
+| `currentState` ⭐⭐⭐ | `ONBOARDING`, `INITIAL_REVIEW`, `PERIODIC_REVIEW`, `TRIGGERED_REVIEW`, `OFFBOARDING`, `TERMINATED` | AMLR Art. 21 (ongoing monitoring lifecycle); FATF Rec. 11 (record keeping) |
+| `stateHistory[].state` ⭐⭐⭐ | Same enum | AMLR Art. 21 supervisory inspection; AMLR Art. 56 5-year record retention |
+| `stateHistory[].enteredAt` ⭐⭐⭐ | ISO 8601 date-time | AMLR Art. 21 audit trail; FATF Rec. 11 |
+| `stateHistory[].exitedAt` ⭐⭐⭐ | ISO 8601 date-time (optional) | Duration analysis; supervisory inspection |
+| `stateHistory[].triggeredBy` ⭐⭐⭐ | string (optional) | AMLR Art. 21 — record of who/what triggered each review transition |
+| `stateHistory[].notes` ⭐⭐⭐ | string max 500 (optional) | Free-text rationale for transition; supervisory inspection narrative |
+
+**Relationship to `monitoringStatus`:** `MonitoringInfo.monitoringStatus` (ACTIVE / SUSPENDED / TERMINATED) continues to represent the operational status of the relationship. `reviewLifecycle` adds the formal compliance lifecycle state machine with full history. The two fields are complementary.
+
+### 23.4 Schema-Level Changes (v1.12.0)
+
+| Change | Scope | Backward compatible |
+|---|---|---|
+| `NaturalPerson.gender` (optional) | `$defs.NaturalPerson` | ✅ |
+| `NaturalPerson.occupation` (optional object) | `$defs.NaturalPerson` | ✅ |
+| `EntityGovernance` $def (new) | `$defs` | ✅ |
+| `LegalPerson.entityGovernance` (optional) | `$defs.LegalPerson` | ✅ |
+| `ReviewLifecycle` $def (new) | `$defs` | ✅ |
+| `MonitoringInfo.reviewLifecycle` (optional) | `$defs.MonitoringInfo` | ✅ |
+| Schema `$id` and `version` bumped to `v1.12.0` | Root | ✅ |
+
+_✅ = full field mapping. ⭐ = added in v1.11.0. ⭐⭐ = promoted to hard constraint in v1.11.1. ⭐⭐⭐ = added in v1.12.0. All additions backward-compatible._
+
+---
+
+*Last updated: v1.12.0 — April 2026. Maintained by the OpenKYCAML Technical Working Group.*

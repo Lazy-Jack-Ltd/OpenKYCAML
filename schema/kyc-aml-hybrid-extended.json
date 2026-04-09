@@ -1,9 +1,9 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://openkycaml.org/schema/v1.11.2/kyc-aml-hybrid-extended.json",
+  "$id": "https://openkycaml.org/schema/v1.12.0/kyc-aml-hybrid-extended.json",
   "title": "OpenKYCAML Hybrid KYC/AML Schema",
   "description": "Root OpenKYCAML document. At least one of 'ivms101' or 'verifiableCredential' MUST be present.",
-  "version": "1.11.2",
+  "version": "1.12.0",
   "$defs": {
     "NaturalPersonNameIdentifier": {
       "title": "NaturalPersonNameIdentifier",
@@ -290,6 +290,43 @@
           "items": {
             "$ref": "#/$defs/BankingDetails"
           }
+        },
+        "gender": {
+          "type": "string",
+          "description": "Gender of the natural person. Maps to eIDAS 2.0 PID attribute 'gender' (ISO/IEC 5218). Required for some jurisdictional KYC rules and IVMS 101 extended CDD. Note: gender is a special-category personal data under GDPR Art. 9 — ensure lawful basis and data minimisation apply before collecting.",
+          "enum": [
+            "MALE",
+            "FEMALE",
+            "NON_BINARY",
+            "OTHER",
+            "PREFER_NOT_TO_SAY"
+          ]
+        },
+        "occupation": {
+          "type": "object",
+          "description": "Structured occupation record for the natural person. Complements the free-text kycProfile.customerClassification.occupationOrPurpose field with an ILO/ISCO-aligned code for structured CDD and risk-scoring. Aligned with IVMS 101 extended CDD data and eIDAS 2.0 PID occupation attribute.",
+          "properties": {
+            "occupationCode": {
+              "type": "string",
+              "description": "Broad ILO/ISCO-aligned occupation category code. Use occupationDescription for free-text detail.",
+              "enum": [
+                "EMPLOYED",
+                "SELF_EMPLOYED",
+                "BUSINESS_OWNER",
+                "STUDENT",
+                "RETIRED",
+                "UNEMPLOYED",
+                "PUBLIC_OFFICIAL",
+                "OTHER"
+              ]
+            },
+            "occupationDescription": {
+              "type": "string",
+              "description": "Free-text occupation or job-title description. May be provided in addition to or instead of occupationCode.",
+              "maxLength": 200
+            }
+          },
+          "additionalProperties": false
         }
       }
     },
@@ -555,6 +592,10 @@
         "cellAuditMetadata": {
           "$ref": "#/$defs/AuditMetadata",
           "description": "Cell-specific audit and provenance metadata. Separate from the Core audit trail to enable per-cell record keeping (AMLR Art. 56 — 5-year minimum retention) and change tracking for cell-level compliance events."
+        },
+        "entityGovernance": {
+          "$ref": "#/$defs/EntityGovernance",
+          "description": "Optional governance and regulatory-status flags for the legal entity. Covers regulatory recognition, multi-regulator licences, listed-market status, parent company linkage, state ownership, and subsidiary classification. Fills gaps for cross-border CDD reliance (AMLR Art. 48), market-abuse risk scoring, and FATF Rec. 24/25 entity transparency. All sub-fields are optional and backward-compatible."
         }
       },
       "allOf": [
@@ -2143,6 +2184,10 @@
         "tmModelVersion": {
           "type": "string",
           "description": "Version of the transaction monitoring (TM) rule engine or ML model in use when monitoring was last applied. Supports AMLR Art. 21 audit requirements and model lineage tracking for EU AI Act high-risk AML systems."
+        },
+        "reviewLifecycle": {
+          "$ref": "#/$defs/ReviewLifecycle",
+          "description": "Optional formal review lifecycle state machine for this customer relationship. Provides an explicit, timestamped audit trail of lifecycle transitions (ONBOARDING → INITIAL_REVIEW → PERIODIC_REVIEW → …). Complements monitoringStatus with structured history for AMLR Art. 21 ongoing monitoring auditability and supervisory inspection readiness."
         }
       }
     },
@@ -4592,6 +4637,161 @@
           "issuancePurpose"
         ]
       }
+    },
+    "EntityGovernance": {
+      "title": "EntityGovernance",
+      "description": "Optional governance and regulatory-status block for a legal entity. Covers regulatory recognition, multi-regulator licences, listed-market status, parent company linkage, state ownership, and majority-subsidiary flags. All properties are optional. Designed for cross-border CDD reliance (AMLR Art. 48), market-abuse and insider-risk scoring, FATF Rec. 24 entity transparency, and sovereign-risk / PEP-adjacency assessment.",
+      "type": "object",
+      "properties": {
+        "regulatoryStatus": {
+          "type": "string",
+          "description": "Top-level regulatory or recognition status of the entity. REGULATED = holds an active licence from a recognised regulator; RECOGNISED = formally recognised (e.g. central bank, supranational body) but not licensed per se; UNREGULATED = no regulatory licence or recognition; EXEMPT = exempt from licensing requirements under applicable law.",
+          "enum": [
+            "REGULATED",
+            "RECOGNISED",
+            "UNREGULATED",
+            "EXEMPT"
+          ]
+        },
+        "regulators": {
+          "type": "array",
+          "description": "Array of regulators that licence or supervise this entity. Supports multiple regulators for cross-border or dual-regulated entities (e.g. a VASP with both FCA and CSSF registrations). Critical for AMLR Art. 48 CDD reliance — obliged entity must verify that the third party is subject to equivalent AML/CFT supervision.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "regulatorName": {
+                "type": "string",
+                "description": "Name of the regulatory authority (e.g. 'Financial Conduct Authority', 'BaFin', 'CSSF').",
+                "maxLength": 200
+              },
+              "jurisdiction": {
+                "type": "string",
+                "description": "ISO 3166-1 alpha-2 country code of the regulator's jurisdiction.",
+                "pattern": "^[A-Z]{2}$"
+              },
+              "licenceNumber": {
+                "type": "string",
+                "description": "Licence or registration number issued by this regulator.",
+                "maxLength": 100
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "listedStatus": {
+          "type": "object",
+          "description": "Listed-market status of the entity. Relevant for market-abuse / insider-risk scoring and CDD simplification under AMLR Art. 22 (listed entities on recognised markets may benefit from simplified CDD).",
+          "properties": {
+            "isListed": {
+              "type": "boolean",
+              "description": "Whether the entity (or its instruments) is listed on a stock exchange or regulated market."
+            },
+            "marketIdentifier": {
+              "type": "string",
+              "description": "ISO 10383 Market Identifier Code (MIC) of the primary exchange (e.g. 'XLON' for London Stock Exchange, 'XNAS' for NASDAQ).",
+              "maxLength": 10
+            },
+            "recognisedMarket": {
+              "type": "boolean",
+              "description": "Whether the exchange is a 'recognised' or 'regulated' market under applicable law (e.g. EU MiFID II regulated market, FCA recognised investment exchange). Relevant for CDD simplification and market-abuse regime applicability."
+            }
+          },
+          "additionalProperties": false
+        },
+        "parentCompany": {
+          "$ref": "#/$defs/ParentCellCompanyReference",
+          "description": "Reference to the immediate parent company (if any). Reuses ParentCellCompanyReference for identifier + jurisdiction linkage. Use for non-cell entities where the parent relationship is relevant for beneficial-ownership tracing or group-level risk assessment."
+        },
+        "parentRegulated": {
+          "type": "boolean",
+          "description": "Whether the immediate parent company is regulated by a recognised regulator. Supports group-level risk assessment and CDD reliance eligibility (AMLR Art. 48)."
+        },
+        "parentListed": {
+          "type": "boolean",
+          "description": "Whether the immediate parent company is listed on a recognised market. Relevant for CDD simplification and group-level insider-risk scoring."
+        },
+        "majorityOwnedSubsidiary": {
+          "type": "boolean",
+          "description": "Whether this entity is a majority-owned (>50%) subsidiary of another entity. Supports group-level beneficial-ownership mapping and CDD reliance chain verification (FATF Rec. 24)."
+        },
+        "stateOwned": {
+          "type": "boolean",
+          "description": "Whether the entity is owned or controlled by a state or government body. Material for sovereign-risk assessment and PEP-adjacency scoring — state-owned enterprises may be vehicles for PEP influence even if the enterprise itself is not a PEP."
+        },
+        "governmentOwnershipPercentage": {
+          "type": "number",
+          "description": "Percentage of the entity owned directly or indirectly by a government or state body (0–100). Supports granular sovereign-risk scoring; a value ≥ 50 typically triggers enhanced scrutiny for PEP adjacency.",
+          "minimum": 0,
+          "maximum": 100
+        }
+      },
+      "additionalProperties": false
+    },
+    "ReviewLifecycle": {
+      "title": "ReviewLifecycle",
+      "description": "Formal review lifecycle state machine for a customer relationship. Provides structured, timestamped transitions between lifecycle states for AMLR Art. 21 ongoing monitoring auditability and supervisory inspection readiness. The currentState represents the present position; stateHistory records all prior transitions.",
+      "type": "object",
+      "properties": {
+        "currentState": {
+          "type": "string",
+          "description": "Current lifecycle state of the customer relationship. ONBOARDING = initial data collection in progress; INITIAL_REVIEW = first full CDD review underway; PERIODIC_REVIEW = scheduled recurring review; TRIGGERED_REVIEW = unscheduled review triggered by alert, risk escalation, or regulatory request; OFFBOARDING = relationship closure in progress; TERMINATED = relationship formally closed.",
+          "enum": [
+            "ONBOARDING",
+            "INITIAL_REVIEW",
+            "PERIODIC_REVIEW",
+            "TRIGGERED_REVIEW",
+            "OFFBOARDING",
+            "TERMINATED"
+          ]
+        },
+        "stateHistory": {
+          "type": "array",
+          "description": "Ordered history of lifecycle state transitions, most recent last. Provides the full audit trail required for AMLR Art. 21 supervisory inspection and FATF Rec. 11 record-keeping obligations.",
+          "items": {
+            "type": "object",
+            "required": [
+              "state",
+              "enteredAt"
+            ],
+            "properties": {
+              "state": {
+                "type": "string",
+                "description": "Lifecycle state entered at this transition.",
+                "enum": [
+                  "ONBOARDING",
+                  "INITIAL_REVIEW",
+                  "PERIODIC_REVIEW",
+                  "TRIGGERED_REVIEW",
+                  "OFFBOARDING",
+                  "TERMINATED"
+                ]
+              },
+              "enteredAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "ISO 8601 date-time when this state was entered."
+              },
+              "exitedAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "ISO 8601 date-time when this state was exited (i.e. when the next transition occurred). Absent for the current active state."
+              },
+              "triggeredBy": {
+                "type": "string",
+                "description": "Identifier of the system, operator, rule, or alert that triggered this transition.",
+                "maxLength": 200
+              },
+              "notes": {
+                "type": "string",
+                "description": "Free-text notes describing the reason for or outcome of this state transition.",
+                "maxLength": 500
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
     },
     "ParentCellCompanyReference": {
       "title": "ParentCellCompanyReference",
