@@ -21,7 +21,7 @@ Every example is a complete, schema-valid payload that can be used as a starting
 
 > **Fictional data notice:** All names, passport numbers, national identifiers, addresses, entity names, LEIs, DIDs, wallet addresses, and any other personal or entity data in the example payloads are **entirely fictional** and have been created solely for illustrative purposes. Any resemblance to real persons (living or deceased), real legal entities, or real transactions is entirely coincidental.
 
-There are currently **44 example files** covering fourteen categories:
+There are currently **46 example files** covering fifteen categories:
 
 | # | Category | Files |
 |---|---|---|
@@ -40,6 +40,7 @@ There are currently **44 example files** covering fourteen categories:
 | M | Cell Companies — PCC / ICC (v1.11.0) | 3 |
 | N | Entity & Person Governance (v1.12.0) | 3 |
 | O | Presentation Definitions (OpenID4VP) | 1 |
+| P | CRM Completeness (v1.13.0) | 2 |
 
 All files in `examples/` and its sub-directories (`evidence/`, `tax/`, `predictive/`, `contact-banking/`, `cell-company/`, `presentation-definitions/`) validate against [`schema/kyc-aml-hybrid-extended.json`](../schema/kyc-aml-hybrid-extended.json) (JSON Schema draft 2020-12), with the exception of `sd-jwt-compact-token.json` which is an annotated reference document — see [§6](#6-notes-on-special-files).
 
@@ -178,6 +179,8 @@ Each example targets a specific compliance scenario.  Use the catalogue table in
 | [`legal-entity-governance.json`](legal-entity-governance.json) | N — Governance | Legal entity | 1.12.0 | ✓ | | ✓ | | | | | Dual-regulated, exchange-listed subsidiary; `entityGovernance` with `regulators[]`, `listedStatus` (XETR), `parentRegulated`, `majorityOwnedSubsidiary` |
 | [`natural-person-gender-occupation.json`](natural-person-gender-occupation.json) | N — Governance | Natural person | 1.12.0 | ✓ | | ✓ | | | | | Natural person with `gender: FEMALE`, `occupation.occupationCode: SELF_EMPLOYED`, and `reviewLifecycle` state history |
 | [`amlr2027-fatca-ai-act.json`](amlr2027-fatca-ai-act.json) | N — Governance | Legal entity | 1.9.1 | ✓ | ✓ | ✓ | ✓ | | | ✓ | End-to-end reference: predictiveAML (EU AI Act) + taxStatus (FATCA/CRS/Pillar 2) + pkiEvidence (QSealC) + legacyIdentifiers (X.500 DN) |
+| [`crm-natural-person-full.json`](crm-natural-person-full.json) | P — CRM Completeness | Natural person | 1.13.0 | ✓ | | ✓ | | | | | Full CRM natural person: historicalNames, marital status, emergency contact, typed emailAddresses/phoneNumbers, preferred language/channel, relationship manager, customer segment, estimated net worth |
+| [`crm-legal-entity-full.json`](crm-legal-entity-full.json) | P — CRM Completeness | Legal entity | 1.13.0 | ✓ | | ✓ | | | | | Full CRM legal entity: incorporation/dissolution dates, operational status, employee count, revenue, website, social media, industryCodes, registeredAgent, typed contact arrays, entityGovernance (ultimate parent, group LEI), mandates, relationship manager |
 | [`presentation-definitions/travel-rule-minimum.json`](presentation-definitions/travel-rule-minimum.json) | O — Presentation Defs | — | 1.7.0 | — | — | — | — | — | — | — | OpenID4VP Presentation Definition for the FATF Travel Rule minimum credential request |
 
 ---
@@ -269,6 +272,13 @@ Three files demonstrate the v1.12.0 governance extensions:
 
 `presentation-definitions/travel-rule-minimum.json` is an OpenID4VP Presentation Definition for the FATF Travel Rule minimum credential request.  Use it as a starting point when building an OpenID4VP verifier that requests the minimum set of claims required for FATF Rec. 16 compliance.
 
+### P — CRM Completeness (v1.13.0)
+
+Two files demonstrate the 20 CRM-completeness field gaps closed in schema v1.13.0:
+
+- `crm-natural-person-full.json` — natural person with the full set of v1.13.0 CRM fields: `historicalNames[]`, `maritalStatus`, `numberOfDependants`, `householdSize`, `emergencyContact`, typed `emailAddresses[]` and `phoneNumbers[]`, `faxNumber`, `preferredLanguage`, `preferredCommunicationChannel`, `marketingOptOut`, `isDeceased`, `tags`, and `customAttributes`; `kycProfile` adds `relationshipManagerId`, `relationshipManagerName`, `primaryBranchCode`, `servingBusinessUnit`, `customerSegment`, `estimatedNetWorth` (with currency and date), `tags`, and `customAttributes`.
+- `crm-legal-entity-full.json` — legal entity with the full set of v1.13.0 CRM fields: `dateOfIncorporation`, `dateOfRegistration`, `operationalStatus`, `numberOfEmployees`, `annualRevenue` (with currency and verification date), `websiteUrl`, `socialMediaProfiles[]`, `industryCodes[]`, `registeredAgent`, typed `emailAddresses[]` and `phoneNumbers[]`, `faxNumber`, `entityGovernance` (including `ultimateParentLEI`, `ultimateParentName`, `groupName`, `groupLEI`), structured `mandates[]`, `tags`, and `customAttributes`; `kycProfile` mirrors the natural person CRM profile additions.
+
 ---
 
 ## 6. Notes on special files
@@ -316,6 +326,8 @@ examples/
 ├── amlr2027-fatca-ai-act.json       N — Governance
 ├── legal-entity-governance.json     N — Governance
 ├── natural-person-gender-occupation.json N — Governance
+├── crm-natural-person-full.json     P — CRM Completeness (v1.13.0)
+├── crm-legal-entity-full.json       P — CRM Completeness (v1.13.0)
 ├── evidence/                        I — PKI Evidence (v1.8.0)
 ├── tax/                             J — Tax Status (v1.9.0)
 ├── predictive/                      K — PredictiveAML (v1.7.0)

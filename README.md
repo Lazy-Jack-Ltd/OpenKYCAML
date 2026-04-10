@@ -5,7 +5,7 @@
 **The neutral, open hybrid KYC/AML data standard for the compliant digital economy.**
 
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
-[![Schema Version](https://img.shields.io/badge/schema-v1.13.0-brightgreen.svg)](schema/kyc-aml-hybrid-extended.json)
+[![Schema Version](https://img.shields.io/badge/schema-v1.14.0-brightgreen.svg)](schema/kyc-aml-hybrid-extended.json)
 [![IVMS 101](https://img.shields.io/badge/IVMS%20101-compatible-orange.svg)](docs/mappings/mapping-ivms101-eidas-amlr.md)
 [![eIDAS 2.0](https://img.shields.io/badge/eIDAS%202.0-VC%20ready-blueviolet.svg)](docs/mappings/mapping-ivms101-eidas-amlr.md)
 [![AMLR 2027 Ready](https://img.shields.io/badge/AMLR%202027-ready-red.svg)](docs/compliance/compliance-matrix.md)
@@ -164,7 +164,7 @@ node validator.js ../../examples/full-kyc-profile.json
 
 ```json
 {
-  "$schema": "https://openkycaml.org/schema/v1.13.0/kyc-aml-hybrid-extended.json",
+  "$schema": "https://openkycaml.org/schema/v1.14.0/kyc-aml-hybrid-extended.json",
   "version": "1.8.0",
   "messageId": "550e8400-e29b-41d4-a716-446655440001",
   "messageDateTime": "2024-06-15T09:30:00Z",
@@ -201,7 +201,7 @@ node validator.js ../../examples/full-kyc-profile.json
 
 ```json
 {
-  "$schema": "https://openkycaml.org/schema/v1.13.0/kyc-aml-hybrid-extended.json",
+  "$schema": "https://openkycaml.org/schema/v1.14.0/kyc-aml-hybrid-extended.json",
   "version": "1.8.0",
   "verifiableCredential": {
     "issuer": { "id": "did:web:acme-crypto.example.nl", "name": "Acme Crypto Exchange BV" },
@@ -228,7 +228,7 @@ node validator.js ../../examples/full-kyc-profile.json
 
 > **Fictional data notice:** All names, passport numbers, national identifiers, addresses, entity names, LEIs, DIDs, wallet addresses, and any other personal or entity data in the example payloads are **entirely fictional** and have been created solely for illustrative purposes. Any resemblance to real persons (living or deceased), real legal entities, or real transactions is entirely coincidental. Any names that may coincidentally resemble those of real-world individuals or organisations have been deliberately altered.
 
-There are **46 example payloads** in [`examples/`](examples/) covering the full range of scenarios — from a minimal two-party Travel Rule message to complex 4-tier ownership structures, EUDI Wallet DID triangulation, SD-JWT selective disclosure, v1.5.0 Verification Document Bundles, v1.8.0 X.509 PKI evidence, v1.9.0 taxStatus examples, v1.10.0 contact/banking, v1.11.0 PCC/ICC cell companies, v1.12.0 entity governance / review lifecycle examples, and v1.13.0 CRM completeness examples.
+There are **45 example payloads** in [`examples/`](examples/) covering the full range of scenarios — from a minimal two-party Travel Rule message to complex 4-tier ownership structures, EUDI Wallet DID triangulation, SD-JWT selective disclosure, v1.5.0 Verification Document Bundles, v1.8.0 X.509 PKI evidence, v1.9.0 taxStatus examples, v1.10.0 contact/banking, v1.11.0 PCC/ICC cell companies, v1.12.0 entity governance / review lifecycle examples, v1.13.0 CRM completeness examples, and v1.14.0 schema cleanup (alias removal, `isPrimary` constraints, `EntityReference` rename).
 
 The complete catalogue with per-file descriptions, schema block inventory, and testing guidance is in **[`examples/EXAMPLES.md`](examples/EXAMPLES.md)**.
 
@@ -319,6 +319,7 @@ Each `-eudi-wallet.json` example documents a **trust chain** using W3C VC eviden
 | **Cell Company Structures (PCC / ICC)** | ✅ v1.11.0 — Protected Cell Companies and Incorporated Cell Companies in Guernsey, Jersey, Cayman, Malta, and Gibraltar; `CellCompanyType` enum, `CellCompanyDetails`, `ParentCellCompanyReference`; hard schema constraints (v1.11.1) — see [Cell Company mapping](docs/mappings/cell-company.md) |
 | **Entity Governance / Review Lifecycle / Natural Person Completeness** | ✅ v1.12.0 — `EntityGovernance` $def (`regulatoryStatus`, `regulators[]`, `listedStatus`, `parentCompany`, `stateOwned`, `governmentOwnershipPercentage`); `ReviewLifecycle` state machine (AMLR Art. 21 audit trail); `NaturalPerson.gender` (ISO/IEC 5218) and `occupation` (ILO/ISCO-08) — see [Entity Governance mapping](docs/mappings/entity-governance.md) and [Natural Person Governance mapping](docs/mappings/natural-person-governance.md) |
 | **CRM Completeness — 20 field gaps closed** | ✅ v1.13.0 — 6 new $defs (`EmailAddress`, `EmergencyContact`, `IndustryCode`, `Mandate`, `PhoneNumber`, `RegisteredAgent`); typed contact arrays, historical names, marital status, deceased flag, preferred language/channel, emergency contact, incorporation/dissolution dates, operational status, employee count, revenue, website, social media, industry codes, registered agent, GLEIF ultimate parent/group, relationship manager, customer segment, net worth, structured mandates — see §24 in compliance matrix |
+| **Schema Cleanup — Alias removal and `isPrimary` constraints** | ✅ v1.14.0 — removed 8 deprecated alias fields (`isPep`, `lastPepCheckDate`, `SanctionsScreening.status`, `lastScreenedDate`, `AdverseMedia.lastCheckedDate`, `AuditMetadata.timestamp`, `lastKycReviewDate`, `BeneficialOwner.naturalPerson`); removed 5 legacy contact strings (`emailAddress`/`phoneNumber`/`mobileNumber` from `NaturalPerson`/`LegalPerson`); removed `KYCProfile.sourceOfFundsWealth` string array; renamed `ParentCellCompanyReference` → `EntityReference`; added `isPrimary` `maxContains:1` constraints on 6 arrays |
 
 ---
 
@@ -327,23 +328,25 @@ Each `-eudi-wallet.json` example documents a **trust chain** using W3C VC eviden
 ```
 openKYCAML/
 ├── schema/
-│   ├── kyc-aml-hybrid-extended.json     ← Canonical schema (latest — currently v1.13.0)
+│   ├── kyc-aml-hybrid-extended.json     ← Canonical schema (latest — currently v1.14.0)
 │   └── versions/
 │       ├── v1.0.0.json                  ← v1.0.0 snapshot
 │       ├── v1.1.0.json                  ← v1.1.0 snapshot
 │       ├── v1.2.0.json                  ← v1.2.0 snapshot
 │       ├── v1.3.0.json                  ← v1.3.0 snapshot
-│       ├── v1.4.0.json                  ← v1.4.0 snapshot (ISO 20275 ELF, entity types)
 │       ├── v1.5.0.json                  ← v1.5.0 snapshot (Verification Document Bundle)
 │       ├── v1.6.0.json                  ← v1.6.0 snapshot (Document ID URN scheme)
 │       ├── v1.7.0.json                  ← v1.7.0 snapshot (XRPL XLS-70/80/81/96/77, Bitcoin/Lightning)
 │       ├── v1.8.0.json                  ← v1.8.0 snapshot (X.500 DN, X.509 PKI evidence)
-│       ├── v1.9.1.json                  ← v1.9.1 snapshot (taxStatus: TIN/ESR/Pillar 2/FATCA/CRS)
+│       ├── v1.9.0.json                  ← v1.9.0 snapshot (taxStatus: TIN/ESR/Pillar 2)
+│       ├── v1.9.1.json                  ← v1.9.1 snapshot (FATCA/CRS: crsTaxResidencies, fatcaStatus)
 │       ├── v1.10.0.json                 ← v1.10.0 snapshot (contact details, banking identifiers)
 │       ├── v1.11.0.json                 ← v1.11.0 snapshot (PCC/ICC cell company structures)
+│       ├── v1.11.1.json                 ← v1.11.1 snapshot (hard if/then constraints for cell companies)
 │       ├── v1.11.2.json                 ← v1.11.2 snapshot (cell-level predictive AML scores)
 │       ├── v1.12.0.json                 ← v1.12.0 snapshot (gender, occupation, EntityGovernance, ReviewLifecycle)
-│       └── v1.13.0.json                 ← v1.13.0 snapshot (current — CRM completeness: 20 field gaps, 6 new $defs)
+│       ├── v1.13.0.json                 ← v1.13.0 snapshot (CRM completeness: 20 field gaps, 6 new $defs)
+│       └── v1.14.0.json                 ← v1.14.0 snapshot (current — alias removal, isPrimary constraints, EntityReference rename)
 ├── examples/
 │   ├── *-plain.json                     ← Plain IVMS 101 baseline examples
 │   ├── *-wrapped.json                   ← VC-wrapped examples
