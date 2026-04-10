@@ -10,7 +10,11 @@
     "sanctionsScreening": {
       "screeningStatus": "CLEAR",
       "screeningDate": "2026-04-01T12:00:00Z",
-      "listsChecked": ["OFAC_SDN", "EU_CONSOLIDATED", "UN_CONSOLIDATED"]
+      "listsChecked": [
+        "OFAC_SDN",
+        "EU_CONSOLIDATED",
+        "UN_CONSOLIDATED"
+      ]
     },
     "auditMetadata": {
       "recordCreatedAt": "2026-04-01T12:30:00Z",
@@ -40,7 +44,9 @@
           }
         }
       ],
-      "accountNumber": ["IE29AIBK93115212345678"]
+      "accountNumber": [
+        "IE29AIBK93115212345678"
+      ]
     },
     "beneficiary": {
       "beneficiaryPersons": [
@@ -58,7 +64,9 @@
           }
         }
       ],
-      "accountNumber": ["KY0012345678901234"]
+      "accountNumber": [
+        "KY0012345678901234"
+      ]
     },
     "originatingVASP": {
       "originatingVASP": {

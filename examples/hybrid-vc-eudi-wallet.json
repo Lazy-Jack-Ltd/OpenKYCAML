@@ -3,9 +3,7 @@
   "version": "1.3.0",
   "messageId": "e9f0a1b2-c3d4-4e5f-6a7b-8c9d0e1f2a3b",
   "messageDateTime": "2025-10-20T11:45:00Z",
-
   "_comment_eudi": "EUDI Wallet Hybrid VC — Natural Person, full IVMS 101 + kycProfile. This is the EUDI Wallet companion to hybrid-vc-wrapped.json. Anna Müller (DE) sends ETH to Marco Rossi (IT) via BerlinDeFi GmbH. Anna identified via German EUDI Wallet PID. Four DIDs: (1) Anna's EUDI Wallet DID, (2) German PID Issuer DID, (3) BerlinDeFi VASP DID, (4) MilanoChain VASP DID referenced in proof. The VC is issued by BerlinDeFi (originating VASP) and binds Anna's wallet DID as subject.",
-
   "ivms101": {
     "originator": {
       "originatorPersons": [
@@ -100,7 +98,6 @@
       "assetType": "ETH"
     }
   },
-
   "verifiableCredential": {
     "@context": [
       "https://www.w3.org/2018/credentials/v1",
@@ -113,20 +110,16 @@
       "OpenKYCAMLCredential",
       "TravelRuleAttestation"
     ],
-
     "_comment_issuer": "DID #3 — BerlinDeFi GmbH (originating VASP, assembled IVMS 101 from PID data and signs this OpenKYCAML VC)",
     "issuer": {
       "id": "did:web:berlindefi.example.de",
       "name": "BerlinDeFi GmbH"
     },
-
     "issuanceDate": "2025-10-20T11:45:00Z",
     "expirationDate": "2026-10-20T11:45:00Z",
-
     "credentialSubject": {
       "_comment_subject": "DID #1 — Anna Müller's EU Digital Identity Wallet DID (German EUDI Wallet, BSI-anchored)",
       "id": "did:ebsi:z2LSzT7LiUNMxKKyGCnNjNT",
-
       "ivms101": {
         "originator": {
           "originatorPersons": [
@@ -211,7 +204,6 @@
           "assetType": "ETH"
         }
       },
-
       "kycProfile": {
         "customerRiskRating": "MEDIUM",
         "riskRatingDetail": {
@@ -270,12 +262,14 @@
         }
       }
     },
-
     "_comment_evidence": "Evidence block — German PID from BSI (DID #2) presented by Anna at onboarding. DID #4 is referenced as MilanoChain's DID in the Travel Rule acceptance record.",
     "evidence": [
       {
         "id": "urn:uuid:pid-de-anna-muller-onboarding-2025-01-15",
-        "type": ["PIDCredential", "EUDIWalletPresentationEvidence"],
+        "type": [
+          "PIDCredential",
+          "EUDIWalletPresentationEvidence"
+        ],
         "verifier": "did:web:berlindefi.example.de",
         "credentialIssuer": "did:web:pid-provider.bsi.example.de",
         "evidenceDocument": "German National Identity Card (eIDAS 2.0 PID — Regulation (EU) 2024/1183)",
@@ -286,7 +280,9 @@
       },
       {
         "id": "urn:uuid:travel-rule-acceptance-milanochain-2025-10-20",
-        "type": ["TravelRuleAcceptanceEvidence"],
+        "type": [
+          "TravelRuleAcceptanceEvidence"
+        ],
         "verifier": "did:web:milanchain.example.it",
         "credentialIssuer": "did:web:berlindefi.example.de",
         "evidenceDocument": "IVMS 101 Travel Rule message acknowledged by MilanoChain S.p.A. via TRP protocol",
@@ -296,7 +292,6 @@
         "presentationDate": "2025-10-20T11:44:00Z"
       }
     ],
-
     "credentialStatus": {
       "id": "https://berlindefi.example.de/status/v1#3377",
       "type": "StatusList2021Entry"
@@ -313,7 +308,6 @@
       "proofValue": "zDw6Ox2aQyRt7VgI9KnZ4XeL8FsC3BpA0MjE5HuN1TrP"
     }
   },
-
   "transactionMonitoring": {
     "transactionReference": "TXN-DE-IT-2025-0009823-004",
     "monitoringDate": "2025-10-20T11:45:10Z",

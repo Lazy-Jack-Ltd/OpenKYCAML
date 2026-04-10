@@ -93,3 +93,32 @@ This page tracks documentation-specific improvements planned for upcoming releas
 - [x] Add `api/openkycaml-v1.9.1.yaml` — OpenAPI 3.1 specification reflecting all v1.9.1 components (`TaxStatus`, `CrsTaxResidency`, `FatcaStatus`, `legacyIdentifiers`, `pkiEvidence`).
 - [x] Add §6 formal X.400 deprecation policy to `docs/mappings/x500-x400-legacy.md`.
 - [x] Update all document version footers to v1.9.1.
+
+### v1.10
+- [x] Add `docs/mappings/contact-financial-identifiers.md` + `.yaml` — contact and banking identifier field mapping: email (RFC 5321), phone/mobile (E.164), IBAN (ISO 13616), BIC (ISO 9362), account type classification.
+- [x] Add compliance matrix §21 — contact and financial identifier format/pattern coverage.
+- [x] Add `examples/contact-banking/natural-person-with-contact.json` and `examples/contact-banking/legal-entity-with-banking.json`.
+- [x] Update TypeScript types (`typescript-types.md`) — add `BankingDetails` interface and `PersonContactExtension` section (v1.10.0).
+- [x] Update ER diagram to include `BankingDetails` entity with all fields and relationships to `NaturalPerson` and `LegalPerson`.
+- [x] Update all document version footers to v1.10.0.
+
+### v1.11
+- [x] Add `docs/mappings/cell-company.md` + `.yaml` — PCC/ICC cell company field mapping: `CellCompanyType` enum, `CellCompanyDetails`, `ParentCellCompanyReference`, regulatory mapping (FATF Rec. 24/25, AMLR Art. 26/29/56).
+- [x] Add compliance matrix §22 — cell company structures.
+- [x] Add `examples/cell-company/pcc-cell.json` and `examples/cell-company/icc-cell.json` (v1.11.0).
+- [x] Add `examples/cell-company/pcc-cell-predictive-aml.json` with `cellLevelPredictiveScores[]` (v1.11.2).
+- [x] Update compliance matrix FATF Rec. 24 and AMLR Art. 26 rows to cross-reference §22 (v1.11.2).
+- [x] Update TypeScript types (`typescript-types.md`) — add `CellCompanyType`, `CellCompanyDetails`, `ParentCellCompanyReference`, `LegalPersonCellExtension` section (v1.11.0).
+- [x] Update ER diagram to include `CellCompanyDetails` and `ParentCellCompanyReference` entities (v1.11.0).
+- [x] Update all document version footers to v1.11.2.
+
+### v1.12
+- [x] Add `docs/mappings/entity-governance.md` + `.yaml` — `EntityGovernance` $def field mapping: `regulatoryStatus`, `regulators[]`, `listedStatus`, `parentCompany`, `parentRegulated`, `parentListed`, `majorityOwnedSubsidiary`, `stateOwned`, `governmentOwnershipPercentage`.
+- [x] Add `docs/mappings/natural-person-governance.md` + `.yaml` — `gender` (ISO/IEC 5218, eIDAS PID, GDPR Art. 9) and `occupation` (ILO/ISCO-08, IVMS 101) field mapping.
+- [x] Add compliance matrix §23 — entity governance flags and review lifecycle.
+- [x] Add `examples/legal-entity-governance.json` (dual-regulated, exchange-listed subsidiary).
+- [x] Add `examples/natural-person-gender-occupation.json` (gender + occupation + reviewLifecycle).
+- [x] Add `api/openkycaml-v1.12.0.yaml` — OpenAPI 3.1 specification reflecting all v1.12.0 components (`EntityGovernance`, `ReviewLifecycle`, `NaturalPerson` gender/occupation extensions).
+- [x] Update TypeScript types (`typescript-types.md`) — add `EntityGovernance`, `ReviewLifecycle`, `ReviewLifecycleState`, `NaturalPersonGender`, occupation types section (v1.12.0).
+- [x] Update ER diagram to include `EntityGovernance`, `ReviewLifecycle`, `ReviewLifecycleHistory` entities and `NaturalPerson` gender/occupation attributes (v1.12.0).
+- [x] Update all document version footers to v1.12.0.

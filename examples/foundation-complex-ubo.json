@@ -3,9 +3,7 @@
   "version": "1.3.0",
   "messageId": "f3a4b5c6-d7e8-9f0a-1b2c-3d4e5f6a7b8c",
   "messageDateTime": "2025-10-25T08:00:00Z",
-
   "_comment_scenario": "Private Foundation Beneficial Ownership — Liechtenstein Privatstiftung with Founder, Foundation Council and Named Beneficiaries. This example demonstrates AMLR Art. 26(2)(c) disclosure for a foundation structure where Steinberg Asset Management AG (Switzerland) — the subject VASP entity — is 100% owned by the Steinberg Privatstiftung (Liechtenstein). Liechtenstein private foundations (Privatstiftung under PGR Art. 552 §§1–41) are a common wealth-structuring vehicle but present high opacity risk. FATF Recommendation 25 and AMLR Art. 26(2)(c) require identification of: [Founder] Heinrich Steinberg (DE) — settled assets into the foundation and, under the foundation statutes, retains reserved powers including the right to appoint and dismiss foundation council members and to amend the foundation purpose; [Foundation Council] Dr. Andreas Mayer LI (Chairman), Dr. Helga Kirchner DE, Marco Bergomi CH — three natural persons who constitute the governing body, documented via LPID mandates; [Beneficiaries] Heinrich Steinberg and his lineal descendants — identified in the foundation statutes and a supplementary beneficiary declaration. UBO determination: Heinrich Steinberg is the UBO because (i) as founder he retains statutory appointment/dismissal powers over the foundation council under PGR Art. 552 §29, giving him DE_FACTO_CONTROL, and (ii) he and his family are the exclusive beneficiaries. The foundation's charter has been obtained, reviewed and retained on the EDD file.",
-
   "ivms101": {
     "originator": {
       "originatorPersons": [
@@ -86,7 +84,6 @@
       "assetType": "USDC"
     }
   },
-
   "verifiableCredential": {
     "@context": [
       "https://www.w3.org/2018/credentials/v1",
@@ -98,15 +95,12 @@
       "OpenKYCAMLCredential",
       "KYCAttestation"
     ],
-
     "issuer": {
       "id": "did:web:frankfurt-digital-assets.example.de",
       "name": "Frankfurt Digital Assets GmbH"
     },
-
     "issuanceDate": "2025-10-25T08:00:00Z",
     "expirationDate": "2026-10-25T08:00:00Z",
-
     "credentialSubject": {
       "ivms101": {
         "originator": {
@@ -188,7 +182,6 @@
           "assetType": "USDC"
         }
       },
-
       "kycProfile": {
         "customerRiskRating": "HIGH",
         "riskRatingDetail": {
@@ -220,16 +213,25 @@
           "screeningStatus": "CLEAR",
           "screeningDate": "2025-10-20T07:30:00Z",
           "screeningProvider": "ComplyAdvantage",
-          "listsChecked": ["OFAC_SDN", "EU_CONSOLIDATED", "UN_CONSOLIDATED", "HMT", "SECO"]
+          "listsChecked": [
+            "OFAC_SDN",
+            "EU_CONSOLIDATED",
+            "UN_CONSOLIDATED",
+            "HMT",
+            "SECO"
+          ]
         },
         "onboardingChannel": "IN_PERSON",
         "kycCompletionDate": "2025-10-20",
         "consentRecord": {
           "consentGiven": true,
           "consentDate": "2025-10-15T14:00:00Z",
-          "consentPurpose": ["AML_SCREENING", "DATA_SHARING_TRAVEL_RULE", "EDD_REVIEW"]
+          "consentPurpose": [
+            "AML_SCREENING",
+            "DATA_SHARING_TRAVEL_RULE",
+            "EDD_REVIEW"
+          ]
         },
-
         "beneficialOwnership": [
           {
             "_comment_ubo_founder": "UBO: Heinrich Steinberg (DE) — 100% effective control through the Steinberg Privatstiftung (Liechtenstein) by virtue of: (1) founder reservation powers under PGR Art. 552 §29 — the right to appoint and dismiss all foundation council members at any time; (2) exclusive family beneficiary class — only Heinrich Steinberg and his lineal descendants are named beneficiaries; (3) de facto control over the foundation's investment decisions through council appointment power. AMLR Art. 26(2)(c) requires identification of the founder as the beneficial owner of a private foundation. The foundation charter and beneficiary declaration have been reviewed.",
@@ -293,108 +295,28 @@
                     "uniqueIdentifier": "FL-OGD-2008-FL-0002.344.671-5",
                     "mandates": [
                       {
-                        "_comment_council_chairman": "Foundation Council Chairman: Dr. Andreas Mayer (LI). Appointed by the founder per statutes Article 8. Chairs all foundation council meetings and has casting vote. Verified via Liechtenstein national ID.",
-                        "naturalPerson": {
-                          "name": {
-                            "nameIdentifier": [
-                              {
-                                "primaryIdentifier": "Mayer",
-                                "secondaryIdentifier": "Andreas Josef",
-                                "nameIdentifierType": "LEGL"
-                              }
-                            ]
-                          },
-                          "nationalIdentification": {
-                            "nationalIdentifier": "LI-PASS-FL00012345",
-                            "nationalIdentifierType": "CCPT",
-                            "countryOfIssue": "LI"
-                          },
-                          "dateAndPlaceOfBirth": {
-                            "dateOfBirth": "1963-09-18",
-                            "placeOfBirth": "Vaduz"
-                          },
-                          "countryOfResidence": "LI"
-                        },
-                        "roleOrPower": "Foundation Council Chairman — Steinberg Privatstiftung; appointed by founder per statutes Art. 8; casting vote at council meetings",
-                        "validFrom": "2008-09-05"
+                        "mandateType": "OTHER",
+                        "signatoryName": "Andreas Josef Mayer",
+                        "scope": "Foundation Council Chairman — Steinberg Privatstiftung; appointed by founder per statutes Art. 8; casting vote at council meetings",
+                        "effectiveFrom": "2008-09-05"
                       },
                       {
-                        "_comment_council_member1": "Foundation Council Member: Dr. Helga Kirchner (DE). German tax and estate planning specialist. Appointed by the founder per statutes Article 8. Verified via German passport.",
-                        "naturalPerson": {
-                          "name": {
-                            "nameIdentifier": [
-                              {
-                                "primaryIdentifier": "Kirchner",
-                                "secondaryIdentifier": "Helga Maria",
-                                "nameIdentifierType": "LEGL"
-                              }
-                            ]
-                          },
-                          "nationalIdentification": {
-                            "nationalIdentifier": "DE-PASS-D12345678",
-                            "nationalIdentifierType": "CCPT",
-                            "countryOfIssue": "DE"
-                          },
-                          "dateAndPlaceOfBirth": {
-                            "dateOfBirth": "1967-04-25",
-                            "placeOfBirth": "Frankfurt am Main"
-                          },
-                          "countryOfResidence": "DE"
-                        },
-                        "roleOrPower": "Foundation Council Member — Steinberg Privatstiftung; appointed by founder per statutes Art. 8; responsible for investment oversight",
-                        "validFrom": "2008-09-05"
+                        "mandateType": "OTHER",
+                        "signatoryName": "Helga Maria Kirchner",
+                        "scope": "Foundation Council Member — Steinberg Privatstiftung; appointed by founder per statutes Art. 8; responsible for investment oversight",
+                        "effectiveFrom": "2008-09-05"
                       },
                       {
-                        "_comment_council_member2": "Foundation Council Member: Marco Bergomi (CH). Swiss asset management specialist. Appointed by the founder per statutes Article 8. Verified via Swiss passport.",
-                        "naturalPerson": {
-                          "name": {
-                            "nameIdentifier": [
-                              {
-                                "primaryIdentifier": "Bergomi",
-                                "secondaryIdentifier": "Marco Aurelio",
-                                "nameIdentifierType": "LEGL"
-                              }
-                            ]
-                          },
-                          "nationalIdentification": {
-                            "nationalIdentifier": "CH-PASS-X8765432",
-                            "nationalIdentifierType": "CCPT",
-                            "countryOfIssue": "CH"
-                          },
-                          "dateAndPlaceOfBirth": {
-                            "dateOfBirth": "1970-12-05",
-                            "placeOfBirth": "Lugano"
-                          },
-                          "countryOfResidence": "CH"
-                        },
-                        "roleOrPower": "Foundation Council Member — Steinberg Privatstiftung; appointed by founder per statutes Art. 8; responsible for compliance and legal oversight",
-                        "validFrom": "2015-01-10"
+                        "mandateType": "OTHER",
+                        "signatoryName": "Marco Aurelio Bergomi",
+                        "scope": "Foundation Council Member — Steinberg Privatstiftung; appointed by founder per statutes Art. 8; responsible for compliance and legal oversight",
+                        "effectiveFrom": "2015-01-10"
                       },
                       {
-                        "_comment_founder_and_beneficiary": "Founder and Primary Beneficiary: Heinrich Steinberg (DE). The founder retains appointment and dismissal powers over the entire foundation council (PGR Art. 552 §29). He is also named as the primary income beneficiary under the foundation's supplementary beneficiary declaration dated 5 September 2008.",
-                        "naturalPerson": {
-                          "name": {
-                            "nameIdentifier": [
-                              {
-                                "primaryIdentifier": "Steinberg",
-                                "secondaryIdentifier": "Heinrich Klaus",
-                                "nameIdentifierType": "LEGL"
-                              }
-                            ]
-                          },
-                          "nationalIdentification": {
-                            "nationalIdentifier": "DE-PASS-C01X00T47",
-                            "nationalIdentifierType": "CCPT",
-                            "countryOfIssue": "DE"
-                          },
-                          "dateAndPlaceOfBirth": {
-                            "dateOfBirth": "1951-03-12",
-                            "placeOfBirth": "Munich"
-                          },
-                          "countryOfResidence": "DE"
-                        },
-                        "roleOrPower": "Founder — retains appointment and dismissal powers over all foundation council members (PGR Art. 552 §29); also named primary income beneficiary in supplementary beneficiary declaration",
-                        "validFrom": "2008-09-05"
+                        "mandateType": "OTHER",
+                        "signatoryName": "Heinrich Klaus Steinberg",
+                        "scope": "Founder — retains appointment and dismissal powers over all foundation council members (PGR Art. 552 §29); also named primary income beneficiary in supplementary beneficiary declaration",
+                        "effectiveFrom": "2008-09-05"
                       }
                     ]
                   }
@@ -409,7 +331,6 @@
             "isPEP": false
           }
         ],
-
         "auditMetadata": {
           "recordId": "f3a4b5c6-d7e8-9f0a-1b2c-3d4e5f6a7b8c",
           "recordCreatedAt": "2025-10-25T08:00:00Z",
@@ -422,7 +343,6 @@
         }
       }
     },
-
     "credentialStatus": {
       "id": "https://frankfurt-digital-assets.example.de/status/v1#3301",
       "type": "StatusList2021Entry"

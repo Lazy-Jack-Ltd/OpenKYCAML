@@ -11,7 +11,77 @@ For the full project roadmap and planned features, see [ROADMAP.md](ROADMAP.md).
 
 ## [Unreleased]
 
-### Added
+---
+
+## [1.13.0] — April 2026
+
+### Added — v1.13.0: CRM completeness — 20 contact/account field gaps closed (P1–P4)
+
+All additions are optional and backward-compatible. No existing required fields changed. Version: `1.13.0`.
+
+#### New $defs
+
+- **`EmailAddress`** — typed email address entry with `emailType` (WORK/PERSONAL/OTHER), `emailAddress`, `isPrimary`, `verificationStatus`.
+- **`EmergencyContact`** — emergency contact / next-of-kin with `name`, `relationship`, `phoneNumber`, `emailAddress`. GDPR Art. 9 note included.
+- **`IndustryCode`** — structured industry classification entry with `codeSystem` (NAICS/NACE/SIC/ISIC/OTHER), `codeValue`, `codeDescription`.
+- **`Mandate`** — authorised-signatory mandate with `signatoryName`, `signatoryRef`, `mandateType` (SOLE/JOINT_ANY_TWO/JOINT_ALL/LIMITED/OTHER), `scope`, `effectiveFrom`, `effectiveTo`.
+- **`PhoneNumber`** — typed phone number entry with `phoneType` (WORK/MOBILE/HOME/FAX/DIRECT/OTHER), `phoneNumber` (E.164), `isPrimary`.
+- **`RegisteredAgent`** — registered agent / company secretary with `name`, `jurisdiction`, `address`, `agentType` (REGISTERED_AGENT/COMPANY_SECRETARY/RESIDENT_DIRECTOR/OTHER).
+
+#### `NaturalPersonNameIdentifier` — Gap 1 (CRM name completeness)
+
+Added 6 optional fields: `salutation` (MR/MRS/MS/MISS/DR/PROF/REV/OTHER), `middleName`, `nameSuffix`, `preferredName`, `formerName`, `pronouns` (GDPR Art. 9 note).
+
+#### `DateAndPlaceOfBirth` — Gap 3 (structured country of birth)
+
+Added `countryOfBirth` (ISO 3166-1 alpha-2). Complements free-text `placeOfBirth`. Aligns with IVMS 101 optional field and eIDAS 2.0 PID.
+
+#### `Address` — Gap 5 (richer address type vocabulary + history tracking)
+
+- Expanded `addressType` enum to include: `HOME`, `REGISTERED_OFFICE`, `PRINCIPAL_PLACE_OF_BUSINESS`, `MAILING`, `BILLING`, `SHIPPING`, `CORRESPONDENCE`, `PREVIOUS`, `OTHER` (GEOG and BIZZ retained for IVMS 101 back-compat).
+- Added `isPrimary` (boolean), `effectiveFrom` (date), `effectiveTo` (date) for historical address tracking.
+
+#### `NaturalPerson` — Gaps 2, 4, 6, 7, 8, 17, 19, 20
+
+- **Gap 2**: `isDeceased` (boolean), `deceasedDate` (date).
+- **Gap 4**: `emailAddresses[]` (`$ref EmailAddress`), `phoneNumbers[]` (`$ref PhoneNumber`), `faxNumber`. Supplement legacy single-string fields; prefer arrays for new integrations.
+- **Gap 6**: `preferredLanguage` (BCP 47), `preferredCommunicationChannel` (EMAIL/PHONE/SMS/POST/PORTAL/OTHER), `marketingOptOut`.
+- **Gap 7**: `maritalStatus` (SINGLE/MARRIED/CIVIL_PARTNERSHIP/SEPARATED/DIVORCED/WIDOWED/OTHER/PREFER_NOT_TO_SAY). GDPR Art. 9 note.
+- **Gap 8**: `numberOfDependants` (integer ≥ 0), `householdSize` (integer ≥ 1).
+- **Gap 17**: `emergencyContact` (`$ref EmergencyContact`).
+- **Gap 19**: `tags[]` (string array), `customAttributes` (open object).
+- **Gap 20**: `historicalNames[]` — array of `{ name, nameType (MAIDEN/PREVIOUS_LEGAL/ALIAS/TRADING/OTHER), effectiveFrom, effectiveTo }`. Critical for PEP/sanctions screening against all known aliases.
+
+#### `LegalPerson` — Gaps 4, 9, 10, 11, 12, 13, 19
+
+- **Gap 4**: `emailAddresses[]`, `phoneNumbers[]`, `faxNumber`.
+- **Gap 9**: `dateOfIncorporation`, `dateOfRegistration`, `dateOfDissolution`, `operationalStatus` (ACTIVE/DORMANT/IN_LIQUIDATION/DISSOLVED/STRUCK_OFF/SUSPENDED/OTHER).
+- **Gap 10**: `numberOfEmployees` (integer ≥ 0), `annualRevenue` (number ≥ 0), `annualRevenueCurrency` (ISO 4217), `annualRevenueVerificationDate`.
+- **Gap 11**: `websiteUrl` (URI), `socialMediaProfiles[]` — `{ platform (LINKEDIN/TWITTER/FACEBOOK/INSTAGRAM/YOUTUBE/OTHER), url, isVerified }`.
+- **Gap 12**: `industryCodes[]` (`$ref IndustryCode`). Structured NAICS/NACE/SIC codes alongside free-text `industrySector` in KYCProfile.
+- **Gap 13**: `registeredAgent` (`$ref RegisteredAgent`).
+- **Gap 19**: `tags[]`, `customAttributes`.
+
+#### `LegalPersonIdentificationData` — Gap 18 (structured mandates)
+
+`mandates[]` array items now reference the new `Mandate` $def (previously an untyped opaque array).
+
+#### `EntityGovernance` — Gap 15 (GLEIF ultimate parent / group structure)
+
+Added: `ultimateParentLEI` (ISO 17442 20-char pattern), `ultimateParentName`, `groupName`, `groupLEI` (ISO 17442 20-char pattern).
+
+#### `KYCProfile` — Gaps 14, 16, 19
+
+- **Gap 14**: `relationshipManagerId`, `relationshipManagerName`, `primaryBranchCode`, `servingBusinessUnit`.
+- **Gap 16**: `customerSegment` (MASS_MARKET/AFFLUENT/PRIVATE_BANKING/ULTRA_HIGH_NET_WORTH/INSTITUTIONAL/SME/MID_MARKET/LARGE_CORPORATE/OTHER), `estimatedNetWorth`, `estimatedNetWorthCurrency` (ISO 4217), `estimatedNetWorthDate`.
+- **Gap 19**: `tags[]`, `customAttributes`.
+
+#### Version, snapshot, and documentation
+
+- `schema/kyc-aml-hybrid-extended.json`: `$id` and `version` bumped to `v1.13.0`.
+- `schema/versions/v1.13.0.json`: versioned snapshot created.
+- `docs/compliance/compliance-matrix.md` §24: CRM completeness section added.
+- `README.md`: schema version badge and version tree updated to `v1.13.0`.
 
 ---
 

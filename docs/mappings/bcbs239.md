@@ -87,4 +87,4 @@ The `predictiveAML.dataAggregationMetadata` object is the primary BCBS 239 vehic
 
 ---
 
-*Last updated: April 2026 — OpenKYCAML v1.7.0*
+*Last updated: April 2026 — OpenKYCAML v1.12.0*

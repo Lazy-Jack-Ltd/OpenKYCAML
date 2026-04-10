@@ -662,5 +662,5 @@ XLS-96 confidential transfers encrypt balance data on-ledger. The `xrplConfident
 
 ---
 
-*Document version: v1.7.0 — April 2026. Maintained by the OpenKYCAML Technical Working Group.*
+*Document version: v1.12.0 — April 2026. Maintained by the OpenKYCAML Technical Working Group.*
 *XRPL references: [XLS-70 Credentials](https://opensource.ripple.com/docs/xls-70-credentials), [XLS-80 Permissioned Domains](https://xrpl.org/docs/concepts/tokens/decentralized-exchange/permissioned-domains), [XLS-33d MPTs](https://github.com/XRPLF/XRPL-Standards/discussions/120), [XLS-96 Confidential Transfers](https://github.com/XRPLF/XRPL-Standards/discussions/220), [XLS-77 Deep Freeze](https://github.com/XRPLF/XRPL-Standards/discussions/200), [did:xrpl](https://github.com/XRPLF/XRPL-Standards/discussions/140), [W3C VC DM v2.0](https://www.w3.org/TR/vc-data-model-2.0/), [W3C DID Core v1.0](https://www.w3.org/TR/did-core/)*

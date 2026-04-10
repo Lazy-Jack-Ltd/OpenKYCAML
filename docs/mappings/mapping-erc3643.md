@@ -234,7 +234,7 @@ Full mapping: [ISO 3166-1 alpha-2 to numeric](https://en.wikipedia.org/wiki/ISO_
 
 ---
 
-*Document version: v1.7.0 — April 2026. Maintained by the OpenKYCAML Technical Working Group.*
+*Document version: v1.12.0 — April 2026. Maintained by the OpenKYCAML Technical Working Group.*
 *ERC-3643 reference: [EIP-3643](https://github.com/TokenySolutions/EIP3643), [ONCHAINID](https://github.com/onchain-id/solidity)*
 
 ---

@@ -39,9 +39,6 @@
             ],
             "countryOfResidence": "DE",
             "nationality": "DE",
-            "emailAddress": "anna.mueller@example.de",
-            "phoneNumber": "+4969123456789",
-            "mobileNumber": "+4915112345678",
             "bankingDetails": [
               {
                 "iban": "DE89370400440532013000",
@@ -50,6 +47,24 @@
                 "accountCurrency": "EUR",
                 "accountType": "CURRENT",
                 "bankingCountry": "DE"
+              }
+            ],
+            "emailAddresses": [
+              {
+                "emailType": "WORK",
+                "emailAddress": "anna.mueller@example.de",
+                "isPrimary": true
+              }
+            ],
+            "phoneNumbers": [
+              {
+                "phoneType": "WORK",
+                "phoneNumber": "+4969123456789",
+                "isPrimary": true
+              },
+              {
+                "phoneType": "MOBILE",
+                "phoneNumber": "+4915112345678"
               }
             ]
           }

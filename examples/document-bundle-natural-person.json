@@ -42,7 +42,9 @@
           }
         }
       ],
-      "accountNumber": ["DE89370400440532013000"]
+      "accountNumber": [
+        "DE89370400440532013000"
+      ]
     },
     "beneficiary": {
       "beneficiaryPersons": [
@@ -66,7 +68,9 @@
           }
         }
       ],
-      "accountNumber": ["JP12MUFG1234567890123456"]
+      "accountNumber": [
+        "JP12MUFG1234567890123456"
+      ]
     },
     "originatingVASP": {
       "originatingVASP": {

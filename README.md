@@ -5,7 +5,7 @@
 **The neutral, open hybrid KYC/AML data standard for the compliant digital economy.**
 
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
-[![Schema Version](https://img.shields.io/badge/schema-v1.12.0-brightgreen.svg)](schema/kyc-aml-hybrid-extended.json)
+[![Schema Version](https://img.shields.io/badge/schema-v1.13.0-brightgreen.svg)](schema/kyc-aml-hybrid-extended.json)
 [![IVMS 101](https://img.shields.io/badge/IVMS%20101-compatible-orange.svg)](docs/mappings/mapping-ivms101-eidas-amlr.md)
 [![eIDAS 2.0](https://img.shields.io/badge/eIDAS%202.0-VC%20ready-blueviolet.svg)](docs/mappings/mapping-ivms101-eidas-amlr.md)
 [![AMLR 2027 Ready](https://img.shields.io/badge/AMLR%202027-ready-red.svg)](docs/compliance/compliance-matrix.md)
@@ -164,7 +164,7 @@ node validator.js ../../examples/full-kyc-profile.json
 
 ```json
 {
-  "$schema": "https://openkycaml.org/schema/v1.9.1/kyc-aml-hybrid-extended.json",
+  "$schema": "https://openkycaml.org/schema/v1.13.0/kyc-aml-hybrid-extended.json",
   "version": "1.8.0",
   "messageId": "550e8400-e29b-41d4-a716-446655440001",
   "messageDateTime": "2024-06-15T09:30:00Z",
@@ -201,7 +201,7 @@ node validator.js ../../examples/full-kyc-profile.json
 
 ```json
 {
-  "$schema": "https://openkycaml.org/schema/v1.9.1/kyc-aml-hybrid-extended.json",
+  "$schema": "https://openkycaml.org/schema/v1.13.0/kyc-aml-hybrid-extended.json",
   "version": "1.8.0",
   "verifiableCredential": {
     "issuer": { "id": "did:web:acme-crypto.example.nl", "name": "Acme Crypto Exchange BV" },
@@ -228,7 +228,7 @@ node validator.js ../../examples/full-kyc-profile.json
 
 > **Fictional data notice:** All names, passport numbers, national identifiers, addresses, entity names, LEIs, DIDs, wallet addresses, and any other personal or entity data in the example payloads are **entirely fictional** and have been created solely for illustrative purposes. Any resemblance to real persons (living or deceased), real legal entities, or real transactions is entirely coincidental. Any names that may coincidentally resemble those of real-world individuals or organisations have been deliberately altered.
 
-There are **32 example payloads** in [`examples/`](examples/) covering the full range of scenarios — from a minimal two-party Travel Rule message to complex 4-tier ownership structures, EUDI Wallet DID triangulation, SD-JWT selective disclosure, v1.5.0 Verification Document Bundles, and v1.8.0 X.509 PKI evidence, and v1.9.0 taxStatus examples.
+There are **46 example payloads** in [`examples/`](examples/) covering the full range of scenarios — from a minimal two-party Travel Rule message to complex 4-tier ownership structures, EUDI Wallet DID triangulation, SD-JWT selective disclosure, v1.5.0 Verification Document Bundles, v1.8.0 X.509 PKI evidence, v1.9.0 taxStatus examples, v1.10.0 contact/banking, v1.11.0 PCC/ICC cell companies, v1.12.0 entity governance / review lifecycle examples, and v1.13.0 CRM completeness examples.
 
 The complete catalogue with per-file descriptions, schema block inventory, and testing guidance is in **[`examples/EXAMPLES.md`](examples/EXAMPLES.md)**.
 
@@ -272,8 +272,18 @@ Each `-eudi-wallet.json` example documents a **trust chain** using W3C VC eviden
 | [Sovrin / Hyperledger Indy (AnonCreds) Mapping](docs/mappings/mapping-sovrin.md) | Field-level mapping from OpenKYCAML to Sovrin DID Method, Indy ledger transactions, and AnonCreds ZKP credentials |
 | [XRPL Credentials, DIDs, MPTs, Permissioned Domains, and Confidential Transfers Mapping](docs/mappings/mapping-xrpl-credentials-mpt.md) | Field-level mapping from OpenKYCAML to XRPL Credentials (XLS-70), `did:xrpl` DID method, Multi-Purpose Tokens (XLS-33d), Permissioned Domains (XLS-80), Permissioned DEX (XLS-81d), Deep Freeze (XLS-77), and Confidential Transfers (XLS-96) |
 | [Bitcoin and Lightning Network Mapping](docs/mappings/mapping-bitcoin-lightning.md) | Service-layer enforcement for Bitcoin/Lightning — Lightspark, Voltage, LNURL-auth, Taproot Assets, RGB, Liquid Network |
+| [Wolfsberg FCCQ / CBDDQ Mapping](docs/mappings/wolfsberg-fccq-cbddq.md) | Field-level mapping from OpenKYCAML to Wolfsberg FCCQ and CBDDQ v1.4 questionnaire fields |
+| [BCBS 239 Data Governance Mapping](docs/mappings/bcbs239.md) | OpenKYCAML field coverage for BCBS 239 data accuracy, aggregation, and reporting principles |
+| [FATF Recommendations 24/25 Mapping](docs/mappings/fatf-r24-r25.md) | Beneficial ownership transparency fields — FATF Rec. 24 (corporate) and Rec. 25 (arrangements) |
+| [EU AI Act Mapping](docs/mappings/eu-ai-act.md) | PredictiveAML field coverage for EU AI Act Art. 13 transparency and explainability requirements |
 | [X.500 DN / X.400 Legacy Mapping](docs/mappings/x500-x400-legacy.md) | X.500 Distinguished Name use-cases (eIDAS QTS, SWIFTNet, LDAP); X.400 explicitly out-of-scope rationale |
 | [X.509 PKI Evidence Mapping](docs/mappings/x509-pki.md) | Full X.509 certificate metadata, ETSI QCStatements, ASN.1 OID array — eIDAS Qualified Certificates and AMLR Art. 22/56 compliance |
+| [Tax Status / TIN / OECD ESR / Pillar 2 Mapping](docs/mappings/tax-status-oecd-esr-pillar2.md) | TIN array, VAT/GST registrations, Economic Substance Regulations, and OECD Pillar 2 GloBE field mapping |
+| [FATCA and CRS Mapping](docs/mappings/fatca-crs.md) | US FATCA Chapter 4 (`fatcaStatus`) and OECD CRS (`crsTaxResidencies[]`) first-class field mapping |
+| [Contact and Financial Identifiers Mapping](docs/mappings/contact-financial-identifiers.md) | Format/pattern coverage for contact fields (email, phone) and banking identifiers (IBAN, BIC) — v1.10.0 |
+| [Cell Company Structures Mapping](docs/mappings/cell-company.md) | PCC and ICC cell company KYC/AML field mapping — `CellCompanyDetails`, `ParentCellCompanyReference` — v1.11.0 |
+| [Entity Governance Flags Mapping](docs/mappings/entity-governance.md) | `EntityGovernance` $def — regulatory status, multi-regulator array, listed status, parent/ownership flags — v1.12.0 |
+| [Natural Person Governance Mapping](docs/mappings/natural-person-governance.md) | `gender` and `occupation` fields — eIDAS PID / IVMS 101 alignment, GDPR Art. 9 guidance — v1.12.0 |
 | [Three-Tier Enforcement Model](docs/compliance/enforcement-tiers.md) | Normative document mapping Tier 1 (Ethereum ERC-3643), Tier 2 (XRPL protocol), and Tier 3 (Bitcoin/Lightning service-layer) compliance enforcement |
 | [Roadmap](ROADMAP.md) | Planned features and upcoming versions |
 | [Contributing](CONTRIBUTING.md) | How to contribute to the standard |
@@ -288,7 +298,8 @@ Each `-eudi-wallet.json` example documents a **trust chain** using W3C VC eviden
 | **IVMS 101 v1.0** | ✅ Full superset — all fields supported |
 | **FATF Recommendation 16** | ✅ Travel Rule compliant |
 | **FATF Recommendations 10, 12, 24** | ✅ CDD, PEP, UBO fields |
-| **EU AMLR 2024** | ✅ Art. 20–22, 24, 26, 28–31, 56, 73, 83; verification document bundle (Art. 22 & 26, v1.5.0); document ID URN scheme (Art. 56, v1.6.0) |
+| **FATF Recommendations 24/25 (2022 revision)** | ✅ v1.7.0 — `beneficialOwnership[].nomineeFlags` (isNominee, nominatorIdentified, bearerShareFlag), `roleInArrangement`, `trustInstrumentReference` — see [FATF R.24/25 mapping](docs/mappings/fatf-r24-r25.md) |
+| **EU AMLR 2024** | ✅ Art. 20–22, 24, 26, 28–31, 56, 73, 83; verification document bundle (Art. 22 & 26, v1.5.0); document ID URN scheme (Art. 56, v1.6.0); entity governance flags including `regulatoryStatus`, `regulators[]`, `listedStatus`, `stateOwned` (Art. 22/26/48, v1.12.0) |
 | **eIDAS 2.0 / ARF** | ✅ W3C VC Data Model v2, DID, Ed25519 proof suites, LPID, QEAA mandates |
 | **EU Digital Identity Wallet (EUDIW)** | ✅ PID + LPID credential flows via OpenID4VP; W3C VC evidence block; EUDI_WALLET onboarding channel; `gdprSensitivityMetadata` for tipping-off-safe EUDIW presentations (v1.3.0) |
 | **ISO 20022** | ✅ v1.3.0 — SupplementaryData envelope, pacs.008/pain.001/camt.053 profiles, Python & TypeScript converters (bidirectional) — see [`iso20022-integration/`](iso20022-integration/) |
@@ -299,8 +310,15 @@ Each `-eudi-wallet.json` example documents a **trust chain** using W3C VC eviden
 | **Sovrin / Hyperledger Indy (AnonCreds)** | ✅ `did:sov` / `did:indy` DIDs, AnonCreds CL credentials, CLAIM_DEF, REVOC_REG, Rich Schema — see [Sovrin mapping](docs/mappings/mapping-sovrin.md) |
 | **XRPL Credentials (XLS-70), DIDs (`did:xrpl`), MPTs (XLS-33d), Permissioned Domains (XLS-80/81d), Confidential Transfers (XLS-96), Deep Freeze (XLS-77)** | ✅ On-ledger `Credential` anchoring W3C VCs (XLS-70, live on mainnet), `did:xrpl` DID method, MPT permissioned tokens, Permissioned Domain + DEX gating (v1.7.0), EC-ElGamal Confidential Transfers with selective disclosure (v1.7.0), Deep Freeze (v1.7.0), Native Clawback (v1.7.0) — see [XRPL mapping](docs/mappings/mapping-xrpl-credentials-mpt.md) |
 | **Bitcoin / Lightning Network** | ✅ v1.7.0 — service-layer enforcement; Lightning node pubkey (`lightningNodePubkey`), LSP identification (`lightningServiceProvider`), Bitcoin script type (`bitcoinScriptType`); Lightspark/Voltage/BitGo compliance wrapper integration — see [Bitcoin/Lightning mapping](docs/mappings/mapping-bitcoin-lightning.md) |
+| **Wolfsberg FCCQ / CBDDQ** | ✅ v1.7.0 — field-level mapping to Wolfsberg Financial Crime Compliance Questionnaire and Correspondent Banking Due Diligence Questionnaire v1.4; CBDDQ importer tool — see [Wolfsberg mapping](docs/mappings/wolfsberg-fccq-cbddq.md) |
+| **BCBS 239** | ✅ v1.7.0 — `dataAggregationMetadata` (P1–P6 accuracy/completeness), `predictiveAML.explainability` (P8 model transparency) — see [BCBS 239 mapping](docs/mappings/bcbs239.md) |
+| **EU AI Act (Art. 13 / Annex IV)** | ✅ v1.7.0 — `predictiveAML.modelMetadata` (Art. 13 model card), `explainability` (SHAP/LIME/counterfactual), EU AI Act conformity statement — see [EU AI Act mapping](docs/mappings/eu-ai-act.md) |
 | **X.500 Distinguished Names / X.509 PKI** | ✅ v1.8.0 — optional `legacyIdentifiers.x500DN` (RFC 4514, regex-validated) for eIDAS QTS certificate Subject/Issuer, SWIFTNet addressing, and LDAP entries; optional `pkiEvidence` block with X.509 metadata (serial number, validity, signature algorithm, ETSI QCStatements[], CRL/OCSP, SHA-256 thumbprint) and OID array — see [X.500/X.400 mapping](docs/mappings/x500-x400-legacy.md) and [X.509 PKI mapping](docs/mappings/x509-pki.md) |
 | **Tax Status / TIN / OECD CRS (crsTaxResidencies) / FATCA (GIIN + Chapter 4) / ESR / Pillar 2 GloBE** | ✅ v1.9.1 — optional `taxStatus` block: `tinIdentifiers[]` (OECD CRS/CARF TIN array, multi-jurisdiction, replaces IVMS 101 TXID), `indirectTaxRegistrations[]` (VAT/GST/PST/HST with VIES/GST-portal verification), `economicSubstance` (ESR status for BVI/Cayman/UAE/Jersey/Guernsey/IoM — `nonCompliant` triggers EDD+SAR warning), `pillarTwo` (GloBE ETR per jurisdiction, GIR reference, safe-harbour election) — see [Tax Status mapping](docs/mappings/tax-status-oecd-esr-pillar2.md) |
+| **Contact and Financial Identifiers** | ✅ v1.10.0 — RFC 5321 email, E.164 phone/mobile, ISO 13616 IBAN, ISO 9362 BIC — validated as optional fields on both `NaturalPerson` and `LegalPerson`; account type classification — see [Contact/Financial mapping](docs/mappings/contact-financial-identifiers.md) |
+| **Cell Company Structures (PCC / ICC)** | ✅ v1.11.0 — Protected Cell Companies and Incorporated Cell Companies in Guernsey, Jersey, Cayman, Malta, and Gibraltar; `CellCompanyType` enum, `CellCompanyDetails`, `ParentCellCompanyReference`; hard schema constraints (v1.11.1) — see [Cell Company mapping](docs/mappings/cell-company.md) |
+| **Entity Governance / Review Lifecycle / Natural Person Completeness** | ✅ v1.12.0 — `EntityGovernance` $def (`regulatoryStatus`, `regulators[]`, `listedStatus`, `parentCompany`, `stateOwned`, `governmentOwnershipPercentage`); `ReviewLifecycle` state machine (AMLR Art. 21 audit trail); `NaturalPerson.gender` (ISO/IEC 5218) and `occupation` (ILO/ISCO-08) — see [Entity Governance mapping](docs/mappings/entity-governance.md) and [Natural Person Governance mapping](docs/mappings/natural-person-governance.md) |
+| **CRM Completeness — 20 field gaps closed** | ✅ v1.13.0 — 6 new $defs (`EmailAddress`, `EmergencyContact`, `IndustryCode`, `Mandate`, `PhoneNumber`, `RegisteredAgent`); typed contact arrays, historical names, marital status, deceased flag, preferred language/channel, emergency contact, incorporation/dissolution dates, operational status, employee count, revenue, website, social media, industry codes, registered agent, GLEIF ultimate parent/group, relationship manager, customer segment, net worth, structured mandates — see §24 in compliance matrix |
 
 ---
 
@@ -309,7 +327,7 @@ Each `-eudi-wallet.json` example documents a **trust chain** using W3C VC eviden
 ```
 openKYCAML/
 ├── schema/
-│   ├── kyc-aml-hybrid-extended.json     ← Canonical schema (latest — currently v1.9.1)
+│   ├── kyc-aml-hybrid-extended.json     ← Canonical schema (latest — currently v1.13.0)
 │   └── versions/
 │       ├── v1.0.0.json                  ← v1.0.0 snapshot
 │       ├── v1.1.0.json                  ← v1.1.0 snapshot
@@ -319,15 +337,24 @@ openKYCAML/
 │       ├── v1.5.0.json                  ← v1.5.0 snapshot (Verification Document Bundle)
 │       ├── v1.6.0.json                  ← v1.6.0 snapshot (Document ID URN scheme)
 │       ├── v1.7.0.json                  ← v1.7.0 snapshot (XRPL XLS-70/80/81/96/77, Bitcoin/Lightning)
-│       └── v1.8.0.json                  ← v1.8.0 snapshot (X.500 DN, X.509 PKI evidence)
-│       └── v1.9.1.json                  ← v1.9.1 snapshot (current — taxStatus: TIN/ESR/Pillar 2/FATCA/CRS)
+│       ├── v1.8.0.json                  ← v1.8.0 snapshot (X.500 DN, X.509 PKI evidence)
+│       ├── v1.9.1.json                  ← v1.9.1 snapshot (taxStatus: TIN/ESR/Pillar 2/FATCA/CRS)
+│       ├── v1.10.0.json                 ← v1.10.0 snapshot (contact details, banking identifiers)
+│       ├── v1.11.0.json                 ← v1.11.0 snapshot (PCC/ICC cell company structures)
+│       ├── v1.11.2.json                 ← v1.11.2 snapshot (cell-level predictive AML scores)
+│       ├── v1.12.0.json                 ← v1.12.0 snapshot (gender, occupation, EntityGovernance, ReviewLifecycle)
+│       └── v1.13.0.json                 ← v1.13.0 snapshot (current — CRM completeness: 20 field gaps, 6 new $defs)
 ├── examples/
 │   ├── *-plain.json                     ← Plain IVMS 101 baseline examples
 │   ├── *-wrapped.json                   ← VC-wrapped examples
 │   ├── *-eudi-wallet.json               ← EUDI Wallet / DID triangulation examples
 │   ├── document-bundle-*.json           ← Verification document bundle examples (v1.5.0)
-│   └── evidence/                        ← X.509 PKI evidence examples (v1.8.0)
-│   └── tax/                             ← Tax status examples (v1.9.0)
+│   ├── evidence/                        ← X.509 PKI evidence examples (v1.8.0)
+│   ├── tax/                             ← Tax status examples (v1.9.0)
+│   ├── contact-banking/                 ← Contact/banking identifier examples (v1.10.0)
+│   ├── cell-company/                    ← PCC/ICC cell company examples (v1.11.0)
+│   ├── predictive/                      ← PredictiveAML / EU AI Act examples (v1.7.0)
+│   └── presentation-definitions/        ← OpenID4VP presentation definitions
 ├── iso20022-integration/                ← ISO 20022 bridge module (v1.3.0+)
 │   ├── mapping/                         ← Bidirectional field mapping YAML + gap analysis
 │   ├── supplementary-data/              ← KYCAMLEnvelope JSON Schema + reference instance

@@ -185,5 +185,5 @@ All fields are optional and additive. Existing payloads remain fully valid.
 
 ---
 
-*Document version: v1.7.0 — April 2026. Maintained by the OpenKYCAML Technical Working Group.*
+*Document version: v1.12.0 — April 2026. Maintained by the OpenKYCAML Technical Working Group.*
 *References: [FATF VA Guidance](https://www.fatf-gafi.org/publications/fatfgeneral/documents/guidance-rba-virtual-assets-2021.html), [Lightspark](https://docs.lightspark.com/lightspark-sdk/compliance), [Voltage](https://docs.voltage.cloud), [RGB Protocol](https://rgb.tech/), [Taproot Assets](https://docs.lightning.engineering/the-lightning-network/taproot-assets), [Liquid Network](https://blockstream.com/liquid/), [BIP-341 Taproot](https://github.com/bitcoin/bips/blob/master/bip-0341.mediawiki)*

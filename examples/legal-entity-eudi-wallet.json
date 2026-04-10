@@ -3,9 +3,7 @@
   "version": "1.3.0",
   "messageId": "d4e5f6a7-b8c9-4d0e-1f2a-3b4c5d6e7f8a",
   "messageDateTime": "2025-09-10T10:00:00Z",
-
   "_comment_eudi": "EUDI Wallet KYC — Legal Entity. Global Trade Solutions GmbH (DE) onboards at Deutsche Krypto Bank AG by presenting its eIDAS 2.0 LPID from the German company EUDI Wallet, issued by Bundesanzeiger (DE business registry). Director Hans Bauer presents a QEAA mandate confirming his power of representation. Four DIDs triangulate the identity chain: (1) Company wallet DID, (2) LPID Issuer DID (Bundesanzeiger), (3) Director personal wallet DID, (4) VASP DID. LPID mandatory attributes: currentLegalName + uniqueIdentifier. Optional attributes: lei, vatRegistrationNumber, eoriNumber, europeanUniqueIdentifier, currentAddress. Mandates block carries AMLR Art. 26 authorised representative data.",
-
   "ivms101": {
     "originator": {
       "originatorPersons": [
@@ -59,30 +57,10 @@
               "eoriNumber": "DE1234567890123",
               "mandates": [
                 {
-                  "naturalPerson": {
-                    "name": {
-                      "nameIdentifier": [
-                        {
-                          "primaryIdentifier": "Bauer",
-                          "secondaryIdentifier": "Hans Friedrich",
-                          "nameIdentifierType": "LEGL"
-                        }
-                      ]
-                    },
-                    "dateAndPlaceOfBirth": {
-                      "dateOfBirth": "1972-03-14",
-                      "placeOfBirth": "Stuttgart"
-                    },
-                    "nationalIdentification": {
-                      "nationalIdentifier": "DE-IDCARD-T880012456",
-                      "nationalIdentifierType": "IDCD",
-                      "countryOfIssue": "DE"
-                    },
-                    "countryOfResidence": "DE",
-                    "nationality": "DE"
-                  },
-                  "roleOrPower": "Geschäftsführer (Managing Director) — full power of representation, individually authorised",
-                  "validFrom": "2023-01-01"
+                  "mandateType": "OTHER",
+                  "signatoryName": "Hans Friedrich Bauer",
+                  "scope": "Geschäftsführer (Managing Director) — full power of representation, individually authorised",
+                  "effectiveFrom": "2023-01-01"
                 }
               ]
             }
@@ -133,7 +111,6 @@
       "assetType": "EUR"
     }
   },
-
   "verifiableCredential": {
     "@context": [
       "https://www.w3.org/2018/credentials/v1",
@@ -146,20 +123,16 @@
       "OpenKYCAMLCredential",
       "LegalEntityKYCAttestation"
     ],
-
     "_comment_issuer": "DID #4 — Deutsche Krypto Bank AG VASP (issuer of this OpenKYCAML VC, acts as relying party after LPID + mandate QEAA verification)",
     "issuer": {
       "id": "did:web:deutsche-krypto-bank.example.de",
       "name": "Deutsche Krypto Bank AG"
     },
-
     "issuanceDate": "2025-09-10T10:00:00Z",
     "expirationDate": "2026-09-10T10:00:00Z",
-
     "credentialSubject": {
       "_comment_subject": "DID #1 — Global Trade Solutions GmbH company EUDI Wallet DID. Companies receive a legal entity wallet DID anchored to their EUID/LEI.",
       "id": "did:ebsi:z2JJFoq4joyXKABBGe7mJmN5",
-
       "lpid": {
         "currentLegalName": "Global Trade Solutions GmbH",
         "uniqueIdentifier": "DE-HRB-12345-FFM",
@@ -178,34 +151,13 @@
         "eoriNumber": "DE1234567890123",
         "mandates": [
           {
-            "naturalPerson": {
-              "name": {
-                "nameIdentifier": [
-                  {
-                    "primaryIdentifier": "Bauer",
-                    "secondaryIdentifier": "Hans Friedrich",
-                    "nameIdentifierType": "LEGL"
-                  }
-                ]
-              },
-              "dateAndPlaceOfBirth": {
-                "dateOfBirth": "1972-03-14",
-                "placeOfBirth": "Stuttgart"
-              },
-              "nationalIdentification": {
-                "nationalIdentifier": "DE-IDCARD-T880012456",
-                "nationalIdentifierType": "IDCD",
-                "countryOfIssue": "DE"
-              },
-              "countryOfResidence": "DE",
-              "nationality": "DE"
-            },
-            "roleOrPower": "Geschäftsführer (Managing Director) — full power of representation, individually authorised",
-            "validFrom": "2023-01-01"
+            "mandateType": "OTHER",
+            "signatoryName": "Hans Friedrich Bauer",
+            "scope": "Geschäftsführer (Managing Director) — full power of representation, individually authorised",
+            "effectiveFrom": "2023-01-01"
           }
         ]
       },
-
       "ivms101": {
         "originator": {
           "originatorPersons": [
@@ -276,7 +228,6 @@
           "assetType": "EUR"
         }
       },
-
       "kycProfile": {
         "customerRiskRating": "MEDIUM",
         "riskRatingDetail": {
@@ -372,12 +323,14 @@
         }
       }
     },
-
     "_comment_evidence": "Evidence block — two source credentials presented. (A) LPID from Bundesanzeiger (DID #2) for the company entity. (B) QEAA mandate from Bundesanzeiger (Director PID cross-referenced to company register). DID #3 is Hans Bauer's personal EUDI Wallet, whose PID underpins the mandate QEAA.",
     "evidence": [
       {
         "id": "urn:uuid:lpid-de-gts-gmbh-2025-09-10",
-        "type": ["LPIDCredential", "EUDIWalletPresentationEvidence"],
+        "type": [
+          "LPIDCredential",
+          "EUDIWalletPresentationEvidence"
+        ],
         "verifier": "did:web:deutsche-krypto-bank.example.de",
         "credentialIssuer": "did:web:lpid-provider.bundesanzeiger.example.de",
         "evidenceDocument": "German Commercial Register LPID — Bundesanzeiger (eIDAS 2.0 LPID — Regulation (EU) 2024/1183)",
@@ -388,7 +341,10 @@
       },
       {
         "id": "urn:uuid:qeaa-mandate-hans-bauer-gts-2025-09-10",
-        "type": ["QEAAMandateCredential", "EUDIWalletPresentationEvidence"],
+        "type": [
+          "QEAAMandateCredential",
+          "EUDIWalletPresentationEvidence"
+        ],
         "verifier": "did:web:deutsche-krypto-bank.example.de",
         "credentialIssuer": "did:web:lpid-provider.bundesanzeiger.example.de",
         "evidenceDocument": "QEAA: Power of Representation — Hans Bauer as Geschäftsführer of Global Trade Solutions GmbH (verified against Handelsregister)",
@@ -399,7 +355,10 @@
       },
       {
         "id": "urn:uuid:pid-de-hans-bauer-director-2025-09-10",
-        "type": ["PIDCredential", "EUDIWalletPresentationEvidence"],
+        "type": [
+          "PIDCredential",
+          "EUDIWalletPresentationEvidence"
+        ],
         "verifier": "did:web:deutsche-krypto-bank.example.de",
         "credentialIssuer": "did:web:pid-provider.bsi.example.de",
         "evidenceDocument": "German National Identity Card (eIDAS 2.0 PID) — Hans Friedrich Bauer (Director)",
@@ -409,7 +368,6 @@
         "presentationDate": "2025-09-10T09:52:00Z"
       }
     ],
-
     "credentialStatus": {
       "id": "https://deutsche-krypto-bank.example.de/status/v2#0091",
       "type": "StatusList2021Entry"

@@ -3,9 +3,7 @@
   "version": "1.3.0",
   "messageId": "a4b5c6d7-e8f9-0a1b-2c3d-4e5f6a7b8c9d",
   "messageDateTime": "2025-11-01T08:30:00Z",
-
   "_comment_scenario": "Limited Liability Partnership — UK LLP with Corporate General Partner, Multiple Limited Partners and Natural Person Directors. This example demonstrates AMLR Art. 26 and FATF R.24 beneficial ownership disclosure for Meridian Capital LLP (UK), a private digital asset fund structured as a limited liability partnership. The LLP is itself the originating VASP. Under the LLP agreement (LPA), management and control are exclusively vested in the General Partner (GP); limited partners have no management rights. Partnership interest breakdown: [GP, 0% economic / 100% management control] Meridian Capital GP Ltd (UK); [LP, 45%] Priya Sharma Investments Ltd (Mauritius); [LP, 35%] Ashworth Pension Fund Ltd (UK); [LP, 10%] Dr. Arjun Sharma (UK); [LP, 10%] Sita Patel (UK). UBO determination: Priya Sharma (UK/India) is the sole UBO because (i) she is the sole director and 100% shareholder of Meridian Capital GP Ltd — the General Partner holding all management and voting rights under the LPA; (ii) she also beneficially owns 100% of Priya Sharma Investments Ltd (the largest LP). Despite GP partners in an LLP having no formal ownership stake, control through the GP role constitutes DE_FACTO_CONTROL and CONTRACTUAL control for UBO purposes under AMLR Art. 26(1). FATF Guidance on Transparency of LPs (June 2023) explicitly requires identification of GP controllers as UBOs.",
-
   "ivms101": {
     "originator": {
       "originatorPersons": [
@@ -86,7 +84,6 @@
       "assetType": "USDT"
     }
   },
-
   "verifiableCredential": {
     "@context": [
       "https://www.w3.org/2018/credentials/v1",
@@ -98,15 +95,12 @@
       "OpenKYCAMLCredential",
       "KYCAttestation"
     ],
-
     "issuer": {
       "id": "did:web:singapore-digital-securities.example.sg",
       "name": "Singapore Digital Securities Pte Ltd"
     },
-
     "issuanceDate": "2025-11-01T08:30:00Z",
     "expirationDate": "2026-11-01T08:30:00Z",
-
     "credentialSubject": {
       "ivms101": {
         "originator": {
@@ -188,7 +182,6 @@
           "assetType": "USDT"
         }
       },
-
       "kycProfile": {
         "customerRiskRating": "HIGH",
         "riskRatingDetail": {
@@ -220,16 +213,25 @@
           "screeningStatus": "CLEAR",
           "screeningDate": "2025-10-28T09:00:00Z",
           "screeningProvider": "Refinitiv World-Check",
-          "listsChecked": ["OFAC_SDN", "EU_CONSOLIDATED", "UN_CONSOLIDATED", "HMT", "MAS"]
+          "listsChecked": [
+            "OFAC_SDN",
+            "EU_CONSOLIDATED",
+            "UN_CONSOLIDATED",
+            "HMT",
+            "MAS"
+          ]
         },
         "onboardingChannel": "REMOTE_AUTOMATED",
         "kycCompletionDate": "2025-10-28",
         "consentRecord": {
           "consentGiven": true,
           "consentDate": "2025-10-25T10:00:00Z",
-          "consentPurpose": ["AML_SCREENING", "DATA_SHARING_TRAVEL_RULE", "EDD_REVIEW"]
+          "consentPurpose": [
+            "AML_SCREENING",
+            "DATA_SHARING_TRAVEL_RULE",
+            "EDD_REVIEW"
+          ]
         },
-
         "beneficialOwnership": [
           {
             "_comment_ubo_gp_controller": "UBO: Priya Sharma (UK/India) — 100% effective control over Meridian Capital LLP through her sole ownership and directorship of Meridian Capital GP Ltd (the General Partner). Under the LLP Agreement (LPA) Clause 5, the General Partner has exclusive authority to manage the LLP's business, make all investment decisions, and bind the LLP in contracts. Limited partners have no management rights whatsoever (LPA Clause 7). Priya Sharma also beneficially owns 100% of Priya Sharma Investments Ltd (the 45% LP), but it is her GP control — not LP economic interest — that triggers the UBO determination. AMLR Art. 26(1) and FATF June 2023 LP Transparency Guidance both require identification of the natural person(s) controlling the General Partner as the LLP's UBO.",
@@ -304,55 +306,16 @@
                     "uniqueIdentifier": "GB-CH-14112233",
                     "mandates": [
                       {
-                        "naturalPerson": {
-                          "name": {
-                            "nameIdentifier": [
-                              {
-                                "primaryIdentifier": "Sharma",
-                                "secondaryIdentifier": "Priya Anita",
-                                "nameIdentifierType": "LEGL"
-                              }
-                            ]
-                          },
-                          "nationalIdentification": {
-                            "nationalIdentifier": "GB-PASS-PD7788990",
-                            "nationalIdentifierType": "CCPT",
-                            "countryOfIssue": "GB"
-                          },
-                          "dateAndPlaceOfBirth": {
-                            "dateOfBirth": "1976-02-28",
-                            "placeOfBirth": "Mumbai"
-                          },
-                          "countryOfResidence": "GB"
-                        },
-                        "roleOrPower": "Sole Director and 100% Shareholder of General Partner — exclusive management authority over Meridian Capital LLP under LPA Clause 5",
-                        "validFrom": "2022-04-01"
+                        "mandateType": "OTHER",
+                        "signatoryName": "Priya Anita Sharma",
+                        "scope": "Sole Director and 100% Shareholder of General Partner — exclusive management authority over Meridian Capital LLP under LPA Clause 5",
+                        "effectiveFrom": "2022-04-01"
                       },
                       {
-                        "_comment_ned_ashworth": "Non-executive director of the GP for governance purposes only. No ownership interest in GP or LLP.",
-                        "naturalPerson": {
-                          "name": {
-                            "nameIdentifier": [
-                              {
-                                "primaryIdentifier": "Ashworth",
-                                "secondaryIdentifier": "Robert James",
-                                "nameIdentifierType": "LEGL"
-                              }
-                            ]
-                          },
-                          "nationalIdentification": {
-                            "nationalIdentifier": "GB-PASS-PE1122334",
-                            "nationalIdentifierType": "CCPT",
-                            "countryOfIssue": "GB"
-                          },
-                          "dateAndPlaceOfBirth": {
-                            "dateOfBirth": "1955-08-14",
-                            "placeOfBirth": "Manchester"
-                          },
-                          "countryOfResidence": "GB"
-                        },
-                        "roleOrPower": "Non-Executive Director of General Partner (governance role; no ownership interest in GP or LLP)",
-                        "validFrom": "2022-04-01"
+                        "mandateType": "OTHER",
+                        "signatoryName": "Robert James Ashworth",
+                        "scope": "Non-Executive Director of General Partner (governance role; no ownership interest in GP or LLP)",
+                        "effectiveFrom": "2022-04-01"
                       }
                     ]
                   }
@@ -389,29 +352,10 @@
                   "uniqueIdentifier": "MU-ROC-C200234567",
                   "mandates": [
                     {
-                      "naturalPerson": {
-                        "name": {
-                          "nameIdentifier": [
-                            {
-                              "primaryIdentifier": "Sharma",
-                              "secondaryIdentifier": "Priya Anita",
-                              "nameIdentifierType": "LEGL"
-                            }
-                          ]
-                        },
-                        "nationalIdentification": {
-                          "nationalIdentifier": "GB-PASS-PD7788990",
-                          "nationalIdentifierType": "CCPT",
-                          "countryOfIssue": "GB"
-                        },
-                        "dateAndPlaceOfBirth": {
-                          "dateOfBirth": "1976-02-28",
-                          "placeOfBirth": "Mumbai"
-                        },
-                        "countryOfResidence": "GB"
-                      },
-                      "roleOrPower": "Sole Director and 100% Shareholder",
-                      "validFrom": "2018-11-15"
+                      "mandateType": "OTHER",
+                      "signatoryName": "Priya Anita Sharma",
+                      "scope": "Sole Director and 100% Shareholder",
+                      "effectiveFrom": "2018-11-15"
                     }
                   ]
                 }
@@ -537,7 +481,6 @@
             "isPEP": false
           }
         ],
-
         "auditMetadata": {
           "recordId": "a4b5c6d7-e8f9-0a1b-2c3d-4e5f6a7b8c9d",
           "recordCreatedAt": "2025-11-01T08:30:00Z",
@@ -550,7 +493,6 @@
         }
       }
     },
-
     "credentialStatus": {
       "id": "https://singapore-digital-securities.example.sg/status/v1#1101",
       "type": "StatusList2021Entry"

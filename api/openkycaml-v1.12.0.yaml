@@ -1,0 +1,711 @@
+openapi: "3.1.0"
+info:
+  title: OpenKYCAML API
+  version: "1.12.0"
+  description: |
+    The OpenKYCAML REST API provides endpoints for submitting, retrieving, and validating
+    KYC/AML profiles conforming to the OpenKYCAML v1.12.0 schema. It supports:
+    - Full KYC profile submission with optional predictiveAML extension
+    - Delta-based continuous KYC (cKYC) risk evolution retrieval
+    - Schema and predictive scoring validation
+    - Wolfsberg CBDDQ import/export
+
+    **Regulatory alignment:** AMLR 2027, FATF R.10/12/16/17/24/25, EU AI Act Art. 13, BCBS 239,
+    USA PATRIOT Act Section 314(a)/(b) (31 CFR 1010.520/540), OECD CRS/CARF, US FATCA (Chapter 4),
+    OECD Pillar 2 GloBE, BVI/Cayman ESR, MiFID II Art. 4(1)(21), eIDAS 2.0 PID/LPID
+
+    **v1.12.0 additions:**
+    - `NaturalPerson.gender` (ISO/IEC 5218 aligned enum — GDPR Art. 9 special-category data)
+    - `NaturalPerson.occupation` (ILO/ISCO-08 aligned occupationCode + occupationDescription)
+    - `LegalPerson.entityGovernance` (`EntityGovernance` $def: regulatoryStatus, regulators[],
+      listedStatus, parentCompany, parentRegulated, parentListed, majorityOwnedSubsidiary,
+      stateOwned, governmentOwnershipPercentage)
+    - `MonitoringInfo.reviewLifecycle` (`ReviewLifecycle` $def: currentState enum + stateHistory[])
+  contact:
+    name: OpenKYCAML Core Maintainers
+    url: https://github.com/Lazy-Jack-Ltd/OpenKYCAML
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+
+servers:
+  - url: https://api.openkycaml.org/v1
+    description: Production API server
+  - url: https://sandbox.openkycaml.org/v1
+    description: Sandbox / test environment
+
+tags:
+  - name: profiles
+    description: KYC/AML profile management
+  - name: validation
+    description: Schema and compliance validation
+  - name: predictive
+    description: Predictive AML scores and risk evolution
+  - name: wolfsberg
+    description: Wolfsberg FCCQ/CBDDQ import and export
+
+paths:
+  /profiles:
+    post:
+      operationId: submitProfile
+      tags: [profiles]
+      summary: Submit a full KYC + predictiveAML profile
+      description: |
+        Submit a complete OpenKYCAML v1.12.0 envelope containing a KYC profile and optional
+        predictiveAML extension. The payload must conform to the canonical OpenKYCAML JSON Schema.
+        On success, returns the assigned profile ID and validation summary.
+
+        **Regulatory basis:** AMLR Art. 22, FATF R.10, EU AI Act Art. 13 (when predictiveAML present).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OpenKYCAMLEnvelope"
+            examples:
+              static-risk-score:
+                summary: Static predictive risk score
+                externalValue: https://raw.githubusercontent.com/Lazy-Jack-Ltd/OpenKYCAML/main/examples/predictive/predictive-static.json
+              entity-governance:
+                summary: Legal entity with governance flags
+                externalValue: https://raw.githubusercontent.com/Lazy-Jack-Ltd/OpenKYCAML/main/examples/legal-entity-governance.json
+              natural-person-governance:
+                summary: Natural person with gender, occupation, and review lifecycle
+                externalValue: https://raw.githubusercontent.com/Lazy-Jack-Ltd/OpenKYCAML/main/examples/natural-person-gender-occupation.json
+      responses:
+        "201":
+          description: Profile accepted and stored
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProfileSubmissionResponse"
+        "400":
+          description: Schema validation failure
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationError"
+        "422":
+          description: Business logic validation failure (e.g. PEP without EDD)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ComplianceWarning"
+
+  /profiles/{id}:
+    get:
+      operationId: getProfile
+      tags: [profiles]
+      summary: Retrieve a KYC profile by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Profile UUID assigned on submission
+      responses:
+        "200":
+          description: Profile found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OpenKYCAMLEnvelope"
+        "404":
+          description: Profile not found
+
+  /profiles/{id}/delta:
+    get:
+      operationId: getProfileDelta
+      tags: [predictive, profiles]
+      summary: Retrieve risk evolution history (delta-based cKYC)
+      description: |
+        Returns the `predictiveAML.riskEvolutionHistory[]` for the specified profile,
+        enabling delta-based continuous KYC without triggering a full re-KYC.
+        Supports AMLR Art. 22 ongoing monitoring and BCBS 239 P6 (adaptability).
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: from
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date-time
+          description: Filter snapshots after this ISO 8601 timestamp
+        - name: to
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date-time
+          description: Filter snapshots before this ISO 8601 timestamp
+      responses:
+        "200":
+          description: Risk evolution history
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RiskEvolutionResponse"
+        "404":
+          description: Profile not found or no predictiveAML data
+
+  /validate:
+    post:
+      operationId: validatePayload
+      tags: [validation]
+      summary: Validate a payload against the OpenKYCAML schema
+      description: |
+        Validates a JSON payload against the OpenKYCAML v1.12.0 JSON Schema and
+        runs business-logic compliance checks (PEP/EDD consistency, sanctions
+        screening age, tipping-off classification, predictiveAML EU AI Act
+        completeness, documentId URN format, cell company parentCellCompanyReference
+        requirement, EntityGovernance stateOwned + governmentOwnershipPercentage
+        consistency). Returns all schema errors and advisory warnings without
+        storing the payload.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OpenKYCAMLEnvelope"
+      responses:
+        "200":
+          description: Validation complete (payload may be valid or invalid — check isValid)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationResponse"
+
+  /wolfsberg/import:
+    post:
+      operationId: importWolfsbergCBDDQ
+      tags: [wolfsberg]
+      summary: Import a Wolfsberg CBDDQ v1.4 questionnaire response
+      description: |
+        Converts a Wolfsberg CBDDQ v1.4 XML or JSON questionnaire response into an
+        OpenKYCAML v1.12.0 envelope. Returns the converted envelope and a gap report
+        listing CBDDQ fields not mappable to OpenKYCAML.
+      requestBody:
+        required: true
+        content:
+          application/xml:
+            schema:
+              type: string
+              description: CBDDQ v1.4 XML payload
+          application/json:
+            schema:
+              type: object
+              description: CBDDQ v1.4 JSON payload
+      responses:
+        "200":
+          description: Conversion successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WolfsbergImportResponse"
+        "400":
+          description: Invalid CBDDQ input
+
+  /wolfsberg/export/{id}:
+    get:
+      operationId: exportWolfsbergCBDDQ
+      tags: [wolfsberg]
+      summary: Export a profile as Wolfsberg CBDDQ v1.4 format
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: format
+          in: query
+          schema:
+            type: string
+            enum: [json, xml]
+            default: json
+      responses:
+        "200":
+          description: CBDDQ export
+          content:
+            application/json:
+              schema:
+                type: object
+            application/xml:
+              schema:
+                type: string
+
+components:
+  schemas:
+    OpenKYCAMLEnvelope:
+      type: object
+      description: |
+        Full OpenKYCAML v1.12.0 envelope. See the canonical JSON Schema at
+        https://schema.openkycaml.org/v1.12.0 for the complete field-level specification.
+      properties:
+        version:
+          type: string
+          example: "1.12.0"
+        messageId:
+          type: string
+          format: uuid
+        messageDateTime:
+          type: string
+          format: date-time
+        ivms101:
+          type: object
+          description: IVMS 101 v1.0 Travel Rule payload
+        kycProfile:
+          type: object
+          description: OpenKYCAML KYC profile
+        predictiveAML:
+          type: object
+          description: Optional predictive AML extension (EU AI Act Art. 13 compliant)
+          properties:
+            modelMetadata:
+              type: object
+              required: [modelId, modelVersion, euAiActClassification]
+            predictiveScores:
+              type: array
+              minItems: 1
+            cellLevelPredictiveScores:
+              type: array
+              description: Cell-level predictive scores (v1.11.2)
+              items:
+                type: object
+                required: [cellIdentifier, scores]
+                properties:
+                  cellIdentifier: { type: string }
+                  scores:
+                    type: array
+                    items: { type: object }
+        informationSharingFlags:
+          type: object
+          description: FinCEN 314(a)/(b) information sharing flags
+        gdprSensitivityMetadata:
+          type: object
+          description: GDPR/AML sensitivity classification
+        identityDocuments:
+          type: object
+          description: Verification document bundle (v1.5.0+)
+        legacyIdentifiers:
+          type: object
+          description: X.500 Distinguished Name for eIDAS QTS / SWIFTNet PKI (v1.8.0+)
+          properties:
+            x500DN:
+              type: string
+              description: RFC 4514 Distinguished Name string
+            x500DNType:
+              type: string
+              enum: [certificateSubject, certificateIssuer, directoryEntry, swiftNetAddress]
+        pkiEvidence:
+          type: object
+          description: X.509 PKI certificate evidence for eIDAS 2.0 QES/QSealC/QWAC/QEAA (v1.8.0+)
+        taxStatus:
+          $ref: "#/components/schemas/TaxStatus"
+
+    ProfileSubmissionResponse:
+      type: object
+      required: [profileId, isValid]
+      properties:
+        profileId:
+          type: string
+          format: uuid
+          description: Assigned profile UUID
+        isValid:
+          type: boolean
+        warnings:
+          type: array
+          items:
+            type: string
+        predictiveAMLProcessed:
+          type: boolean
+          description: Whether the predictiveAML block was ingested and scored
+
+    ValidationResponse:
+      type: object
+      required: [isValid]
+      properties:
+        isValid:
+          type: boolean
+        errors:
+          type: array
+          items:
+            $ref: "#/components/schemas/ValidationError"
+        warnings:
+          type: array
+          items:
+            type: string
+        payloadVersion:
+          type: string
+
+    ValidationError:
+      type: object
+      required: [path, message]
+      properties:
+        path:
+          type: string
+          description: JSON pointer to the invalid field
+        message:
+          type: string
+        schemaKeyword:
+          type: string
+
+    ComplianceWarning:
+      type: object
+      required: [code, message]
+      properties:
+        code:
+          type: string
+          description: Machine-readable warning code (e.g. W001_PEP_WITHOUT_EDD)
+        message:
+          type: string
+        severity:
+          type: string
+          enum: [advisory, warning, error]
+
+    RiskEvolutionResponse:
+      type: object
+      properties:
+        profileId:
+          type: string
+          format: uuid
+        snapshots:
+          type: array
+          items:
+            type: object
+            properties:
+              snapshotDate: { type: string, format: date-time }
+              overallRiskScore: { type: number }
+              riskCategory: { type: string }
+
+    WolfsbergImportResponse:
+      type: object
+      properties:
+        envelope:
+          $ref: "#/components/schemas/OpenKYCAMLEnvelope"
+        gapReport:
+          type: array
+          items:
+            type: object
+            properties:
+              cbddqField: { type: string }
+              reason: { type: string }
+
+    # ── Tax Status components (v1.9.0–v1.9.1) ────────────────────────────────
+
+    TinIdentifier:
+      type: object
+      required: [jurisdiction, tinType]
+      properties:
+        jurisdiction: { type: string, pattern: "^[A-Z]{2}$" }
+        tinType:
+          type: string
+          enum: [CRS_REPORTABLE, CARF_REPORTABLE, FATCA_EIN, FUNCTIONAL_EQUIVALENT, NATIONAL_TAX_ID]
+        tinValue: { type: string }
+        verificationStatus:
+          type: string
+          enum: [verified, unverified, relief-applied, not-required]
+        verificationDate: { type: string, format: date-time }
+        issuingAuthority: { type: string }
+
+    IndirectTaxRegistration:
+      type: object
+      required: [taxType, jurisdiction]
+      properties:
+        taxType:
+          type: string
+          enum: [VAT, GST, PST, HST, salesTax, other]
+        jurisdiction: { type: string, pattern: "^[A-Z]{2}$" }
+        registrationNumber: { type: string }
+        status: { type: string, enum: [active, suspended, revoked, exempt] }
+        effectiveFrom: { type: string, format: date }
+
+    EconomicSubstance:
+      type: object
+      properties:
+        jurisdiction: { type: string, pattern: "^[A-Z]{2}$" }
+        status:
+          type: string
+          enum: [inScope-RelevantEntity, exempt-TaxResidentElsewhere, exempt-PureEquityHolding, compliant, nonCompliant]
+        relevantActivities:
+          type: array
+          items: { type: string }
+        coreIncomeGeneratingActivitiesPerformed: { type: boolean }
+        lastNotificationDate: { type: string, format: date }
+        lastReportReference: { type: string }
+
+    PillarTwo:
+      type: object
+      properties:
+        inScopeMNE: { type: boolean }
+        consolidatedRevenueEUR: { type: number }
+        constituentEntityStatus: { type: string, enum: [inScope, excluded, QDMTT] }
+        etrJurisdictions:
+          type: array
+          items:
+            type: object
+            required: [jurisdiction, etr]
+            properties:
+              jurisdiction: { type: string, pattern: "^[A-Z]{2}$" }
+              etr: { type: number, minimum: 0, maximum: 1 }
+        safeHarbourApplied: { type: string, enum: [SimplifiedETR, SubstanceBased, DeMinimis, none] }
+        girFilingReference: { type: string }
+        lastGIRDate: { type: string, format: date-time }
+
+    CrsTaxResidency:
+      type: object
+      required: [jurisdiction]
+      properties:
+        jurisdiction: { type: string, pattern: "^[A-Z]{2}$" }
+        tinValue: { type: string }
+        tinVerificationStatus:
+          type: string
+          enum: [verified, unverified, relief-applied, not-required]
+        selfCertificationDate: { type: string, format: date-time }
+        controllingPersonFlag: { type: boolean }
+
+    FatcaStatus:
+      type: object
+      properties:
+        giin:
+          type: string
+          pattern: "^[0-9A-Z]{6}\\.[0-9A-Z]{5}\\.[0-9A-Z]{2}\\.[0-9A-Z]{3}$"
+          description: "19-char IRS GIIN: XXXXXX.XXXXX.XX.XXX"
+        chapter4Classification:
+          type: string
+          enum:
+            - participatingFFI
+            - registeredDeemedCompliantFFI
+            - certifiedDeemedCompliantFFI
+            - sponsoredDirectReportingNFFE
+            - exemptBeneficialOwner
+            - nonFinancialNonReportingEntity
+            - nonParticipatingFFI
+            - other
+        usTinRequired: { type: boolean }
+        temporaryReliefApplied: { type: boolean, description: "IRS Notice 2024-78 relief (2025-2027)" }
+        ffiListVerificationTimestamp: { type: string, format: date-time }
+        withholdingAgentReference: { type: string }
+
+    TaxStatus:
+      type: object
+      additionalProperties: false
+      properties:
+        tinIdentifiers:
+          type: array
+          items: { $ref: "#/components/schemas/TinIdentifier" }
+        indirectTaxRegistrations:
+          type: array
+          items: { $ref: "#/components/schemas/IndirectTaxRegistration" }
+        economicSubstance:
+          $ref: "#/components/schemas/EconomicSubstance"
+        pillarTwo:
+          $ref: "#/components/schemas/PillarTwo"
+        crsTaxResidencies:
+          type: array
+          items: { $ref: "#/components/schemas/CrsTaxResidency" }
+        fatcaStatus:
+          $ref: "#/components/schemas/FatcaStatus"
+
+    # ── Contact / Banking Identifiers (v1.10.0) ──────────────────────────────
+
+    BankingDetails:
+      type: object
+      description: |
+        Validated banking account details (v1.10.0). Wired as bankingDetails[]
+        on both NaturalPerson and LegalPerson.
+      properties:
+        iban:
+          type: string
+          pattern: "^[A-Z]{2}[0-9]{2}[A-Z0-9]{4,30}$"
+          description: ISO 13616 IBAN
+        bic:
+          type: string
+          pattern: "^[A-Z]{6}[A-Z0-9]{2}([A-Z0-9]{3})?$"
+          description: ISO 9362 BIC (8 or 11 characters)
+        bankName: { type: string }
+        accountCurrency:
+          type: string
+          pattern: "^[A-Z]{3}$"
+          description: ISO 4217 currency code
+        accountType:
+          type: string
+          enum: [CURRENT, SAVINGS, CORRESPONDENT, CRYPTO_FIAT_GATEWAY, OTHER]
+        bankingCountry:
+          type: string
+          pattern: "^[A-Z]{2}$"
+          description: ISO 3166-1 alpha-2 country code
+
+    # ── Cell Company Structures (v1.11.0) ────────────────────────────────────
+
+    CellCompanyDetails:
+      type: object
+      required: [cellCompanyType]
+      description: Metadata for a PCC or ICC Core or Cell (v1.11.0).
+      properties:
+        cellCompanyType:
+          type: string
+          enum: [NONE, PCC_CORE, PCC_CELL, ICC_CORE, ICC_CELL]
+        cellIdentifier:
+          type: string
+          maxLength: 64
+          pattern: "^[A-Za-z0-9 \\-]{1,64}$"
+        cellName: { type: string, maxLength: 128 }
+        cellRegistrationNumber:
+          type: string
+          maxLength: 35
+          pattern: "^[A-Z0-9]{1,35}$"
+        hasIndependentLegalPersonality: { type: boolean }
+        isCellCompanyIssuer: { type: boolean }
+        issuancePurpose:
+          type: string
+          enum: [INSURANCE_LINKED_SECURITY, CATASTROPHE_BOND, STRUCTURED_NOTE, DEBT_INSTRUMENT, OTHER]
+        cellSpecificInstrumentReference: { type: string, format: uri }
+
+    ParentCellCompanyReference:
+      type: object
+      required: [legalEntityIdentifier, jurisdiction]
+      description: |
+        Reference to the parent PCC/ICC Core (v1.11.0), or to the parent company
+        of a non-cell legal entity when used in EntityGovernance.parentCompany (v1.12.0).
+      properties:
+        legalEntityIdentifier:
+          type: string
+          maxLength: 35
+          pattern: "^[A-Z0-9]{1,35}$"
+        jurisdiction:
+          type: string
+          pattern: "^[A-Z]{2}$"
+        parentName: { type: string, maxLength: 128 }
+
+    # ── Entity Governance (v1.12.0) ──────────────────────────────────────────
+
+    RegulatorEntry:
+      type: object
+      description: Single regulator entry in EntityGovernance.regulators[] (v1.12.0).
+      properties:
+        regulatorName: { type: string, maxLength: 200 }
+        jurisdiction:
+          type: string
+          pattern: "^[A-Z]{2}$"
+          description: ISO 3166-1 alpha-2
+        licenceNumber: { type: string, maxLength: 100 }
+
+    ListedStatus:
+      type: object
+      description: Stock exchange listing metadata (v1.12.0).
+      properties:
+        isListed: { type: boolean }
+        marketIdentifier:
+          type: string
+          maxLength: 10
+          description: ISO 10383 MIC code (e.g. XLON, XNAS, XETR)
+        recognisedMarket:
+          type: boolean
+          description: Whether the market is regulated/recognised under MiFID II or equivalent
+
+    EntityGovernance:
+      type: object
+      description: |
+        Entity governance flags for LegalPerson (v1.12.0).
+        Supports AMLR Art. 22 (SDD), Art. 26 (group UBO), Art. 48 (third-party reliance),
+        FATF Rec. 10/12/17/24, Wolfsberg CBDDQ §3.
+      properties:
+        regulatoryStatus:
+          type: string
+          enum: [REGULATED, RECOGNISED, UNREGULATED, EXEMPT]
+          description: "AMLR Art. 48 / FATF Rec. 17 — entity licensing status"
+        regulators:
+          type: array
+          items: { $ref: "#/components/schemas/RegulatorEntry" }
+          description: "Array of regulators holding jurisdiction over this entity"
+        listedStatus:
+          $ref: "#/components/schemas/ListedStatus"
+        parentCompany:
+          $ref: "#/components/schemas/ParentCellCompanyReference"
+          description: "Non-cell parent company reference (FATF Rec. 24, AMLR Art. 26)"
+        parentRegulated:
+          type: boolean
+          description: "AMLR Art. 48 group-reliance condition"
+        parentListed:
+          type: boolean
+          description: "AMLR Art. 22 SDD condition for subsidiaries of listed groups"
+        majorityOwnedSubsidiary:
+          type: boolean
+          description: ">50% ownership — FATF Rec. 24 / AMLR Art. 26"
+        stateOwned:
+          type: boolean
+          description: "FATF PEP Guidance / AMLR Art. 28–31 state-owned enterprise"
+        governmentOwnershipPercentage:
+          type: number
+          minimum: 0
+          maximum: 100
+          description: "% government ownership — ≥50 = effective control; ≥25 = significant influence"
+
+    # ── Review Lifecycle (v1.12.0) ───────────────────────────────────────────
+
+    ReviewLifecycleHistory:
+      type: object
+      required: [toState, transitionAt]
+      description: Single state-transition entry in ReviewLifecycle.stateHistory[] (v1.12.0).
+      properties:
+        fromState:
+          type: string
+          enum: [ONBOARDING, INITIAL_REVIEW, PERIODIC_REVIEW, TRIGGERED_REVIEW, OFFBOARDING, TERMINATED]
+        toState:
+          type: string
+          enum: [ONBOARDING, INITIAL_REVIEW, PERIODIC_REVIEW, TRIGGERED_REVIEW, OFFBOARDING, TERMINATED]
+        transitionAt:
+          type: string
+          format: date-time
+        reason: { type: string, maxLength: 500 }
+        actor: { type: string, maxLength: 200 }
+
+    ReviewLifecycle:
+      type: object
+      description: |
+        KYC/AML review lifecycle state machine (v1.12.0).
+        Wired as optional MonitoringInfo.reviewLifecycle.
+        Provides AMLR Art. 21 audit trail for the review lifecycle.
+      properties:
+        currentState:
+          type: string
+          enum: [ONBOARDING, INITIAL_REVIEW, PERIODIC_REVIEW, TRIGGERED_REVIEW, OFFBOARDING, TERMINATED]
+        stateHistory:
+          type: array
+          items: { $ref: "#/components/schemas/ReviewLifecycleHistory" }
+          description: Append-only ordered audit log of all state transitions
+
+    # ── Natural Person Governance (v1.12.0) ──────────────────────────────────
+
+    NaturalPersonOccupation:
+      type: object
+      description: |
+        Structured occupation for a natural person (v1.12.0).
+        Aligned to eIDAS 2.0 PID occupation attribute and IVMS 101 extended CDD.
+      properties:
+        occupationCode:
+          type: string
+          enum: [EMPLOYED, SELF_EMPLOYED, BUSINESS_OWNER, STUDENT, RETIRED, UNEMPLOYED, PUBLIC_OFFICIAL, OTHER]
+          description: "ILO/ISCO-08 aligned broad occupation category; PUBLIC_OFFICIAL may trigger PEP screening"
+        occupationDescription:
+          type: string
+          maxLength: 200
+          description: Free-text job title or occupation detail
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT issued by the OpenKYCAML identity provider
+
+security:
+  - bearerAuth: []

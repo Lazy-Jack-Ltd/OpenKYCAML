@@ -3,9 +3,7 @@
   "version": "1.9.1",
   "messageId": "f7a8b9c0-d1e2-3f4a-5b6c-7d8e9f0a1b2c",
   "messageDateTime": "2026-04-08T10:00:00Z",
-
   "_comment": "End-to-end AMLR 2027 + FATCA Chapter 4 + EU AI Act integration example. Combines: predictiveAML (EU AI Act Art. 13, BCBS 239), taxStatus (FATCA GIIN, CRS multi-residency, OECD Pillar 2), pkiEvidence (eIDAS 2.0 QSealC X.509), legacyIdentifiers (X.500 DN), ivms101 (FATF R.16 Travel Rule), and kycProfile (AMLR Art. 22 EDD). This is the reference payload for implementers targeting full AMLR 2027 + FATCA + EU AI Act compliance from a single OpenKYCAML v1.9.1 envelope.",
-
   "ivms101": {
     "originator": {
       "originatorPersons": [
@@ -28,7 +26,9 @@
           }
         }
       ],
-      "accountNumber": ["IE64IRCE92050112345678"]
+      "accountNumber": [
+        "IE64IRCE92050112345678"
+      ]
     },
     "beneficiary": {
       "beneficiaryPersons": [
@@ -46,7 +46,9 @@
           }
         }
       ],
-      "accountNumber": ["KY0098765432109876"]
+      "accountNumber": [
+        "KY0098765432109876"
+      ]
     },
     "originatingVASP": {
       "originatingVASP": {
@@ -79,7 +81,6 @@
       }
     }
   },
-
   "kycProfile": {
     "customerRiskRating": "HIGH",
     "dueDiligenceType": "EDD",
@@ -132,7 +133,6 @@
       "dataRetentionDate": "2031-03-01"
     }
   },
-
   "taxStatus": {
     "tinIdentifiers": [
       {
@@ -230,7 +230,6 @@
       "lastGIRDate": "2026-03-31T23:59:59Z"
     }
   },
-
   "pkiEvidence": {
     "x509Certificate": {
       "serialNumber": "1A2B3C4D5E6F7A8B",
@@ -270,12 +269,10 @@
     ],
     "certificateDocumentRef": "urn:openkycaml:doc:ie:certificate-of-incorporation:nexus-capital:2026-03"
   },
-
   "legacyIdentifiers": {
     "x500DN": "CN=Nexus Capital Management Ltd,OU=Finance,O=NexusCapital,C=IE,serialNumber=213800NEXUSCAPITAL001",
     "x500DNType": "certificateSubject"
   },
-
   "predictiveAML": {
     "modelMetadata": {
       "modelId": "amlr2027-edd-risk-model-v2",
@@ -350,7 +347,6 @@
       "dataLineageReference": "urn:lineage:temenos-fcm:edd:job:20260408-084500"
     }
   },
-
   "informationSharingFlags": {
     "section314bSafeHarbor": true,
     "sharingConsentTimestamp": "2026-04-08T09:00:00Z"

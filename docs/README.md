@@ -23,6 +23,18 @@ Field-level mapping documents to other standards.
 | [Sovrin / Hyperledger Indy (AnonCreds) Mapping](mappings/mapping-sovrin.md) | Field-level mapping from OpenKYCAML to Sovrin DID Method, Hyperledger Indy ledger transactions, and AnonCreds ZKP credential model |
 | [XRPL Credentials, DIDs, MPTs, Permissioned Domains, and Confidential Transfers Mapping](mappings/mapping-xrpl-credentials-mpt.md) | Field-level mapping from OpenKYCAML to XRPL Credentials (XLS-70), `did:xrpl` DID method, MPTs (XLS-33d), Permissioned Domains (XLS-80), Permissioned DEX (XLS-81d), Deep Freeze (XLS-77), Native Clawback, and Confidential Transfers (XLS-96) |
 | [Bitcoin and Lightning Network Mapping](mappings/mapping-bitcoin-lightning.md) | Field-level mapping for Bitcoin and Lightning Network service-layer enforcement (Lightspark, Voltage, BitGo, LNURL-auth, Taproot Assets, RGB Protocol) |
+| [Wolfsberg FCCQ / CBDDQ Mapping](mappings/wolfsberg-fccq-cbddq.md) | Field-level mapping from OpenKYCAML to Wolfsberg Financial Crime Compliance Questionnaire (FCCQ) and Correspondent Banking Due Diligence Questionnaire (CBDDQ) v1.4 |
+| [BCBS 239 Data Governance Mapping](mappings/bcbs239.md) | OpenKYCAML field coverage for BCBS 239 data accuracy, aggregation, and reporting principles (P1–P11) |
+| [FATF Recommendations 24/25 Mapping](mappings/fatf-r24-r25.md) | Beneficial ownership transparency fields — FATF Rec. 24 (corporate structures) and Rec. 25 (legal arrangements) |
+| [EU AI Act Mapping](mappings/eu-ai-act.md) | PredictiveAML field coverage for EU AI Act Art. 13 transparency, explainability, and model-card requirements |
+| [X.500 DN / X.400 Legacy Mapping](mappings/x500-x400-legacy.md) | X.500 Distinguished Name use-cases (eIDAS QTS, SWIFTNet, LDAP); X.400 explicitly out-of-scope rationale |
+| [X.509 PKI Evidence Mapping](mappings/x509-pki.md) | Full X.509 certificate metadata, ETSI QCStatements, ASN.1 OID array — eIDAS Qualified Certificates and AMLR Art. 22/56 compliance |
+| [Tax Status / TIN / OECD ESR / Pillar 2 Mapping](mappings/tax-status-oecd-esr-pillar2.md) | TIN array, VAT/GST indirect tax registrations, Economic Substance Regulations (BVI/Cayman/UAE/Jersey/IoM/Guernsey), and OECD Pillar 2 GloBE field mapping |
+| [FATCA and CRS Mapping](mappings/fatca-crs.md) | US FATCA Chapter 4 (`fatcaStatus`) and OECD CRS (`crsTaxResidencies[]`) first-class field mapping |
+| [Contact and Financial Identifiers Mapping](mappings/contact-financial-identifiers.md) | Format/pattern coverage for contact fields (email, phone/mobile E.164) and banking identifiers (IBAN ISO 13616, BIC ISO 9362) — v1.10.0 |
+| [Cell Company Structures Mapping](mappings/cell-company.md) | PCC and ICC cell company KYC/AML support — `CellCompanyType` enum, `CellCompanyDetails`, `ParentCellCompanyReference` — Guernsey, Jersey, Cayman, Malta, Gibraltar — v1.11.0 |
+| [Entity Governance Flags Mapping](mappings/entity-governance.md) | `EntityGovernance` $def — regulatory status, multi-regulator array, listed status, parent/state-ownership flags — FATF Rec. 24/25, AMLR Art. 26/48 — v1.12.0 |
+| [Natural Person Governance Mapping](mappings/natural-person-governance.md) | `gender` (ISO/IEC 5218) and `occupation` (ILO/ISCO-08) fields — eIDAS PID / IVMS 101 alignment, GDPR Art. 9 guidance — v1.12.0 |
 
 ## Compliance
 
@@ -54,6 +66,7 @@ Mermaid diagram sources.
 | [Schema ER Diagram](diagrams/schema-er-diagram.md) | Mermaid entity-relationship diagram for the full OpenKYCAML schema |
 | [Travel Rule Sequence Diagrams](diagrams/travel-rule-sequence-diagrams.md) | Mermaid sequence diagrams for TRISA, OpenVASP, Notabene, TRP, Sygna Bridge, and EUDI Wallet Travel Rule flows |
 | [eIDAS 2.0 VC Issuance and Presentation Flows](diagrams/eidas-sequence-diagrams.md) | Mermaid sequence diagrams for OpenID4VCI issuance (pre-auth and auth code flows) and OpenID4VP presentation (same-device and cross-device) |
+| [Tax Status Sequence Diagrams](diagrams/tax-status-diagrams.md) | Mermaid sequence diagrams for all five tax status scenarios (TIN, VAT/GST, FATCA/CRS, Pillar 2, ESR) — v1.9.1 |
 
 ## Naming Convention
 

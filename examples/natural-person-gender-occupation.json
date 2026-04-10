@@ -40,13 +40,25 @@
             },
             "countryOfResidence": "DE",
             "nationality": "DE",
-            "emailAddress": "anna.mueller@example.de",
-            "phoneNumber": "+4930123456789",
             "gender": "FEMALE",
             "occupation": {
               "occupationCode": "SELF_EMPLOYED",
               "occupationDescription": "Freelance UX designer and digital product consultant"
-            }
+            },
+            "emailAddresses": [
+              {
+                "emailType": "WORK",
+                "emailAddress": "anna.mueller@example.de",
+                "isPrimary": true
+              }
+            ],
+            "phoneNumbers": [
+              {
+                "phoneType": "WORK",
+                "phoneNumber": "+4930123456789",
+                "isPrimary": true
+              }
+            ]
           }
         }
       ],

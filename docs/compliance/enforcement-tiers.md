@@ -237,7 +237,7 @@ All three tiers satisfy the same regulatory requirements — FATF Recommendation
 
 ---
 
-*Document version: v1.7.0 — April 2026. Maintained by the OpenKYCAML Technical Working Group.*
+*Document version: v1.12.0 — April 2026. Maintained by the OpenKYCAML Technical Working Group.*
 
 ---
 

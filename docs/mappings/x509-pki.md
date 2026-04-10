@@ -135,4 +135,4 @@ Certificate validity metadata feeds predictive risk signals:
 
 ---
 
-*Last updated: v1.8.0 — April 2026. Maintained by the OpenKYCAML Technical Working Group.*
+*Last updated: v1.12.0 — April 2026. Maintained by the OpenKYCAML Technical Working Group.*

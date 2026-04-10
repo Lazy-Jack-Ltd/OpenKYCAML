@@ -25,7 +25,9 @@
           }
         }
       ],
-      "accountNumber": ["DE89370400440532013000"]
+      "accountNumber": [
+        "DE89370400440532013000"
+      ]
     },
     "beneficiary": {
       "beneficiaryPersons": [
@@ -43,7 +45,9 @@
           }
         }
       ],
-      "accountNumber": ["IN50765432100987654321"]
+      "accountNumber": [
+        "IN50765432100987654321"
+      ]
     },
     "originatingVASP": {
       "originatingVASP": {
@@ -83,7 +87,11 @@
     "sanctionsScreening": {
       "screeningStatus": "CLEAR",
       "screeningDate": "2026-04-01T08:00:00Z",
-      "listsChecked": ["EU_CONSOLIDATED", "UN_CONSOLIDATED", "OFAC_SDN"]
+      "listsChecked": [
+        "EU_CONSOLIDATED",
+        "UN_CONSOLIDATED",
+        "OFAC_SDN"
+      ]
     },
     "beneficialOwnership": [
       {

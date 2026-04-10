@@ -1179,3 +1179,159 @@ interface LegalPersonCellExtension {
 ```
 
 *Cell company types added in OpenKYCAML v1.11.0. Last updated: v1.11.0.*
+
+---
+
+## Entity Governance, Natural Person Governance, and Review Lifecycle Types (v1.12.0)
+
+```typescript
+/** Gender enum for NaturalPerson — ISO/IEC 5218 aligned (v1.12.0).
+ *  GDPR Art. 9 special-category data — collect only where lawfully required. */
+export type NaturalPersonGender =
+  | 'MALE'           // ISO/IEC 5218 code 1
+  | 'FEMALE'         // ISO/IEC 5218 code 2
+  | 'NON_BINARY'     // ISO/IEC 5218 code 9 (extended)
+  | 'OTHER'          // Self-described gender outside binary categories
+  | 'PREFER_NOT_TO_SAY';  // Data subject has declined to specify
+
+/** ILO/ISCO-08 aligned broad occupation category (v1.12.0). */
+export type OccupationCode =
+  | 'EMPLOYED'       // Major groups 1–9 (salaried/waged employment)
+  | 'SELF_EMPLOYED'  // Major groups 1–3, 5 (own-account workers)
+  | 'BUSINESS_OWNER' // Major group 1 (managers and proprietors)
+  | 'STUDENT'
+  | 'RETIRED'
+  | 'UNEMPLOYED'
+  | 'PUBLIC_OFFICIAL' // Major group 1 sub-group 111 — may trigger PEP screening
+  | 'OTHER';
+
+/**
+ * Structured occupation for a natural person (v1.12.0).
+ * Aligned to eIDAS 2.0 PID occupation attribute and IVMS 101 extended CDD.
+ * Complements — does not replace — kycProfile.customerClassification.occupationOrPurpose.
+ */
+export interface NaturalPersonOccupation {
+  /** Broad ILO/ISCO-08-aligned occupation category */
+  occupationCode?: OccupationCode;
+  /** Free-text job title or occupation detail (maxLength: 200) */
+  occupationDescription?: string;
+}
+
+/**
+ * NaturalPerson v1.12.0 additions.
+ * Both fields are optional and backward-compatible.
+ */
+interface NaturalPersonGovernanceExtension {
+  /** ISO/IEC 5218 aligned gender — GDPR Art. 9 special-category data (v1.12.0) */
+  gender?: NaturalPersonGender;
+  /** Structured occupation — eIDAS PID / IVMS 101 alignment (v1.12.0) */
+  occupation?: NaturalPersonOccupation;
+}
+
+/** Regulatory status of a legal entity (v1.12.0). */
+export type RegulatoryStatus = 'REGULATED' | 'RECOGNISED' | 'UNREGULATED' | 'EXEMPT';
+
+/** Single regulator entry in EntityGovernance.regulators[] (v1.12.0). */
+export interface RegulatorEntry {
+  /** e.g. 'Financial Conduct Authority', 'BaFin', 'CSSF' (maxLength: 200) */
+  regulatorName?: string;
+  /** ISO 3166-1 alpha-2 — pattern: /^[A-Z]{2}$/ */
+  jurisdiction?: string;
+  /** Licence or registration number (maxLength: 100) */
+  licenceNumber?: string;
+}
+
+/** Listed-exchange status (v1.12.0). */
+export interface ListedStatus {
+  /** Whether the entity is listed on any exchange */
+  isListed?: boolean;
+  /** ISO 10383 MIC code (e.g. 'XLON', 'XNAS', 'XETR') — maxLength: 10 */
+  marketIdentifier?: string;
+  /** Whether the market is a regulated/recognised market under applicable law (MiFID II, FCA) */
+  recognisedMarket?: boolean;
+}
+
+/**
+ * Entity governance flags for LegalPerson (v1.12.0).
+ * Exposed as optional LegalPerson.entityGovernance.
+ * Supports AMLR Art. 22 (SDD), Art. 26 (group UBO), Art. 48 (third-party reliance),
+ * FATF Rec. 10/12/17/24, Wolfsberg CBDDQ §3.
+ */
+export interface EntityGovernance {
+  /** Regulatory licensing status of this entity */
+  regulatoryStatus?: RegulatoryStatus;
+  /** Array of regulators holding jurisdiction over this entity */
+  regulators?: RegulatorEntry[];
+  /** Stock exchange listing metadata */
+  listedStatus?: ListedStatus;
+  /**
+   * Parent company reference for non-cell corporate groups.
+   * Reuses ParentCellCompanyReference $def (legalEntityIdentifier, jurisdiction, parentName).
+   * For PCC/ICC cells use LegalPerson.parentCellCompanyReference instead.
+   */
+  parentCompany?: ParentCellCompanyReference;
+  /** Whether the immediate parent is regulated by a recognised regulator (AMLR Art. 48) */
+  parentRegulated?: boolean;
+  /** Whether the immediate parent is listed on a recognised market (AMLR Art. 22 SDD) */
+  parentListed?: boolean;
+  /** Whether this entity is a majority-owned (>50%) subsidiary (FATF Rec. 24, AMLR Art. 26) */
+  majorityOwnedSubsidiary?: boolean;
+  /** Whether the entity is owned or controlled by a state/government body (FATF PEP Guidance) */
+  stateOwned?: boolean;
+  /** Percentage of entity owned directly or indirectly by a government (0–100) */
+  governmentOwnershipPercentage?: number;
+}
+
+/**
+ * LegalPerson v1.12.0 addition.
+ */
+interface LegalPersonGovernanceExtension {
+  /** Entity governance flags — regulatory status, listed status, ownership chain (v1.12.0) */
+  entityGovernance?: EntityGovernance;
+}
+
+/** Review lifecycle state enum (v1.12.0). */
+export type ReviewLifecycleState =
+  | 'ONBOARDING'        // Initial customer acceptance / KYC onboarding
+  | 'INITIAL_REVIEW'    // First full KYC review after onboarding
+  | 'PERIODIC_REVIEW'   // Scheduled periodic CDD refresh
+  | 'TRIGGERED_REVIEW'  // Event-triggered re-KYC (e.g. transaction alert, SAR)
+  | 'OFFBOARDING'       // Customer exit / relationship termination in progress
+  | 'TERMINATED';       // Relationship permanently terminated
+
+/** Single historical state transition entry (v1.12.0). */
+export interface ReviewLifecycleHistory {
+  /** State that was exited */
+  fromState?: ReviewLifecycleState;
+  /** State that was entered */
+  toState: ReviewLifecycleState;
+  /** ISO 8601 timestamp of the state transition */
+  transitionAt: string;
+  /** Free-text reason or trigger description (maxLength: 500) */
+  reason?: string;
+  /** User or system actor that triggered the transition */
+  actor?: string;
+}
+
+/**
+ * KYC/AML review lifecycle state machine (v1.12.0).
+ * Exposed as optional MonitoringInfo.reviewLifecycle.
+ * Provides AMLR Art. 21 audit trail for the review lifecycle.
+ */
+export interface ReviewLifecycle {
+  /** Current lifecycle state */
+  currentState?: ReviewLifecycleState;
+  /** Full ordered history of state transitions (append-only audit log) */
+  stateHistory?: ReviewLifecycleHistory[];
+}
+
+/**
+ * MonitoringInfo v1.12.0 addition.
+ */
+interface MonitoringInfoReviewExtension {
+  /** KYC review lifecycle state machine and audit trail (v1.12.0) */
+  reviewLifecycle?: ReviewLifecycle;
+}
+```
+
+*Entity governance, natural person governance, and review lifecycle types added in OpenKYCAML v1.12.0. Last updated: v1.12.0.*

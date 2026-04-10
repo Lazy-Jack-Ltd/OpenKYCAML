@@ -95,4 +95,4 @@ This document provides a detailed field-level mapping of **FATF Recommendation 2
 
 ---
 
-*Last updated: April 2026 — OpenKYCAML v1.7.0*
+*Last updated: April 2026 — OpenKYCAML v1.12.0*

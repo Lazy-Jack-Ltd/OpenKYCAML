@@ -242,4 +242,4 @@ sequenceDiagram
 
 ---
 
-*All diagrams are rendered with [Mermaid](https://mermaid.js.org/). Last updated: v1.7.0.*
+*All diagrams are rendered with [Mermaid](https://mermaid.js.org/). Last updated: v1.12.0.*

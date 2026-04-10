@@ -8,11 +8,23 @@
     "purpose": "Verify the FATF Recommendation 16 minimum identity data for a natural person originator or beneficiary in a Virtual Asset Service Provider (VASP) Travel Rule transfer. Minimum claims: legal name, date of birth or address, and national identifier.",
     "format": {
       "dc+sd-jwt": {
-        "sd-jwt_alg_values": ["ES256", "ES384", "PS256"],
-        "kb-jwt_alg_values": ["ES256", "ES384", "PS256"]
+        "sd-jwt_alg_values": [
+          "ES256",
+          "ES384",
+          "PS256"
+        ],
+        "kb-jwt_alg_values": [
+          "ES256",
+          "ES384",
+          "PS256"
+        ]
       },
       "jwt_vc_json": {
-        "alg": ["ES256", "ES384", "PS256"]
+        "alg": [
+          "ES256",
+          "ES384",
+          "PS256"
+        ]
       }
     },
     "input_descriptors": [
@@ -22,18 +34,33 @@
         "purpose": "A W3C Verifiable Credential or SD-JWT VC issued by a KYC provider or identity authority containing the FATF Travel Rule minimum claims for a natural person.",
         "format": {
           "dc+sd-jwt": {
-            "sd-jwt_alg_values": ["ES256", "ES384", "PS256"],
-            "kb-jwt_alg_values": ["ES256", "ES384", "PS256"]
+            "sd-jwt_alg_values": [
+              "ES256",
+              "ES384",
+              "PS256"
+            ],
+            "kb-jwt_alg_values": [
+              "ES256",
+              "ES384",
+              "PS256"
+            ]
           },
           "jwt_vc_json": {
-            "alg": ["ES256", "ES384", "PS256"]
+            "alg": [
+              "ES256",
+              "ES384",
+              "PS256"
+            ]
           }
         },
         "constraints": {
           "limit_disclosure": "required",
           "fields": [
             {
-              "path": ["$.vct", "$.type"],
+              "path": [
+                "$.vct",
+                "$.type"
+              ],
               "purpose": "Credential type must be an OpenKYCAML KYC attestation.",
               "filter": {
                 "type": "string",

@@ -1,9 +1,9 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://openkycaml.org/schema/v1.12.0/kyc-aml-hybrid-extended.json",
+  "$id": "https://openkycaml.org/schema/v1.14.0/kyc-aml-hybrid-extended.json",
   "title": "OpenKYCAML Hybrid KYC/AML Schema",
   "description": "Root OpenKYCAML document. At least one of 'ivms101' or 'verifiableCredential' MUST be present.",
-  "version": "1.12.0",
+  "version": "1.14.0",
   "$defs": {
     "NaturalPersonNameIdentifier": {
       "title": "NaturalPersonNameIdentifier",
@@ -26,7 +26,7 @@
         },
         "nameIdentifierType": {
           "type": "string",
-          "description": "IVMS 101 NameIdentifierType code.",
+          "description": "IVMS 101 NameIdentifierType code. LEGL = legal/registered name (use for primary identity). ALIA = alias or known-as name. MAID = maiden name — use this type within a NaturalPersonNameIdentifier entry when transmitting a maiden name as part of an IVMS 101 Travel Rule payload. For AML screening records with full date context, use NaturalPerson.historicalNames[] with nameType MAIDEN instead. BIRT = name at birth. MISC = miscellaneous.",
           "enum": [
             "ALIA",
             "BIRT",
@@ -34,6 +34,45 @@
             "LEGL",
             "MISC"
           ]
+        },
+        "salutation": {
+          "type": "string",
+          "enum": [
+            "MR",
+            "MRS",
+            "MS",
+            "MISS",
+            "DR",
+            "PROF",
+            "REV",
+            "OTHER"
+          ],
+          "description": "Honorific title prefix (e.g. Mr, Dr, Prof). Optional; collect only where legally required or operationally necessary."
+        },
+        "middleName": {
+          "type": "string",
+          "maxLength": 200,
+          "description": "Middle name(s) of the natural person. Distinct from primaryIdentifier (last/family name) and secondaryIdentifier (first name)."
+        },
+        "nameSuffix": {
+          "type": "string",
+          "maxLength": 50,
+          "description": "Name suffix such as Jr., Sr., III, Esq."
+        },
+        "preferredName": {
+          "type": "string",
+          "maxLength": 200,
+          "description": "Preferred or display name / known-as name. Used for correspondence and CRM display."
+        },
+        "formerName": {
+          "type": "string",
+          "maxLength": 200,
+          "description": "Single previous legal name attached to this name identifier entry. Use this field only when exactly one former name needs to be captured within an IVMS 101 name block and date context is not required. If NaturalPerson.historicalNames[] is populated, this field is redundant and should be omitted to avoid conflicting records. For screening-grade records with multiple historical names and effective-date ranges, use NaturalPerson.historicalNames[] instead."
+        },
+        "pronouns": {
+          "type": "string",
+          "maxLength": 50,
+          "description": "Personal pronouns (e.g. he/him, she/her, they/them). GDPR Art. 9 may apply — collect only where lawfully required or with explicit consent."
         }
       }
     },
@@ -47,12 +86,20 @@
       "properties": {
         "addressType": {
           "type": "string",
-          "description": "IVMS 101 AddressType code.",
           "enum": [
+            "GEOG",
             "HOME",
             "BIZZ",
-            "GEOG"
-          ]
+            "REGISTERED_OFFICE",
+            "PRINCIPAL_PLACE_OF_BUSINESS",
+            "MAILING",
+            "BILLING",
+            "SHIPPING",
+            "CORRESPONDENCE",
+            "PREVIOUS",
+            "OTHER"
+          ],
+          "description": "Address type. IVMS 101 codes (use for Travel Rule / IVMS 101 payloads): GEOG = geographic address, BIZZ = business address. Extended KYC/CRM codes (use for domestic KYC records): HOME = residential address, REGISTERED_OFFICE = statutory registered office (legal entities), PRINCIPAL_PLACE_OF_BUSINESS = primary operational location (legal entities), MAILING = correspondence-only address, BILLING = billing/invoicing address, SHIPPING = delivery address, CORRESPONDENCE = formal correspondence address, PREVIOUS = former/historical address, OTHER = none of the above."
         },
         "department": {
           "type": "string",
@@ -121,6 +168,20 @@
           },
           "maxItems": 7,
           "description": "Unstructured address lines (up to 7), used when structured fields are unavailable."
+        },
+        "isPrimary": {
+          "type": "boolean",
+          "description": "True if this is the primary address for the subject. At most one address in the geographicAddress array should be marked isPrimary."
+        },
+        "effectiveFrom": {
+          "type": "string",
+          "format": "date",
+          "description": "Date from which this address was effective (ISO 8601 YYYY-MM-DD). Enables historical address tracking for AML."
+        },
+        "effectiveTo": {
+          "type": "string",
+          "format": "date",
+          "description": "Date on which this address ceased to be current (ISO 8601 YYYY-MM-DD). Present for historical/former addresses."
         }
       }
     },
@@ -195,6 +256,11 @@
           "type": "string",
           "description": "City or municipality of birth. Maps to eIDAS 2.0 PID attribute 'birth_place' (optional in eIDAS; required by IVMS 101 §3.3).",
           "maxLength": 70
+        },
+        "countryOfBirth": {
+          "type": "string",
+          "pattern": "^[A-Z]{2}$",
+          "description": "ISO 3166-1 alpha-2 country code of birth. Complements the free-text placeOfBirth field. Aligns with IVMS 101 optional birth-country field and eIDAS 2.0 PID."
         }
       }
     },
@@ -242,7 +308,20 @@
           "items": {
             "$ref": "#/$defs/Address"
           },
-          "description": "Geographic address(es) of the natural person. Maps to eIDAS 2.0 PID attribute 'resident_address' (structured)."
+          "description": "Geographic address(es) of the natural person. Maps to eIDAS 2.0 PID attribute 'resident_address' (structured).",
+          "contains": {
+            "type": "object",
+            "required": [
+              "isPrimary"
+            ],
+            "properties": {
+              "isPrimary": {
+                "const": true
+              }
+            }
+          },
+          "maxContains": 1,
+          "minContains": 0
         },
         "nationalIdentification": {
           "$ref": "#/$defs/NationalIdentification",
@@ -265,24 +344,6 @@
           "type": "string",
           "description": "ISO 3166-1 alpha-2 nationality of the natural person. Maps to eIDAS 2.0 PID attribute 'nationality'. Use when nationality differs from country of residence.",
           "pattern": "^[A-Z]{2}$"
-        },
-        "emailAddress": {
-          "type": "string",
-          "format": "email",
-          "description": "Primary email address of the natural person. RFC 5321 format-validated. Used in FATF Rec. 16 contact data requirements, AMLR Art. 22 CDD verification, and eIDAS onboarding notification flows.",
-          "maxLength": 254
-        },
-        "phoneNumber": {
-          "type": "string",
-          "description": "Primary telephone number in E.164 international format (e.g. '+447911123456'). Format: '+' followed by country code and subscriber number, 2–15 digits total.",
-          "pattern": "^\\+[1-9]\\d{1,14}$",
-          "maxLength": 16
-        },
-        "mobileNumber": {
-          "type": "string",
-          "description": "Mobile / cell phone number in E.164 international format. Used for mTAN/OTP delivery in remote CDD flows (AMLR Art. 22(5)) and EUDI Wallet notification. Separate from phoneNumber to support voice + SMS differentiation.",
-          "pattern": "^\\+[1-9]\\d{1,14}$",
-          "maxLength": 16
         },
         "bankingDetails": {
           "type": "array",
@@ -327,6 +388,160 @@
             }
           },
           "additionalProperties": false
+        },
+        "isDeceased": {
+          "type": "boolean",
+          "description": "True if the natural person is deceased. Triggers offboarding workflow and estate-handling processes. GDPR Art. 9 note: deceased persons generally fall outside GDPR scope but data should still be handled with care."
+        },
+        "deceasedDate": {
+          "type": "string",
+          "format": "date",
+          "description": "Date of death (ISO 8601 YYYY-MM-DD). Only populated when isDeceased is true."
+        },
+        "historicalNames": {
+          "type": "array",
+          "description": "Canonical list of all previous legal names with effective date ranges. This is the preferred field for AML/CTF screening — it supports multiple historical names with MAIDEN, PREVIOUS_LEGAL, ALIAS, TRADING, and OTHER categories, and includes effectiveFrom/effectiveTo dates required for time-based screening. When this array is populated, NaturalPersonNameIdentifier.formerName entries on any nameIdentifier item are redundant and should be omitted. GDPR Art. 9 may apply for maiden names.",
+          "items": {
+            "type": "object",
+            "required": [
+              "name"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "type": "string",
+                "maxLength": 200,
+                "description": "Full previous legal name."
+              },
+              "nameType": {
+                "type": "string",
+                "enum": [
+                  "MAIDEN",
+                  "PREVIOUS_LEGAL",
+                  "ALIAS",
+                  "TRADING",
+                  "OTHER"
+                ],
+                "description": "Category of the historical name."
+              },
+              "effectiveFrom": {
+                "type": "string",
+                "format": "date",
+                "description": "Date from which this name was used."
+              },
+              "effectiveTo": {
+                "type": "string",
+                "format": "date",
+                "description": "Date on which this name ceased to be used."
+              }
+            }
+          }
+        },
+        "preferredLanguage": {
+          "type": "string",
+          "pattern": "^[a-z]{2}(-[A-Z]{2})?$",
+          "description": "Preferred language for communications (BCP 47 language tag, e.g. 'en', 'fr', 'de-AT'). Relevant for AMLR Art. 22 multilingual customer due diligence."
+        },
+        "preferredCommunicationChannel": {
+          "type": "string",
+          "enum": [
+            "EMAIL",
+            "PHONE",
+            "SMS",
+            "POST",
+            "PORTAL",
+            "OTHER"
+          ],
+          "description": "Customer's preferred channel for receiving communications."
+        },
+        "marketingOptOut": {
+          "type": "boolean",
+          "description": "True if the customer has opted out of marketing communications. Distinct from consentRecord which covers regulatory/KYC consent."
+        },
+        "maritalStatus": {
+          "type": "string",
+          "enum": [
+            "SINGLE",
+            "MARRIED",
+            "CIVIL_PARTNERSHIP",
+            "SEPARATED",
+            "DIVORCED",
+            "WIDOWED",
+            "OTHER",
+            "PREFER_NOT_TO_SAY"
+          ],
+          "description": "Marital status of the natural person. GDPR Art. 9 note: may be treated as special-category data in some jurisdictions — collect only where legally required or operationally necessary for inheritance / joint-account governance."
+        },
+        "numberOfDependants": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of financial dependants. Relevant for source-of-wealth risk assessment and affordability analysis."
+        },
+        "householdSize": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Total household size including the subject. Used in wealth-management and source-of-wealth profiling."
+        },
+        "emergencyContact": {
+          "$ref": "#/$defs/EmergencyContact",
+          "description": "Emergency contact / next-of-kin details. Used for account succession planning and estate-handling workflows."
+        },
+        "emailAddresses": {
+          "type": "array",
+          "description": "Typed list of email addresses for this natural person. Use emailType (WORK, PERSONAL, OTHER) to distinguish address roles. At most one entry should have isPrimary set to true.",
+          "items": {
+            "$ref": "#/$defs/EmailAddress"
+          },
+          "contains": {
+            "type": "object",
+            "required": [
+              "isPrimary"
+            ],
+            "properties": {
+              "isPrimary": {
+                "const": true
+              }
+            }
+          },
+          "maxContains": 1,
+          "minContains": 0
+        },
+        "phoneNumbers": {
+          "type": "array",
+          "description": "Typed list of phone numbers for this natural person. Use phoneType (WORK, MOBILE, HOME, FAX, DIRECT, OTHER) to distinguish number roles. MOBILE type replaces the former mobileNumber string field. At most one entry should have isPrimary set to true.",
+          "items": {
+            "$ref": "#/$defs/PhoneNumber"
+          },
+          "contains": {
+            "type": "object",
+            "required": [
+              "isPrimary"
+            ],
+            "properties": {
+              "isPrimary": {
+                "const": true
+              }
+            }
+          },
+          "maxContains": 1,
+          "minContains": 0
+        },
+        "faxNumber": {
+          "type": "string",
+          "description": "Fax number in E.164 format."
+        },
+        "tags": {
+          "type": "array",
+          "description": "Free-form tags or labels applied to this record by the implementing system. Useful for segmentation, workflow routing, and custom filtering.",
+          "items": {
+            "type": "string",
+            "maxLength": 100
+          }
+        },
+        "customAttributes": {
+          "type": "object",
+          "description": "Extensible key-value store for implementer-defined attributes not covered by the standard schema. Values may be any JSON type.",
+          "additionalProperties": true
         }
       }
     },
@@ -366,7 +581,7 @@
       "properties": {
         "currentLegalName": {
           "type": "string",
-          "description": "Current legal name of the entity as registered. Mandatory LPID attribute. Maps to legalPerson.name.nameIdentifier[0].legalPersonName (LEGL).",
+          "description": "Current legal name of the entity as registered. Mandatory LPID attribute. This is the eIDAS LPID presentation-layer copy of legalPerson.name.nameIdentifier[0].legalPersonName (LEGL). The canonical name record is legalPerson.name; populate this field only when transmitting an eIDAS LPID credential.",
           "maxLength": 100
         },
         "uniqueIdentifier": {
@@ -376,7 +591,7 @@
         },
         "currentAddress": {
           "$ref": "#/$defs/Address",
-          "description": "Current registered address of the legal entity. Optional LPID attribute. Maps to legalPerson.geographicAddress[]."
+          "description": "Current registered address of the legal entity. Optional LPID attribute. This is the eIDAS LPID presentation-layer copy of legalPerson.geographicAddress[]. The canonical address record is legalPerson.geographicAddress; populate this field only when transmitting an eIDAS LPID credential."
         },
         "vatRegistrationNumber": {
           "type": "string",
@@ -397,7 +612,7 @@
         },
         "lei": {
           "type": "string",
-          "description": "Legal Entity Identifier (LEI) per ISO 17442. Optional LPID attribute. Maps to legalPerson.lei and/or legalPerson.nationalIdentification with nationalIdentifierType LEIX.",
+          "description": "Legal Entity Identifier (LEI) per ISO 17442. This field is the eIDAS LPID presentation-layer copy, populated when transmitting an eIDAS 2.0 LPID credential. The master, authoritative LEI is legalPerson.lei. When both are present they must be identical.",
           "pattern": "^[A-Z0-9]{20}$"
         },
         "eoriNumber": {
@@ -408,34 +623,9 @@
         },
         "mandates": {
           "type": "array",
-          "description": "Representation and mandate records — natural persons authorised to act on behalf of the legal entity. Supports AMLR authorised representative and beneficial owner verification. May be conveyed as QEAAs in EUDI Wallet flows.",
+          "description": "Structured list of authorised signatory mandates for this legal entity. Replaces the previously untyped array.",
           "items": {
-            "type": "object",
-            "required": [
-              "naturalPerson",
-              "roleOrPower"
-            ],
-            "properties": {
-              "naturalPerson": {
-                "$ref": "#/$defs/NaturalPerson",
-                "description": "The natural person holding the mandate or representation power."
-              },
-              "roleOrPower": {
-                "type": "string",
-                "description": "Description of the role or power of representation (e.g. 'Director', 'Authorised Signatory', 'Power of Attorney').",
-                "maxLength": 200
-              },
-              "validFrom": {
-                "type": "string",
-                "format": "date",
-                "description": "Date from which the mandate is effective (ISO 8601)."
-              },
-              "validUntil": {
-                "type": "string",
-                "format": "date",
-                "description": "Date on which the mandate expires (ISO 8601). Omit if open-ended."
-              }
-            }
+            "$ref": "#/$defs/Mandate"
           }
         }
       }
@@ -480,7 +670,20 @@
           "items": {
             "$ref": "#/$defs/Address"
           },
-          "description": "Geographic address(es) of the legal person. Maps to eIDAS 2.0 LPID attribute 'current_address'."
+          "description": "Geographic address(es) of the legal person. Maps to eIDAS 2.0 LPID attribute 'current_address'.",
+          "contains": {
+            "type": "object",
+            "required": [
+              "isPrimary"
+            ],
+            "properties": {
+              "isPrimary": {
+                "const": true
+              }
+            }
+          },
+          "maxContains": 1,
+          "minContains": 0
         },
         "customerNumber": {
           "type": "string",
@@ -503,7 +706,7 @@
         },
         "lpid": {
           "$ref": "#/$defs/LegalPersonIdentificationData",
-          "description": "Optional eIDAS 2.0 Legal Person Identification Data (LPID) block. Carries LPID-specific attributes (current legal name, unique identifier, VAT, EORI, LEI, mandates) for EUDI Wallet and AMLR high-assurance CDD flows. Backward-compatible — omit for pure IVMS 101 usage."
+          "description": "Optional eIDAS 2.0 Legal Person Identification Data (LPID) block. Carry LPID-specific attributes (current legal name, unique identifier, VAT, EORI, LEI, mandates) when presenting this record as an eIDAS 2.0 LPID Verifiable Credential. Fields inside lpid are presentation-layer copies; legalPerson.name, legalPerson.lei, and legalPerson.geographicAddress[] remain the authoritative master fields. Omit for pure IVMS 101 usage."
         },
         "legalFormCode": {
           "type": "string",
@@ -548,24 +751,6 @@
           "format": "uri",
           "description": "Reference to the LegalEntityDocument record (by documentRef URI) in identityDocuments.legalEntityDocuments[] that confirmed the legalFormCode via the GLEIF RAL. Typically a REGISTRY_EXTRACT or CERTIFICATE_OF_INCORPORATION record."
         },
-        "emailAddress": {
-          "type": "string",
-          "format": "email",
-          "description": "Primary business email address of the legal person. RFC 5321 format-validated. Used in FATF Rec. 16 counterparty contact requirements and AMLR Art. 22 legal entity CDD.",
-          "maxLength": 254
-        },
-        "phoneNumber": {
-          "type": "string",
-          "description": "Primary business telephone number in E.164 international format (e.g. '+4930123456'). Format: '+' followed by country code and subscriber number, 2–15 digits total.",
-          "pattern": "^\\+[1-9]\\d{1,14}$",
-          "maxLength": 16
-        },
-        "mobileNumber": {
-          "type": "string",
-          "description": "Mobile contact number for authorised representative or compliance contact, in E.164 international format. Used for OTP/notification delivery in remote CDD and EUDI Wallet mandate verification.",
-          "pattern": "^\\+[1-9]\\d{1,14}$",
-          "maxLength": 16
-        },
         "bankingDetails": {
           "type": "array",
           "description": "Verified banking account details for this legal entity. Supports IBAN/BIC-validated account records for correspondent banking due diligence (FATF Rec. 16), AMLR Art. 22 source-of-funds verification, and ISO 20022 payment instruction pre-population.",
@@ -578,7 +763,7 @@
           "description": "Cell structure classification and metadata. Absent for ordinary non-cell companies (cellCompanyType: NONE implied). Present whenever this LegalPerson is a PCC Core, PCC Cell, ICC Core, or ICC Cell."
         },
         "parentCellCompanyReference": {
-          "$ref": "#/$defs/ParentCellCompanyReference",
+          "$ref": "#/$defs/EntityReference",
           "description": "Required (schema-enforced) when cellCompanyDetails.cellCompanyType is PCC_CELL or ICC_CELL. References the parent PCC/ICC Core for FATF beneficial-ownership tracing and AMLR Art. 26 entity verification. Optional (and ignored) for PCC_CORE, ICC_CORE, and NONE types."
         },
         "cellRiskProfileOverride": {
@@ -596,6 +781,162 @@
         "entityGovernance": {
           "$ref": "#/$defs/EntityGovernance",
           "description": "Optional governance and regulatory-status flags for the legal entity. Covers regulatory recognition, multi-regulator licences, listed-market status, parent company linkage, state ownership, and subsidiary classification. Fills gaps for cross-border CDD reliance (AMLR Art. 48), market-abuse risk scoring, and FATF Rec. 24/25 entity transparency. All sub-fields are optional and backward-compatible."
+        },
+        "dateOfIncorporation": {
+          "type": "string",
+          "format": "date",
+          "description": "Date of incorporation or formation (ISO 8601 YYYY-MM-DD). Aligns with Companies House, GLEIF, and standard CRM Account fields."
+        },
+        "dateOfRegistration": {
+          "type": "string",
+          "format": "date",
+          "description": "Date of registration with the relevant authority (ISO 8601 YYYY-MM-DD). May differ from dateOfIncorporation for foreign-registered entities."
+        },
+        "dateOfDissolution": {
+          "type": "string",
+          "format": "date",
+          "description": "Date of dissolution, strike-off, or winding-up (ISO 8601 YYYY-MM-DD). Populated when operationalStatus is DISSOLVED or STRUCK_OFF."
+        },
+        "operationalStatus": {
+          "type": "string",
+          "enum": [
+            "ACTIVE",
+            "DORMANT",
+            "IN_LIQUIDATION",
+            "DISSOLVED",
+            "STRUCK_OFF",
+            "SUSPENDED",
+            "OTHER"
+          ],
+          "description": "Current operational status of the legal entity. ACTIVE = trading normally, DORMANT = registered but not trading, IN_LIQUIDATION = winding-up proceedings underway, DISSOLVED = formally dissolved, STRUCK_OFF = removed from registry, SUSPENDED = operations suspended by regulator."
+        },
+        "numberOfEmployees": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of employees. Used for customer classification, EDD sizing, and product suitability assessment. Aligns with Salesforce NumberOfEmployees and Dynamics 365 numberofemployees fields."
+        },
+        "annualRevenue": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Annual revenue / turnover of the entity. Used for risk-tier assignment and product suitability. Aligns with Salesforce AnnualRevenue and Dynamics 365 Revenue."
+        },
+        "annualRevenueCurrency": {
+          "type": "string",
+          "pattern": "^[A-Z]{3}$",
+          "description": "ISO 4217 three-letter currency code for annualRevenue (e.g. USD, EUR, GBP)."
+        },
+        "annualRevenueVerificationDate": {
+          "type": "string",
+          "format": "date",
+          "description": "Date on which annualRevenue was last verified (ISO 8601 YYYY-MM-DD)."
+        },
+        "websiteUrl": {
+          "type": "string",
+          "format": "uri",
+          "description": "Primary website URL of the entity. Used for adverse media screening and virtual asset provider identification."
+        },
+        "socialMediaProfiles": {
+          "type": "array",
+          "description": "Social media and digital presence profiles for the entity. Used for adverse media screening and enhanced due diligence.",
+          "items": {
+            "type": "object",
+            "required": [
+              "platform",
+              "url"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "platform": {
+                "type": "string",
+                "enum": [
+                  "LINKEDIN",
+                  "TWITTER",
+                  "FACEBOOK",
+                  "INSTAGRAM",
+                  "YOUTUBE",
+                  "OTHER"
+                ],
+                "description": "Social media platform."
+              },
+              "url": {
+                "type": "string",
+                "format": "uri",
+                "description": "URL of the profile page."
+              },
+              "isVerified": {
+                "type": "boolean",
+                "description": "True if the profile has been verified as belonging to this entity."
+              }
+            }
+          }
+        },
+        "industryCodes": {
+          "type": "array",
+          "description": "Structured industry classification codes for the entity (NAICS, NACE Rev.2, SIC, ISIC). Complements the free-text industrySector field in KYCProfile.customerClassification.",
+          "items": {
+            "$ref": "#/$defs/IndustryCode"
+          }
+        },
+        "registeredAgent": {
+          "$ref": "#/$defs/RegisteredAgent",
+          "description": "Registered agent or company secretary for this entity. Relevant for offshore, cell company, and SPV structures."
+        },
+        "emailAddresses": {
+          "type": "array",
+          "description": "Typed list of email addresses for this legal entity. Use emailType (WORK, PERSONAL, OTHER) to distinguish address roles. At most one entry should have isPrimary set to true.",
+          "items": {
+            "$ref": "#/$defs/EmailAddress"
+          },
+          "contains": {
+            "type": "object",
+            "required": [
+              "isPrimary"
+            ],
+            "properties": {
+              "isPrimary": {
+                "const": true
+              }
+            }
+          },
+          "maxContains": 1,
+          "minContains": 0
+        },
+        "phoneNumbers": {
+          "type": "array",
+          "description": "Typed list of phone numbers for this legal entity. Use phoneType (WORK, MOBILE, HOME, FAX, DIRECT, OTHER) to distinguish number roles. MOBILE type replaces the former mobileNumber string field. At most one entry should have isPrimary set to true.",
+          "items": {
+            "$ref": "#/$defs/PhoneNumber"
+          },
+          "contains": {
+            "type": "object",
+            "required": [
+              "isPrimary"
+            ],
+            "properties": {
+              "isPrimary": {
+                "const": true
+              }
+            }
+          },
+          "maxContains": 1,
+          "minContains": 0
+        },
+        "faxNumber": {
+          "type": "string",
+          "description": "Fax number in E.164 format."
+        },
+        "tags": {
+          "type": "array",
+          "description": "Free-form tags or labels applied to this record by the implementing system.",
+          "items": {
+            "type": "string",
+            "maxLength": 100
+          }
+        },
+        "customAttributes": {
+          "type": "object",
+          "description": "Extensible key-value store for implementer-defined attributes not covered by the standard schema.",
+          "additionalProperties": true
         }
       },
       "allOf": [
@@ -677,7 +1018,7 @@
             ],
             "properties": {
               "parentCellCompanyReference": {
-                "$ref": "#/$defs/ParentCellCompanyReference",
+                "$ref": "#/$defs/EntityReference",
                 "description": "Required (schema-enforced) when cellCompanyDetails.cellCompanyType is PCC_CELL or ICC_CELL. References the parent PCC/ICC Core for FATF beneficial-ownership tracing and AMLR Art. 26 entity verification."
               }
             }
@@ -1533,10 +1874,6 @@
           "type": "boolean",
           "description": "Whether the subject is classified as a PEP."
         },
-        "isPep": {
-          "type": "boolean",
-          "description": "Alias for isPEP (reference schema interoperability). When both are present, isPEP takes precedence."
-        },
         "pepCategory": {
           "type": "string",
           "description": "PEP classification category aligned to the AMLA draft RTS taxonomy (AMLR Art. 28–31). Primary values: DOMESTIC_PEP, FOREIGN_PEP, INTERNATIONAL_ORGANISATION, FAMILY_MEMBER_OF_PEP, CLOSE_ASSOCIATE_OF_PEP, FORMER_PEP, NOT_PEP. Legacy aliases INTERNATIONAL_ORG_PEP and RCA are retained for backward compatibility.",
@@ -1561,11 +1898,6 @@
           "type": "string",
           "format": "date",
           "description": "Date of the most recent PEP screening."
-        },
-        "lastPepCheckDate": {
-          "type": "string",
-          "format": "date",
-          "description": "Alias for screeningDate (reference schema interoperability)."
         },
         "screeningProvider": {
           "type": "string",
@@ -1595,27 +1927,10 @@
             "ESCALATED"
           ]
         },
-        "status": {
-          "type": "string",
-          "description": "Alias for screeningStatus (reference schema interoperability). Accepts all screeningStatus values.",
-          "enum": [
-            "CLEAR",
-            "HIT",
-            "POTENTIAL_MATCH",
-            "FALSE_POSITIVE",
-            "PENDING",
-            "ESCALATED"
-          ]
-        },
         "screeningDate": {
           "type": "string",
           "format": "date-time",
           "description": "ISO 8601 datetime of the screening."
-        },
-        "lastScreenedDate": {
-          "type": "string",
-          "format": "date-time",
-          "description": "Alias for screeningDate (reference schema interoperability)."
         },
         "screeningProvider": {
           "type": "string",
@@ -1710,11 +2025,6 @@
         "screeningDate": {
           "type": "string",
           "format": "date-time"
-        },
-        "lastCheckedDate": {
-          "type": "string",
-          "format": "date",
-          "description": "Date of the most recent adverse media check (reference schema interoperability)."
         },
         "screeningProvider": {
           "type": "string",
@@ -1852,19 +2162,6 @@
       "required": [
         "ownershipPercentage"
       ],
-      "if": {
-        "required": [
-          "person"
-        ]
-      },
-      "then": {
-        "not": {
-          "required": [
-            "naturalPerson"
-          ]
-        },
-        "description": "When 'person' is present, the legacy 'naturalPerson' field must not be used to avoid ambiguity."
-      },
       "properties": {
         "person": {
           "type": "object",
@@ -1889,10 +2186,6 @@
               ]
             }
           ]
-        },
-        "naturalPerson": {
-          "$ref": "#/$defs/NaturalPerson",
-          "description": "The beneficial owner as a natural person. Legacy field — use 'person' when natural or legal person support is needed. Do not use alongside 'person'."
         },
         "ownershipPercentage": {
           "type": "number",
@@ -2058,11 +2351,6 @@
           "type": "string",
           "format": "date",
           "description": "Date of the last periodic review."
-        },
-        "lastKycReviewDate": {
-          "type": "string",
-          "format": "date",
-          "description": "Alias for lastReviewDate (reference schema interoperability)."
         },
         "nextReviewDate": {
           "type": "string",
@@ -2249,11 +2537,6 @@
           "type": "string",
           "format": "date",
           "description": "Date after which this record may be deleted per data retention policy."
-        },
-        "timestamp": {
-          "type": "string",
-          "format": "date-time",
-          "description": "ISO 8601 datetime of this audit record (reference schema interoperability; see also recordCreatedAt)."
         },
         "changeLog": {
           "type": "array",
@@ -2918,17 +3201,9 @@
         "adverseMedia": {
           "$ref": "#/$defs/AdverseMedia"
         },
-        "sourceOfFundsWealth": {
-          "type": "array",
-          "items": {
-            "type": "string",
-            "maxLength": 100
-          },
-          "description": "Declared source(s) of funds or wealth as free-text or coded values (e.g., EMPLOYMENT_INCOME, INHERITANCE). When sourceOfFundsWealthDetail is also present, it supersedes this field and the values here should match sourceOfFundsWealthDetail.sourceOfFunds."
-        },
         "sourceOfFundsWealthDetail": {
           "$ref": "#/$defs/SourceOfFundsWealth",
-          "description": "Detailed and verified source of funds and wealth record including supporting documents. Supersedes sourceOfFundsWealth when present."
+          "description": "Structured source of funds and wealth record including coded sources, narrative, verification status, and supporting document references. This is the single canonical SoF/SoW field. Aligns with FATF Rec. 10 and AMLR Art. 22 source-of-funds requirements."
         },
         "beneficialOwnership": {
           "type": "array",
@@ -3152,6 +3427,69 @@
               }
             }
           }
+        },
+        "relationshipManagerId": {
+          "type": "string",
+          "maxLength": 100,
+          "description": "Internal staff identifier of the assigned relationship manager. Required by many compliance auditors as part of the KYC record."
+        },
+        "relationshipManagerName": {
+          "type": "string",
+          "maxLength": 200,
+          "description": "Full name of the assigned relationship manager."
+        },
+        "primaryBranchCode": {
+          "type": "string",
+          "maxLength": 50,
+          "description": "Branch or office code where the customer relationship is managed. Used for regulatory reporting and geographic risk attribution."
+        },
+        "servingBusinessUnit": {
+          "type": "string",
+          "maxLength": 200,
+          "description": "Business unit or division serving this customer (e.g. 'Private Banking', 'Corporate & Institutional', 'Retail')."
+        },
+        "customerSegment": {
+          "type": "string",
+          "enum": [
+            "MASS_MARKET",
+            "AFFLUENT",
+            "PRIVATE_BANKING",
+            "ULTRA_HIGH_NET_WORTH",
+            "INSTITUTIONAL",
+            "SME",
+            "MID_MARKET",
+            "LARGE_CORPORATE",
+            "OTHER"
+          ],
+          "description": "Customer segment assigned by the institution. Used for product suitability, EDD thresholds, and service-level routing."
+        },
+        "estimatedNetWorth": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Estimated net worth of the customer. Used for EDD sizing, product suitability, and source-of-wealth risk assessment."
+        },
+        "estimatedNetWorthCurrency": {
+          "type": "string",
+          "pattern": "^[A-Z]{3}$",
+          "description": "ISO 4217 three-letter currency code for estimatedNetWorth."
+        },
+        "estimatedNetWorthDate": {
+          "type": "string",
+          "format": "date",
+          "description": "Date on which estimatedNetWorth was last assessed (ISO 8601 YYYY-MM-DD)."
+        },
+        "tags": {
+          "type": "array",
+          "description": "Free-form tags or labels applied to this KYC profile by the implementing system.",
+          "items": {
+            "type": "string",
+            "maxLength": 100
+          }
+        },
+        "customAttributes": {
+          "type": "object",
+          "description": "Extensible key-value store for implementer-defined KYC profile attributes.",
+          "additionalProperties": true
         }
       }
     },
@@ -4699,8 +5037,8 @@
           "additionalProperties": false
         },
         "parentCompany": {
-          "$ref": "#/$defs/ParentCellCompanyReference",
-          "description": "Reference to the immediate parent company (if any). Reuses ParentCellCompanyReference for identifier + jurisdiction linkage. Use for non-cell entities where the parent relationship is relevant for beneficial-ownership tracing or group-level risk assessment."
+          "$ref": "#/$defs/EntityReference",
+          "description": "Reference to the immediate parent company (if any). Use for non-cell entities where the parent relationship is relevant for beneficial-ownership tracing or group-level risk assessment."
         },
         "parentRegulated": {
           "type": "boolean",
@@ -4723,6 +5061,26 @@
           "description": "Percentage of the entity owned directly or indirectly by a government or state body (0–100). Supports granular sovereign-risk scoring; a value ≥ 50 typically triggers enhanced scrutiny for PEP adjacency.",
           "minimum": 0,
           "maximum": 100
+        },
+        "ultimateParentLEI": {
+          "type": "string",
+          "pattern": "^[0-9A-Z]{18}[0-9]{2}$",
+          "description": "LEI of the ultimate parent entity (GLEIF Level 2 ultimate parent data). 20-character alphanumeric ISO 17442 format."
+        },
+        "ultimateParentName": {
+          "type": "string",
+          "maxLength": 300,
+          "description": "Legal name of the ultimate parent entity."
+        },
+        "groupName": {
+          "type": "string",
+          "maxLength": 300,
+          "description": "Commercial group or conglomerate name (e.g. 'HSBC Group', 'BNP Paribas Group'). Used for group-level risk aggregation."
+        },
+        "groupLEI": {
+          "type": "string",
+          "pattern": "^[0-9A-Z]{18}[0-9]{2}$",
+          "description": "LEI of the group holding company. 20-character alphanumeric ISO 17442 format."
         }
       },
       "additionalProperties": false
@@ -4793,9 +5151,223 @@
       },
       "additionalProperties": false
     },
-    "ParentCellCompanyReference": {
-      "title": "ParentCellCompanyReference",
-      "description": "Reference to the parent PCC or ICC Core entity. Mandatory when the LegalPerson represents a cell (cellCompanyType is PCC_CELL or ICC_CELL). Provides the link required for FATF beneficial-ownership tracing, AMLR Art. 26 entity verification, and IVMS 101 counterparty identification across the Core/Cell structure. Prevents orphan cell records that cannot be linked to a legal person hierarchy. Use legalEntityIdentifier + jurisdiction as the primary reference link. For performance-critical or deeply-nested cell-of-cell payloads, avoid embedding full parent objects — reference by identifier only.",
+    "EmailAddress": {
+      "title": "EmailAddress",
+      "description": "A typed email address entry for a person or entity.",
+      "type": "object",
+      "required": [
+        "emailAddress"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "emailType": {
+          "type": "string",
+          "enum": [
+            "WORK",
+            "PERSONAL",
+            "OTHER"
+          ],
+          "description": "Category of the email address."
+        },
+        "emailAddress": {
+          "type": "string",
+          "format": "email",
+          "description": "The email address."
+        },
+        "isPrimary": {
+          "type": "boolean",
+          "description": "True if this is the primary contact email."
+        },
+        "verificationStatus": {
+          "type": "string",
+          "enum": [
+            "UNVERIFIED",
+            "VERIFIED",
+            "BOUNCED"
+          ],
+          "description": "Delivery / verification status of this email address."
+        }
+      }
+    },
+    "EmergencyContact": {
+      "title": "EmergencyContact",
+      "description": "Emergency contact / next-of-kin for a natural person. GDPR Art. 9 may apply depending on relationship data.",
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "maxLength": 200,
+          "description": "Full name of the emergency contact."
+        },
+        "relationship": {
+          "type": "string",
+          "maxLength": 100,
+          "description": "Relationship to the subject (e.g. spouse, parent, sibling)."
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "Contact phone number in E.164 format."
+        },
+        "emailAddress": {
+          "type": "string",
+          "format": "email",
+          "description": "Contact email address."
+        }
+      }
+    },
+    "IndustryCode": {
+      "title": "IndustryCode",
+      "description": "A structured industry classification code entry.",
+      "type": "object",
+      "required": [
+        "codeSystem",
+        "codeValue"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "codeSystem": {
+          "type": "string",
+          "enum": [
+            "NAICS",
+            "NACE",
+            "SIC",
+            "ISIC",
+            "OTHER"
+          ],
+          "description": "The classification system used (e.g. NACE Rev.2, NAICS 2022)."
+        },
+        "codeValue": {
+          "type": "string",
+          "maxLength": 20,
+          "description": "The code value within the specified system (e.g. '6419' for NACE Other monetary intermediation)."
+        },
+        "codeDescription": {
+          "type": "string",
+          "maxLength": 200,
+          "description": "Human-readable description of the industry code."
+        }
+      }
+    },
+    "Mandate": {
+      "title": "Mandate",
+      "description": "A structured authorised-signatory / mandate record for a legal entity account.",
+      "type": "object",
+      "required": [
+        "mandateType"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "signatoryName": {
+          "type": "string",
+          "maxLength": 200,
+          "description": "Full name of the authorised signatory."
+        },
+        "signatoryRef": {
+          "type": "string",
+          "maxLength": 200,
+          "description": "Internal reference or identifier for the signatory (e.g. employee ID, customer number)."
+        },
+        "mandateType": {
+          "type": "string",
+          "enum": [
+            "SOLE",
+            "JOINT_ANY_TWO",
+            "JOINT_ALL",
+            "LIMITED",
+            "OTHER"
+          ],
+          "description": "Type of signing authority granted."
+        },
+        "scope": {
+          "type": "string",
+          "maxLength": 500,
+          "description": "Description of the scope or limit of the mandate (e.g. 'Payments up to EUR 50,000')."
+        },
+        "effectiveFrom": {
+          "type": "string",
+          "format": "date",
+          "description": "Date from which the mandate is effective (ISO 8601 YYYY-MM-DD)."
+        },
+        "effectiveTo": {
+          "type": "string",
+          "format": "date",
+          "description": "Date on which the mandate expires (ISO 8601 YYYY-MM-DD). Omit if open-ended."
+        }
+      }
+    },
+    "PhoneNumber": {
+      "title": "PhoneNumber",
+      "description": "A typed phone number entry for a person or entity.",
+      "type": "object",
+      "required": [
+        "phoneNumber"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "phoneType": {
+          "type": "string",
+          "enum": [
+            "WORK",
+            "MOBILE",
+            "HOME",
+            "FAX",
+            "DIRECT",
+            "OTHER"
+          ],
+          "description": "Category of the phone number."
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "The phone number in E.164 format (e.g. +442071234567)."
+        },
+        "isPrimary": {
+          "type": "boolean",
+          "description": "True if this is the primary contact number."
+        }
+      }
+    },
+    "RegisteredAgent": {
+      "title": "RegisteredAgent",
+      "description": "Registered agent or company secretary for a legal entity. Relevant for offshore, special-purpose, and cell company structures.",
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "maxLength": 200,
+          "description": "Name of the registered agent or company secretary firm/individual."
+        },
+        "jurisdiction": {
+          "type": "string",
+          "pattern": "^[A-Z]{2}$",
+          "description": "ISO 3166-1 alpha-2 country code of the registered agent's jurisdiction."
+        },
+        "address": {
+          "$ref": "#/$defs/Address",
+          "description": "Registered address of the agent."
+        },
+        "agentType": {
+          "type": "string",
+          "enum": [
+            "REGISTERED_AGENT",
+            "COMPANY_SECRETARY",
+            "RESIDENT_DIRECTOR",
+            "OTHER"
+          ],
+          "description": "Role of the agent in the entity's governance structure."
+        }
+      }
+    },
+    "EntityReference": {
+      "title": "EntityReference",
+      "description": "Lightweight reference to a related legal entity by identifier. Used for: (a) parent PCC/ICC Core in cell-company structures (legalPerson.parentCellCompanyReference), and (b) immediate parent company in EntityGovernance.parentCompany. Use legalEntityIdentifier + jurisdiction as the primary reference link. For performance-critical payloads, reference by identifier only — avoid embedding full parent objects.",
       "type": "object",
       "required": [
         "legalEntityIdentifier",
@@ -4804,18 +5376,18 @@
       "properties": {
         "legalEntityIdentifier": {
           "type": "string",
-          "description": "LEI (ISO 17442, 20-char) or registration number of the parent PCC/ICC Core. Use the LEI where available for unambiguous cross-border identification.",
+          "description": "LEI (ISO 17442, 20-char) or national registration number of the referenced entity. Use the LEI where available for unambiguous cross-border identification.",
           "maxLength": 35,
           "pattern": "^[A-Z0-9]{1,35}$"
         },
         "jurisdiction": {
           "type": "string",
-          "description": "ISO 3166-1 alpha-2 country code of the jurisdiction in which the parent PCC/ICC Core is incorporated (e.g. 'GG' for Guernsey, 'JE' for Jersey, 'KY' for Cayman Islands).",
+          "description": "ISO 3166-1 alpha-2 country code of the jurisdiction in which the referenced entity is incorporated.",
           "pattern": "^[A-Z]{2}$"
         },
         "parentName": {
           "type": "string",
-          "description": "Registered legal name of the parent PCC/ICC Core. Informational — the legalEntityIdentifier is the authoritative reference.",
+          "description": "Registered legal name of the referenced entity. Informational — the legalEntityIdentifier is the authoritative reference.",
           "maxLength": 128
         }
       },

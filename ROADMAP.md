@@ -6,7 +6,65 @@ This document is the **authoritative project roadmap** covering schema features,
 
 ---
 
-## Current Version: v1.9.1
+## Current Version: v1.12.0
+
+**Released:** April 2026
+
+**Highlights (v1.12.0):**
+- **Natural-person completeness** — `NaturalPerson.gender` (string enum: `MALE`, `FEMALE`, `NON_BINARY`, `OTHER`, `PREFER_NOT_TO_SAY`; maps to eIDAS 2.0 PID `gender` attribute, ISO/IEC 5218; GDPR Art. 9 special-category data). `NaturalPerson.occupation` (object with `occupationCode` enum aligned to ILO/ISCO-08 broad categories and free-text `occupationDescription`; complements existing `occupationOrPurpose`).
+- **Entity governance flags** — New `EntityGovernance` $def exposed as optional `LegalPerson.entityGovernance`: `regulatoryStatus` enum (`REGULATED` / `RECOGNISED` / `UNREGULATED` / `EXEMPT`), `regulators[]` array (regulatorName, jurisdiction, licenceNumber), `listedStatus` (isListed, marketIdentifier ISO 10383 MIC, recognisedMarket), `parentCompany` ($ref: ParentCellCompanyReference), `parentRegulated`, `parentListed`, `majorityOwnedSubsidiary`, `stateOwned`, `governmentOwnershipPercentage` (0–100).
+- **Review lifecycle state machine** — New `ReviewLifecycle` $def exposed as optional `MonitoringInfo.reviewLifecycle`: `currentState` enum (`ONBOARDING`, `INITIAL_REVIEW`, `PERIODIC_REVIEW`, `TRIGGERED_REVIEW`, `OFFBOARDING`, `TERMINATED`) and `stateHistory[]` with full timestamped audit trail. Provides AMLR Art. 21 auditability.
+- **2 new mapping documents** — `docs/mappings/entity-governance.md` and `docs/mappings/natural-person-governance.md` with YAML companions.
+- **2 new examples** — `examples/legal-entity-governance.json` (dual-regulated, exchange-listed subsidiary) and `examples/natural-person-gender-occupation.json`.
+- **Compliance matrix §23** — full regulatory mapping for all three v1.12.0 extensions.
+- **Fully backward-compatible** — all additions are optional; no existing required fields changed.
+
+## Previous Version: v1.11.2
+
+**Released:** April 2026
+
+**Highlights (v1.11.2):**
+- **Cell identifier disambiguation** — `CellCompanyDetails.cellIdentifier` description clarified; historical draft name `cellCompanyIdentifier` explicitly deprecated.
+- **Recursion-depth guidance** — `ParentCellCompanyReference` description extended with identifier-only guidance for deeply-nested cell-of-cell payloads.
+- **Cell-level predictive AML scores** — `PredictiveAML.$defs` gains optional `cellLevelPredictiveScores[]` array (each item: `cellIdentifier` + `scores[]` with `scoreType`, `value`, `confidence`, optional `horizonDays`, `timestamp`).
+- **Compliance matrix updates** — FATF Rec. 24/25 and AMLR Art. 26 rows cross-reference §22 cell structures.
+- **New example** — `examples/cell-company/pcc-cell-predictive-aml.json`.
+
+## Previous Version: v1.11.1
+
+**Released:** April 2026
+
+**Highlights (v1.11.1):**
+- **Hard schema constraints promoted from validator warnings** — Two conditions previously enforced as Python/JS validator business-logic warnings are now hard JSON Schema `if`/`then` constraints: (1) `LegalPerson.allOf` enforces `parentCellCompanyReference` is required when `cellCompanyType` is `PCC_CELL` or `ICC_CELL`; (2) `CellCompanyDetails.if`/`then` enforces `issuancePurpose` is required when `isCellCompanyIssuer: true`.
+- **Validator simplification** — Python and JS validator warning code blocks for the above conditions removed.
+- **Compliance matrix §22.5** — documents the v1.11.1 hard constraint promotion.
+- **Fully backward-compatible** — payloads that satisfy the constraints are unaffected; only invalid payloads that previously generated warnings now fail schema validation.
+
+## Previous Version: v1.11.0
+
+**Released:** April 2026
+
+**Highlights (v1.11.0):**
+- **PCC / ICC Cell Company structures** — New `CellCompanyType` enum (`NONE`, `PCC_CORE`, `PCC_CELL`, `ICC_CORE`, `ICC_CELL`), `CellCompanyDetails` $def (cellIdentifier, cellName, cellRegistrationNumber, hasIndependentLegalPersonality, isCellCompanyIssuer, issuancePurpose, cellSpecificInstrumentReference), and `ParentCellCompanyReference` $def (legalEntityIdentifier + jurisdiction + optional parentName).
+- **5 new optional `LegalPerson` fields** — `cellCompanyDetails`, `parentCellCompanyReference`, `cellRiskProfileOverride` (RiskSnapshot), `cellSourceOfFundsWealth` (SourceOfFundsWealth), `cellAuditMetadata` (AuditMetadata).
+- **New mapping document** — `docs/mappings/cell-company.md` + `.yaml`.
+- **2 new examples** — `examples/cell-company/pcc-cell.json` and `examples/cell-company/icc-cell.json`.
+- **Compliance matrix §22** — full regulatory mapping covering FATF Rec. 24/25, AMLR Art. 26/29/56, and cell-specific enforcement patterns.
+- **Fully backward-compatible** — all additions are optional; ordinary non-cell LegalPerson payloads unaffected.
+
+## Previous Version: v1.10.0
+
+**Released:** April 2026
+
+**Highlights (v1.10.0):**
+- **Contact and financial identifiers** — RFC 5321-validated `emailAddress` (format: `email`, maxLength: 254), E.164-validated `phoneNumber` and `mobileNumber` (pattern: `/^\+[1-9]\d{1,14}$/`), and ISO 13616/9362-validated `BankingDetails` object (`iban`, `bic`, `bankName`, `accountCurrency` ISO 4217, `accountType` enum, `bankingCountry` ISO 3166-1 alpha-2) added as optional fields to both `NaturalPerson` and `LegalPerson`.
+- **Format/pattern completeness** — comprehensive machine-enforceable validation for internal systems, suppliers, clients, and regulatory counterparties.
+- **New mapping document** — `docs/mappings/contact-financial-identifiers.md` + `.yaml`.
+- **2 new examples** — `examples/contact-banking/natural-person-with-contact.json` and `examples/contact-banking/legal-entity-with-banking.json`.
+- **Compliance matrix §21** — documents format/pattern coverage.
+- **Fully backward-compatible** — all additions are optional.
+
+## Previous Version: v1.9.1
 
 **Released:** April 2026
 

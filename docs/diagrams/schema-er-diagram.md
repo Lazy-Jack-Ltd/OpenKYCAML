@@ -42,6 +42,9 @@ erDiagram
         string emailAddress
         string phoneNumber
         string mobileNumber
+        string gender
+        string occupationCode
+        string occupationDescription
     }
 
     LegalPerson {
@@ -328,6 +331,23 @@ erDiagram
 
     CellCompanyDetails { string cellCompanyType string cellIdentifier string cellName string cellRegistrationNumber boolean hasIndependentLegalPersonality boolean isCellCompanyIssuer string issuancePurpose }
     ParentCellCompanyReference { string legalEntityIdentifier string jurisdiction string parentName }
+
+    %% Entity Governance (v1.12.0)
+    LegalPerson ||--o| EntityGovernance : "entityGovernance"
+    EntityGovernance ||--o{ RegulatorEntry : "regulators"
+    EntityGovernance ||--o| ListedStatus : "listedStatus"
+    EntityGovernance ||--o| ParentCellCompanyReference : "parentCompany"
+
+    EntityGovernance { string regulatoryStatus boolean parentRegulated boolean parentListed boolean majorityOwnedSubsidiary boolean stateOwned number governmentOwnershipPercentage }
+    RegulatorEntry { string regulatorName string jurisdiction string licenceNumber }
+    ListedStatus { boolean isListed string marketIdentifier boolean recognisedMarket }
+
+    %% Review Lifecycle (v1.12.0)
+    MonitoringInfo ||--o| ReviewLifecycle : "reviewLifecycle"
+    ReviewLifecycle ||--o{ ReviewLifecycleHistory : "stateHistory"
+
+    ReviewLifecycle { string currentState }
+    ReviewLifecycleHistory { string fromState string toState string transitionAt string reason string actor }
 ```
 
 ---
@@ -383,8 +403,13 @@ erDiagram
 | `BankingDetails` | Validated banking account details — IBAN (ISO 13616), BIC (ISO 9362), account currency (ISO 4217), account type classification, and banking country. Wired as `bankingDetails[]` on both `NaturalPerson` and `LegalPerson` (v1.10.0). |
 | `CellCompanyType` | Enum classifying a LegalPerson as a non-cell entity (NONE), PCC Core, PCC Cell, ICC Core, or ICC Cell (v1.11.0). |
 | `CellCompanyDetails` | Structured metadata for PCC/ICC cells: cell type, identifier, name, registration number (ICC cells), legal personality flag, issuer flag, issuance purpose, and instrument URI (v1.11.0). |
-| `ParentCellCompanyReference` | Mandatory parent link for any cell — LEI or registration number + jurisdiction of the parent PCC/ICC Core (v1.11.0). |
+| `ParentCellCompanyReference` | Mandatory parent link for any cell — LEI or registration number + jurisdiction of the parent PCC/ICC Core (v1.11.0). Also reused by `EntityGovernance.parentCompany` for non-cell corporate groups (v1.12.0). |
+| `EntityGovernance` | Entity governance flags for LegalPerson: `regulatoryStatus` enum, `regulators[]` array, `listedStatus`, `parentCompany`, `parentRegulated`, `parentListed`, `majorityOwnedSubsidiary`, `stateOwned`, `governmentOwnershipPercentage` (v1.12.0). |
+| `RegulatorEntry` | Single regulator in `EntityGovernance.regulators[]`: regulator name, ISO 3166-1 alpha-2 jurisdiction, licence number (v1.12.0). |
+| `ListedStatus` | Stock exchange listing status: `isListed`, ISO 10383 `marketIdentifier` (MIC code), `recognisedMarket` boolean (v1.12.0). |
+| `ReviewLifecycle` | KYC/AML review lifecycle state machine wired to `MonitoringInfo`: `currentState` enum and `stateHistory[]` audit trail (v1.12.0). |
+| `ReviewLifecycleHistory` | Single state-transition entry: `fromState`, `toState`, `transitionAt` timestamp, optional `reason` and `actor` (v1.12.0). |
 
 ---
 
-*Diagram generated from OpenKYCAML schema v1.11.0. Last updated: v1.11.0.*
+*Diagram generated from OpenKYCAML schema v1.12.0. Last updated: v1.12.0.*

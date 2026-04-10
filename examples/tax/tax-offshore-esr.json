@@ -10,7 +10,12 @@
     "sanctionsScreening": {
       "screeningStatus": "CLEAR",
       "screeningDate": "2026-04-01T10:00:00Z",
-      "listsChecked": ["EU_CONSOLIDATED", "UN_CONSOLIDATED", "OFAC_SDN", "HMT_FINANCIAL_SANCTIONS"]
+      "listsChecked": [
+        "EU_CONSOLIDATED",
+        "UN_CONSOLIDATED",
+        "OFAC_SDN",
+        "HMT_FINANCIAL_SANCTIONS"
+      ]
     },
     "beneficialOwnership": [
       {
@@ -48,7 +53,9 @@
           }
         }
       ],
-      "accountNumber": ["KY0012345678901234"]
+      "accountNumber": [
+        "KY0012345678901234"
+      ]
     },
     "beneficiary": {
       "beneficiaryPersons": [
@@ -66,7 +73,9 @@
           }
         }
       ],
-      "accountNumber": ["LU280019400644750000"]
+      "accountNumber": [
+        "LU280019400644750000"
+      ]
     },
     "originatingVASP": {
       "originatingVASP": {
