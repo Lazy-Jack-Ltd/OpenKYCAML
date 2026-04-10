@@ -40,7 +40,9 @@
               "parentName": "Jersey ICC Holdings Core"
             },
             "cellSourceOfFundsWealth": {
-              "sourceOfFunds": ["INVESTMENT_RETURNS"],
+              "sourceOfFunds": [
+                "INVESTMENT_RETURNS"
+              ],
               "sourceOfFundsVerified": true
             },
             "cellAuditMetadata": {

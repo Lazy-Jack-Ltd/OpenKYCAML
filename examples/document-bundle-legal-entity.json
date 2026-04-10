@@ -48,7 +48,9 @@
           }
         }
       ],
-      "accountNumber": ["GB29NWBK60161331926819"]
+      "accountNumber": [
+        "GB29NWBK60161331926819"
+      ]
     },
     "beneficiary": {
       "beneficiaryPersons": [
@@ -71,7 +73,9 @@
           }
         }
       ],
-      "accountNumber": ["DE12500105170648489890"]
+      "accountNumber": [
+        "DE12500105170648489890"
+      ]
     },
     "originatingVASP": {
       "originatingVASP": {

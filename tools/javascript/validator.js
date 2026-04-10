@@ -2,7 +2,7 @@
 /**
  * OpenKYCAML Schema Validator (JavaScript / Node.js)
  * ====================================================
- * Validates JSON payloads against the OpenKYCAML v1.6.0 schema.
+ * Validates JSON payloads against the OpenKYCAML v1.14.0 schema.
  *
  * Usage (CLI):
  *   node validator.js <path-to-payload.json>
@@ -269,18 +269,52 @@ class OpenKYCAMLValidator {
       }
     }
 
-    // EDD contact data warnings (v1.10.0).
+    // EDD contact data warnings — check typed arrays (emailAddresses[], phoneNumbers[]).
     const ddTypeOuter = kyc.dueDiligenceType;
     if (ddTypeOuter === 'ENHANCED') {
       const originatorPersons = (ivms.originator || {}).originatorPersons || [];
       for (let idx = 0; idx < originatorPersons.length; idx++) {
         const np = originatorPersons[idx].naturalPerson;
-        if (np && !np.emailAddress && !np.phoneNumber) {
-          warns.push(
-            `ivms101.originator.originatorPersons[${idx}].naturalPerson has neither ` +
-            'emailAddress nor phoneNumber — FATF Rec. 16 / AMLR Art. 22 require ' +
-            'verified contact data for Enhanced Due Diligence customers.'
-          );
+        if (np) {
+          const hasEmail = Array.isArray(np.emailAddresses) && np.emailAddresses.length > 0;
+          const hasPhone = Array.isArray(np.phoneNumbers) && np.phoneNumbers.length > 0;
+          if (!hasEmail && !hasPhone) {
+            warns.push(
+              `ivms101.originator.originatorPersons[${idx}].naturalPerson has neither ` +
+              'emailAddresses[] nor phoneNumbers[] — FATF Rec. 16 / AMLR Art. 22 require ' +
+              'verified contact data for Enhanced Due Diligence customers.'
+            );
+          }
+        }
+      }
+    }
+
+    // isPrimary uniqueness warnings — at most one entry per array may be isPrimary: true.
+    const checkIsPrimary = (arr, location) => {
+      if (!Array.isArray(arr)) return;
+      const count = arr.filter((item) => item && item.isPrimary === true).length;
+      if (count > 1) {
+        warns.push(
+          `${location} has ${count} entries with isPrimary: true — ` +
+          'at most one entry should be marked as primary.'
+        );
+      }
+    };
+    const partyLabels = [
+      { partyKey: 'originator', personsKey: 'originatorPersons' },
+      { partyKey: 'beneficiary', personsKey: 'beneficiaryPersons' },
+    ];
+    for (const { partyKey, personsKey } of partyLabels) {
+      const persons = ((ivms[partyKey] || {})[personsKey]) || [];
+      for (let idx = 0; idx < persons.length; idx++) {
+        for (const personType of ['naturalPerson', 'legalPerson']) {
+          const person = persons[idx][personType];
+          if (person) {
+            const base = `ivms101.${partyKey}.${personsKey}[${idx}].${personType}`;
+            checkIsPrimary(person.geographicAddress, `${base}.geographicAddress`);
+            checkIsPrimary(person.emailAddresses, `${base}.emailAddresses`);
+            checkIsPrimary(person.phoneNumbers, `${base}.phoneNumbers`);
+          }
         }
       }
     }

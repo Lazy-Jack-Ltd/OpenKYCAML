@@ -62,8 +62,6 @@
             "legalFormCode": "8888",
             "legalFormDescription": "Société Anonyme (SA) — Swiss public limited company",
             "entityType": "COMPANY",
-            "emailAddress": "compliance@meridian-capital.ch",
-            "phoneNumber": "+41224567890",
             "dateOfIncorporation": "2005-03-15",
             "dateOfRegistration": "2005-03-20",
             "operationalStatus": "ACTIVE",
@@ -187,7 +185,11 @@
               "groupName": "Global Asset Management Group",
               "groupLEI": "969500UEQ0IN4ZW0CL09"
             },
-            "tags": ["private-equity", "regulated-ch", "annual-review-2027"],
+            "tags": [
+              "private-equity",
+              "regulated-ch",
+              "annual-review-2027"
+            ],
             "customAttributes": {
               "crmAccountId": "ACC-CH-2024-00991",
               "salesforceId": "0011X00000ABC123",
@@ -196,7 +198,9 @@
           }
         }
       ],
-      "accountNumber": ["CH5604835012345678009"]
+      "accountNumber": [
+        "CH5604835012345678009"
+      ]
     },
     "beneficiary": {
       "beneficiaryPersons": [
@@ -229,7 +233,9 @@
           }
         }
       ],
-      "accountNumber": ["GB29NWBK60161331926819"]
+      "accountNumber": [
+        "GB29NWBK60161331926819"
+      ]
     },
     "originatingVASP": {
       "name": "Meridian Capital Partners S.A.",
@@ -261,7 +267,11 @@
     "estimatedNetWorth": 85000000,
     "estimatedNetWorthCurrency": "CHF",
     "estimatedNetWorthDate": "2026-01-15",
-    "tags": ["edd-required", "cross-border-ch-ky", "annual-review"],
+    "tags": [
+      "edd-required",
+      "cross-border-ch-ky",
+      "annual-review"
+    ],
     "customAttributes": {
       "riskCommitteeApproval": "RC-2026-00112",
       "lastEDDDate": "2025-12-01"

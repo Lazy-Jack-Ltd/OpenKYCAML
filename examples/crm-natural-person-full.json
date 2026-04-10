@@ -66,9 +66,6 @@
             },
             "countryOfResidence": "DE",
             "nationality": "DE",
-            "emailAddress": "clara.rosenberg@example.com",
-            "phoneNumber": "+4989123456789",
-            "mobileNumber": "+4917612345678",
             "isDeceased": false,
             "historicalNames": [
               {
@@ -122,7 +119,11 @@
               }
             ],
             "faxNumber": "+4989123456700",
-            "tags": ["private-banking", "esg-mandate", "german-resident"],
+            "tags": [
+              "private-banking",
+              "esg-mandate",
+              "german-resident"
+            ],
             "customAttributes": {
               "crmAccountId": "ACC-DE-2024-99182",
               "onboardingAgent": "agent-007",
@@ -131,7 +132,9 @@
           }
         }
       ],
-      "accountNumber": ["DE89370400440532013000"]
+      "accountNumber": [
+        "DE89370400440532013000"
+      ]
     },
     "beneficiary": {
       "beneficiaryPersons": [
@@ -165,7 +168,9 @@
           }
         }
       ],
-      "accountNumber": ["FR7630006000011234567890189"]
+      "accountNumber": [
+        "FR7630006000011234567890189"
+      ]
     },
     "originatingVASP": {
       "name": "Deutsche CryptoBank AG",
@@ -196,7 +201,10 @@
     "estimatedNetWorth": 850000,
     "estimatedNetWorthCurrency": "EUR",
     "estimatedNetWorthDate": "2026-01-10",
-    "tags": ["periodic-review-due-2027", "esg"],
+    "tags": [
+      "periodic-review-due-2027",
+      "esg"
+    ],
     "customAttributes": {
       "internalTier": "Tier2",
       "lastContactDate": "2026-03-20"

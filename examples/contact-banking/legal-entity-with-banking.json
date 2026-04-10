@@ -40,8 +40,6 @@
             ],
             "countryOfRegistration": "NO",
             "legalFormCode": "NOAS",
-            "emailAddress": "compliance@nordvik-shipping.example",
-            "phoneNumber": "+4722123456",
             "lpid": {
               "currentLegalName": "Nordvik Shipping AS",
               "uniqueIdentifier": "NO-BRONNOYSUND-912345678",
@@ -65,6 +63,20 @@
                 "accountCurrency": "EUR",
                 "accountType": "CORRESPONDENT",
                 "bankingCountry": "DE"
+              }
+            ],
+            "emailAddresses": [
+              {
+                "emailType": "WORK",
+                "emailAddress": "compliance@nordvik-shipping.example",
+                "isPrimary": true
+              }
+            ],
+            "phoneNumbers": [
+              {
+                "phoneType": "WORK",
+                "phoneNumber": "+4722123456",
+                "isPrimary": true
               }
             ]
           }

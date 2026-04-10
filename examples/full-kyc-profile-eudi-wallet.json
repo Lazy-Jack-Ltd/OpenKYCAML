@@ -3,9 +3,7 @@
   "version": "1.3.0",
   "messageId": "f1a2b3c4-d5e6-4f7a-8b9c-0d1e2f3a4b5c",
   "messageDateTime": "2025-11-05T16:00:00Z",
-
   "_comment_eudi": "EUDI Wallet — Full KYC Profile, EDD, PEP Case. Fatima Noor Al-Rashidi (AE) is a foreign PEP onboarding at DIFC Digital Asset Exchange. She is a UAE national but also holds residency in the EU and presents her Austrian EUDI Wallet PID for remote CDD (AMLR Art. 22(5)). The EUDI Wallet PID combined with EDD enables high-assurance remote onboarding. Four DIDs: (1) Customer's EUDI Wallet DID (Austrian), (2) Austrian PID Issuer DID, (3) DIFC VASP DID, (4) Third-party CDD provider DID referenced in audit. The EUDI PID does NOT reduce the risk rating for a PEP — EDD is always required per AMLR Art. 28.",
-
   "ivms101": {
     "originator": {
       "originatorPersons": [
@@ -96,7 +94,6 @@
       "assetType": "USDC"
     }
   },
-
   "verifiableCredential": {
     "@context": [
       "https://www.w3.org/2018/credentials/v1",
@@ -110,20 +107,16 @@
       "EDDAttestation",
       "PEPAttestation"
     ],
-
     "_comment_issuer": "DID #3 — DIFC Digital Asset Exchange LLC (VASP, issuer of this OpenKYCAML VC after EDD + EUDI PID verification)",
     "issuer": {
       "id": "did:web:difc-dax.example.ae",
       "name": "DIFC Digital Asset Exchange LLC"
     },
-
     "issuanceDate": "2025-11-05T16:00:00Z",
     "expirationDate": "2026-05-05T16:00:00Z",
-
     "credentialSubject": {
       "_comment_subject": "DID #1 — Fatima Al-Rashidi's Austrian EUDI Wallet DID. She registered her Austrian residency PID to satisfy EU remote CDD requirements (AMLR Art. 22(5)) while operating from Dubai.",
       "id": "did:ebsi:z4MrTwQ9nVyXkBFaLdZhGpJ8",
-
       "ivms101": {
         "originator": {
           "originatorPersons": [
@@ -206,7 +199,6 @@
           "assetType": "USDC"
         }
       },
-
       "kycProfile": {
         "customerRiskRating": "HIGH",
         "riskRatingDetail": {
@@ -257,10 +249,6 @@
           "categories": [],
           "summary": "No adverse media found. Comprehensive search across 100,000+ global news sources."
         },
-        "sourceOfFundsWealth": [
-          "INVESTMENT_RETURNS",
-          "BUSINESS_INCOME"
-        ],
         "sourceOfFundsWealthDetail": {
           "sourceOfFunds": [
             "INVESTMENT_RETURNS",
@@ -323,7 +311,9 @@
               "timestamp": "2025-01-20T14:00:00Z",
               "changedBy": "eudi-onboarding-system",
               "changeType": "CREATED",
-              "fieldsChanged": ["all"],
+              "fieldsChanged": [
+                "all"
+              ],
               "notes": "Initial EDD record created. EUDI Wallet Austrian PID presented via OpenID4VP. PEP status identified at onboarding."
             },
             {
@@ -343,12 +333,14 @@
         }
       }
     },
-
     "_comment_evidence": "Evidence block — three source credentials. (A) Austrian PID from Austrian PID Provider (DID #2) — provides high-assurance remote identity verification per AMLR Art. 22(5). (B) UAE Emirates ID cross-reference for primary nationality/residence. (C) Third-party EDD provider attestation (DID #4).",
     "evidence": [
       {
         "id": "urn:uuid:pid-at-fatima-rashidi-2025-01-20",
-        "type": ["PIDCredential", "EUDIWalletPresentationEvidence"],
+        "type": [
+          "PIDCredential",
+          "EUDIWalletPresentationEvidence"
+        ],
         "verifier": "did:web:difc-dax.example.ae",
         "credentialIssuer": "did:web:pid-provider.bmi.example.at",
         "evidenceDocument": "Austrian Residence-based PID (eIDAS 2.0 PID — Regulation (EU) 2024/1183) — issued by Austrian Federal Ministry of the Interior",
@@ -359,7 +351,9 @@
       },
       {
         "id": "urn:uuid:eid-ae-fatima-rashidi-2025-01-20",
-        "type": ["NationalIDVerification"],
+        "type": [
+          "NationalIDVerification"
+        ],
         "verifier": "did:web:difc-dax.example.ae",
         "credentialIssuer": "did:web:icp.example.ae",
         "evidenceDocument": "UAE National Identity Card (Emirates ID) — cross-reference verification",
@@ -370,7 +364,10 @@
       },
       {
         "id": "urn:uuid:edd-report-fatima-rashidi-2025-11-05",
-        "type": ["EDDAttestation", "ThirdPartyVerificationEvidence"],
+        "type": [
+          "EDDAttestation",
+          "ThirdPartyVerificationEvidence"
+        ],
         "verifier": "did:web:difc-dax.example.ae",
         "credentialIssuer": "did:web:dj-risk-compliance.example.com",
         "evidenceDocument": "Enhanced Due Diligence Report — Dow Jones Risk & Compliance. PEP confirmed (FOREIGN_PEP). No sanctions matches. Adverse media clear.",
@@ -380,7 +377,6 @@
         "presentationDate": "2025-10-15T10:00:00Z"
       }
     ],
-
     "credentialStatus": {
       "id": "https://difc-dax.example.ae/status/v1#0042",
       "type": "StatusList2021Entry"

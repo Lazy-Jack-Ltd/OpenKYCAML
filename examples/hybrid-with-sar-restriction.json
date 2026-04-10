@@ -3,9 +3,7 @@
   "version": "1.3.0",
   "messageId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
   "messageDateTime": "2025-11-05T14:00:00Z",
-
   "_comment_scenario": "SAR Restriction + Tipping-Off Protection. Acme Crypto Exchange BV (NL) has filed a Suspicious Activity Report (SAR) on customer Pieter Van Houten after detecting anomalous transaction patterns. The KYC profile retains all standard CDD data but the SAR-related fields (adverse media, internal flags, and the SAR filing reference) are classified as 'sar_restricted' with tippingOffProtected:true. When this VC is stored in or presented from an EUDI Wallet, wallet software and relying parties MUST NOT disclose the existence or content of the SAR to the data subject or any party other than authorised FIU/LEA recipients. The credential uses SD-JWT selective disclosure to cryptographically withhold the SAR-restricted fields — they appear only as SHA-256 digests in the Issuer-JWT _sd array and are never appended as disclosures in any presentation token.",
-
   "ivms101": {
     "originator": {
       "originatorPersons": [
@@ -79,7 +77,6 @@
       "vaspIdentifier": "UNKNOWN"
     }
   },
-
   "verifiableCredential": {
     "@context": [
       "https://www.w3.org/2018/credentials/v1",
@@ -92,18 +89,14 @@
       "OpenKYCAMLCredential",
       "KYCAttestation"
     ],
-
     "issuer": {
       "id": "did:web:acme-crypto.example.nl",
       "name": "Acme Crypto Exchange BV"
     },
-
     "issuanceDate": "2025-11-05T14:00:00Z",
     "expirationDate": "2026-11-05T14:00:00Z",
-
     "credentialSubject": {
       "id": "did:ebsi:z5KMnPq9rLtUvWxYz3NjRsT",
-
       "ivms101": {
         "originator": {
           "originatorPersons": [
@@ -177,7 +170,6 @@
           "vaspIdentifier": "UNKNOWN"
         }
       },
-
       "kycProfile": {
         "customerRiskRating": "HIGH",
         "riskRatingDetail": {
@@ -216,7 +208,10 @@
         "consentRecord": {
           "consentGiven": true,
           "consentDate": "2023-08-14T10:00:00Z",
-          "consentPurpose": ["AML_SCREENING", "DATA_SHARING_TRAVEL_RULE"]
+          "consentPurpose": [
+            "AML_SCREENING",
+            "DATA_SHARING_TRAVEL_RULE"
+          ]
         },
         "auditMetadata": {
           "recordId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
@@ -230,11 +225,12 @@
         }
       }
     },
-
     "evidence": [
       {
         "id": "urn:uuid:b2c3d4e5-f6a7-8901-bcde-f12345678901",
-        "type": ["IDDocumentVerification"],
+        "type": [
+          "IDDocumentVerification"
+        ],
         "verifier": "did:web:acme-crypto.example.nl",
         "credentialIssuer": "did:web:id-verification.example.nl",
         "evidenceDocument": "Dutch National Identity Card",
@@ -244,7 +240,6 @@
         "presentationDate": "2023-08-14T09:50:00Z"
       }
     ],
-
     "_comment_selectiveDisclosure": "The SAR-restricted fields (adverseMedia, sarFilingReference, internalSuspicionFlag) are included in disclosableClaimPaths but intentionally have NO corresponding decodedDisclosures entry — their digests appear only inside the _sd array of the Issuer-JWT and are NEVER appended to any presentation token. This is the cryptographic mechanism that enforces tipping-off protection: the relying party (or data subject) cannot reconstruct the SAR field values even if they receive the SD-JWT VC.",
     "selectiveDisclosure": {
       "_sd_alg": "sha-256",
@@ -288,7 +283,6 @@
         }
       ]
     },
-
     "credentialStatus": {
       "id": "https://acme-crypto.example.nl/status/v1#9847",
       "type": "StatusList2021Entry"
@@ -305,7 +299,6 @@
       "proofValue": "zKn9Lp1yOwSsN5VfH8MkA0WeBtZ7UqI6PjR3XmQ2DdC"
     }
   },
-
   "gdprSensitivityMetadata": {
     "classification": "sar_restricted",
     "restrictedFields": [

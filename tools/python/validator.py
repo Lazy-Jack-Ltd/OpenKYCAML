@@ -2,7 +2,7 @@
 """
 OpenKYCAML Schema Validator
 ===========================
-Validates JSON payloads against the OpenKYCAML schema (v1.7.0).
+Validates JSON payloads against the OpenKYCAML schema (v1.14.0).
 
 Usage:
     python validator.py <path-to-payload.json>
@@ -193,6 +193,9 @@ class OpenKYCAMLValidator:
                 screening_dt = datetime.datetime.fromisoformat(
                     screening_date_str.replace("Z", "+00:00")
                 )
+                # Ensure both datetimes are timezone-aware for subtraction.
+                if screening_dt.tzinfo is None:
+                    screening_dt = screening_dt.replace(tzinfo=datetime.timezone.utc)
                 age = datetime.datetime.now(datetime.timezone.utc) - screening_dt
                 if age.days > 30:
                     warns.append(
@@ -316,9 +319,8 @@ class OpenKYCAMLValidator:
             # FATCA warnings (v1.9.1).
             fatca = tax.get("fatcaStatus", {})
             if fatca:
-                import re as _re
                 giin = fatca.get("giin", "")
-                if giin and not _re.match(r'^[0-9A-Z]{6}\.[0-9A-Z]{5}\.[0-9A-Z]{2}\.[0-9A-Z]{3}$', giin):
+                if giin and not re.match(r'^[0-9A-Z]{6}\.[0-9A-Z]{5}\.[0-9A-Z]{2}\.[0-9A-Z]{3}$', giin):
                     warns.append(
                         f"taxStatus.fatcaStatus.giin '{giin}' does not match the IRS GIIN format "
                         "(XXXXXX.XXXXX.XX.XXX). Please verify against the IRS FATCA FFI List."
@@ -332,9 +334,8 @@ class OpenKYCAMLValidator:
                 ts_str = fatca.get("ffiListVerificationTimestamp", "")
                 if ts_str:
                     try:
-                        from datetime import datetime, timezone, timedelta
-                        ts = datetime.fromisoformat(ts_str.replace("Z", "+00:00"))
-                        if datetime.now(timezone.utc) - ts > timedelta(days=35):
+                        ts = datetime.datetime.fromisoformat(ts_str.replace("Z", "+00:00"))
+                        if datetime.datetime.now(datetime.timezone.utc) - ts > datetime.timedelta(days=35):
                             warns.append(
                                 "taxStatus.fatcaStatus.ffiListVerificationTimestamp is more than 35 days old — "
                                 "the IRS FATCA FFI List is updated monthly; please re-verify the GIIN."
@@ -342,19 +343,47 @@ class OpenKYCAMLValidator:
                     except (ValueError, TypeError):
                         pass
 
-        # EDD contact data warnings (v1.10.0).
+        # EDD contact data warnings — check typed arrays (emailAddresses[], phoneNumbers[]).
         dd_type_outer = kyc.get("dueDiligenceType")
         if dd_type_outer == "ENHANCED":
             for idx, person_wrapper in enumerate(
                 (ivms.get("originator") or {}).get("originatorPersons", [])
             ):
                 np = person_wrapper.get("naturalPerson")
-                if np and not np.get("emailAddress") and not np.get("phoneNumber"):
-                    warns.append(
-                        f"ivms101.originator.originatorPersons[{idx}].naturalPerson has neither "
-                        "emailAddress nor phoneNumber — FATF Rec. 16 / AMLR Art. 22 require "
-                        "verified contact data for Enhanced Due Diligence customers."
-                    )
+                if np:
+                    has_email = bool(np.get("emailAddresses"))
+                    has_phone = bool(np.get("phoneNumbers"))
+                    if not has_email and not has_phone:
+                        warns.append(
+                            f"ivms101.originator.originatorPersons[{idx}].naturalPerson has neither "
+                            "emailAddresses[] nor phoneNumbers[] — FATF Rec. 16 / AMLR Art. 22 require "
+                            "verified contact data for Enhanced Due Diligence customers."
+                        )
+
+        # isPrimary uniqueness warnings — at most one entry per array may be isPrimary: true.
+        def _check_is_primary(arr: list, location: str) -> list[str]:
+            primary_count = sum(1 for item in arr if isinstance(item, dict) and item.get("isPrimary") is True)
+            if primary_count > 1:
+                return [
+                    f"{location} has {primary_count} entries with isPrimary: true — "
+                    "at most one entry should be marked as primary."
+                ]
+            return []
+
+        for person_key in ("originator", "beneficiary"):
+            persons_key = "originatorPersons" if person_key == "originator" else "beneficiaryPersons"
+            for idx, person_wrapper in enumerate(
+                (ivms.get(person_key) or {}).get(persons_key, [])
+            ):
+                base = f"ivms101.{person_key}.{persons_key}[{idx}]"
+                for person_type in ("naturalPerson", "legalPerson"):
+                    person = person_wrapper.get(person_type)
+                    if person:
+                        loc = f"{base}.{person_type}"
+                        for arr_field in ("geographicAddress", "emailAddresses", "phoneNumbers"):
+                            arr = person.get(arr_field)
+                            if arr:
+                                warns.extend(_check_is_primary(arr, f"{loc}.{arr_field}"))
 
         # IBAN without BIC warnings (v1.10.0).
         for person_key in ("originator", "beneficiary"):

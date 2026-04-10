@@ -40,7 +40,9 @@
           }
         }
       ],
-      "accountNumber": ["US12345678901234567890"]
+      "accountNumber": [
+        "US12345678901234567890"
+      ]
     },
     "beneficiary": {
       "beneficiaryPersons": [
@@ -59,7 +61,9 @@
           }
         }
       ],
-      "accountNumber": ["GB29NWBK60161331926819"]
+      "accountNumber": [
+        "GB29NWBK60161331926819"
+      ]
     },
     "originatingVASP": {
       "originatingVASP": {
@@ -99,7 +103,11 @@
     "sanctionsScreening": {
       "screeningStatus": "CLEAR",
       "screeningDate": "2026-04-01T09:00:00Z",
-      "listsChecked": ["OFAC_SDN", "EU_CONSOLIDATED", "UN_CONSOLIDATED"]
+      "listsChecked": [
+        "OFAC_SDN",
+        "EU_CONSOLIDATED",
+        "UN_CONSOLIDATED"
+      ]
     },
     "auditMetadata": {
       "recordCreatedAt": "2026-04-01T09:30:00Z",
