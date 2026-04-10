@@ -59,4 +59,4 @@ The EU Anti-Money Laundering Authority (AMLA) is drafting Regulatory Technical S
 
 ---
 
-*Last updated: v1.7.0 — April 2026. For the full implementer checklist see [`amlr-2027-compliance-checklist.md`](amlr-2027-compliance-checklist.md).*
+*Last updated: v1.12.0 — April 2026. For the full implementer checklist see [`amlr-2027-compliance-checklist.md`](amlr-2027-compliance-checklist.md).*

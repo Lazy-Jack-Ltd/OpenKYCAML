@@ -108,4 +108,4 @@ For full AI Act compliance, providers should supplement with an external model c
 
 ---
 
-*Last updated: April 2026 — OpenKYCAML v1.7.0*
+*Last updated: April 2026 — OpenKYCAML v1.12.0*

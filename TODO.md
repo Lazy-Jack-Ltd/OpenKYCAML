@@ -45,7 +45,7 @@ python3 -c "import json; d=json.load(open('schema/kyc-aml-hybrid-extended.json')
 
 # 2. Confirm the versioned snapshot matches the canonical schema
 diff <(python3 -c "import json; print(json.dumps(json.load(open('schema/kyc-aml-hybrid-extended.json')), indent=2, sort_keys=True))") \
-     <(python3 -c "import json; print(json.dumps(json.load(open('schema/versions/v1.9.1.json')),        indent=2, sort_keys=True))")
+     <(python3 -c "import json; print(json.dumps(json.load(open('schema/versions/v1.12.0.json')),        indent=2, sort_keys=True))")
 # Expected output: (empty — files are identical)
 
 # 3. Confirm pyproject.toml version matches
@@ -69,20 +69,21 @@ git checkout main
 git pull origin main
 
 # Create a signed, annotated tag (preferred — requires GPG key)
-git tag -s v1.9.1 -m "OpenKYCAML v1.9.1 — FATCA/CRS first-class fields
+git tag -s v1.12.0 -m "OpenKYCAML v1.12.0 — Natural-person completeness, entity governance flags, and review lifecycle state machine
 
-- taxStatus.crsTaxResidencies[] (OECD CRS per-jurisdiction self-certification)
-- taxStatus.fatcaStatus (FATCA GIIN, Chapter 4 classification, IRS Notice 2024-78)
-- api/openkycaml-v1.9.1.yaml (OpenAPI 3.1 reflecting all v1.9.1 components)
-- examples/amlr2027-fatca-ai-act.json (combined AMLR + FATCA + EU AI Act example)
+- NaturalPerson.gender (ISO/IEC 5218) and occupation (ILO/ISCO-08)
+- EntityGovernance $def (regulatoryStatus, regulators[], listedStatus, stateOwned, etc.)
+- ReviewLifecycle $def (currentState enum + stateHistory[] audit trail)
+- api/openkycaml-v1.12.0.yaml (OpenAPI 3.1 reflecting all v1.12.0 components)
+- examples/legal-entity-governance.json, examples/natural-person-gender-occupation.json
 
-See CHANGELOG.md [1.9.1] for the full change log."
+See CHANGELOG.md [1.12.0] for the full change log."
 
 # Verify the tag
-git tag -v v1.9.1
+git tag -v v1.12.0
 
 # Push the tag — this triggers release.yml
-git push origin v1.9.1
+git push origin v1.12.0
 ```
 
 > **Unsigned alternative** (if GPG is not set up yet):
@@ -295,7 +296,7 @@ node -e "const {OpenKYCAMLValidator} = require('@openkycaml/tools'); console.log
 
 ### Background
 
-All examples and the canonical schema use `https://schema.openkycaml.org/v1.9.1/…` as
+All examples and the canonical schema use `https://schema.openkycaml.org/v1.12.0/…` as
 their `$schema` URL. This URL must resolve to the actual JSON Schema file. There are two
 independent steps:
 
@@ -376,7 +377,7 @@ jobs:
    above) or **Deploy from a branch** (for the simpler approach).
 3. Note the generated URL: `https://lazy-jack-ltd.github.io/OpenKYCAML/`.
 4. Verify a schema file resolves:
-   `curl -I https://lazy-jack-ltd.github.io/OpenKYCAML/v1.9.1/kyc-aml-hybrid-extended.json`
+   `curl -I https://lazy-jack-ltd.github.io/OpenKYCAML/v1.12.0/kyc-aml-hybrid-extended.json`
 
 ### Step 3 — Configure the custom domain `schema.openkycaml.org`
 
@@ -397,7 +398,7 @@ jobs:
 4. Wait for DNS propagation (up to 24 hours), then verify:
 
    ```bash
-   curl -sI https://schema.openkycaml.org/v1.9.1/kyc-aml-hybrid-extended.json \
+   curl -sI https://schema.openkycaml.org/v1.12.0/kyc-aml-hybrid-extended.json \
      | grep -E "HTTP|Content-Type"
    # Expected:
    # HTTP/2 200
@@ -408,7 +409,7 @@ jobs:
    still referencing `openkycaml.org` rather than `schema.openkycaml.org`:
 
    ```json
-   "$id": "https://schema.openkycaml.org/v1.9.1/kyc-aml-hybrid-extended.json"
+   "$id": "https://schema.openkycaml.org/v1.12.0/kyc-aml-hybrid-extended.json"
    ```
 
 ---

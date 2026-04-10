@@ -603,4 +603,4 @@ print(response)  # {"credential_ids": ["urn:uuid:..."]}
 
 ---
 
-*Pydantic models documented from [`tools/python/models.py`](../../tools/python/models.py) (OpenKYCAML v1.7.0). Last updated: v1.7.0.*
+*Pydantic models documented from [`tools/python/models.py`](../../tools/python/models.py) (OpenKYCAML v1.12.0). Last updated: v1.12.0.*

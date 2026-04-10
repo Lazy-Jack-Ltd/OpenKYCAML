@@ -11,8 +11,6 @@ For the full project roadmap and planned features, see [ROADMAP.md](ROADMAP.md).
 
 ## [Unreleased]
 
-### Added
-
 ---
 
 ## [1.12.0] — April 2026

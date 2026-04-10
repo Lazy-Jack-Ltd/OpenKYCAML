@@ -253,4 +253,4 @@ sequenceDiagram
 
 ---
 
-*All diagrams are rendered with [Mermaid](https://mermaid.js.org/). For the Travel Rule protocol-specific flows, see [Travel Rule Sequence Diagrams](travel-rule-sequence-diagrams.md). Last updated: v1.7.0.*
+*All diagrams are rendered with [Mermaid](https://mermaid.js.org/). For the Travel Rule protocol-specific flows, see [Travel Rule Sequence Diagrams](travel-rule-sequence-diagrams.md). Last updated: v1.12.0.*

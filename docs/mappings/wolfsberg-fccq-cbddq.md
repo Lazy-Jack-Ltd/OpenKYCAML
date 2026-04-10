@@ -86,4 +86,4 @@ A machine-readable import/export template mapping CBDDQ v1.4 XML fields to OpenK
 
 ---
 
-*Last updated: April 2026 — OpenKYCAML v1.7.0*
+*Last updated: April 2026 — OpenKYCAML v1.12.0*
