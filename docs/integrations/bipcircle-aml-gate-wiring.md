@@ -695,9 +695,191 @@ If both tests pass, the integration is wired end-to-end.
 
 ---
 
+## 10. Input from Live Source Verification (BIPCircle 2026-04-11)
+
+> Added 2026-04-11 after re-reading current BIPCircle source. Memories drift; this section is the verified-against-disk view as of the date above. Where the briefing above is correct I confirm it; where I have additions, they are flagged **NEW** below.
+
+### 10.1 Verified-against-source: every claim in §2 holds
+
+| # | Claim | Verified | Evidence |
+|---|---|---|---|
+| 1 | `amlGateClient.js` exists and is wired | ✅ | `platform/services/amlGateClient.js`, 5,368 bytes, mtime 2026-04-08. `callAmlGate()` exported. |
+| 2 | BIPCircle subscriber present, not route-mounted | ✅ | `products/bipcircle/services/amlStatusSubscriber.js`, 10,343 bytes, mtime 2026-04-08. Function `handleAmlStatusEvent({ db, event, messageId, logger })` exported. No `routes/amlEvents.js` mounted in `server.js`. |
+| 3 | `AML_GATE_CLEARED` is a citation-only stub | ✅ | `complianceGate.js` contains the literal `AML_GATE_CLEARED` exactly **once** — at the citations map, not in `REQUIRED_CHECKS`, no `case 'AML_GATE_CLEARED':` in the `runCheck()` switch. `getComplianceCheckedTypes()` returns `Object.keys(REQUIRED_CHECKS)` which today omits AML entirely. |
+| 4 | `travelRuleService.js` is empty | ✅ | `services/travelRuleService.js`, **0 bytes**, mtime 2026-04-08. Confirmed empty placeholder. |
+| 5 | `amlComplianceCheck.js` not merged into BIPCircle | ✅ | File does not exist in `bipcircle/api/src/` at all. Only present in `AML-Gate/bipcircle-integration/`. |
+| 6 | Schema mismatch (§3) is real | ✅ | BIPCircle subscriber lines 53-54: `if (event.eventType !== 'aml.status_changed') throw …`. Destructure on lines 57-71 is camelCase. AML-Gate template uses `event.event === "customer.status_changed"` and snake_case `external_id` / `tenant_id` / `risk_tier` / `fatal_flags`. **The two will not interoperate without the §3.4 reconciliation.** |
+
+Conclusion: **the briefing's findings are accurate as of 2026-04-11.** Proceed.
+
+### 10.2 NEW — Coverage invariant precedent: `validateFeeMaps()` shipped 2026-04-10
+
+This is the highest-leverage addition I can make to the briefing.
+
+On 2026-04-10 BIPCircle shipped a boot-time invariant in `feeService.js` that catches **exactly** the class of bug §3 of this briefing is at risk of: a transaction type emitted by routes that's silently absent from a critical lookup map. Background: BTC on-chain payments charged $0 platform fee for weeks because `routes/treasury.js` emitted `BTC_ONCHAIN_PAYMENT` while `feeService.js` had a `BTC_PAYMENT` typo from the original draft. Silent revenue loss, no error, no log.
+
+The fix was structural, not data-only:
+
+```js
+// services/feeService.js
+export const KNOWN_FEE_TRANSACTION_TYPES = new Set([
+  'RLUSD_PAYMENT', 'USDT_PAYMENT', 'BTC_ONCHAIN_PAYMENT', 'LIGHTNING_PAYMENT',
+  // ...31 types total
+]);
+
+const PLATFORM_FEE_ONLY = new Set(['TEAM_INVITE', 'INVESTOR_WHITELISTED']);
+const FUND_FEE_ONLY     = new Set([]);
+
+export function validateFeeMaps() {
+  const missingFromFund = [];
+  const missingFromPlatform = [];
+  for (const type of KNOWN_FEE_TRANSACTION_TYPES) {
+    if (!FEE_TYPE_MAP[type] && !PLATFORM_FEE_ONLY.has(type)) missingFromFund.push(type);
+    if (!PLATFORM_FEE_TYPE_MAP[type] && !FUND_FEE_ONLY.has(type)) missingFromPlatform.push(type);
+  }
+  if (missingFromFund.length || missingFromPlatform.length) {
+    throw new Error(/* multi-line listing every drifting type */);
+  }
+}
+```
+
+`validateFeeMaps()` is called from `server.js` immediately after the other boot validators (`validateManifest`, `validateRegistry`, `validateCompensationManifest`, `validateFeeComplianceCoverage`, ...). Process refuses to start on drift. **Verified live** — BTC tx `542a1fb29055419576d27ddf8181031ed8aa839927634473fdb0a4a892b09ae5` confirmed the fee engine fix end-to-end the day this section was written.
+
+**Why this matters for the AML wiring:** Appendix B.3 of the briefing notes that `feeComplianceInvariant.js` will pick up new checks via `getComplianceCheckedTypes()`. That's true but **passive** — it only validates that types in `REQUIRED_CHECKS` have compliance gate coverage. It does **not** validate that every type that **should** have `AML_GATE_CLEARED` actually does. Adding `AML_GATE_CLEARED` to `RLUSD_PAYMENT` but forgetting `BTC_ONCHAIN_PAYMENT` will pass `feeComplianceInvariant` and ship to production silently.
+
+**Recommendation (NEW):** Mirror the fee map pattern. Add to `complianceGate.js`:
+
+```js
+// Every value-moving transaction type that MUST include AML_GATE_CLEARED.
+// Drift catcher — boot validator throws if any of these types exist in
+// REQUIRED_CHECKS without the AML_GATE_CLEARED entry.
+export const AML_GATE_REQUIRED_TYPES = new Set([
+  'RLUSD_PAYMENT', 'USDT_PAYMENT', 'BTC_ONCHAIN_PAYMENT', 'LIGHTNING_PAYMENT',
+  'TOKENS_TRANSFERRED', 'TOKENS_ISSUED', 'TOKEN_CLAWBACK', 'TOKEN_FORCED_TRANSFER',
+  'DEX_ORDER_PLACED', 'RFQ_ACCEPTED', 'WITHDRAWAL_INITIATED',
+]);
+
+export function validateAmlGateCoverage() {
+  const missing = [];
+  for (const type of AML_GATE_REQUIRED_TYPES) {
+    const checks = REQUIRED_CHECKS[type] || [];
+    if (!checks.some(c => c.check === 'AML_GATE_CLEARED')) missing.push(type);
+  }
+  if (missing.length) {
+    throw new Error(
+      'complianceGate boot invariant FAILED — AML_GATE_CLEARED coverage drift:\n' +
+      missing.map(t => `  - ${t}`).join('\n') +
+      '\nAdd { check: "AML_GATE_CLEARED", failAction: "block" } to REQUIRED_CHECKS for each type, or remove from AML_GATE_REQUIRED_TYPES with explicit justification.'
+    );
+  }
+}
+```
+
+Wire from `server.js` next to `validateFeeMaps()`. Same shape, same boot-time guarantee. Prevents the exact partial-wiring drift the AML integration is most exposed to.
+
+This invariant should be **shipped before or with the AML_GATE_CLEARED REQUIRED_CHECKS patches** in Appendix B — otherwise future developers can add a new payment type (e.g. `XLM_PAYMENT` next quarter) and forget to add the AML check, with the same silent-failure mode that hit the BTC fee engine.
+
+### 10.3 NEW — Architectural rule: "share primitives, not gates"
+
+The integration model in this doc — `amlGateClient` (primitive) → `AML_GATE_CLEARED` (one check among many in BIPCircle's domain-specific gate) — is the exact correct shape per BIPCircle's locked architectural rule documented in `feedback_share_primitives_not_gates.md`. Worth surfacing in the OpenKYCAML guidance because future products (SoundBip retail, future POS, future custody) will all want to consume AML Gate the same way:
+
+> Share the **primitives** — identity attestation, sanctions/PEP screening, jurisdiction rule packs, audit chains. These are domain-neutral and consume cleanly. Keep the **gates** separate — the per-transaction-type check lists, the rule-to-action mappings. Gates encode product vocabulary (`PIF_HOLDER_LIMIT`, `INVESTOR_CATEGORY_PERMITTED` for funds; `STRUCTURING_DETECTION`, `£25_LIMIT` for retail) that doesn't generalise.
+
+Concretely for OpenKYCAML adopters:
+- `amlGateClient.js` (or its OpenKYCAML equivalent) is a **primitive** — its API never mentions a transaction type. It's a domain-neutral HTTP client.
+- `complianceGate.js` `REQUIRED_CHECKS` is a **gate** — its key (`RLUSD_PAYMENT`, `TOKENS_ISSUED`) betrays its product vocabulary.
+- Two adopters (BIPCircle institutional + SoundBip retail) should each have their **own gate** but share the **same client** and the **same OpenKYCAML event envelope**. Anything that forces them to share a gate is the wrong layer.
+
+This rule means the canonical event schema (§3.4) is properly OpenKYCAML's responsibility — not BIPCircle's — because it's a primitive contract two unrelated products will both depend on.
+
+### 10.4 NEW — CommonJS / ESM gotcha for the merge
+
+Appendix B.2 notes the integration template is CommonJS and BIPCircle is ESM. **This is more dangerous than it looks**, because BIPCircle had a recent incident with broken dynamic imports — F-IMPORT-01, fixed in commit `522de23` on 2026-04-09. Seventeen broken dynamic imports across nine files were silently swallowing errors and returning undefined. The wallet balance bug that cost a day of debugging was a downstream symptom.
+
+**Recommendation:** When merging `amlComplianceCheck.js` and `amlTravelRuleTrigger.js`:
+1. **Port to ESM at merge time.** Don't use dynamic `await import()` shims to bridge CJS modules at runtime — they're the exact pattern that caused F-IMPORT-01.
+2. **Add boot-time validation that imports resolve.** The `lockSagas` / `lockComplianceChecks` / `validateFeeMaps` family of validators in `server.js` should add a sibling that asserts every imported AML helper has its expected exports.
+3. **Run the boundary checker after the merge.** `node api/src/platform/check-boundaries.js` enforces Rule 1-5 of the platform/product split. The new files belong in `products/bipcircle/services/` (gate level), not `platform/services/` (primitive level) — `amlGateClient.js` is the only piece that should live in `platform/`.
+
+### 10.5 NEW — Wallet DID storage: Option C is even more attractive than the doc claims
+
+Section 7 recommends Option C (boundary helper, no schema change) for short-term wiring. I agree more strongly than the briefing does:
+
+- **Option A (mass rewrite)** is a migration that touches `receipts`, `mlro_cases`, `aml_status_cache`, `audit_log`, `attestations`, possibly `held_transactions`. BIPCircle's `migrationRunner` (`feedback_migration_framework_pattern.md`) requires rollback + checkpoint paths for every migration. That's a 1-2 day effort minimum and adds risk to a meeting whose goal is end-to-end test.
+- **Option B (mirror field)** introduces dual-write hazard — every write site needs to be audited. The fee map drift this section opens with is exactly what happens when you have two fields meant to track the same thing and one of them gets forgotten.
+- **Option C (boundary helper)** is the only path that requires zero schema changes, zero migrations, and zero risk to existing audit data. The helper sketch in Appendix C is right; my only addition is to make `ensureWalletDid()` the **only** path that crosses the BIPCircle → AML Gate boundary, and to lint for raw bare addresses in any `callAmlGate()` argument list.
+
+A small companion invariant in `amlGateClient.js`:
+
+```js
+function assertCanonicalDid(field, value) {
+  if (typeof value === 'string' && (value.match(/^r[1-9A-HJ-NP-Za-km-z]{24,34}$/) ||
+                                     value.match(/^0x[0-9a-fA-F]{40}$/))) {
+    throw new Error(
+      `amlGateClient: ${field} contains a bare wallet address (${value.slice(0, 10)}...). ` +
+      `Use ensureWalletDid('xrpl'|'ethereum', address) at the call site.`
+    );
+  }
+}
+```
+
+Throws loudly on a bare address, points the developer at the helper. Protects the boundary even if someone forgets.
+
+### 10.6 NEW — AML Gate's schema is already half-canonicalised in OpenKYCAML
+
+The §3.4 recommendation to adopt AML Gate's snake_case `customer.status_changed` envelope as canonical is correct, **and** OpenKYCAML's existing schema versioning (`docs/versions/`, `pyproject.toml v1.14.0`) is the right home for it. Concretely:
+
+1. Add a new OpenKYCAML schema version (`v1.15.0`) that ships the `customer.status_changed` event JSON Schema as the canonical wire format
+2. Add it to `docs/reference/` as `events/customer-status-changed.json`
+3. Treat any future adopter (SoundBip, ID Circle's external integrators, other tenants) as bound by the schema — not a BIPCircle-specific decision
+4. Pin the schema version in `amlGateClient.js` (e.g. `OPENKYCAML_SCHEMA_VERSION=1.15.0`) so a schema bump fails closed if the client hasn't been updated
+
+This converts the meeting decision from "which schema does BIPCircle use" into "which OpenKYCAML version do we adopt", which is much more durable.
+
+### 10.7 NEW — The meeting's critical-path is shorter than §8 suggests
+
+The briefing's §8 is good prioritisation, but if Nick is constrained on time the **single highest-value 30-minute outcome** is:
+
+1. **Decide the canonical event schema (§3.4 / §10.6)** — this unblocks every other piece of code
+2. **Set `AML_GATE_URL` + `PUBSUB_AML_AUDIENCE` + `PUBSUB_AML_PUBLISHER_SA` in BIPCircle env**  — five minutes
+3. **Confirm the OIDC service account model** (§9 decision 4) — five minutes whiteboard
+
+Everything else (port subscriber, drop in `amlComplianceCheck`, mount push endpoint, end-to-end test) can be done by one developer in a focused session **after** Nick has answered those three questions. The mistake to avoid is trying to wire code in Nick's office — wire decisions, then wire code back at the desk.
+
+### 10.8 Errata for §1 and §2
+
+Two minor corrections to the doc above:
+
+- §2 row 2 says BIPCircle's subscriber is "266 lines, ESM". Actual file as of 2026-04-11 is **10,343 bytes** which is closer to **240 lines including comments** depending on how you count blank lines. The spirit of the claim is right (the file is substantial and ESM); the exact line count is approximate. Recommend dropping numeric line counts from the doc since they drift.
+- §2 row 6 says "BIPCircle subscriber creates cases on `blocked` / `review_required`". I confirmed `handleAmlStatusEvent` does this in code, but I want to flag that the case-creation logic is **inside** the subscriber, not in `routes/mlro.js`. `routes/mlro.js` only **registers** the case types — the actual auto-creation happens in `amlStatusSubscriber.js`. Worth clarifying for new readers.
+
+### 10.9 What the next session should pick up
+
+If the meeting at Nick's lands the §9 decisions and the next session needs to start implementing with this doc as the source of truth, the implementation order I'd actually follow:
+
+1. Add the `validateAmlGateCoverage()` invariant from §10.2 **first** — empty `AML_GATE_REQUIRED_TYPES` Set initially. This is structural, not behavioural; ships in 5 minutes.
+2. Fill `AML_GATE_REQUIRED_TYPES` with whatever Nick approves. Boot will now fail until step 3 is done — that's the point.
+3. Port `amlComplianceCheck.js` from CJS to ESM, drop into `services/`, add to `REQUIRED_CHECKS`, add to `runCheck()` switch. Boot now passes.
+4. Port `amlStatusSubscriber.js` per Appendix D using the §3.4 canonical schema. Test in isolation with a synthesised event payload.
+5. Mount the Pub/Sub push endpoint per Appendix A. Wire env vars per Appendix E.
+6. `start-dev.sh` restart. Confirm `validateFeeMaps` + `validateAmlGateCoverage` both pass at boot. Confirm `amlGateClient` health probe passes.
+7. End-to-end smoke test per Appendix F. The success criterion is one cleared and one blocked.
+8. Defer Travel Rule + KYC revocation processor to a follow-up — neither is required for the smoke test and both are at least an hour each.
+
+### 10.10 Memory anchor
+
+For future Claude sessions reading this file: the live BIPCircle source state above is a snapshot as of **2026-04-11**. Before acting on any specific function name, file size, or behaviour claim:
+- `grep` for the symbol in `bipcircle/api/src/`
+- `ls -la` the cited file path
+- Read the function before relying on its signature
+
+The schema mismatch (§3) is the most stable finding — both files exist, both have been there for days, and the divergence is structural. Most other findings will drift the moment the next merge lands. **Do not cite this section as authoritative without re-verifying.**
+
+---
+
 ## Document Status
 
-- **Version:** 1.0.0 (initial briefing)
+- **Version:** 1.1.0 (added §10 — input from live source verification + boot invariant precedent + OpenKYCAML schema framing)
 - **Date:** 2026-04-11
-- **Author:** Pre-meeting prep, BIPCircle team
-- **Next revision:** After the Nick V meeting — fold in the §9 decisions and update §3.4 with the agreed canonical schema.
+- **Author:** Pre-meeting prep, BIPCircle team — §10 added by Claude after live source re-read
+- **Next revision:** After the Nick V meeting — fold in the §9 decisions, update §3.4 with the agreed canonical schema, and replace §10 with a "decisions landed" record.
