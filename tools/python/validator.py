@@ -193,9 +193,12 @@ class OpenKYCAMLValidator:
                 screening_dt = datetime.datetime.fromisoformat(
                     screening_date_str.replace("Z", "+00:00")
                 )
-                # Ensure both datetimes are timezone-aware for subtraction.
+                # Normalise to UTC — fromisoformat may return an offset-aware or
+                # offset-naive datetime depending on whether the string contains tz info.
                 if screening_dt.tzinfo is None:
                     screening_dt = screening_dt.replace(tzinfo=datetime.timezone.utc)
+                else:
+                    screening_dt = screening_dt.astimezone(datetime.timezone.utc)
                 age = datetime.datetime.now(datetime.timezone.utc) - screening_dt
                 if age.days > 30:
                     warns.append(
