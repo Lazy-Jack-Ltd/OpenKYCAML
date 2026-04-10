@@ -21,7 +21,7 @@ Every example is a complete, schema-valid payload that can be used as a starting
 
 > **Fictional data notice:** All names, passport numbers, national identifiers, addresses, entity names, LEIs, DIDs, wallet addresses, and any other personal or entity data in the example payloads are **entirely fictional** and have been created solely for illustrative purposes. Any resemblance to real persons (living or deceased), real legal entities, or real transactions is entirely coincidental.
 
-There are currently **27 example files** covering nine categories:
+There are currently **44 example files** covering fourteen categories:
 
 | # | Category | Files |
 |---|---|---|
@@ -34,8 +34,14 @@ There are currently **27 example files** covering nine categories:
 | G | Advanced / Compliance Scenarios | 1 |
 | H | Reference / Annotated Tokens | 1 |
 | I | PKI Evidence — X.509 / X.500 (v1.8.0) | 2 |
+| J | Tax Status (v1.9.0) | 5 |
+| K | PredictiveAML / EU AI Act (v1.7.0) | 3 |
+| L | Contact / Banking Identifiers (v1.10.0) | 2 |
+| M | Cell Companies — PCC / ICC (v1.11.0) | 3 |
+| N | Entity & Person Governance (v1.12.0) | 3 |
+| O | Presentation Definitions (OpenID4VP) | 1 |
 
-All files in `examples/` and `examples/evidence/` validate against [`schema/kyc-aml-hybrid-extended.json`](../schema/kyc-aml-hybrid-extended.json) (JSON Schema draft 2020-12), with the exception of `sd-jwt-compact-token.json` which is an annotated reference document — see [§6](#6-notes-on-special-files).
+All files in `examples/` and its sub-directories (`evidence/`, `tax/`, `predictive/`, `contact-banking/`, `cell-company/`, `presentation-definitions/`) validate against [`schema/kyc-aml-hybrid-extended.json`](../schema/kyc-aml-hybrid-extended.json) (JSON Schema draft 2020-12), with the exception of `sd-jwt-compact-token.json` which is an annotated reference document — see [§6](#6-notes-on-special-files).
 
 ---
 
@@ -156,6 +162,23 @@ Each example targets a specific compliance scenario.  Use the catalogue table in
 | [`sd-jwt-compact-token.json`](sd-jwt-compact-token.json) | H — Reference Token | Natural person | 1.3.0 | | | ✓ | | | | | ⚠ Annotated reference — decoded SD-JWT with `compactToken`, `decodedDisclosures`, `verificationSteps`; **not schema-valid** |
 | [`evidence/eidas-x509-dn.json`](evidence/eidas-x509-dn.json) | I — PKI Evidence | Legal entity | 1.8.0 | ✓ | | ✓ | ✓ | | | ✓ | Legal entity QSealC certificate: `legacyIdentifiers.x500DN` + `pkiEvidence.x509Certificate` (ETSI EN 319 412 QCStatements, OCSP) |
 | [`evidence/eidas-x509-qeaa.json`](evidence/eidas-x509-qeaa.json) | I — PKI Evidence | Natural person | 1.8.0 | ✓ | ✓ | ✓ | ✓ | | | ✓ | Natural person QEAA + EUDI Wallet triangulation: VC evidence + `pkiEvidence` X.509 metadata + `legacyIdentifiers.x500DN` + OIDs |
+| [`tax/tax-individual-tin.json`](tax/tax-individual-tin.json) | J — Tax Status | Natural person | 1.9.0 | ✓ | | ✓ | | | | | Individual TIN self-certification — OECD CRS multi-jurisdiction TIN array, unverified status |
+| [`tax/tax-corporate-vat-gst.json`](tax/tax-corporate-vat-gst.json) | J — Tax Status | Legal entity | 1.9.0 | ✓ | | ✓ | | | | | Corporate VAT/GST registrations across EU/UK/AU/SG jurisdictions; VIES and GST-portal verification |
+| [`tax/tax-fatca-crs.json`](tax/tax-fatca-crs.json) | J — Tax Status | Legal entity | 1.9.1 | ✓ | | ✓ | | | | | FATCA GIIN + Chapter 4 classification (participatingFFI) + CRS crsTaxResidencies[] |
+| [`tax/tax-mne-pillar2.json`](tax/tax-mne-pillar2.json) | J — Tax Status | Legal entity | 1.9.0 | ✓ | | ✓ | | | | | Multinational constituent entity — OECD Pillar 2 GloBE ETR per jurisdiction + GIR filing reference |
+| [`tax/tax-offshore-esr.json`](tax/tax-offshore-esr.json) | J — Tax Status | Legal entity | 1.9.0 | ✓ | | ✓ | | | | | Cayman Islands holding company — Economic Substance Regulation compliance (inScope + compliant) |
+| [`predictive/predictive-static.json`](predictive/predictive-static.json) | K — PredictiveAML | Natural person | 1.7.0 | ✓ | | ✓ | | | | | Static risk snapshot with SHAP feature importance; EU AI Act model card metadata |
+| [`predictive/predictive-delta.json`](predictive/predictive-delta.json) | K — PredictiveAML | Natural person | 1.7.0 | ✓ | | ✓ | | | | | Delta-based cKYC — risk evolution history with multiple scored snapshots |
+| [`predictive/predictive-ai-high-risk.json`](predictive/predictive-ai-high-risk.json) | K — PredictiveAML | Natural person | 1.7.0 | ✓ | | ✓ | | | | | High-risk AI score with EU AI Act conformity statement and BCBS 239 gap-analysis flags |
+| [`contact-banking/natural-person-with-contact.json`](contact-banking/natural-person-with-contact.json) | L — Contact/Banking | Natural person | 1.10.0 | ✓ | | ✓ | | | | | Natural person with email, E.164 phone/mobile, and verified IBAN/BIC banking details |
+| [`contact-banking/legal-entity-with-banking.json`](contact-banking/legal-entity-with-banking.json) | L — Contact/Banking | Legal entity | 1.10.0 | ✓ | | ✓ | | | | | Legal entity with business email, phone, and multi-account banking details (IBAN + BIC + accountType) |
+| [`cell-company/pcc-cell.json`](cell-company/pcc-cell.json) | M — Cell Companies | Legal entity | 1.11.0 | ✓ | | ✓ | | | | | PCC Cell with `cellCompanyDetails` + mandatory `parentCellCompanyReference`; Guernsey PCC structure |
+| [`cell-company/icc-cell.json`](cell-company/icc-cell.json) | M — Cell Companies | Legal entity | 1.11.0 | ✓ | | ✓ | | | | | ICC Cell with own legal personality (`hasIndependentLegalPersonality: true`) + registration number; Jersey ICC |
+| [`cell-company/pcc-cell-predictive-aml.json`](cell-company/pcc-cell-predictive-aml.json) | M — Cell Companies | Legal entity | 1.11.2 | ✓ | | ✓ | | | | | PCC Cell with `cellLevelPredictiveScores[]` in predictiveAML block (v1.11.2 addition) |
+| [`legal-entity-governance.json`](legal-entity-governance.json) | N — Governance | Legal entity | 1.12.0 | ✓ | | ✓ | | | | | Dual-regulated, exchange-listed subsidiary; `entityGovernance` with `regulators[]`, `listedStatus` (XETR), `parentRegulated`, `majorityOwnedSubsidiary` |
+| [`natural-person-gender-occupation.json`](natural-person-gender-occupation.json) | N — Governance | Natural person | 1.12.0 | ✓ | | ✓ | | | | | Natural person with `gender: FEMALE`, `occupation.occupationCode: SELF_EMPLOYED`, and `reviewLifecycle` state history |
+| [`amlr2027-fatca-ai-act.json`](amlr2027-fatca-ai-act.json) | N — Governance | Legal entity | 1.9.1 | ✓ | ✓ | ✓ | ✓ | | | ✓ | End-to-end reference: predictiveAML (EU AI Act) + taxStatus (FATCA/CRS/Pillar 2) + pkiEvidence (QSealC) + legacyIdentifiers (X.500 DN) |
+| [`presentation-definitions/travel-rule-minimum.json`](presentation-definitions/travel-rule-minimum.json) | O — Presentation Defs | — | 1.7.0 | — | — | — | — | — | — | — | OpenID4VP Presentation Definition for the FATF Travel Rule minimum credential request |
 
 ---
 
@@ -201,6 +224,51 @@ Two files in `examples/evidence/` demonstrate the new optional `legacyIdentifier
 
 `eidas-x509-qeaa.json` shows a natural person (fictional name) with a QEAA (Qualified Electronic Attestation of Attributes) from a German QTSP, presented via an EUDI Wallet.  It combines three identity layers: a W3C VC `evidence[]` block (EUDI Wallet DID triangulation), a `pkiEvidence.x509Certificate` block (X.509 metadata), and `legacyIdentifiers.x500DN` (certificateSubject).  The `oids[]` array carries the `id-etsi-qcs-QcType-eAttestation` QCStatement OID confirming QEAA status.
 
+### J — Tax Status (v1.9.0)
+
+Five files in `examples/tax/` demonstrate the `taxStatus` block introduced in v1.9.0 (extended in v1.9.1 with FATCA/CRS first-class elements).  Each file isolates a distinct tax scenario:
+
+- `tax-individual-tin.json` — individual TIN self-certification with multi-jurisdiction OECD CRS TIN array.
+- `tax-corporate-vat-gst.json` — corporate VAT/GST registrations across EU/UK/AU/SG with VIES and GST-portal verification statuses.
+- `tax-fatca-crs.json` — FATCA GIIN + Chapter 4 classification (`participatingFFI`) + `crsTaxResidencies[]`.
+- `tax-mne-pillar2.json` — multinational constituent entity OECD Pillar 2 GloBE ETR per jurisdiction + GIR filing reference.
+- `tax-offshore-esr.json` — Cayman Islands holding company ESR compliance (inScope + compliant status).
+
+### K — PredictiveAML / EU AI Act (v1.7.0)
+
+Three files in `examples/predictive/` demonstrate the `predictiveAML` extension introduced in v1.7.0:
+
+- `predictive-static.json` — single static risk snapshot with SHAP feature importance and EU AI Act model card.
+- `predictive-delta.json` — delta-based cKYC with a `riskEvolutionHistory[]` showing progressive risk changes.
+- `predictive-ai-high-risk.json` — high-risk AI-generated score with EU AI Act conformity statement (`euAiActConformity`), BCBS 239 data lineage (`dataAggregationMetadata`), and explainability block (`explanationMethod: SHAP`).
+
+### L — Contact / Banking Identifiers (v1.10.0)
+
+Two files in `examples/contact-banking/` demonstrate the contact and banking identifier fields added in v1.10.0:
+
+- `natural-person-with-contact.json` — natural person with validated email (RFC 5321), E.164 phone/mobile, and IBAN/BIC banking details.
+- `legal-entity-with-banking.json` — legal entity with business email, phone, and multi-account banking details (IBAN + BIC + `accountType` classification).
+
+### M — Cell Companies — PCC / ICC (v1.11.0)
+
+Three files in `examples/cell-company/` demonstrate PCC and ICC cell company structures introduced in v1.11.0:
+
+- `pcc-cell.json` — Protected Cell Company cell with `cellCompanyDetails` and mandatory `parentCellCompanyReference`; Guernsey PCC structure.
+- `icc-cell.json` — Incorporated Cell Company cell with own legal personality (`hasIndependentLegalPersonality: true`) and cell-specific registration number; Jersey ICC.
+- `pcc-cell-predictive-aml.json` — PCC cell extended with `cellLevelPredictiveScores[]` in the `predictiveAML` block (v1.11.2).
+
+### N — Entity & Person Governance (v1.12.0)
+
+Three files demonstrate the v1.12.0 governance extensions:
+
+- `legal-entity-governance.json` — dual-regulated, exchange-listed subsidiary with `entityGovernance` (BaFin + FCA `regulators[]`, `listedStatus.marketIdentifier: XETR`, `parentRegulated`, `majorityOwnedSubsidiary`).
+- `natural-person-gender-occupation.json` — natural person with `gender: FEMALE`, `occupation.occupationCode: SELF_EMPLOYED`, and a `reviewLifecycle` state history (ONBOARDING → INITIAL_REVIEW → PERIODIC_REVIEW).
+- `amlr2027-fatca-ai-act.json` — end-to-end reference payload combining predictiveAML (EU AI Act), taxStatus (FATCA/CRS/Pillar 2), pkiEvidence (X.509 QSealC), legacyIdentifiers (X.500 DN), and full EDD kycProfile.
+
+### O — Presentation Definitions (OpenID4VP)
+
+`presentation-definitions/travel-rule-minimum.json` is an OpenID4VP Presentation Definition for the FATF Travel Rule minimum credential request.  Use it as a starting point when building an OpenID4VP verifier that requests the minimum set of claims required for FATF Rec. 16 compliance.
+
 ---
 
 ## 6. Notes on special files
@@ -223,22 +291,37 @@ These files use `legalFormCode` (ISO 20275 ELF), `entityType`, and typed sub-obj
 
 ---
 
-## 7. Future folder structure
+## 7. Folder structure
 
-The examples directory is intentionally kept **flat** at this stage.  Twenty-five files in a single directory is still easy to navigate, and a flat structure avoids updating every path reference in CI workflows, validators, and documentation in a disruptive reorganisation PR.
+The examples directory uses a hybrid structure: flat files at the root for the core baseline, natural person, legal entity, ownership, VC-wrapped, document bundle, and advanced scenarios; and sub-directories for the feature-specific categories introduced in v1.7.0–v1.12.0 (predictive AML, tax status, contact/banking, cell companies, and evidence).
 
-When the example count grows significantly (roughly 40+), the recommended subdirectory scheme is:
+The current layout is:
 
 ```
 examples/
-├── 01-baseline/          minimal-travel-rule*
-├── 02-natural-person/    natural-person-*, full-kyc-profile*
-├── 03-legal-entity/      legal-entity-*
-├── 04-ownership/         *-deep-ubo, complex-group-*, foundation-*, llp-*, trust-complex-*
-├── 05-vc-wrapped/        hybrid-vc-*, travel-rule-vc-*
-├── 06-document-bundles/  document-bundle-*
-├── 07-advanced/          hybrid-with-sar-restriction
-└── 08-reference/         sd-jwt-compact-token
+├── minimal-travel-rule*.json        A — Baseline
+├── natural-person-*.json            B — Natural Person
+├── full-kyc-profile*.json           B — Natural Person
+├── legal-entity-*.json              C — Legal Entity
+├── *-deep-ubo.json                  D — Complex Ownership
+├── complex-group-*.json             D — Complex Ownership
+├── foundation-*.json                D — Complex Ownership
+├── llp-*.json                       D — Complex Ownership
+├── trust-complex-*.json             D — Complex Ownership
+├── hybrid-vc-*.json                 E — VC-Wrapped
+├── travel-rule-vc-*.json            E — VC-Wrapped
+├── document-bundle-*.json           F — Document Bundles
+├── hybrid-with-sar-restriction.json G — Advanced
+├── sd-jwt-compact-token.json        H — Reference Token
+├── amlr2027-fatca-ai-act.json       N — Governance
+├── legal-entity-governance.json     N — Governance
+├── natural-person-gender-occupation.json N — Governance
+├── evidence/                        I — PKI Evidence (v1.8.0)
+├── tax/                             J — Tax Status (v1.9.0)
+├── predictive/                      K — PredictiveAML (v1.7.0)
+├── contact-banking/                 L — Contact/Banking (v1.10.0)
+├── cell-company/                    M — Cell Companies (v1.11.0)
+└── presentation-definitions/        O — Presentation Definitions
 ```
 
-Any such reorganisation should be done in a dedicated PR that changes **only file paths** and updates every reference simultaneously (CI workflow glob patterns, README links, docs cross-references, validator tool defaults), with no content changes, so the diff is trivially reviewable.
+If the root flat files grow further, the recommended reorganisation is a dedicated PR that changes **only file paths** and updates every reference simultaneously (CI workflow glob patterns, README links, docs cross-references, validator tool defaults), with no content changes, so the diff is trivially reviewable.
