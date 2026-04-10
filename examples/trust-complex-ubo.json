@@ -3,9 +3,7 @@
   "version": "1.3.0",
   "messageId": "e2f3a4b5-c6d7-8e9f-0a1b-2c3d4e5f6a7b",
   "messageDateTime": "2025-10-20T09:00:00Z",
-
   "_comment_scenario": "Discretionary Trust Beneficial Ownership — Jersey Discretionary Trust with Corporate Trustee, Named Protector, Settlor and Beneficiaries. This example demonstrates EDD disclosure for a trust structure where Windermere Digital Assets Ltd (BVI) — the subject VASP entity — is 100% owned by the Windermere Discretionary Trust (Jersey). The schema captures all four categories of trust principal required by FATF Recommendation 25 and AMLR Art. 26(2)(b): [Settlor] Sir James Hartley (UK) — contributed the settlement assets and retains a letter of wishes; [Trustee] Windermere Trustees Ltd (Jersey) — a professional corporate trustee whose natural person directors (Margaret Forsyth and David Okonkwo) are documented via LPID mandates; [Protector] Lady Catherine Hartley (UK) — holds the power to remove and replace trustees under the trust deed; [Beneficiaries] Sir James Hartley (life interest), James Hartley Jr. and Emma Hartley (remainder). UBO determination: Sir James Hartley is identified as the effective UBO because (i) he is the settlor and primary beneficiary, (ii) Lady Catherine Hartley, the protector, acts in accordance with his letter of wishes and can remove trustees, and (iii) the combination of settlor reservation and protector influence constitutes DE_FACTO_CONTROL under AMLR Art. 26(2)(b). FATF R.25 and AMLR Art. 26(2)(b) require VASPs to identify all these roles and trace effective control.",
-
   "ivms101": {
     "originator": {
       "originatorPersons": [
@@ -72,7 +70,6 @@
       "assetType": "BTC"
     }
   },
-
   "verifiableCredential": {
     "@context": [
       "https://www.w3.org/2018/credentials/v1",
@@ -84,15 +81,12 @@
       "OpenKYCAMLCredential",
       "KYCAttestation"
     ],
-
     "issuer": {
       "id": "did:web:caledonian-digital-bank.example.co.uk",
       "name": "Caledonian Digital Bank plc"
     },
-
     "issuanceDate": "2025-10-20T09:00:00Z",
     "expirationDate": "2026-10-20T09:00:00Z",
-
     "credentialSubject": {
       "ivms101": {
         "originator": {
@@ -160,7 +154,6 @@
           "assetType": "BTC"
         }
       },
-
       "kycProfile": {
         "customerRiskRating": "HIGH",
         "riskRatingDetail": {
@@ -192,16 +185,24 @@
           "screeningStatus": "CLEAR",
           "screeningDate": "2025-10-15T07:45:00Z",
           "screeningProvider": "Dow Jones Risk & Compliance",
-          "listsChecked": ["OFAC_SDN", "EU_CONSOLIDATED", "UN_CONSOLIDATED", "HMT"]
+          "listsChecked": [
+            "OFAC_SDN",
+            "EU_CONSOLIDATED",
+            "UN_CONSOLIDATED",
+            "HMT"
+          ]
         },
         "onboardingChannel": "REMOTE_AUTOMATED",
         "kycCompletionDate": "2025-10-15",
         "consentRecord": {
           "consentGiven": true,
           "consentDate": "2025-10-12T11:00:00Z",
-          "consentPurpose": ["AML_SCREENING", "DATA_SHARING_TRAVEL_RULE", "EDD_REVIEW"]
+          "consentPurpose": [
+            "AML_SCREENING",
+            "DATA_SHARING_TRAVEL_RULE",
+            "EDD_REVIEW"
+          ]
         },
-
         "beneficialOwnership": [
           {
             "_comment_ubo_settlor": "UBO: Sir James Hartley (UK) — effective control through combination of settlor reservation rights, letter of wishes, and influence over the protector (Lady Catherine Hartley, his spouse). FATF R.25 and AMLR Art. 26(2)(b) require identification of the settlor as a trust principal. Sir James retains a life-interest in income distributions and his letter of wishes, while non-binding on the trustee, has been followed in every distribution to date. Control mechanism is assessed as DE_FACTO_CONTROL in conjunction with CONTRACTUAL (trust deed powers).",
@@ -265,159 +266,40 @@
                     "uniqueIdentifier": "JE-RT-2015-00341",
                     "mandates": [
                       {
-                        "_comment_trustee_mandate": "Corporate Trustee: Windermere Trustees Ltd (Jersey). Legal title to trust assets and formal administration vested in the corporate trustee. Two natural person directors responsible for trust governance.",
-                        "naturalPerson": {
-                          "name": {
-                            "nameIdentifier": [
-                              {
-                                "primaryIdentifier": "Forsyth",
-                                "secondaryIdentifier": "Margaret Anne",
-                                "nameIdentifierType": "LEGL"
-                              }
-                            ]
-                          },
-                          "nationalIdentification": {
-                            "nationalIdentifier": "GB-PASS-PY9876543",
-                            "nationalIdentifierType": "CCPT",
-                            "countryOfIssue": "GB"
-                          },
-                          "dateAndPlaceOfBirth": {
-                            "dateOfBirth": "1968-03-22",
-                            "placeOfBirth": "Edinburgh"
-                          },
-                          "countryOfResidence": "JE"
-                        },
-                        "roleOrPower": "Director of Corporate Trustee — Windermere Trustees Ltd (Jersey); authorised signatory for trust administration",
-                        "validFrom": "2015-03-12"
+                        "mandateType": "OTHER",
+                        "signatoryName": "Margaret Anne Forsyth",
+                        "scope": "Director of Corporate Trustee — Windermere Trustees Ltd (Jersey); authorised signatory for trust administration",
+                        "effectiveFrom": "2015-03-12"
                       },
                       {
-                        "naturalPerson": {
-                          "name": {
-                            "nameIdentifier": [
-                              {
-                                "primaryIdentifier": "Okonkwo",
-                                "secondaryIdentifier": "David Chukwuemeka",
-                                "nameIdentifierType": "LEGL"
-                              }
-                            ]
-                          },
-                          "nationalIdentification": {
-                            "nationalIdentifier": "GB-PASS-PZ1122334",
-                            "nationalIdentifierType": "CCPT",
-                            "countryOfIssue": "GB"
-                          },
-                          "dateAndPlaceOfBirth": {
-                            "dateOfBirth": "1975-08-07",
-                            "placeOfBirth": "Lagos"
-                          },
-                          "countryOfResidence": "JE"
-                        },
-                        "roleOrPower": "Director of Corporate Trustee — Windermere Trustees Ltd (Jersey); authorised signatory for trust administration",
-                        "validFrom": "2019-06-15"
+                        "mandateType": "OTHER",
+                        "signatoryName": "David Chukwuemeka Okonkwo",
+                        "scope": "Director of Corporate Trustee — Windermere Trustees Ltd (Jersey); authorised signatory for trust administration",
+                        "effectiveFrom": "2019-06-15"
                       },
                       {
-                        "_comment_protector_mandate": "Protector: Lady Catherine Hartley (UK). Holds power under trust deed Clause 14 to remove and replace the trustee at any time and without cause. In practice acts in accordance with the settlor's letter of wishes. This protector power is the primary mechanism by which the settlor (UBO) exercises effective control.",
-                        "naturalPerson": {
-                          "name": {
-                            "nameIdentifier": [
-                              {
-                                "primaryIdentifier": "Hartley",
-                                "secondaryIdentifier": "Catherine Rose",
-                                "nameIdentifierType": "LEGL"
-                              }
-                            ]
-                          },
-                          "nationalIdentification": {
-                            "nationalIdentifier": "GB-PASS-PA3344556",
-                            "nationalIdentifierType": "CCPT",
-                            "countryOfIssue": "GB"
-                          },
-                          "dateAndPlaceOfBirth": {
-                            "dateOfBirth": "1959-11-14",
-                            "placeOfBirth": "Oxford"
-                          },
-                          "countryOfResidence": "GB"
-                        },
-                        "roleOrPower": "Protector — power to remove and replace trustees (trust deed Clause 14); spouse of settlor Sir James Hartley",
-                        "validFrom": "2015-03-12"
+                        "mandateType": "OTHER",
+                        "signatoryName": "Catherine Rose Hartley",
+                        "scope": "Protector — power to remove and replace trustees (trust deed Clause 14); spouse of settlor Sir James Hartley",
+                        "effectiveFrom": "2015-03-12"
                       },
                       {
-                        "_comment_beneficiary1": "Beneficiary 1 — Settlor/Life Interest: Sir James Hartley (UK). Entitled to all trust income during his lifetime. His dual role as settlor and primary life-interest beneficiary reinforces the UBO determination.",
-                        "naturalPerson": {
-                          "name": {
-                            "nameIdentifier": [
-                              {
-                                "primaryIdentifier": "Hartley",
-                                "secondaryIdentifier": "James Edward",
-                                "nameIdentifierType": "LEGL"
-                              }
-                            ]
-                          },
-                          "nationalIdentification": {
-                            "nationalIdentifier": "GB-PASS-PX1234567",
-                            "nationalIdentifierType": "CCPT",
-                            "countryOfIssue": "GB"
-                          },
-                          "dateAndPlaceOfBirth": {
-                            "dateOfBirth": "1955-07-23",
-                            "placeOfBirth": "London"
-                          },
-                          "countryOfResidence": "GB"
-                        },
-                        "roleOrPower": "Beneficiary — life interest in trust income; also the settlor and UBO",
-                        "validFrom": "2015-03-12"
+                        "mandateType": "OTHER",
+                        "signatoryName": "James Edward Hartley",
+                        "scope": "Beneficiary — life interest in trust income; also the settlor and UBO",
+                        "effectiveFrom": "2015-03-12"
                       },
                       {
-                        "_comment_beneficiary2": "Beneficiary 2 — Remainder: James Hartley Jr. (UK). Entitled to a share of trust capital on the death of the settlor or on vesting at age 30.",
-                        "naturalPerson": {
-                          "name": {
-                            "nameIdentifier": [
-                              {
-                                "primaryIdentifier": "Hartley",
-                                "secondaryIdentifier": "James William",
-                                "nameIdentifierType": "LEGL"
-                              }
-                            ]
-                          },
-                          "nationalIdentification": {
-                            "nationalIdentifier": "GB-PASS-PB5566778",
-                            "nationalIdentifierType": "CCPT",
-                            "countryOfIssue": "GB"
-                          },
-                          "dateAndPlaceOfBirth": {
-                            "dateOfBirth": "1985-01-15",
-                            "placeOfBirth": "London"
-                          },
-                          "countryOfResidence": "GB"
-                        },
-                        "roleOrPower": "Beneficiary — remainder interest in trust capital; son of settlor",
-                        "validFrom": "2015-03-12"
+                        "mandateType": "OTHER",
+                        "signatoryName": "James William Hartley",
+                        "scope": "Beneficiary — remainder interest in trust capital; son of settlor",
+                        "effectiveFrom": "2015-03-12"
                       },
                       {
-                        "_comment_beneficiary3": "Beneficiary 3 — Remainder: Emma Hartley (UK). Entitled to a share of trust capital on the death of the settlor or on vesting at age 30.",
-                        "naturalPerson": {
-                          "name": {
-                            "nameIdentifier": [
-                              {
-                                "primaryIdentifier": "Hartley",
-                                "secondaryIdentifier": "Emma Louise",
-                                "nameIdentifierType": "LEGL"
-                              }
-                            ]
-                          },
-                          "nationalIdentification": {
-                            "nationalIdentifier": "GB-PASS-PC7788990",
-                            "nationalIdentifierType": "CCPT",
-                            "countryOfIssue": "GB"
-                          },
-                          "dateAndPlaceOfBirth": {
-                            "dateOfBirth": "1988-09-30",
-                            "placeOfBirth": "London"
-                          },
-                          "countryOfResidence": "GB"
-                        },
-                        "roleOrPower": "Beneficiary — remainder interest in trust capital; daughter of settlor",
-                        "validFrom": "2015-03-12"
+                        "mandateType": "OTHER",
+                        "signatoryName": "Emma Louise Hartley",
+                        "scope": "Beneficiary — remainder interest in trust capital; daughter of settlor",
+                        "effectiveFrom": "2015-03-12"
                       }
                     ]
                   }
@@ -432,7 +314,6 @@
             "isPEP": false
           }
         ],
-
         "auditMetadata": {
           "recordId": "e2f3a4b5-c6d7-8e9f-0a1b-2c3d4e5f6a7b",
           "recordCreatedAt": "2025-10-20T09:00:00Z",
@@ -445,7 +326,6 @@
         }
       }
     },
-
     "credentialStatus": {
       "id": "https://caledonian-digital-bank.example.co.uk/status/v1#5501",
       "type": "StatusList2021Entry"

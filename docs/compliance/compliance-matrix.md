@@ -632,4 +632,136 @@ _✅ = full field mapping. ⭐ = added in v1.11.0. ⭐⭐ = promoted to hard con
 
 ---
 
-*Last updated: v1.12.0 — April 2026. Maintained by the OpenKYCAML Technical Working Group.*
+## 24. CRM Completeness — 20 Contact/Account Field Gaps Closed (v1.13.0)
+
+> All additions are optional and backward-compatible. No existing required fields changed.
+
+### 24.1 New $defs (v1.13.0)
+
+| $def | Required fields | Key optional fields | Regulatory / Operational basis |
+|---|---|---|---|
+| **`EmailAddress`** ⭐⭐⭐⭐ | `emailAddress` | `emailType`, `isPrimary`, `verificationStatus` | AMLR Art. 22 (CDD contact data); GDPR Art. 5 (accuracy principle) |
+| **`EmergencyContact`** ⭐⭐⭐⭐ | `name` | `relationship`, `phoneNumber`, `emailAddress` | Account succession; estate-handling workflows; GDPR Art. 9 note |
+| **`IndustryCode`** ⭐⭐⭐⭐ | `codeSystem`, `codeValue` | `codeDescription` | AMLR Art. 20 risk factors (sector risk); NACE Rev.2 / NAICS 2022 / SIC / ISIC alignment |
+| **`Mandate`** ⭐⭐⭐⭐ | `mandateType` | `signatoryName`, `signatoryRef`, `scope`, `effectiveFrom`, `effectiveTo` | eIDAS 2.0 LPID mandates attribute; AMLR Art. 26 authorised representatives; FATF Rec. 24 |
+| **`PhoneNumber`** ⭐⭐⭐⭐ | `phoneNumber` | `phoneType`, `isPrimary` | AMLR Art. 22 CDD contact data; E.164 format alignment |
+| **`RegisteredAgent`** ⭐⭐⭐⭐ | `name` | `jurisdiction`, `address`, `agentType` | FATF Rec. 24 (registered agent transparency); AMLR Art. 26 (offshore / SPV structures) |
+
+### 24.2 `NaturalPersonNameIdentifier` — Gap 1 (CRM name completeness)
+
+| Field | Type / Constraint | Regulatory / Operational basis |
+|---|---|---|
+| `salutation` ⭐⭐⭐⭐ | enum: MR/MRS/MS/MISS/DR/PROF/REV/OTHER | CRM correspondence; AMLR Art. 22(2) customer identity |
+| `middleName` ⭐⭐⭐⭐ | string max 200 | PEP/sanctions screening completeness; AMLR Art. 22 |
+| `nameSuffix` ⭐⭐⭐⭐ | string max 50 | CRM identity matching |
+| `preferredName` ⭐⭐⭐⭐ | string max 200 | Customer correspondence; AMLR Art. 22 |
+| `formerName` ⭐⭐⭐⭐ | string max 200 | Name-change records; AMLR Art. 22; PEP screening |
+| `pronouns` ⭐⭐⭐⭐ | string max 50 | GDPR Art. 9 — collect only with explicit consent or legal requirement |
+
+### 24.3 `DateAndPlaceOfBirth` — Gap 3
+
+| Field | Type / Constraint | Regulatory / Operational basis |
+|---|---|---|
+| `countryOfBirth` ⭐⭐⭐⭐ | ISO 3166-1 alpha-2 pattern | IVMS 101 optional birth-country field; eIDAS 2.0 PID; AMLR Art. 22(2) |
+
+### 24.4 `Address` — Gap 5 (richer vocabulary + history tracking)
+
+| Field / Change | Type / Enum | Regulatory / Operational basis |
+|---|---|---|
+| `addressType` enum expanded ⭐⭐⭐⭐ | +REGISTERED_OFFICE, PRINCIPAL_PLACE_OF_BUSINESS, MAILING, BILLING, SHIPPING, CORRESPONDENCE, PREVIOUS, OTHER | AMLR Art. 22(2) address types; FATF Rec. 10; backward-compat: GEOG + BIZZ retained |
+| `isPrimary` ⭐⭐⭐⭐ | boolean | CRM primary address designation |
+| `effectiveFrom` ⭐⭐⭐⭐ | ISO 8601 date | AMLR Art. 21 ongoing monitoring; FATF Rec. 11 record keeping |
+| `effectiveTo` ⭐⭐⭐⭐ | ISO 8601 date | Historical address tracking for AML; AMLR Art. 56 record retention |
+
+### 24.5 `NaturalPerson` — Gaps 2, 4, 6, 7, 8, 17, 19, 20
+
+| Field | Gap | Type | Regulatory / Operational basis |
+|---|---|---|---|
+| `isDeceased` ⭐⭐⭐⭐ | 2 | boolean | Estate-handling; GDPR (deceased generally out of scope) |
+| `deceasedDate` ⭐⭐⭐⭐ | 2 | ISO 8601 date | Account offboarding; probate workflow |
+| `emailAddresses[]` ⭐⭐⭐⭐ | 4 | `$ref EmailAddress` | AMLR Art. 22 CDD contact; supplements legacy `emailAddress` string |
+| `phoneNumbers[]` ⭐⭐⭐⭐ | 4 | `$ref PhoneNumber` | AMLR Art. 22 CDD contact; supplements legacy `phoneNumber`/`mobileNumber` |
+| `faxNumber` ⭐⭐⭐⭐ | 4 | string (E.164) | Legacy contact channel support |
+| `preferredLanguage` ⭐⭐⭐⭐ | 6 | BCP 47 pattern | AMLR Art. 22 multilingual CDD; CRM communications routing |
+| `preferredCommunicationChannel` ⭐⭐⭐⭐ | 6 | enum EMAIL/PHONE/SMS/POST/PORTAL/OTHER | CRM service delivery; GDPR consent records |
+| `marketingOptOut` ⭐⭐⭐⭐ | 6 | boolean | GDPR Art. 21 right to object; ePrivacy Directive |
+| `maritalStatus` ⭐⭐⭐⭐ | 7 | enum (8 values) | GDPR Art. 9 — collect only where legally required; inheritance / joint-account governance |
+| `numberOfDependants` ⭐⭐⭐⭐ | 8 | integer ≥ 0 | Source-of-wealth risk assessment; affordability analysis |
+| `householdSize` ⭐⭐⭐⭐ | 8 | integer ≥ 1 | Wealth-management profiling; source-of-wealth |
+| `emergencyContact` ⭐⭐⭐⭐ | 17 | `$ref EmergencyContact` | Account succession; estate-handling; GDPR Art. 9 note |
+| `tags[]` ⭐⭐⭐⭐ | 19 | string array max 100 each | CRM segmentation; workflow routing |
+| `customAttributes` ⭐⭐⭐⭐ | 19 | open object | Implementer extensibility without schema fork |
+| `historicalNames[]` ⭐⭐⭐⭐ | 20 | array of `{ name, nameType, effectiveFrom, effectiveTo }` | FATF Rec. 12 PEP screening; AMLR Art. 28–31; sanctions screening all known aliases |
+
+### 24.6 `LegalPerson` — Gaps 4, 9, 10, 11, 12, 13, 19
+
+| Field | Gap | Type | Regulatory / Operational basis |
+|---|---|---|---|
+| `emailAddresses[]` ⭐⭐⭐⭐ | 4 | `$ref EmailAddress` | AMLR Art. 22 CDD contact |
+| `phoneNumbers[]` ⭐⭐⭐⭐ | 4 | `$ref PhoneNumber` | AMLR Art. 22 CDD contact |
+| `faxNumber` ⭐⭐⭐⭐ | 4 | string (E.164) | Legacy contact channel |
+| `dateOfIncorporation` ⭐⭐⭐⭐ | 9 | ISO 8601 date | AMLR Art. 22(2); Companies House / GLEIF alignment |
+| `dateOfRegistration` ⭐⭐⭐⭐ | 9 | ISO 8601 date | AMLR Art. 22(2); cross-border registration |
+| `dateOfDissolution` ⭐⭐⭐⭐ | 9 | ISO 8601 date | AMLR Art. 56 record retention; offboarding workflow |
+| `operationalStatus` ⭐⭐⭐⭐ | 9 | enum (7 values) | AMLR Art. 21 ongoing monitoring; Companies House / GLEIF alignment |
+| `numberOfEmployees` ⭐⭐⭐⭐ | 10 | integer ≥ 0 | Customer classification; EDD sizing; Salesforce/Dynamics alignment |
+| `annualRevenue` ⭐⭐⭐⭐ | 10 | number ≥ 0 | Risk-tier assignment; product suitability; AMLR Art. 20 risk factors |
+| `annualRevenueCurrency` ⭐⭐⭐⭐ | 10 | ISO 4217 3-char | Currency denomination for annualRevenue |
+| `annualRevenueVerificationDate` ⭐⭐⭐⭐ | 10 | ISO 8601 date | AMLR Art. 21 periodic review; data freshness |
+| `websiteUrl` ⭐⭐⭐⭐ | 11 | URI format | Adverse media screening; VASP identification |
+| `socialMediaProfiles[]` ⭐⭐⭐⭐ | 11 | array `{ platform, url, isVerified }` | Adverse media screening; EDD digital footprint |
+| `industryCodes[]` ⭐⭐⭐⭐ | 12 | `$ref IndustryCode` | AMLR Art. 20 sector risk; NACE/NAICS/SIC/ISIC alignment |
+| `registeredAgent` ⭐⭐⭐⭐ | 13 | `$ref RegisteredAgent` | FATF Rec. 24; AMLR Art. 26 — offshore / SPV / cell company transparency |
+| `tags[]` ⭐⭐⭐⭐ | 19 | string array | CRM segmentation; workflow routing |
+| `customAttributes` ⭐⭐⭐⭐ | 19 | open object | Implementer extensibility |
+
+### 24.7 `LegalPersonIdentificationData` — Gap 18 (structured mandates)
+
+| Change | Regulatory / Operational basis |
+|---|---|
+| `mandates[]` items now `$ref Mandate` ⭐⭐⭐⭐ | eIDAS 2.0 LPID mandates attribute; AMLR Art. 26 authorised representatives; FATF Rec. 24 |
+
+### 24.8 `EntityGovernance` — Gap 15 (GLEIF ultimate parent / group)
+
+| Field | Type / Constraint | Regulatory / Operational basis |
+|---|---|---|
+| `ultimateParentLEI` ⭐⭐⭐⭐ | ISO 17442 20-char pattern | GLEIF Level 2 ultimate parent; FATF Rec. 24; AMLR Art. 26 |
+| `ultimateParentName` ⭐⭐⭐⭐ | string max 300 | Group beneficial ownership chain; AMLR Art. 26 |
+| `groupName` ⭐⭐⭐⭐ | string max 300 | Group-level risk aggregation; Wolfsberg CBDDQ §3 |
+| `groupLEI` ⭐⭐⭐⭐ | ISO 17442 20-char pattern | GLEIF group identification; FATF Rec. 24 |
+
+### 24.9 `KYCProfile` — Gaps 14, 16, 19
+
+| Field | Gap | Type | Regulatory / Operational basis |
+|---|---|---|---|
+| `relationshipManagerId` ⭐⭐⭐⭐ | 14 | string max 100 | Compliance audit trail; AMLR Art. 56 record keeping |
+| `relationshipManagerName` ⭐⭐⭐⭐ | 14 | string max 200 | CRM accountability; supervisory inspection |
+| `primaryBranchCode` ⭐⭐⭐⭐ | 14 | string max 50 | Regulatory reporting; geographic risk attribution |
+| `servingBusinessUnit` ⭐⭐⭐⭐ | 14 | string max 200 | Product suitability; EDD routing |
+| `customerSegment` ⭐⭐⭐⭐ | 16 | enum (9 values) | EDD thresholds; service-level routing; product suitability |
+| `estimatedNetWorth` ⭐⭐⭐⭐ | 16 | number ≥ 0 | EDD sizing; AMLR Art. 29 source-of-wealth assessment |
+| `estimatedNetWorthCurrency` ⭐⭐⭐⭐ | 16 | ISO 4217 3-char | Currency denomination |
+| `estimatedNetWorthDate` ⭐⭐⭐⭐ | 16 | ISO 8601 date | AMLR Art. 21 periodic review; data freshness |
+| `tags[]` ⭐⭐⭐⭐ | 19 | string array | CRM segmentation |
+| `customAttributes` ⭐⭐⭐⭐ | 19 | open object | Implementer extensibility |
+
+### 24.10 Schema-Level Changes (v1.13.0)
+
+| Change | Scope | Backward compatible |
+|---|---|---|
+| 6 new $defs (EmailAddress, EmergencyContact, IndustryCode, Mandate, PhoneNumber, RegisteredAgent) | `$defs` | ✅ |
+| `NaturalPersonNameIdentifier` — 6 new optional fields | `$defs.NaturalPersonNameIdentifier` | ✅ |
+| `DateAndPlaceOfBirth.countryOfBirth` | `$defs.DateAndPlaceOfBirth` | ✅ |
+| `Address.addressType` enum expanded; `isPrimary`, `effectiveFrom`, `effectiveTo` | `$defs.Address` | ✅ |
+| `NaturalPerson` — 15 new optional fields | `$defs.NaturalPerson` | ✅ |
+| `LegalPerson` — 17 new optional fields | `$defs.LegalPerson` | ✅ |
+| `EntityGovernance` — 4 new optional fields | `$defs.EntityGovernance` | ✅ |
+| `KYCProfile` — 10 new optional fields | `$defs.KYCProfile` | ✅ |
+| `LegalPersonIdentificationData.mandates` — typed array items | `$defs.LegalPersonIdentificationData` | ✅ |
+| Schema `$id` and `version` bumped to `v1.13.0` | Root | ✅ |
+
+_✅ = full field mapping. ⭐⭐⭐⭐ = added in v1.13.0. All additions backward-compatible._
+
+---
+
+*Last updated: v1.13.0 — April 2026. Maintained by the OpenKYCAML Technical Working Group.*
