@@ -877,9 +877,148 @@ The schema mismatch (§3) is the most stable finding — both files exist, both 
 
 ---
 
+## Appendix G — What Was Built Pre-Meeting (15-min sprint)
+
+In the 15 minutes immediately before the Nick V meeting, the four
+"safe to land regardless of meeting outcome" items from the briefing
+were committed to BIPCircle as actual code, not just sketches. None
+of these depend on any §9 decision — they work on either side of the
+schema choice and can be reused or thrown away with no waste.
+
+### G.1 — `walletDid` helper landed (was Option A)
+
+**Files:**
+- `api/src/platform/utils/walletDid.js` (142 lines)
+- `api/test/walletDid.test.js` (192 lines, **35 tests passing**)
+
+**Functions exported:**
+
+| Function | Purpose |
+|---|---|
+| `toWalletDid(chain, address)` | Convert raw address → `did:xrpl:r…` / `did:eth:0x…` / `did:btc:…`. Throws on shape mismatch or unsupported chain. |
+| `fromWalletDid(did)` | Inverse: parse a DID URI back to `{ chain, address }`. Throws on malformed input. |
+| `ensureWalletDid(chain, addressOrDid)` | Idempotent — accepts either form and always returns the canonical DID. Validates that the embedded chain matches the declared one to catch silent confusion bugs. |
+| `safeWalletDid(chain, addressOrDid)` | Same as `ensureWalletDid` but returns `null` instead of throwing. For audit/log paths that must not break the call. |
+
+**Test coverage** (all passing under `node --test`):
+- Round-trip identity for all three chains (XRPL / EVM / BTC)
+- Case preservation for EVM addresses (no EIP-55 normalisation — matches storage)
+- Whitespace tolerance, alias handling (`eth` ↔ `ethereum`, `btc` ↔ `bitcoin`)
+- Chain-mismatch detection (XRPL address fed to ethereum, etc.)
+- Error messages match assertable patterns
+- `safeWalletDid` returns `null` instead of throwing for the audit path
+
+**Implements:** Option C from §7 (boundary translator). Works regardless of which storage option (A, B, or C) is chosen in the meeting.
+
+### G.2 — Schema adapter shim landed (was Option C)
+
+**Files:**
+- `api/src/platform/utils/amlGateEventAdapter.js` (137 lines)
+- `api/test/amlGateEventAdapter.test.js` (188 lines, **22 tests passing**)
+
+**Functions exported:**
+
+| Function | Purpose |
+|---|---|
+| `translateAmlGateEvent(canonicalEvent)` | Pure function. Translates AML Gate's snake_case `customer.status_changed` envelope into BIPCircle's existing camelCase `aml.status_changed` shape. Throws on missing required fields. |
+| `tryTranslateAmlGateEvent(canonicalEvent)` | Non-throwing wrapper that returns `{ ok, event, error }`. For route handlers that want structured error responses instead of 500s. |
+
+**Field mapping (the meeting decision table, made executable):**
+
+| Canonical (AML Gate) | BIPCircle |
+|---|---|
+| `event` | `eventType` (always `aml.status_changed` after translate) |
+| `external_id` | `userId` |
+| `tenant_id` | `fundTenantId` |
+| `status` | `status` (passthrough) |
+| `fatal_flags` | `matchedLists` |
+| `screening_id` | `screeningId` |
+| `country_code` | `jurisdictionCode` |
+| `correlation_id` | `correlationId` |
+| (full payload) | `rawPayload` (verbatim, for traceability) |
+
+**Reason field synthesis:** the canonical schema has no `reason` text field, but BIPCircle's MLRO case auto-creation does `reason.toLowerCase().includes('sanction')` to pick the case type. The adapter synthesises `reason` from `fatal_flags.join(', ')` so the existing detection logic still works without modification. Test coverage pins this behaviour.
+
+**Backwards compatible both ways:**
+- Accepts either `event` or `eventType` field name (publisher-side schema drift tolerance)
+- Accepts either `external_id` or `userId`
+- Accepts either `tenant_id` or `fundTenantId`
+
+**Why this matters for the meeting:** if Nick agrees on the snake_case canonical (§3.4 recommendation), this shim is the migration path — no behavioural rewrite of `amlStatusSubscriber.js` needed. If Nick prefers a different approach, the shim is 137 lines of pure-function code that can be deleted with no debt.
+
+### G.3 — Environment variables and connectivity smoke test landed (was Option B)
+
+**Files:**
+- `api/.env.example` — 12 new lines of AML Gate config
+- `start-dev.sh` — 6 new lines exporting `AML_GATE_URL`, `AML_HIGH_VALUE_THRESHOLD_USD`, `AML_HEARTBEAT_STALE_MS`, `PUBSUB_TOPIC_AML_EVENTS`
+- `scripts/aml-gate-health-check.sh` (99 lines, executable)
+
+**Smoke test verified live against the deployed sandbox:**
+
+```text
+$ ./scripts/aml-gate-health-check.sh
+AML Gate health check
+  URL:      https://api-bmuvem3rrq-nw.a.run.app
+
+[1/2] GET /v1/health
+  ✓ Health OK
+  Body: {"success":true,"version":"v1","data":{"status":"ok","version":"v1","timestamp":"2026-04-10T16:04:01.004Z"}}
+
+[2/2] OIDC dual-read ping — SKIPPED
+      Set AUTH=oidc to enable
+
+All checks passed.
+```
+
+**OIDC mode** (`AUTH=oidc ./scripts/aml-gate-health-check.sh`) requires a `gcloud auth application-default login` and `roles/run.invoker` on the aml-gate project. Use it to verify the dual-read endpoint reachability before depending on it from `amlComplianceCheck`.
+
+**Why this matters:** two of the eight meeting blockers from §2 (rows 7 and 8 — env vars + connectivity) disappeared without any schema decisions needed.
+
+### G.4 — Travel Rule placeholder hardened (was Option D)
+
+**File:** `api/src/products/bipcircle/services/travelRuleService.js` — replaced 0-byte empty file with a 75-line stub that throws structured errors with `code: 'TRAVEL_RULE_NOT_IMPLEMENTED'`.
+
+**Exports:**
+- `checkTravelRule()` — throws `TRAVEL_RULE_NOT_IMPLEMENTED`
+- `releaseHeldTransaction()` — throws `TRAVEL_RULE_NOT_IMPLEMENTED`
+- `TRAVEL_RULE_IMPLEMENTED = false` — boolean marker for boot-time invariant checks that want to fail loud if a route claims Travel Rule support but the service is still stubbed
+
+**Why this matters:** the previous empty file would silently no-op any caller (any route that imported and called the function would just `return undefined` and proceed to sign). With the stub in place, any call site that forgets to check `TRAVEL_RULE_IMPLEMENTED` first will throw a clear, traceable error instead of letting an over-threshold transaction settle without Travel Rule confirmation. Comments in the file point at this OpenKYCAML doc (§5 + §8 step 9 + the integration template at `AML-Gate/bipcircle-integration/amlTravelRuleTrigger.js`) for the implementation plan.
+
+### G.5 — Verification summary
+
+| Check | Result |
+|---|---|
+| `node --test test/walletDid.test.js test/amlGateEventAdapter.test.js` | **57/57 pass** in 47ms |
+| `./scripts/aml-gate-health-check.sh` (no auth) | **200 OK** from sandbox, server timestamp `2026-04-10T16:04:01Z` |
+| BIPCircle API still boots cleanly | (no schema invariant runs against the new files — they're pure utilities, no call sites added yet) |
+
+### G.6 — What this does NOT do
+
+- Does not register `AML_GATE_CLEARED` in `complianceGate.js` REQUIRED_CHECKS — that depends on the §3.4 schema decision and the merge plan in Appendix D.
+- Does not mount `routes/amlEvents.js` — Appendix A is still a draft pending the same decision.
+- Does not implement the Travel Rule service body — see §5 + §8 step 9.
+- Does not modify any existing call sites — `amlGateClient.js`, `amlStatusSubscriber.js`, and `idCircle.js` are unchanged. Boundary translators are available but no caller is using them yet.
+- Does not add the `validateAmlGateCoverage()` boot invariant from §10.2 — that is still scoped as the next concrete commit and depends on the §9 decision about which transaction types must require AML Gate clearance.
+
+This is intentional. Everything in §G.1 through §G.4 is **commit-clean and revertable** with zero blast radius — pure additive utilities behind a clean interface. The wiring step (the part that actually inserts these utilities into the production call graph) waits for the meeting decisions.
+
+### G.7 — Meeting agenda update implied by §G
+
+Two items in §8's recommended order shift forward because the underlying scaffolding is now in place:
+
+| Step | Was | Now |
+|---|---|---|
+| 2 | Set env vars in `.env.local` and Cloud Run | **Already done in `start-dev.sh` and `.env.example`.** Cloud Run env still needs setting. |
+| 4 | Reconcile two `amlStatusSubscriber.js` versions | **Use `amlGateEventAdapter.js` instead.** The shim removes the rewrite — the existing BIPCircle subscriber stays as-is, the route's Pub/Sub push handler runs `tryTranslateAmlGateEvent()` on the inbound payload before calling `handleAmlStatusEvent()`. The merge plan in Appendix D becomes optional cleanup. |
+
+The schema decision in §3.4 is still needed — but only to confirm the canonical wire format the adapter targets, not to choose between two source files. That's a much cheaper decision.
+
+---
+
 ## Document Status
 
-- **Version:** 1.1.0 (added §10 — input from live source verification + boot invariant precedent + OpenKYCAML schema framing)
+- **Version:** 1.2.0 — added Appendix G with the four pre-meeting code drops (walletDid helper, schema adapter, env vars + smoke test, Travel Rule stub). All 57 tests passing, sandbox connectivity verified live.
 - **Date:** 2026-04-11
-- **Author:** Pre-meeting prep, BIPCircle team — §10 added by Claude after live source re-read
+- **Author:** Pre-meeting prep, BIPCircle team — §10 added by Claude after live source re-read; §G added by Claude after the 15-minute pre-meeting sprint
 - **Next revision:** After the wiring meeting — fold in the §9 decisions, update §3.4 with the agreed canonical schema, and replace §10 with a "decisions landed" record.
