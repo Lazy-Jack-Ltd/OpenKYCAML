@@ -1,6 +1,6 @@
 # BIPCircle ↔ AML Gate Integration — Wiring Briefing
 
-> **Status:** Pre-meeting briefing for the wiring session with Nick V on 2026-04-11.
+> **Status:** Pre-meeting briefing for the AML Gate wiring session on 2026-04-11.
 > **Audience:** AML Gate maintainers, BIPCircle maintainers, integration reviewers.
 > **Purpose:** Snapshot of what is already wired between BIPCircle and AML Gate, what is still missing, and the decisions that need to be agreed before any merge can happen.
 > **Sources:** Live read of `bipcircle/api/src` and `AML-Gate/bipcircle-integration/` on 2026-04-11. Code citations are by function/file name only — line numbers drift.
@@ -263,9 +263,9 @@ A sketch of the helper is in **Appendix C**.
 
 ## 8. Recommended Meeting Order
 
-If time is tight with Nick, do these in dependency order. Each step unlocks the next.
+If time is tight, do these in dependency order. Each step unlocks the next.
 
-1. **GCP-side prep first** (Nick or both): create Pub/Sub topic `aml-gate-events`, create push subscription `bipcircle-aml-status`, generate the OIDC service account that BIPCircle will use to call AML Gate.
+1. **GCP-side prep first**: create Pub/Sub topic `aml-gate-events`, create push subscription `bipcircle-aml-status`, generate the OIDC service account that BIPCircle will use to call AML Gate.
 2. **Set `AML_GATE_URL` + `PUBSUB_TOPIC_AML_EVENTS`** in BIPCircle `.env.local` and Cloud Run env.
 3. **Decide canonical event schema** (§3.4) — this is the single highest-leverage decision.
 4. **Reconcile the two `amlStatusSubscriber.js` versions** based on the §3.4 decision. Port BIPCircle's behavioural model onto AML Gate's wire schema.
@@ -279,7 +279,7 @@ If time is tight with Nick, do these in dependency order. Each step unlocks the 
 
 ---
 
-## 9. Decisions Nick Needs to Make in the Meeting
+## 9. Decisions Needed in the Meeting
 
 1. **Event schema** — accept the canonical snake_case `customer.status_changed` envelope (§3.4)?
 2. **Wallet DID storage** — Option A / B / C from §7?
@@ -838,13 +838,13 @@ This converts the meeting decision from "which schema does BIPCircle use" into "
 
 ### 10.7 NEW — The meeting's critical-path is shorter than §8 suggests
 
-The briefing's §8 is good prioritisation, but if Nick is constrained on time the **single highest-value 30-minute outcome** is:
+The briefing's §8 is good prioritisation, but if meeting time is constrained the **single highest-value 30-minute outcome** is:
 
 1. **Decide the canonical event schema (§3.4 / §10.6)** — this unblocks every other piece of code
 2. **Set `AML_GATE_URL` + `PUBSUB_AML_AUDIENCE` + `PUBSUB_AML_PUBLISHER_SA` in BIPCircle env**  — five minutes
 3. **Confirm the OIDC service account model** (§9 decision 4) — five minutes whiteboard
 
-Everything else (port subscriber, drop in `amlComplianceCheck`, mount push endpoint, end-to-end test) can be done by one developer in a focused session **after** Nick has answered those three questions. The mistake to avoid is trying to wire code in Nick's office — wire decisions, then wire code back at the desk.
+Everything else (port subscriber, drop in `amlComplianceCheck`, mount push endpoint, end-to-end test) can be done by one developer in a focused session **after** those three questions are answered. The mistake to avoid is trying to wire code in the meeting — wire decisions, then wire code back at the desk.
 
 ### 10.8 Errata for §1 and §2
 
@@ -855,10 +855,10 @@ Two minor corrections to the doc above:
 
 ### 10.9 What the next session should pick up
 
-If the meeting at Nick's lands the §9 decisions and the next session needs to start implementing with this doc as the source of truth, the implementation order I'd actually follow:
+If the meeting lands the §9 decisions and the next session needs to start implementing with this doc as the source of truth, the implementation order I'd actually follow:
 
 1. Add the `validateAmlGateCoverage()` invariant from §10.2 **first** — empty `AML_GATE_REQUIRED_TYPES` Set initially. This is structural, not behavioural; ships in 5 minutes.
-2. Fill `AML_GATE_REQUIRED_TYPES` with whatever Nick approves. Boot will now fail until step 3 is done — that's the point.
+2. Fill `AML_GATE_REQUIRED_TYPES` with whatever the meeting approves. Boot will now fail until step 3 is done — that's the point.
 3. Port `amlComplianceCheck.js` from CJS to ESM, drop into `services/`, add to `REQUIRED_CHECKS`, add to `runCheck()` switch. Boot now passes.
 4. Port `amlStatusSubscriber.js` per Appendix D using the §3.4 canonical schema. Test in isolation with a synthesised event payload.
 5. Mount the Pub/Sub push endpoint per Appendix A. Wire env vars per Appendix E.
@@ -882,4 +882,4 @@ The schema mismatch (§3) is the most stable finding — both files exist, both 
 - **Version:** 1.1.0 (added §10 — input from live source verification + boot invariant precedent + OpenKYCAML schema framing)
 - **Date:** 2026-04-11
 - **Author:** Pre-meeting prep, BIPCircle team — §10 added by Claude after live source re-read
-- **Next revision:** After the Nick V meeting — fold in the §9 decisions, update §3.4 with the agreed canonical schema, and replace §10 with a "decisions landed" record.
+- **Next revision:** After the wiring meeting — fold in the §9 decisions, update §3.4 with the agreed canonical schema, and replace §10 with a "decisions landed" record.
