@@ -1,0 +1,63 @@
+{
+  "schemaVersion": "1.0.0",
+  "profileType": "naturalPerson",
+  "naturalPerson": {
+    "name": {
+      "firstName": "Satoshi",
+      "lastName": "Tanaka"
+    },
+    "dateOfBirth": "1992-12-01",
+    "nationality": ["JP"],
+    "address": {
+      "city": "Tokyo",
+      "country": "JP"
+    },
+    "identificationDocuments": [
+      {
+        "documentType": "passport",
+        "documentNumber": "TK9876543",
+        "issuingCountry": "JP",
+        "issueDate": "2022-05-01",
+        "expiryDate": "2032-04-30"
+      }
+    ]
+  },
+  "verifiableCredential": {
+    "@context": [
+      "https://www.w3.org/2018/credentials/v1",
+      "https://openkyc.org/contexts/kyc/v1"
+    ],
+    "type": ["VerifiableCredential", "KYCCredential"],
+    "issuer": "did:web:kyc-provider.example.com",
+    "issuanceDate": "2025-04-10T12:00:00Z",
+    "expirationDate": "2026-04-10T12:00:00Z",
+    "credentialSubject": {
+      "id": "did:key:z6MkpTHR8VNs4jWVprYE7qWcKalFpRNJfMnGLLuSErHvHN7c",
+      "name": "Satoshi Tanaka",
+      "dateOfBirth": "1992-12-01",
+      "nationality": "JP",
+      "kycStatus": "verified",
+      "verificationLevel": "enhanced"
+    },
+    "proof": {
+      "type": "Ed25519Signature2020",
+      "created": "2025-04-10T12:00:00Z",
+      "proofPurpose": "assertionMethod",
+      "verificationMethod": "did:web:kyc-provider.example.com#key-1",
+      "jws": "eyJhbGciOiJFZERTQSIsImI2NCI6ZmFsc2UsImNyaXQiOlsiYjY0Il19..EXAMPLE_SIGNATURE"
+    }
+  },
+  "riskAssessment": {
+    "riskLevel": "low",
+    "riskScore": 10,
+    "assessmentDate": "2025-04-10T12:00:00Z",
+    "nextReviewDate": "2026-04-10"
+  },
+  "metadata": {
+    "createdAt": "2025-04-10T12:00:00Z",
+    "updatedAt": "2025-04-10T12:00:00Z",
+    "source": "vc-issuance-service",
+    "jurisdiction": "JP",
+    "dataClassification": "confidential"
+  }
+}

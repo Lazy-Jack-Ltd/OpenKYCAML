@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "1.0.0",
+  "profileType": "naturalPerson",
+  "naturalPerson": {
+    "name": {
+      "firstName": "Maria",
+      "lastName": "García",
+      "middleName": "Elena"
+    },
+    "dateOfBirth": "1985-03-22",
+    "placeOfBirth": "Madrid, Spain",
+    "nationality": ["ES"],
+    "address": {
+      "streetAddress": "Calle Gran Vía 28",
+      "city": "Madrid",
+      "stateProvince": "Madrid",
+      "postalCode": "28013",
+      "country": "ES"
+    },
+    "identificationDocuments": [
+      {
+        "documentType": "passport",
+        "documentNumber": "PAA123456",
+        "issuingCountry": "ES",
+        "issueDate": "2020-01-15",
+        "expiryDate": "2030-01-14"
+      },
+      {
+        "documentType": "national_id",
+        "documentNumber": "12345678Z",
+        "issuingCountry": "ES",
+        "issueDate": "2019-06-01",
+        "expiryDate": "2029-05-31"
+      }
+    ],
+    "contactDetails": {
+      "email": "maria.garcia@example.com",
+      "phone": "+34600123456"
+    },
+    "politicallyExposedPerson": false,
+    "sourceOfFunds": "Employment income",
+    "occupation": "Software Engineer"
+  },
+  "metadata": {
+    "createdAt": "2025-04-10T10:00:00Z",
+    "updatedAt": "2025-04-10T10:00:00Z",
+    "source": "onboarding-portal",
+    "jurisdiction": "ES",
+    "dataClassification": "confidential"
+  }
+}

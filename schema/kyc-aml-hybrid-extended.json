@@ -1,0 +1,373 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://openkyc.org/schema/kyc-aml-hybrid-extended.json",
+  "title": "OpenKYCAML Hybrid Extended Schema",
+  "description": "Open Schema Standard for KYC/AML data interchange. Supports natural persons, legal entities, verifiable credentials, IVMS 101 travel rule data, and hybrid VC-wrapped payloads.",
+  "version": "1.0.0",
+  "type": "object",
+  "properties": {
+    "schemaVersion": {
+      "type": "string",
+      "description": "Version of the OpenKYCAML schema used.",
+      "const": "1.0.0"
+    },
+    "profileType": {
+      "type": "string",
+      "description": "Type of KYC/AML profile.",
+      "enum": ["naturalPerson", "legalEntity", "hybrid"]
+    },
+    "naturalPerson": {
+      "$ref": "#/$defs/NaturalPerson"
+    },
+    "legalEntity": {
+      "$ref": "#/$defs/LegalEntity"
+    },
+    "travelRule": {
+      "$ref": "#/$defs/TravelRule"
+    },
+    "verifiableCredential": {
+      "$ref": "#/$defs/VerifiableCredential"
+    },
+    "riskAssessment": {
+      "$ref": "#/$defs/RiskAssessment"
+    },
+    "metadata": {
+      "$ref": "#/$defs/Metadata"
+    }
+  },
+  "required": ["schemaVersion", "profileType"],
+  "additionalProperties": false,
+  "$defs": {
+    "NaturalPerson": {
+      "type": "object",
+      "description": "Identity data for a natural person (individual).",
+      "properties": {
+        "name": {
+          "type": "object",
+          "properties": {
+            "firstName": { "type": "string" },
+            "lastName": { "type": "string" },
+            "middleName": { "type": "string" },
+            "nameLocal": { "type": "string", "description": "Name in local script." }
+          },
+          "required": ["firstName", "lastName"]
+        },
+        "dateOfBirth": {
+          "type": "string",
+          "format": "date",
+          "description": "ISO 8601 date of birth."
+        },
+        "placeOfBirth": {
+          "type": "string"
+        },
+        "nationality": {
+          "type": "array",
+          "items": { "type": "string", "pattern": "^[A-Z]{2}$" },
+          "description": "ISO 3166-1 alpha-2 country codes."
+        },
+        "address": {
+          "$ref": "#/$defs/Address"
+        },
+        "identificationDocuments": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/IdentificationDocument" }
+        },
+        "contactDetails": {
+          "$ref": "#/$defs/ContactDetails"
+        },
+        "politicallyExposedPerson": {
+          "type": "boolean",
+          "description": "Whether the person is a PEP."
+        },
+        "sourceOfFunds": {
+          "type": "string",
+          "description": "Description of the source of funds."
+        },
+        "sourceOfWealth": {
+          "type": "string",
+          "description": "Description of the source of wealth."
+        },
+        "occupation": {
+          "type": "string"
+        }
+      },
+      "required": ["name", "dateOfBirth"]
+    },
+    "LegalEntity": {
+      "type": "object",
+      "description": "Identity data for a legal entity (company, organization).",
+      "properties": {
+        "legalName": {
+          "type": "string",
+          "description": "Official registered name."
+        },
+        "tradingName": {
+          "type": "string",
+          "description": "Name used for trading/business."
+        },
+        "registrationNumber": {
+          "type": "string"
+        },
+        "leiCode": {
+          "type": "string",
+          "pattern": "^[A-Z0-9]{20}$",
+          "description": "Legal Entity Identifier (LEI), 20-character alphanumeric."
+        },
+        "incorporationDate": {
+          "type": "string",
+          "format": "date"
+        },
+        "incorporationCountry": {
+          "type": "string",
+          "pattern": "^[A-Z]{2}$",
+          "description": "ISO 3166-1 alpha-2 country code."
+        },
+        "entityType": {
+          "type": "string",
+          "enum": ["corporation", "partnership", "sole_proprietorship", "trust", "foundation", "government", "ngo", "other"]
+        },
+        "registeredAddress": {
+          "$ref": "#/$defs/Address"
+        },
+        "beneficialOwners": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/BeneficialOwner" },
+          "description": "Ultimate beneficial owners holding significant control."
+        },
+        "directors": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "role": { "type": "string" },
+              "dateOfBirth": { "type": "string", "format": "date" },
+              "nationality": { "type": "string", "pattern": "^[A-Z]{2}$" }
+            },
+            "required": ["name"]
+          }
+        },
+        "contactDetails": {
+          "$ref": "#/$defs/ContactDetails"
+        }
+      },
+      "required": ["legalName", "incorporationCountry"]
+    },
+    "TravelRule": {
+      "type": "object",
+      "description": "FATF Travel Rule data for virtual asset transfers (IVMS 101 aligned).",
+      "properties": {
+        "originator": {
+          "$ref": "#/$defs/TravelRuleParty"
+        },
+        "beneficiary": {
+          "$ref": "#/$defs/TravelRuleParty"
+        },
+        "originatingVASP": {
+          "$ref": "#/$defs/VASP"
+        },
+        "beneficiaryVASP": {
+          "$ref": "#/$defs/VASP"
+        },
+        "transactionReference": {
+          "type": "string",
+          "description": "Unique transaction identifier."
+        },
+        "transferAmount": {
+          "type": "object",
+          "properties": {
+            "amount": { "type": "string", "pattern": "^[0-9]+(\\.[0-9]+)?$" },
+            "currency": { "type": "string", "description": "ISO 4217 or virtual asset code." }
+          },
+          "required": ["amount", "currency"]
+        },
+        "transferDate": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["originator", "beneficiary", "originatingVASP", "beneficiaryVASP"]
+    },
+    "TravelRuleParty": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "accountNumber": { "type": "string" },
+        "address": { "$ref": "#/$defs/Address" },
+        "dateOfBirth": { "type": "string", "format": "date" },
+        "placeOfBirth": { "type": "string" },
+        "nationalIdentification": { "type": "string" }
+      },
+      "required": ["name", "accountNumber"]
+    },
+    "VASP": {
+      "type": "object",
+      "description": "Virtual Asset Service Provider identification.",
+      "properties": {
+        "name": { "type": "string" },
+        "leiCode": { "type": "string", "pattern": "^[A-Z0-9]{20}$" },
+        "registrationCountry": { "type": "string", "pattern": "^[A-Z]{2}$" },
+        "address": { "$ref": "#/$defs/Address" }
+      },
+      "required": ["name"]
+    },
+    "VerifiableCredential": {
+      "type": "object",
+      "description": "W3C Verifiable Credential wrapper for KYC/AML data.",
+      "properties": {
+        "@context": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "JSON-LD contexts."
+        },
+        "type": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "issuer": {
+          "type": "string",
+          "format": "uri",
+          "description": "DID or URI of the credential issuer."
+        },
+        "issuanceDate": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "expirationDate": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "credentialSubject": {
+          "type": "object",
+          "description": "The KYC/AML data as the credential subject."
+        },
+        "proof": {
+          "type": "object",
+          "description": "Digital proof/signature.",
+          "properties": {
+            "type": { "type": "string" },
+            "created": { "type": "string", "format": "date-time" },
+            "proofPurpose": { "type": "string" },
+            "verificationMethod": { "type": "string" },
+            "jws": { "type": "string" }
+          }
+        }
+      },
+      "required": ["@context", "type", "issuer", "issuanceDate", "credentialSubject"]
+    },
+    "RiskAssessment": {
+      "type": "object",
+      "description": "AML/CFT risk assessment output.",
+      "properties": {
+        "riskLevel": {
+          "type": "string",
+          "enum": ["low", "medium", "high", "prohibited"]
+        },
+        "riskScore": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "assessmentDate": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "nextReviewDate": {
+          "type": "string",
+          "format": "date"
+        },
+        "sanctions": {
+          "type": "object",
+          "properties": {
+            "screened": { "type": "boolean" },
+            "matched": { "type": "boolean" },
+            "lists": {
+              "type": "array",
+              "items": { "type": "string" }
+            }
+          }
+        },
+        "pepStatus": {
+          "type": "object",
+          "properties": {
+            "screened": { "type": "boolean" },
+            "matched": { "type": "boolean" },
+            "details": { "type": "string" }
+          }
+        },
+        "adverseMedia": {
+          "type": "object",
+          "properties": {
+            "screened": { "type": "boolean" },
+            "matched": { "type": "boolean" },
+            "details": { "type": "string" }
+          }
+        }
+      },
+      "required": ["riskLevel", "assessmentDate"]
+    },
+    "Metadata": {
+      "type": "object",
+      "description": "Record-keeping metadata.",
+      "properties": {
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" },
+        "createdBy": { "type": "string" },
+        "source": { "type": "string" },
+        "jurisdiction": { "type": "string", "pattern": "^[A-Z]{2}$" },
+        "dataClassification": {
+          "type": "string",
+          "enum": ["public", "internal", "confidential", "restricted"]
+        }
+      }
+    },
+    "Address": {
+      "type": "object",
+      "properties": {
+        "streetAddress": { "type": "string" },
+        "city": { "type": "string" },
+        "stateProvince": { "type": "string" },
+        "postalCode": { "type": "string" },
+        "country": { "type": "string", "pattern": "^[A-Z]{2}$", "description": "ISO 3166-1 alpha-2." }
+      },
+      "required": ["country"]
+    },
+    "IdentificationDocument": {
+      "type": "object",
+      "properties": {
+        "documentType": {
+          "type": "string",
+          "enum": ["passport", "national_id", "drivers_license", "residence_permit", "other"]
+        },
+        "documentNumber": { "type": "string" },
+        "issuingCountry": { "type": "string", "pattern": "^[A-Z]{2}$" },
+        "issueDate": { "type": "string", "format": "date" },
+        "expiryDate": { "type": "string", "format": "date" }
+      },
+      "required": ["documentType", "documentNumber", "issuingCountry"]
+    },
+    "ContactDetails": {
+      "type": "object",
+      "properties": {
+        "email": { "type": "string", "format": "email" },
+        "phone": { "type": "string" },
+        "website": { "type": "string", "format": "uri" }
+      }
+    },
+    "BeneficialOwner": {
+      "type": "object",
+      "description": "Person with significant ownership or control.",
+      "properties": {
+        "name": { "type": "string" },
+        "dateOfBirth": { "type": "string", "format": "date" },
+        "nationality": { "type": "string", "pattern": "^[A-Z]{2}$" },
+        "ownershipPercentage": { "type": "number", "minimum": 0, "maximum": 100 },
+        "controlType": {
+          "type": "string",
+          "enum": ["ownership", "voting_rights", "other_control"]
+        }
+      },
+      "required": ["name", "ownershipPercentage"]
+    }
+  }
+}
