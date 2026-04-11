@@ -1,0 +1,50 @@
+name: Validate Examples
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'schema/**'
+      - 'examples/**'
+      - 'tools/**'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'schema/**'
+      - 'examples/**'
+      - 'tools/**'
+
+permissions:
+  contents: read
+
+jobs:
+  validate-python:
+    name: Validate with Python
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install jsonschema
+      - name: Validate all examples
+        run: |
+          for f in examples/*.json; do
+            echo "Validating $f ..."
+            python tools/python/validate.py "$f"
+          done
+
+  validate-javascript:
+    name: Validate with JavaScript
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - run: npm install ajv ajv-formats
+      - name: Validate all examples
+        run: |
+          for f in examples/*.json; do
+            echo "Validating $f ..."
+            node tools/javascript/validate.js "$f"
+          done

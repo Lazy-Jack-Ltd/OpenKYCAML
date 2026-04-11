@@ -1,0 +1,37 @@
+{
+  "schemaVersion": "1.0.0",
+  "profileType": "naturalPerson",
+  "naturalPerson": {
+    "name": {
+      "firstName": "Alice",
+      "lastName": "Smith"
+    },
+    "dateOfBirth": "1990-06-15"
+  },
+  "travelRule": {
+    "originator": {
+      "name": "Alice Smith",
+      "accountNumber": "0x1234567890abcdef1234567890abcdef12345678"
+    },
+    "beneficiary": {
+      "name": "Bob Johnson",
+      "accountNumber": "0xabcdef1234567890abcdef1234567890abcdef12"
+    },
+    "originatingVASP": {
+      "name": "ExampleVASP Inc.",
+      "leiCode": "EXAMPLEVASP12345ABCD",
+      "registrationCountry": "US"
+    },
+    "beneficiaryVASP": {
+      "name": "ReceiverVASP Ltd.",
+      "leiCode": "RECEIVERVASP7890CD12",
+      "registrationCountry": "GB"
+    },
+    "transactionReference": "TX-2025-00001",
+    "transferAmount": {
+      "amount": "1500.00",
+      "currency": "USDC"
+    },
+    "transferDate": "2025-04-10T14:30:00Z"
+  }
+}

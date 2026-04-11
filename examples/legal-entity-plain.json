@@ -1,0 +1,75 @@
+{
+  "schemaVersion": "1.0.0",
+  "profileType": "legalEntity",
+  "legalEntity": {
+    "legalName": "Acme Fintech Solutions GmbH",
+    "tradingName": "Acme Fintech",
+    "registrationNumber": "HRB 12345",
+    "leiCode": "ACMEFINTECH123456ABC",
+    "incorporationDate": "2018-09-01",
+    "incorporationCountry": "DE",
+    "entityType": "corporation",
+    "registeredAddress": {
+      "streetAddress": "Friedrichstraße 100",
+      "city": "Berlin",
+      "stateProvince": "Berlin",
+      "postalCode": "10117",
+      "country": "DE"
+    },
+    "beneficialOwners": [
+      {
+        "name": "Hans Müller",
+        "dateOfBirth": "1975-08-12",
+        "nationality": "DE",
+        "ownershipPercentage": 60,
+        "controlType": "ownership"
+      },
+      {
+        "name": "Petra Schmidt",
+        "dateOfBirth": "1980-11-03",
+        "nationality": "DE",
+        "ownershipPercentage": 40,
+        "controlType": "ownership"
+      }
+    ],
+    "directors": [
+      {
+        "name": "Hans Müller",
+        "role": "CEO",
+        "dateOfBirth": "1975-08-12",
+        "nationality": "DE"
+      }
+    ],
+    "contactDetails": {
+      "email": "compliance@acme-fintech.example.com",
+      "phone": "+4930123456",
+      "website": "https://acme-fintech.example.com"
+    }
+  },
+  "riskAssessment": {
+    "riskLevel": "low",
+    "riskScore": 15,
+    "assessmentDate": "2025-04-01T09:00:00Z",
+    "nextReviewDate": "2026-04-01",
+    "sanctions": {
+      "screened": true,
+      "matched": false,
+      "lists": ["EU Sanctions List", "UN Sanctions List", "OFAC SDN"]
+    },
+    "pepStatus": {
+      "screened": true,
+      "matched": false
+    },
+    "adverseMedia": {
+      "screened": true,
+      "matched": false
+    }
+  },
+  "metadata": {
+    "createdAt": "2025-04-01T09:00:00Z",
+    "updatedAt": "2025-04-10T12:00:00Z",
+    "source": "corporate-onboarding",
+    "jurisdiction": "DE",
+    "dataClassification": "confidential"
+  }
+}

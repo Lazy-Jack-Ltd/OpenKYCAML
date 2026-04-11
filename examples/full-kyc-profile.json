@@ -1,0 +1,114 @@
+{
+  "schemaVersion": "1.0.0",
+  "profileType": "naturalPerson",
+  "naturalPerson": {
+    "name": {
+      "firstName": "John",
+      "lastName": "Doe",
+      "middleName": "Michael"
+    },
+    "dateOfBirth": "1988-07-04",
+    "placeOfBirth": "New York, USA",
+    "nationality": ["US", "IE"],
+    "address": {
+      "streetAddress": "350 Fifth Avenue",
+      "city": "New York",
+      "stateProvince": "NY",
+      "postalCode": "10118",
+      "country": "US"
+    },
+    "identificationDocuments": [
+      {
+        "documentType": "passport",
+        "documentNumber": "C01234567",
+        "issuingCountry": "US",
+        "issueDate": "2021-03-15",
+        "expiryDate": "2031-03-14"
+      },
+      {
+        "documentType": "drivers_license",
+        "documentNumber": "DL-NY-9876543",
+        "issuingCountry": "US",
+        "issueDate": "2022-01-10",
+        "expiryDate": "2030-01-09"
+      }
+    ],
+    "contactDetails": {
+      "email": "john.doe@example.com",
+      "phone": "+12125551234"
+    },
+    "politicallyExposedPerson": false,
+    "sourceOfFunds": "Employment and investments",
+    "sourceOfWealth": "Technology sector employment and stock options",
+    "occupation": "Financial Analyst"
+  },
+  "travelRule": {
+    "originator": {
+      "name": "John Doe",
+      "accountNumber": "0xabc123def456789abc123def456789abc123def4",
+      "address": {
+        "streetAddress": "350 Fifth Avenue",
+        "city": "New York",
+        "stateProvince": "NY",
+        "postalCode": "10118",
+        "country": "US"
+      },
+      "dateOfBirth": "1988-07-04",
+      "placeOfBirth": "New York, USA"
+    },
+    "beneficiary": {
+      "name": "Jane Roe",
+      "accountNumber": "0xdef789abc123456def789abc123456def789abc1"
+    },
+    "originatingVASP": {
+      "name": "AlphaExchange Inc.",
+      "leiCode": "ALPHAEXCHANGE12345AB",
+      "registrationCountry": "US",
+      "address": {
+        "streetAddress": "100 Wall Street",
+        "city": "New York",
+        "stateProvince": "NY",
+        "postalCode": "10005",
+        "country": "US"
+      }
+    },
+    "beneficiaryVASP": {
+      "name": "BetaAssets Ltd.",
+      "leiCode": "BETAASSETS1234567890",
+      "registrationCountry": "GB"
+    },
+    "transactionReference": "TX-2025-FULL-001",
+    "transferAmount": {
+      "amount": "25000.00",
+      "currency": "USDT"
+    },
+    "transferDate": "2025-04-10T16:00:00Z"
+  },
+  "riskAssessment": {
+    "riskLevel": "medium",
+    "riskScore": 42,
+    "assessmentDate": "2025-04-10T08:00:00Z",
+    "nextReviewDate": "2025-10-10",
+    "sanctions": {
+      "screened": true,
+      "matched": false,
+      "lists": ["OFAC SDN", "EU Sanctions List", "UN Sanctions List"]
+    },
+    "pepStatus": {
+      "screened": true,
+      "matched": false
+    },
+    "adverseMedia": {
+      "screened": true,
+      "matched": false
+    }
+  },
+  "metadata": {
+    "createdAt": "2025-04-10T08:00:00Z",
+    "updatedAt": "2025-04-10T16:30:00Z",
+    "createdBy": "onboarding-service-v2",
+    "source": "api-integration",
+    "jurisdiction": "US",
+    "dataClassification": "confidential"
+  }
+}
