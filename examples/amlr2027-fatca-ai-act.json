@@ -1,0 +1,354 @@
+{
+  "$schema": "https://openkycaml.org/schema/v1.9.1/kyc-aml-hybrid-extended.json",
+  "version": "1.18.0",
+  "messageId": "f7a8b9c0-d1e2-3f4a-5b6c-7d8e9f0a1b2c",
+  "messageDateTime": "2026-04-08T10:00:00Z",
+  "_comment": "End-to-end AMLR 2027 + FATCA Chapter 4 + EU AI Act integration example. Combines: predictiveAML (EU AI Act Art. 13, BCBS 239), taxStatus (FATCA GIIN, CRS multi-residency, OECD Pillar 2), pkiEvidence (eIDAS 2.0 QSealC X.509), legacyIdentifiers (X.500 DN), ivms101 (FATF R.16 Travel Rule), and kycProfile (AMLR Art. 22 EDD). This is the reference payload for implementers targeting full AMLR 2027 + FATCA + EU AI Act compliance from a single OpenKYCAML v1.9.1 envelope.",
+  "ivms101": {
+    "originator": {
+      "originatorPersons": [
+        {
+          "legalPerson": {
+            "name": {
+              "nameIdentifier": [
+                {
+                  "legalPersonName": "Nexus Capital Management Ltd",
+                  "legalPersonNameIdentifierType": "LEGL"
+                }
+              ]
+            },
+            "nationalIdentification": {
+              "nationalIdentifier": "213800NEXUSCAPITAL001",
+              "nationalIdentifierType": "LEIX",
+              "registrationAuthority": "RA000130"
+            },
+            "countryOfRegistration": "IE"
+          }
+        }
+      ],
+      "accountNumber": [
+        "IE64IRCE92050112345678"
+      ]
+    },
+    "beneficiary": {
+      "beneficiaryPersons": [
+        {
+          "legalPerson": {
+            "name": {
+              "nameIdentifier": [
+                {
+                  "legalPersonName": "Meridian Prime Fund SPC",
+                  "legalPersonNameIdentifierType": "LEGL"
+                }
+              ]
+            },
+            "countryOfRegistration": "KY"
+          }
+        }
+      ],
+      "accountNumber": [
+        "KY0098765432109876"
+      ]
+    },
+    "originatingVASP": {
+      "originatingVASP": {
+        "name": {
+          "nameIdentifier": [
+            {
+              "legalPersonName": "Atlantic VASP Services Ltd",
+              "legalPersonNameIdentifierType": "LEGL"
+            }
+          ]
+        },
+        "nationalIdentification": {
+          "nationalIdentifier": "635400ATLANTICVASP01",
+          "nationalIdentifierType": "LEIX"
+        },
+        "countryOfRegistration": "IE"
+      }
+    },
+    "beneficiaryVASP": {
+      "beneficiaryVASP": {
+        "name": {
+          "nameIdentifier": [
+            {
+              "legalPersonName": "Cayman Digital VASP Ltd",
+              "legalPersonNameIdentifierType": "LEGL"
+            }
+          ]
+        },
+        "countryOfRegistration": "KY"
+      }
+    }
+  },
+  "kycProfile": {
+    "customerRiskRating": "HIGH",
+    "dueDiligenceType": "EDD",
+    "onboardingChannel": "CORRESPONDENT",
+    "kycCompletionDate": "2026-03-01",
+    "beneficialOwnership": [
+      {
+        "fullLegalName": "Nexus Global Holdings PLC",
+        "ownershipPercentage": 80,
+        "controlMechanism": "SHAREHOLDING",
+        "verificationStatus": "VERIFIED",
+        "verificationDate": "2026-03-01",
+        "isPEP": false
+      },
+      {
+        "fullLegalName": "Jonathan P. Harrington",
+        "ownershipPercentage": 20,
+        "controlMechanism": "SHAREHOLDING",
+        "verificationStatus": "VERIFIED",
+        "verificationDate": "2026-03-01",
+        "isPEP": true,
+        "pepCategory": "FOREIGN_PEP"
+      }
+    ],
+    "sanctionsScreening": {
+      "screeningStatus": "CLEAR",
+      "screeningDate": "2026-04-07T06:00:00Z",
+      "listsChecked": [
+        "OFAC_SDN",
+        "EU_CONSOLIDATED",
+        "UN_CONSOLIDATED",
+        "HMT_FINANCIAL_SANCTIONS"
+      ]
+    },
+    "monitoringInfo": {
+      "monitoringLevel": "CONTINUOUS",
+      "monitoringStatus": "ACTIVE",
+      "eddRequired": true,
+      "lastReviewDate": "2026-03-01",
+      "nextReviewDate": "2026-06-01",
+      "reviewFrequency": "QUARTERLY",
+      "alertFrequency": "REAL_TIME",
+      "tmModelVersion": "temenos-financial-crime-mitigation-11.2"
+    },
+    "auditMetadata": {
+      "recordCreatedAt": "2026-03-01T09:00:00Z",
+      "recordUpdatedAt": "2026-04-08T09:00:00Z",
+      "recordVersion": 3,
+      "dataSourceSystem": "EDD-Platform-v4",
+      "dataRetentionDate": "2031-03-01"
+    }
+  },
+  "taxStatus": {
+    "tinIdentifiers": [
+      {
+        "jurisdiction": "IE",
+        "tinType": "TIN",
+        "tinValue": "IE6336214T",
+        "issuanceDate": "2015-01-01T00:00:00Z",
+        "verificationStatus": "verified",
+        "verificationSource": "Revenue-IE"
+      },
+      {
+        "jurisdiction": "US",
+        "tinType": "EIN",
+        "tinValue": "98-7654321",
+        "issuanceDate": "2016-07-15T00:00:00Z",
+        "verificationStatus": "verified",
+        "verificationSource": "IRS-TIN-Matching"
+      },
+      {
+        "jurisdiction": "DE",
+        "tinType": "TIN",
+        "tinValue": "86095742719",
+        "issuanceDate": "2018-03-01T00:00:00Z",
+        "verificationStatus": "verified",
+        "verificationSource": "OECD-TIN-list"
+      }
+    ],
+    "indirectTaxRegistrations": [
+      {
+        "taxType": "VAT",
+        "jurisdiction": "IE",
+        "registrationNumber": "IE6336214T",
+        "status": "active",
+        "effectiveFrom": "2015-01-01"
+      },
+      {
+        "taxType": "VAT",
+        "jurisdiction": "DE",
+        "registrationNumber": "DE123456789",
+        "status": "active",
+        "effectiveFrom": "2018-03-01"
+      }
+    ],
+    "crsTaxResidencies": [
+      {
+        "jurisdiction": "IE",
+        "tinValue": "IE6336214T",
+        "tinVerificationStatus": "verified",
+        "selfCertificationDate": "2026-01-10T09:00:00Z",
+        "controllingPersonFlag": false
+      },
+      {
+        "jurisdiction": "US",
+        "tinValue": "98-7654321",
+        "tinVerificationStatus": "verified",
+        "selfCertificationDate": "2026-01-10T09:00:00Z",
+        "controllingPersonFlag": false
+      },
+      {
+        "jurisdiction": "DE",
+        "tinValue": "86095742719",
+        "tinVerificationStatus": "verified",
+        "selfCertificationDate": "2026-01-10T09:00:00Z",
+        "controllingPersonFlag": false
+      }
+    ],
+    "fatcaStatus": {
+      "giin": "XYZ123.DEF45.LE.372",
+      "chapter4Classification": "registeredDeemedCompliantFFI",
+      "usTinRequired": true,
+      "temporaryReliefApplied": false,
+      "ffiListVerificationTimestamp": "2026-04-01T08:00:00Z",
+      "withholdingAgentReference": "WA-NEXUS-IE-2026-001"
+    },
+    "pillarTwo": {
+      "inScopeMNE": true,
+      "consolidatedRevenueEUR": 920000000,
+      "constituentEntityStatus": "inScope",
+      "etrJurisdictions": [
+        {
+          "jurisdiction": "IE",
+          "etr": 0.125
+        },
+        {
+          "jurisdiction": "US",
+          "etr": 0.21
+        },
+        {
+          "jurisdiction": "DE",
+          "etr": 0.298
+        }
+      ],
+      "safeHarbourApplied": "SubstanceBased",
+      "girFilingReference": "GIR-NEXUS-IE-2025-001",
+      "lastGIRDate": "2026-03-31T23:59:59Z"
+    }
+  },
+  "pkiEvidence": {
+    "x509Certificate": {
+      "serialNumber": "1A2B3C4D5E6F7A8B",
+      "subjectDN": "CN=Nexus Capital Management Ltd,OU=Finance,O=NexusCapital,C=IE,serialNumber=213800NEXUSCAPITAL001",
+      "issuerDN": "CN=IE-QTSP-ROOT-CA,O=Irish Qualified Trust Services Ltd,C=IE",
+      "validFrom": "2025-03-01T00:00:00Z",
+      "validTo": "2028-02-29T23:59:59Z",
+      "signatureAlgorithm": "ecdsa-with-SHA256",
+      "qcStatements": [
+        "id-etsi-qcs-QcCompliance",
+        "id-etsi-qcs-QcType-eSeal",
+        "id-etsi-qcs-QcSSCD",
+        "id-etsi-qcs-QcCClegislation"
+      ],
+      "crlDistributionPoints": [
+        "http://crl.ie-qtsp.example/crl/root.crl"
+      ],
+      "ocspResponderUrl": "http://ocsp.ie-qtsp.example",
+      "thumbprintSha256": "b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3"
+    },
+    "oids": [
+      {
+        "oid": "1.3.6.1.5.5.7.1.3",
+        "description": "id-pe-QCStatements",
+        "value": "QcCompliance + QcSSCD + QcType-eSeal"
+      },
+      {
+        "oid": "2.5.4.97",
+        "description": "organizationIdentifier (eIDAS 2.0 LPID / LEI in Subject DN)",
+        "value": "LEIXG-213800NEXUSCAPITAL001"
+      },
+      {
+        "oid": "1.3.6.1.5.5.7.48.1",
+        "description": "id-ad-ocsp — OCSP access method OID",
+        "value": "http://ocsp.ie-qtsp.example"
+      }
+    ],
+    "certificateDocumentRef": "urn:openkycaml:doc:ie:certificate-of-incorporation:nexus-capital:2026-03"
+  },
+  "legacyIdentifiers": {
+    "x500DN": "CN=Nexus Capital Management Ltd,OU=Finance,O=NexusCapital,C=IE,serialNumber=213800NEXUSCAPITAL001",
+    "x500DNType": "certificateSubject"
+  },
+  "predictiveAML": {
+    "modelMetadata": {
+      "modelId": "amlr2027-edd-risk-model-v2",
+      "modelVersion": "2.1.0",
+      "provider": "Temenos Financial Crime Mitigation",
+      "trainingDate": "2026-01-15T00:00:00Z",
+      "euAiActClassification": "high-risk-aml",
+      "conformityAssessmentReference": "EU-AIACT-2026-NB007-EDDPEP-00451"
+    },
+    "predictiveScores": [
+      {
+        "scoreType": "ubo_graph_risk",
+        "value": 76.0,
+        "confidence": 0.91,
+        "horizonDays": 30,
+        "timestamp": "2026-04-08T09:00:00Z"
+      },
+      {
+        "scoreType": "network_risk",
+        "value": 68.5,
+        "confidence": 0.87,
+        "horizonDays": 30,
+        "timestamp": "2026-04-08T09:00:00Z"
+      },
+      {
+        "scoreType": "transaction_anomaly",
+        "value": 62.0,
+        "confidence": 0.83,
+        "horizonDays": 14,
+        "timestamp": "2026-04-08T09:00:00Z"
+      }
+    ],
+    "featureVector": {
+      "pep_in_ubo_chain": true,
+      "offshore_counterparty_flag": true,
+      "pillar2_below_minimum_etr_jurisdictions": 1,
+      "fatca_giin_verified": true,
+      "x509_cert_valid_days_remaining": 662,
+      "crs_residency_count": 3
+    },
+    "explainability": {
+      "method": "SHAP",
+      "values": {
+        "pep_in_ubo_chain": 0.32,
+        "offshore_counterparty_flag": 0.28,
+        "pillar2_below_minimum_etr_jurisdictions": 0.21,
+        "crs_residency_count": 0.11,
+        "x509_cert_valid_days_remaining": -0.05
+      }
+    },
+    "riskEvolutionHistory": [
+      {
+        "timestamp": "2026-03-01T00:00:00Z",
+        "overallRiskScore": 58.0,
+        "deltaFromPrevious": 0.0
+      },
+      {
+        "timestamp": "2026-04-01T00:00:00Z",
+        "overallRiskScore": 70.0,
+        "deltaFromPrevious": 12.0
+      },
+      {
+        "timestamp": "2026-04-08T09:00:00Z",
+        "overallRiskScore": 76.0,
+        "deltaFromPrevious": 6.0
+      }
+    ],
+    "alertCorrelationId": "TEMENOS-FCM-2026-04512",
+    "dataAggregationMetadata": {
+      "bcbs239ComplianceLevel": "full",
+      "lastAggregationTimestamp": "2026-04-08T08:45:00Z",
+      "dataLineageReference": "urn:lineage:temenos-fcm:edd:job:20260408-084500"
+    }
+  },
+  "informationSharingFlags": {
+    "section314bSafeHarbor": true,
+    "sharingConsentTimestamp": "2026-04-08T09:00:00Z"
+  }
+}

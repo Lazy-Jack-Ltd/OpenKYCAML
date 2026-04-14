@@ -1,0 +1,42 @@
+{
+  "name": "@openkycaml/tools",
+  "version": "1.0.0",
+  "description": "OpenKYCAML validator and converter tools for JavaScript/Node.js",
+  "main": "validator.js",
+  "scripts": {
+    "validate": "node validator.js",
+    "test": "node --test tests/*.js",
+    "prepublishOnly": "npm test"
+  },
+  "keywords": [
+    "kyc",
+    "aml",
+    "ivms101",
+    "travel-rule",
+    "eidas",
+    "verifiable-credentials",
+    "compliance",
+    "fintech",
+    "vasp",
+    "schema-validation"
+  ],
+  "license": "Apache-2.0",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "ajv": "^8.17.1",
+    "ajv-formats": "^3.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Lazy-Jack-Ltd/openKYCAML.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Lazy-Jack-Ltd/openKYCAML/issues"
+  },
+  "homepage": "https://github.com/Lazy-Jack-Ltd/openKYCAML#readme"
+}

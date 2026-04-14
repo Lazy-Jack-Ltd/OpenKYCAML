@@ -1,0 +1,222 @@
+{
+  "$schema": "https://openkycaml.org/schema/v1.3.0/kyc-aml-hybrid-extended.json",
+  "version": "1.18.0",
+  "messageId": "b5c6d7e8-f9a0-4b1c-8d2e-3f4a5b6c7d8e",
+  "messageDateTime": "2025-08-01T14:15:00Z",
+  "_comment_eudi": "EUDI Wallet Travel Rule — Minimal. Hiroshi Tanaka (JP) sends BTC to Marie Dubois (FR). Marie presents her French eIDAS 2.0 PID at the beneficiary VASP. This is the minimal Travel Rule payload; FATF Rec 16 threshold met. DIDs: (1) Marie's EUDI Wallet DID, (2) French PID Issuer DID, (3) Beneficiary VASP DID. Originator is a Japanese customer identified by standard IVMS 101 (non-EU, no EUDI Wallet).",
+  "ivms101": {
+    "originator": {
+      "originatorPersons": [
+        {
+          "naturalPerson": {
+            "name": {
+              "nameIdentifier": [
+                {
+                  "primaryIdentifier": "Tanaka",
+                  "secondaryIdentifier": "Hiroshi",
+                  "nameIdentifierType": "LEGL"
+                }
+              ]
+            },
+            "nationalIdentification": {
+              "nationalIdentifier": "JP-MYNUMBER-1234-5678-9012",
+              "nationalIdentifierType": "TXID",
+              "countryOfIssue": "JP"
+            },
+            "customerIdentification": "CUST-JP-0087231",
+            "countryOfResidence": "JP"
+          }
+        }
+      ],
+      "accountNumber": [
+        "bc1qar0srrr7xfkvy5l643lydnw9re59gtzzwf5mdq"
+      ]
+    },
+    "beneficiary": {
+      "beneficiaryPersons": [
+        {
+          "naturalPerson": {
+            "name": {
+              "nameIdentifier": [
+                {
+                  "primaryIdentifier": "Dubois",
+                  "secondaryIdentifier": "Marie Élise",
+                  "nameIdentifierType": "LEGL"
+                }
+              ]
+            },
+            "geographicAddress": [
+              {
+                "addressType": "HOME",
+                "streetName": "Rue de Rivoli",
+                "buildingNumber": "12",
+                "townName": "Paris",
+                "postCode": "75001",
+                "country": "FR"
+              }
+            ],
+            "nationalIdentification": {
+              "nationalIdentifier": "FR-CNI-1234567890123",
+              "nationalIdentifierType": "IDCD",
+              "countryOfIssue": "FR"
+            },
+            "countryOfResidence": "FR",
+            "nationality": "FR"
+          }
+        }
+      ],
+      "accountNumber": [
+        "bc1p0xlxvlhemja6c4dqv22uapctqupfhlxm9h8z3k2e72q4k9hcz7vqzk5jj0"
+      ]
+    },
+    "originatingVASP": {
+      "name": "Tokyo Digital Assets Co., Ltd.",
+      "lei": "3538003FPHWP7EM5C773",
+      "vaspIdentifier": "JP-Tokyo Digital Assets Co., Ltd."
+    },
+    "beneficiaryVASP": {
+      "name": "CryptoFrance SAS",
+      "lei": "969500T6EEF8MJKQ5541",
+      "vaspIdentifier": "FR-CryptoFrance SAS"
+    },
+    "transferredAmount": {
+      "amount": "0.05",
+      "assetType": "BTC"
+    }
+  },
+  "verifiableCredential": {
+    "@context": [
+      "https://www.w3.org/ns/credentials/v2",
+      "https://openkycaml.org/contexts/v1",
+      "https://europa.eu/2018/credentials/eudi/v1"
+    ],
+    "id": "urn:uuid:b5c6d7e8-f9a0-4b1c-8d2e-3f4a5b6c7d8e",
+    "type": [
+      "VerifiableCredential",
+      "OpenKYCAMLCredential",
+      "TravelRuleAttestation"
+    ],
+    "_comment_issuer": "DID #3 — CryptoFrance SAS (beneficiary VASP, issuing the Travel Rule VC after verifying beneficiary PID)",
+    "issuer": {
+      "id": "did:web:cryptofrance.example.fr",
+      "name": "CryptoFrance SAS"
+    },
+    "credentialSubject": {
+      "_comment_subject": "DID #1 — Marie Dubois's EU Digital Identity Wallet DID (EBSI-anchored, FR national wallet)",
+      "id": "did:ebsi:z3KpWqR8mTvXnYbZhFjLcGaE",
+      "ivms101": {
+        "originator": {
+          "originatorPersons": [
+            {
+              "naturalPerson": {
+                "name": {
+                  "nameIdentifier": [
+                    {
+                      "primaryIdentifier": "Tanaka",
+                      "secondaryIdentifier": "Hiroshi",
+                      "nameIdentifierType": "LEGL"
+                    }
+                  ]
+                },
+                "nationalIdentification": {
+                  "nationalIdentifier": "JP-MYNUMBER-1234-5678-9012",
+                  "nationalIdentifierType": "TXID",
+                  "countryOfIssue": "JP"
+                },
+                "countryOfResidence": "JP"
+              }
+            }
+          ],
+          "accountNumber": [
+            "bc1qar0srrr7xfkvy5l643lydnw9re59gtzzwf5mdq"
+          ]
+        },
+        "beneficiary": {
+          "beneficiaryPersons": [
+            {
+              "naturalPerson": {
+                "name": {
+                  "nameIdentifier": [
+                    {
+                      "primaryIdentifier": "Dubois",
+                      "secondaryIdentifier": "Marie Élise",
+                      "nameIdentifierType": "LEGL"
+                    }
+                  ]
+                },
+                "geographicAddress": [
+                  {
+                    "addressType": "HOME",
+                    "streetName": "Rue de Rivoli",
+                    "buildingNumber": "12",
+                    "townName": "Paris",
+                    "postCode": "75001",
+                    "country": "FR"
+                  }
+                ],
+                "nationalIdentification": {
+                  "nationalIdentifier": "FR-CNI-1234567890123",
+                  "nationalIdentifierType": "IDCD",
+                  "countryOfIssue": "FR"
+                },
+                "countryOfResidence": "FR",
+                "nationality": "FR"
+              }
+            }
+          ],
+          "accountNumber": [
+            "bc1p0xlxvlhemja6c4dqv22uapctqupfhlxm9h8z3k2e72q4k9hcz7vqzk5jj0"
+          ]
+        },
+        "originatingVASP": {
+          "name": "Tokyo Digital Assets Co., Ltd.",
+          "lei": "3538003FPHWP7EM5C773",
+          "vaspIdentifier": "JP-Tokyo Digital Assets Co., Ltd."
+        },
+        "beneficiaryVASP": {
+          "name": "CryptoFrance SAS",
+          "lei": "969500T6EEF8MJKQ5541",
+          "vaspIdentifier": "FR-CryptoFrance SAS"
+        },
+        "transferredAmount": {
+          "amount": "0.05",
+          "assetType": "BTC"
+        }
+      }
+    },
+    "_comment_evidence": "DID #2 — French ANSSI (national PID Provider FR) issued the PID VC that Marie presented to CryptoFrance SAS. This evidence block creates the trust triangle.",
+    "evidence": [
+      {
+        "id": "urn:uuid:pid-fr-marie-dubois-2025-08-01",
+        "type": [
+          "PIDCredential",
+          "EUDIWalletPresentationEvidence"
+        ],
+        "verifier": "did:web:cryptofrance.example.fr",
+        "credentialIssuer": "did:web:pid-provider.anssi.example.fr",
+        "evidenceDocument": "French National Identity Card CNIe (eIDAS 2.0 PID — Regulation (EU) 2024/1183)",
+        "subjectPresence": "Digital",
+        "documentPresence": "Digital",
+        "presentationMethod": "OpenID4VP",
+        "presentationDate": "2025-08-01T14:13:00Z"
+      }
+    ],
+    "credentialStatus": {
+      "id": "https://cryptofrance.example.fr/status/v1#0771",
+      "type": "StatusList2021Entry"
+    },
+    "credentialSchema": {
+      "id": "https://openkycaml.org/schema/v1.3.0/kyc-aml-hybrid-extended.json",
+      "type": "JsonSchemaValidator2018"
+    },
+    "proof": {
+      "type": "Ed25519Signature2020",
+      "created": "2025-08-01T14:15:03Z",
+      "verificationMethod": "did:web:cryptofrance.example.fr#key-2",
+      "proofPurpose": "assertionMethod",
+      "proofValue": "zBn8Lq0yOwRs4UeG7IkZ2VcD5FtA9HjM3NpX6WbE1PmK"
+    },
+    "validFrom": "2025-08-01T14:15:00Z",
+    "validUntil": "2026-08-01T14:15:00Z"
+  }
+}

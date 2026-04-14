@@ -1,0 +1,371 @@
+{
+  "$schema": "https://openkycaml.org/schema/v1.3.0/kyc-aml-hybrid-extended.json",
+  "version": "1.18.0",
+  "messageId": "f1a5b964-7c8d-6e9f-0a1b-2c3d4e5f6a7b",
+  "messageDateTime": "2025-10-01T09:00:00Z",
+  "_comment_scenario": "Enhanced Beneficial Ownership — 4-Tier Corporate Chain. This example demonstrates AMLR Art. 26 deep beneficial ownership disclosure for a complex holding structure: Fatima Al-Rashidi (UAE national, 75%) ultimately controls Meridian Digital Assets Ltd (Cayman Islands) through a three-tier intermediate chain: [1] Al-Rashidi Family Office Holding Ltd (BVI, 100%) → [2] Meridian Holdings SA (Luxembourg, 88%) → [3] Meridian Ventures Ltd (Cayman, 75%). A second UBO, Sheikh Omar Al-Farsi, holds 20% directly (depth 1). The remaining 5% is dispersed below the 25% FATF threshold and not reported. This structure is increasingly common in crypto-native fund vehicles and AMLR Art. 26 requires full chain disclosure for all UBOs ≥ 25%.",
+  "ivms101": {
+    "originator": {
+      "originatorPersons": [
+        {
+          "legalPerson": {
+            "name": {
+              "nameIdentifier": [
+                {
+                  "legalPersonName": "Meridian Digital Assets Ltd",
+                  "legalPersonNameIdentifierType": "LEGL"
+                }
+              ]
+            },
+            "nationalIdentification": {
+              "nationalIdentifier": "KY-CI-MC-2020-000142",
+              "nationalIdentifierType": "RAID",
+              "countryOfIssue": "KY"
+            },
+            "countryOfRegistration": "KY"
+          }
+        }
+      ],
+      "accountNumber": [
+        "0x5C7Be4dFB4b72a4C25ad5BAaE56b5D1F7aB7a1C"
+      ]
+    },
+    "beneficiary": {
+      "beneficiaryPersons": [
+        {
+          "legalPerson": {
+            "name": {
+              "nameIdentifier": [
+                {
+                  "legalPersonName": "Prime Digital Exchange Ltd",
+                  "legalPersonNameIdentifierType": "LEGL"
+                }
+              ]
+            },
+            "nationalIdentification": {
+              "nationalIdentifier": "GB-CH-13456789",
+              "nationalIdentifierType": "RAID",
+              "countryOfIssue": "GB"
+            },
+            "countryOfRegistration": "GB"
+          }
+        }
+      ],
+      "accountNumber": [
+        "0x9F3a8Ed0fA4C2Bb7e1Cd5087Df6A2b3C4D5e6F7"
+      ]
+    },
+    "originatingVASP": {
+      "name": "Meridian Digital Assets Ltd",
+      "lei": "213800DZWM2ULYSJRN63",
+      "vaspIdentifier": "KY-Meridian Digital Assets Ltd"
+    },
+    "beneficiaryVASP": {
+      "name": "Prime Digital Exchange Ltd",
+      "lei": "213800PFGH1KDXSYA174",
+      "vaspIdentifier": "GB-Prime Digital Exchange Ltd"
+    },
+    "transferredAmount": {
+      "amount": "500000.00",
+      "assetType": "USDT"
+    }
+  },
+  "verifiableCredential": {
+    "@context": [
+      "https://www.w3.org/ns/credentials/v2",
+      "https://openkycaml.org/contexts/v1"
+    ],
+    "id": "urn:uuid:f1a5b964-7c8d-6e9f-0a1b-2c3d4e5f6a7b",
+    "type": [
+      "VerifiableCredential",
+      "OpenKYCAMLCredential",
+      "KYCAttestation"
+    ],
+    "issuer": {
+      "id": "did:web:prime-digital-exchange.example.co.uk",
+      "name": "Prime Digital Exchange Ltd"
+    },
+    "credentialSubject": {
+      "ivms101": {
+        "originator": {
+          "originatorPersons": [
+            {
+              "legalPerson": {
+                "name": {
+                  "nameIdentifier": [
+                    {
+                      "legalPersonName": "Meridian Digital Assets Ltd",
+                      "legalPersonNameIdentifierType": "LEGL"
+                    }
+                  ]
+                },
+                "nationalIdentification": {
+                  "nationalIdentifier": "KY-CI-MC-2020-000142",
+                  "nationalIdentifierType": "RAID",
+                  "countryOfIssue": "KY"
+                },
+                "countryOfRegistration": "KY"
+              }
+            }
+          ],
+          "accountNumber": [
+            "0x5C7Be4dFB4b72a4C25ad5BAaE56b5D1F7aB7a1C"
+          ]
+        },
+        "beneficiary": {
+          "beneficiaryPersons": [
+            {
+              "legalPerson": {
+                "name": {
+                  "nameIdentifier": [
+                    {
+                      "legalPersonName": "Prime Digital Exchange Ltd",
+                      "legalPersonNameIdentifierType": "LEGL"
+                    }
+                  ]
+                },
+                "nationalIdentification": {
+                  "nationalIdentifier": "GB-CH-13456789",
+                  "nationalIdentifierType": "RAID",
+                  "countryOfIssue": "GB"
+                },
+                "countryOfRegistration": "GB"
+              }
+            }
+          ],
+          "accountNumber": [
+            "0x9F3a8Ed0fA4C2Bb7e1Cd5087Df6A2b3C4D5e6F7"
+          ]
+        },
+        "originatingVASP": {
+          "name": "Meridian Digital Assets Ltd",
+          "lei": "213800DZWM2ULYSJRN63",
+          "vaspIdentifier": "KY-Meridian Digital Assets Ltd"
+        },
+        "beneficiaryVASP": {
+          "name": "Prime Digital Exchange Ltd",
+          "lei": "213800PFGH1KDXSYA174",
+          "vaspIdentifier": "GB-Prime Digital Exchange Ltd"
+        },
+        "transferredAmount": {
+          "amount": "500000.00",
+          "assetType": "USDT"
+        }
+      },
+      "kycProfile": {
+        "customerRiskRating": "HIGH",
+        "riskRatingDetail": {
+          "riskScore": 620,
+          "riskRatingDate": "2025-10-01",
+          "riskFactors": {
+            "geographicRisk": "HIGH",
+            "productRisk": "HIGH",
+            "channelRisk": "MEDIUM",
+            "customerTypeRisk": "HIGH",
+            "transactionRisk": "HIGH"
+          },
+          "ratingMethodology": "EBA Risk Factor Guidelines 2024 — offshore holding structure, complex UBO chain, high-value transaction"
+        },
+        "customerClassification": {
+          "customerType": "CORPORATE",
+          "industrySector": "CRYPTO_ASSETS",
+          "occupationOrPurpose": "Crypto-asset investment fund vehicle (Cayman exempted limited company)"
+        },
+        "dueDiligenceType": "EDD",
+        "pepStatus": {
+          "isPEP": false,
+          "pepCategory": "NOT_PEP",
+          "screeningDate": "2025-10-01",
+          "screeningProvider": "Refinitiv World-Check"
+        },
+        "sanctionsScreening": {
+          "screeningStatus": "CLEAR",
+          "screeningDate": "2025-10-01T08:50:00Z",
+          "screeningProvider": "Refinitiv World-Check",
+          "listsChecked": [
+            "OFAC_SDN",
+            "EU_CONSOLIDATED",
+            "UN_CONSOLIDATED",
+            "HMT",
+            "OFAC_CAATSA"
+          ]
+        },
+        "onboardingChannel": "REMOTE_AUTOMATED",
+        "kycCompletionDate": "2025-10-01",
+        "consentRecord": {
+          "consentGiven": true,
+          "consentDate": "2025-09-28T10:00:00Z",
+          "consentPurpose": [
+            "AML_SCREENING",
+            "DATA_SHARING_TRAVEL_RULE",
+            "EDD_REVIEW"
+          ]
+        },
+        "beneficialOwnership": [
+          {
+            "_comment_ubo1": "UBO 1: Fatima Al-Rashidi — effective 75% ultimate control through a 4-tier holding chain (AMLR Art. 26 full chain disclosure required for indirect ownership ≥ 25%).",
+            "person": {
+              "naturalPerson": {
+                "name": {
+                  "nameIdentifier": [
+                    {
+                      "primaryIdentifier": "Al-Rashidi",
+                      "secondaryIdentifier": "Fatima Noor",
+                      "nameIdentifierType": "LEGL"
+                    }
+                  ]
+                },
+                "nationalIdentification": {
+                  "nationalIdentifier": "AE-EMIRATESID-784-1978-7654321-0",
+                  "nationalIdentifierType": "IDCD",
+                  "countryOfIssue": "AE"
+                },
+                "dateAndPlaceOfBirth": {
+                  "dateOfBirth": "1978-03-12",
+                  "placeOfBirth": "Abu Dhabi"
+                },
+                "countryOfResidence": "AE"
+              }
+            },
+            "ownershipPercentage": 75,
+            "ownershipType": "INDIRECT",
+            "controlMechanism": "SHAREHOLDING",
+            "ownershipChainDepth": 4,
+            "intermediateEntities": [
+              {
+                "_comment_tier1": "Tier 1 (closest to subject entity): Meridian Ventures Ltd holds 75% of Meridian Digital Assets Ltd (subject entity).",
+                "legalPerson": {
+                  "name": {
+                    "nameIdentifier": [
+                      {
+                        "legalPersonName": "Meridian Ventures Ltd",
+                        "legalPersonNameIdentifierType": "LEGL"
+                      }
+                    ]
+                  },
+                  "nationalIdentification": {
+                    "nationalIdentifier": "KY-CI-MV-2018-000077",
+                    "nationalIdentifierType": "RAID",
+                    "countryOfIssue": "KY"
+                  },
+                  "countryOfRegistration": "KY"
+                },
+                "ownershipPercentage": 75,
+                "ownershipType": "DIRECT",
+                "controlMechanism": "SHAREHOLDING",
+                "jurisdiction": "KY"
+              },
+              {
+                "_comment_tier2": "Tier 2: Meridian Holdings SA holds 88% of Meridian Ventures Ltd.",
+                "legalPerson": {
+                  "name": {
+                    "nameIdentifier": [
+                      {
+                        "legalPersonName": "Meridian Holdings SA",
+                        "legalPersonNameIdentifierType": "LEGL"
+                      }
+                    ]
+                  },
+                  "nationalIdentification": {
+                    "nationalIdentifier": "LU-RCS-B247891",
+                    "nationalIdentifierType": "RAID",
+                    "countryOfIssue": "LU"
+                  },
+                  "countryOfRegistration": "LU"
+                },
+                "ownershipPercentage": 88,
+                "ownershipType": "DIRECT",
+                "controlMechanism": "SHAREHOLDING",
+                "jurisdiction": "LU"
+              },
+              {
+                "_comment_tier3": "Tier 3 (closest to UBO): Al-Rashidi Family Office Holding Ltd holds 100% of Meridian Holdings SA. Fatima Al-Rashidi is the sole UBO of the Family Office (verified by BVI beneficial ownership register).",
+                "legalPerson": {
+                  "name": {
+                    "nameIdentifier": [
+                      {
+                        "legalPersonName": "Al-Rashidi Family Office Holding Ltd",
+                        "legalPersonNameIdentifierType": "LEGL"
+                      }
+                    ]
+                  },
+                  "nationalIdentification": {
+                    "nationalIdentifier": "VG-BC-2015-000311",
+                    "nationalIdentifierType": "RAID",
+                    "countryOfIssue": "VG"
+                  },
+                  "countryOfRegistration": "VG"
+                },
+                "ownershipPercentage": 100,
+                "ownershipType": "DIRECT",
+                "controlMechanism": "SHAREHOLDING",
+                "jurisdiction": "VG"
+              }
+            ],
+            "verificationDate": "2025-09-28",
+            "isPEP": false
+          },
+          {
+            "_comment_ubo2": "UBO 2: Sheikh Omar Al-Farsi — 20% direct shareholding in Meridian Digital Assets Ltd. Below 25% FATF threshold but reported per EDD policy for high-risk corporate clients.",
+            "person": {
+              "naturalPerson": {
+                "name": {
+                  "nameIdentifier": [
+                    {
+                      "primaryIdentifier": "Al-Farsi",
+                      "secondaryIdentifier": "Omar Khalid",
+                      "nameIdentifierType": "LEGL"
+                    }
+                  ]
+                },
+                "nationalIdentification": {
+                  "nationalIdentifier": "AE-EMIRATESID-784-1972-1234567-9",
+                  "nationalIdentifierType": "IDCD",
+                  "countryOfIssue": "AE"
+                },
+                "dateAndPlaceOfBirth": {
+                  "dateOfBirth": "1972-07-04",
+                  "placeOfBirth": "Dubai"
+                },
+                "countryOfResidence": "AE"
+              }
+            },
+            "ownershipPercentage": 20,
+            "ownershipType": "DIRECT",
+            "controlMechanism": "SHAREHOLDING",
+            "ownershipChainDepth": 1,
+            "verificationDate": "2025-09-28",
+            "isPEP": false
+          }
+        ],
+        "auditMetadata": {
+          "recordId": "f1a5b964-7c8d-6e9f-0a1b-2c3d4e5f6a7b",
+          "recordCreatedAt": "2025-10-01T09:00:00Z",
+          "recordUpdatedAt": "2025-10-01T09:00:00Z",
+          "recordVersion": 1,
+          "createdBy": "edd-team@prime-digital-exchange.example.co.uk",
+          "dataSourceSystem": "EDD Corporate Registry v3.1",
+          "dataProvider": "Prime Digital Exchange Ltd",
+          "dataRetentionDate": "2035-10-01"
+        }
+      }
+    },
+    "credentialStatus": {
+      "id": "https://prime-digital-exchange.example.co.uk/status/v1#9001",
+      "type": "StatusList2021Entry"
+    },
+    "credentialSchema": {
+      "id": "https://openkycaml.org/schema/v1.3.0/kyc-aml-hybrid-extended.json",
+      "type": "JsonSchemaValidator2018"
+    },
+    "proof": {
+      "type": "Ed25519Signature2020",
+      "created": "2025-10-01T09:00:05Z",
+      "verificationMethod": "did:web:prime-digital-exchange.example.co.uk#key-1",
+      "proofPurpose": "assertionMethod",
+      "proofValue": "zDo0Nr2zPxTtO6WgI9MlB1YfH5EuA8VqJ7KjU4ZsS3GcE"
+    },
+    "validFrom": "2025-10-01T09:00:00Z",
+    "validUntil": "2026-10-01T09:00:00Z"
+  }
+}

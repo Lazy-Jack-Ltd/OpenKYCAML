@@ -1,0 +1,87 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://example.com/kyc-aml-data-standard-hybrid.json",
+  "title": "KYC/AML Data Standard (IVMS 101 + eIDAS 2.0 VC Hybrid)",
+  "description": "Hybrid schema: supports pure IVMS 101 OR a W3C Verifiable Credential wrapper (eIDAS 2.0 / ARF compatible). CredentialSubject can embed the full IVMS 101 payload for seamless mapping to PID/LPID.",
+  "type": "object",
+  "oneOf": [
+    {
+      "properties": {
+        "ivms101": { "$ref": "#/definitions/Ivms101Payload" }
+      },
+      "required": ["ivms101"]
+    },
+    {
+      "properties": {
+        "verifiableCredential": { "$ref": "#/definitions/VerifiableCredential" }
+      },
+      "required": ["verifiableCredential"]
+    }
+  ],
+  "definitions": {
+    "Ivms101Payload": {
+      "type": "object",
+      "properties": {
+        "originator": { "$ref": "#/definitions/Originator" },
+        "beneficiary": { "$ref": "#/definitions/Beneficiary" },
+        "originatingVASP": { "$ref": "#/definitions/VASP" },
+        "beneficiaryVASP": { "$ref": "#/definitions/VASP" },
+        "transferPath": { "$ref": "#/definitions/TransferPath" },
+        "payloadMetadata": { "$ref": "#/definitions/PayloadMetadata" }
+      },
+      "required": ["originator", "beneficiary", "originatingVASP", "beneficiaryVASP"]
+    },
+    "VerifiableCredential": {
+      "type": "object",
+      "properties": {
+        "@context": {
+          "type": "array",
+          "items": { "type": "string" },
+          "minItems": 1,
+          "contains": { "const": "https://www.w3.org/ns/credentials/v2" }
+        },
+        "id": { "type": "string", "format": "uri" },
+        "type": {
+          "type": "array",
+          "items": { "type": "string" },
+          "contains": { "const": "VerifiableCredential" }
+        },
+        "issuer": {
+          "oneOf": [
+            { "type": "string", "format": "uri" },
+            { "type": "object", "properties": { "id": { "type": "string", "format": "uri" } } }
+          ]
+        },
+        "validFrom": { "type": "string", "format": "date-time" },
+        "validUntil": { "type": "string", "format": "date-time" },
+        "credentialSubject": {
+          "type": "object",
+          "properties": {
+            "id": { "type": "string", "format": "uri" },
+            "ivms101": { "$ref": "#/definitions/Ivms101Payload" }
+          },
+          "required": ["ivms101"]
+        },
+        "proof": { "type": "object" }
+      },
+      "required": ["@context", "type", "issuer", "credentialSubject"]
+    },
+    "Originator": { "type": "object", "description": "IVMS 101 Originator (see current schema)" },
+    "Beneficiary": { "type": "object", "description": "IVMS 101 Beneficiary (see current schema)" },
+    "Person": { "type": "object", "description": "IVMS 101 Person (see current schema)" },
+    "NaturalPerson": { "type": "object", "description": "IVMS 101 NaturalPerson (see current schema)" },
+    "NaturalPersonName": { "type": "object", "description": "IVMS 101 NaturalPersonName (see current schema)" },
+    "NaturalPersonNameId": { "type": "object", "description": "IVMS 101 NaturalPersonNameId (see current schema)" },
+    "LocalNaturalPersonNameId": { "type": "object", "description": "IVMS 101 LocalNaturalPersonNameId (see current schema)" },
+    "LegalPerson": { "type": "object", "description": "IVMS 101 LegalPerson (see current schema)" },
+    "LegalPersonName": { "type": "object", "description": "IVMS 101 LegalPersonName (see current schema)" },
+    "LegalPersonNameId": { "type": "object", "description": "IVMS 101 LegalPersonNameId (see current schema)" },
+    "LocalLegalPersonNameId": { "type": "object", "description": "IVMS 101 LocalLegalPersonNameId (see current schema)" },
+    "Address": { "type": "object", "description": "IVMS 101 Address (see current schema)" },
+    "NationalIdentification": { "type": "object", "description": "IVMS 101 NationalIdentification (see current schema)" },
+    "DateAndPlaceOfBirth": { "type": "object", "description": "IVMS 101 DateAndPlaceOfBirth (see current schema)" },
+    "VASP": { "type": "object", "description": "IVMS 101 VASP (see current schema)" },
+    "TransferPath": { "type": "object", "description": "IVMS 101 TransferPath (see current schema)" },
+    "PayloadMetadata": { "type": "object", "description": "IVMS 101 PayloadMetadata (see current schema)" }
+  }
+}

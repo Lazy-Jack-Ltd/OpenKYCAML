@@ -1,0 +1,280 @@
+{
+  "$schema": "https://openkycaml.org/schema/v1.13.0/kyc-aml-hybrid-extended.json",
+  "version": "1.18.0",
+  "messageId": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
+  "messageDateTime": "2026-04-15T11:30:00Z",
+  "ivms101": {
+    "originator": {
+      "originatorPersons": [
+        {
+          "legalPerson": {
+            "name": {
+              "nameIdentifier": [
+                {
+                  "legalPersonName": "Meridian Capital Partners S.A.",
+                  "legalPersonNameIdentifierType": "LEGL"
+                },
+                {
+                  "legalPersonName": "MCP",
+                  "legalPersonNameIdentifierType": "SHRT"
+                }
+              ]
+            },
+            "geographicAddress": [
+              {
+                "addressType": "REGISTERED_OFFICE",
+                "streetName": "Rue du Marché",
+                "buildingNumber": "5",
+                "postCode": "1204",
+                "townName": "Geneva",
+                "country": "CH",
+                "isPrimary": true,
+                "effectiveFrom": "2015-01-01"
+              },
+              {
+                "addressType": "PRINCIPAL_PLACE_OF_BUSINESS",
+                "streetName": "Bahnhofstrasse",
+                "buildingNumber": "100",
+                "postCode": "8001",
+                "townName": "Zurich",
+                "country": "CH",
+                "isPrimary": false,
+                "effectiveFrom": "2018-06-01"
+              },
+              {
+                "addressType": "BILLING",
+                "streetName": "Rue du Marché",
+                "buildingNumber": "5",
+                "postCode": "1204",
+                "townName": "Geneva",
+                "country": "CH"
+              }
+            ],
+            "customerNumber": "CUST-CH-0099123",
+            "lei": "529900T8BM49AURSDO55",
+            "nationalIdentification": {
+              "nationalIdentifier": "CH-IDE-CHE-123456789",
+              "nationalIdentifierType": "LEIX",
+              "countryOfIssue": "CH",
+              "registrationAuthority": "RA000534"
+            },
+            "countryOfRegistration": "CH",
+            "legalFormCode": "8888",
+            "legalFormDescription": "Société Anonyme (SA) — Swiss public limited company",
+            "entityType": "COMPANY",
+            "dateOfIncorporation": "2005-03-15",
+            "dateOfRegistration": "2005-03-20",
+            "operationalStatus": "ACTIVE",
+            "numberOfEmployees": 42,
+            "annualRevenue": 12500000,
+            "annualRevenueCurrency": "CHF",
+            "annualRevenueVerificationDate": "2026-01-31",
+            "websiteUrl": "https://www.meridian-capital.ch",
+            "socialMediaProfiles": [
+              {
+                "platform": "LINKEDIN",
+                "url": "https://www.linkedin.com/company/meridian-capital-partners",
+                "isVerified": true
+              },
+              {
+                "platform": "TWITTER",
+                "url": "https://twitter.com/MeridianCapCH",
+                "isVerified": false
+              }
+            ],
+            "industryCodes": [
+              {
+                "codeSystem": "NACE",
+                "codeValue": "6499",
+                "codeDescription": "Other financial service activities, except insurance and pension funding n.e.c."
+              },
+              {
+                "codeSystem": "NAICS",
+                "codeValue": "523910",
+                "codeDescription": "Miscellaneous Intermediation"
+              }
+            ],
+            "registeredAgent": {
+              "name": "Swiss Corporate Services AG",
+              "jurisdiction": "CH",
+              "address": {
+                "addressType": "REGISTERED_OFFICE",
+                "streetName": "Dufourstrasse",
+                "buildingNumber": "101",
+                "postCode": "8008",
+                "townName": "Zurich",
+                "country": "CH"
+              },
+              "agentType": "REGISTERED_AGENT"
+            },
+            "emailAddresses": [
+              {
+                "emailType": "WORK",
+                "emailAddress": "compliance@meridian-capital.ch",
+                "isPrimary": true,
+                "verificationStatus": "VERIFIED"
+              },
+              {
+                "emailType": "OTHER",
+                "emailAddress": "info@meridian-capital.ch",
+                "isPrimary": false,
+                "verificationStatus": "VERIFIED"
+              }
+            ],
+            "phoneNumbers": [
+              {
+                "phoneType": "WORK",
+                "phoneNumber": "+41224567890",
+                "isPrimary": true
+              },
+              {
+                "phoneType": "FAX",
+                "phoneNumber": "+41224567899",
+                "isPrimary": false
+              }
+            ],
+            "faxNumber": "+41224567899",
+            "lpid": {
+              "currentLegalName": "Meridian Capital Partners S.A.",
+              "uniqueIdentifier": "CHE-123456789",
+              "vatRegistrationNumber": "CHE123456789",
+              "lei": "529900T8BM49AURSDO55",
+              "mandates": [
+                {
+                  "mandateType": "SOLE",
+                  "signatoryName": "Jean-Pierre Fontaine",
+                  "signatoryRef": "DIR-001",
+                  "scope": "All corporate transactions up to CHF 500,000",
+                  "effectiveFrom": "2020-01-01"
+                },
+                {
+                  "mandateType": "JOINT_ANY_TWO",
+                  "signatoryName": "Anna Weber",
+                  "signatoryRef": "DIR-002",
+                  "scope": "Transactions exceeding CHF 500,000 require two authorised signatories",
+                  "effectiveFrom": "2021-06-01"
+                },
+                {
+                  "mandateType": "LIMITED",
+                  "signatoryName": "Marc Dupont",
+                  "signatoryRef": "MGR-045",
+                  "scope": "Payments up to CHF 50,000 for operational expenses only",
+                  "effectiveFrom": "2023-01-01",
+                  "effectiveTo": "2026-12-31"
+                }
+              ]
+            },
+            "entityGovernance": {
+              "regulatoryStatus": "REGULATED",
+              "regulators": [
+                {
+                  "regulatorName": "FINMA",
+                  "jurisdiction": "CH",
+                  "licenceNumber": "FINMA-2005-00451"
+                }
+              ],
+              "listedStatus": {
+                "isListed": false
+              },
+              "parentRegulated": true,
+              "parentListed": false,
+              "majorityOwnedSubsidiary": true,
+              "stateOwned": false,
+              "ultimateParentLEI": "969500UEQ0IN4ZW0CL09",
+              "ultimateParentName": "Global Asset Management Holdings AG",
+              "groupName": "Global Asset Management Group",
+              "groupLEI": "969500UEQ0IN4ZW0CL09"
+            },
+            "tags": [
+              "private-equity",
+              "regulated-ch",
+              "annual-review-2027"
+            ],
+            "customAttributes": {
+              "crmAccountId": "ACC-CH-2024-00991",
+              "salesforceId": "0011X00000ABC123",
+              "internalRiskBand": "B"
+            }
+          }
+        }
+      ],
+      "accountNumber": [
+        "CH5604835012345678009"
+      ]
+    },
+    "beneficiary": {
+      "beneficiaryPersons": [
+        {
+          "legalPerson": {
+            "name": {
+              "nameIdentifier": [
+                {
+                  "legalPersonName": "Alpine Investment Fund Ltd",
+                  "legalPersonNameIdentifierType": "LEGL"
+                }
+              ]
+            },
+            "geographicAddress": [
+              {
+                "addressType": "REGISTERED_OFFICE",
+                "streetName": "Harbour Place",
+                "buildingNumber": "103",
+                "postCode": "KY1-1003",
+                "townName": "George Town",
+                "country": "KY"
+              }
+            ],
+            "nationalIdentification": {
+              "nationalIdentifier": "KY-COMPANY-CR-12345",
+              "nationalIdentifierType": "LEIX",
+              "countryOfIssue": "KY"
+            },
+            "countryOfRegistration": "KY"
+          }
+        }
+      ],
+      "accountNumber": [
+        "GB29NWBK60161331926819"
+      ]
+    },
+    "originatingVASP": {
+      "name": "Meridian Capital Partners S.A.",
+      "lei": "529900T8BM49AURSDO55",
+      "vaspIdentifier": "CH-Meridian Capital Partners SA"
+    },
+    "beneficiaryVASP": {
+      "name": "Cayman Digital Assets Ltd",
+      "lei": "254900OPPU84GM83OE79",
+      "vaspIdentifier": "KY-Cayman Digital Assets Ltd"
+    },
+    "transferredAmount": {
+      "amount": "750000.00",
+      "assetType": "USD"
+    }
+  },
+  "kycProfile": {
+    "customerRiskRating": "MEDIUM",
+    "customerClassification": {
+      "customerType": "LEGAL_ENTITY",
+      "industrySector": "Asset Management"
+    },
+    "dueDiligenceType": "EDD",
+    "relationshipManagerId": "RM-00892",
+    "relationshipManagerName": "Sophie Bernhard",
+    "primaryBranchCode": "GVA-CORP-02",
+    "servingBusinessUnit": "Corporate & Institutional",
+    "customerSegment": "INSTITUTIONAL",
+    "estimatedNetWorth": 85000000,
+    "estimatedNetWorthCurrency": "CHF",
+    "estimatedNetWorthDate": "2026-01-15",
+    "tags": [
+      "edd-required",
+      "cross-border-ch-ky",
+      "annual-review"
+    ],
+    "customAttributes": {
+      "riskCommitteeApproval": "RC-2026-00112",
+      "lastEDDDate": "2025-12-01"
+    }
+  }
+}

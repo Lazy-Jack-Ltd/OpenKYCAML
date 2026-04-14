@@ -1,51 +1,99 @@
 {
-  "schemaVersion": "1.0.0",
-  "profileType": "naturalPerson",
-  "naturalPerson": {
-    "name": {
-      "firstName": "Maria",
-      "lastName": "García",
-      "middleName": "Elena"
+  "$schema": "https://openkycaml.org/schema/v1.3.0/kyc-aml-hybrid-extended.json",
+  "version": "1.18.0",
+  "messageId": "550e8400-e29b-41d4-a716-446655440001",
+  "messageDateTime": "2024-06-15T09:30:00Z",
+  "ivms101": {
+    "originator": {
+      "originatorPersons": [
+        {
+          "naturalPerson": {
+            "name": {
+              "nameIdentifier": [
+                {
+                  "primaryIdentifier": "Van Dijk",
+                  "secondaryIdentifier": "Pieter Jan",
+                  "nameIdentifierType": "LEGL"
+                }
+              ]
+            },
+            "geographicAddress": [
+              {
+                "addressType": "HOME",
+                "streetName": "Blockchain Avenue",
+                "buildingNumber": "21",
+                "townName": "Amsterdam",
+                "postCode": "1012AB",
+                "country": "NL"
+              }
+            ],
+            "nationalIdentification": {
+              "nationalIdentifier": "NL-PASSPORT-AB123456",
+              "nationalIdentifierType": "CCPT",
+              "countryOfIssue": "NL"
+            },
+            "customerIdentification": "CUST-NL-0000042",
+            "dateAndPlaceOfBirth": {
+              "dateOfBirth": "1985-04-05",
+              "placeOfBirth": "Amsterdam"
+            },
+            "countryOfResidence": "NL"
+          }
+        }
+      ],
+      "accountNumber": [
+        "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh"
+      ]
     },
-    "dateOfBirth": "1985-03-22",
-    "placeOfBirth": "Madrid, Spain",
-    "nationality": ["ES"],
-    "address": {
-      "streetAddress": "Calle Gran Vía 28",
-      "city": "Madrid",
-      "stateProvince": "Madrid",
-      "postalCode": "28013",
-      "country": "ES"
+    "beneficiary": {
+      "beneficiaryPersons": [
+        {
+          "naturalPerson": {
+            "name": {
+              "nameIdentifier": [
+                {
+                  "primaryIdentifier": "Hargreaves",
+                  "secondaryIdentifier": "Thomas James",
+                  "nameIdentifierType": "LEGL"
+                }
+              ]
+            },
+            "geographicAddress": [
+              {
+                "addressType": "HOME",
+                "streetName": "Pieter Jan Street",
+                "buildingNumber": "10",
+                "townName": "London",
+                "postCode": "EC2V 8RF",
+                "country": "GB"
+              }
+            ],
+            "nationalIdentification": {
+              "nationalIdentifier": "GB-PASSPORT-HF987654",
+              "nationalIdentifierType": "CCPT",
+              "countryOfIssue": "GB"
+            },
+            "countryOfResidence": "GB"
+          }
+        }
+      ],
+      "accountNumber": [
+        "3J98t1WpEZ73CNmQviecrnyiWrnqRhWNLy"
+      ]
     },
-    "identificationDocuments": [
-      {
-        "documentType": "passport",
-        "documentNumber": "PAA123456",
-        "issuingCountry": "ES",
-        "issueDate": "2020-01-15",
-        "expiryDate": "2030-01-14"
-      },
-      {
-        "documentType": "national_id",
-        "documentNumber": "12345678Z",
-        "issuingCountry": "ES",
-        "issueDate": "2019-06-01",
-        "expiryDate": "2029-05-31"
-      }
-    ],
-    "contactDetails": {
-      "email": "maria.garcia@example.com",
-      "phone": "+34600123456"
+    "originatingVASP": {
+      "name": "Acme Crypto Exchange BV",
+      "lei": "724500VNNHZHYDLFMO70",
+      "vaspIdentifier": "NL-Acme Crypto Exchange BV"
     },
-    "politicallyExposedPerson": false,
-    "sourceOfFunds": "Employment income",
-    "occupation": "Software Engineer"
-  },
-  "metadata": {
-    "createdAt": "2025-04-10T10:00:00Z",
-    "updatedAt": "2025-04-10T10:00:00Z",
-    "source": "onboarding-portal",
-    "jurisdiction": "ES",
-    "dataClassification": "confidential"
+    "beneficiaryVASP": {
+      "name": "FinTech Exchange Ltd",
+      "lei": "213800WSGIIZCXF1P572",
+      "vaspIdentifier": "GB-FinTech Exchange Ltd"
+    },
+    "transferredAmount": {
+      "amount": "0.5",
+      "assetType": "BTC"
+    }
   }
 }

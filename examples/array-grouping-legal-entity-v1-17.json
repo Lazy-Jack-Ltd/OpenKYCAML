@@ -1,0 +1,190 @@
+{
+  "$schema": "https://openkycaml.org/schema/v1.17.0/kyc-aml-hybrid-extended.json",
+  "version": "1.18.0",
+  "messageId": "d4e5f6a7-b8c9-40d1-e2f3-a4b5c6d7e8f9",
+  "messageDateTime": "2026-04-14T09:00:00Z",
+  "messageType": "KYC_PROFILE",
+  "ivms101": {
+    "originator": {
+      "originatorPersons": [
+        {
+          "legalPerson": {
+            "name": {
+              "nameIdentifier": [
+                {
+                  "legalPersonName": "Meridian Capital Partners Ltd",
+                  "legalPersonNameIdentifierType": "LEGL"
+                }
+              ]
+            },
+            "geographicAddress": [
+              {
+                "addressType": "BIZZ",
+                "streetName": "1 Canada Square",
+                "townName": "London",
+                "postCode": "E14 5AB",
+                "country": "GB"
+              }
+            ],
+            "nationalIdentification": {
+              "nationalIdentifier": "213800RQHF4EPIMZQ349",
+              "nationalIdentifierType": "LEIX",
+              "countryOfIssue": "GB"
+            },
+            "legalNationalIdentifiers": [
+              {
+                "nationalIdentifier": "213800RQHF4EPIMZQ349",
+                "nationalIdentifierType": "LEIX",
+                "countryOfIssue": "GB"
+              },
+              {
+                "nationalIdentifier": "GB12345678",
+                "nationalIdentifierType": "MISC",
+                "countryOfIssue": "GB",
+                "registrationAuthority": "RA000585"
+              }
+            ],
+            "countryOfRegistration": "GB",
+            "customerNumber": "CUST-LE-2024-001",
+            "annualRevenue": 4500000,
+            "annualRevenueCurrency": "GBP",
+            "annualRevenueVerificationDate": "2024-03-31",
+            "revenueHistory": [
+              {
+                "amount": 3100000,
+                "currency": "GBP",
+                "fiscalYear": 2022,
+                "verificationDate": "2023-03-31",
+                "verificationSource": "AUDITED_ACCOUNTS"
+              },
+              {
+                "amount": 3900000,
+                "currency": "GBP",
+                "fiscalYear": 2023,
+                "verificationDate": "2024-03-31",
+                "verificationSource": "AUDITED_ACCOUNTS"
+              },
+              {
+                "amount": 4500000,
+                "currency": "GBP",
+                "fiscalYear": 2024,
+                "verificationDate": "2024-03-31",
+                "verificationSource": "MANAGEMENT_ACCOUNTS"
+              }
+            ],
+            "registeredAgent": {
+              "name": "Maples Corporate Services Ltd",
+              "jurisdiction": "KY",
+              "agentType": "REGISTERED_AGENT"
+            },
+            "registeredAgents": [
+              {
+                "name": "Maples Corporate Services Ltd",
+                "jurisdiction": "KY",
+                "agentType": "REGISTERED_AGENT"
+              },
+              {
+                "name": "Caledonian Secretarial Services Ltd",
+                "jurisdiction": "KY",
+                "agentType": "COMPANY_SECRETARY"
+              }
+            ],
+            "entityGovernance": {
+              "regulatoryStatus": "REGULATED",
+              "regulators": [
+                {
+                  "regulatorName": "Financial Conduct Authority",
+                  "jurisdiction": "GB",
+                  "licenceNumber": "FRN-123456"
+                }
+              ],
+              "parentCompany": {
+                "legalEntityIdentifier": "GB98765432",
+                "jurisdiction": "GB",
+                "parentName": "Meridian Group Holdings PLC"
+              },
+              "parentCompanies": [
+                {
+                  "legalEntityIdentifier": "GB98765432",
+                  "jurisdiction": "GB",
+                  "parentName": "Meridian Group Holdings PLC"
+                },
+                {
+                  "legalEntityIdentifier": "KY1234567",
+                  "jurisdiction": "KY",
+                  "parentName": "Cayman Co-Invest GP Ltd"
+                }
+              ],
+              "parentRegulated": true,
+              "stateOwned": false,
+              "listedStatus": {
+                "isListed": false
+              }
+            },
+            "emailAddresses": [
+              {
+                "emailAddress": "compliance@meridian.example.com",
+                "isPrimary": true
+              }
+            ],
+            "phoneNumbers": [
+              {
+                "phoneNumber": "+441234567890",
+                "isPrimary": true
+              }
+            ]
+          }
+        }
+      ],
+      "accountNumber": [
+        "GB29NWBK60161331926819"
+      ]
+    },
+    "beneficiary": {
+      "beneficiaryPersons": [
+        {
+          "legalPerson": {
+            "name": {
+              "nameIdentifier": [
+                {
+                  "legalPersonName": "Counterparty Holdings Ltd",
+                  "legalPersonNameIdentifierType": "LEGL"
+                }
+              ]
+            },
+            "customerNumber": "CUST-BENE-LE-001"
+          }
+        }
+      ],
+      "accountNumber": [
+        "GB29NWBK60161331926820"
+      ]
+    },
+    "originatingVASP": {
+      "name": "OpenKYCAML Reference Bank",
+      "lei": "213800RQHF4EPIMZQ349",
+      "vaspIdentifier": "GB-OpenKYCAML-Reference-Bank"
+    },
+    "beneficiaryVASP": {
+      "name": "OpenKYCAML Reference Bank",
+      "lei": "213800RQHF4EPIMZQ349",
+      "vaspIdentifier": "GB-OpenKYCAML-Reference-Bank"
+    }
+  },
+  "kycProfile": {
+    "customerRiskRating": "HIGH",
+    "dueDiligenceType": "EDD",
+    "kycCompletionDate": "2024-02-01",
+    "sanctionsScreening": {
+      "screeningStatus": "CLEAR",
+      "screeningDate": "2024-02-01T00:00:00Z",
+      "screeningProvider": "Refinitiv World-Check",
+      "listsChecked": [
+        "UN",
+        "EU",
+        "OFAC",
+        "HMT"
+      ]
+    }
+  }
+}

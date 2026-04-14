@@ -1,0 +1,133 @@
+# OpenKYCAML v1.11.0 — Cell Company (PCC / ICC) Mapping
+# See docs/mappings/cell-company.md for full documentation.
+
+schema_version: "1.11.0"
+mapping_name: "cell-company"
+description: >
+  Schema support for Protected Cell Companies (PCC) and Incorporated Cell Companies (ICC).
+  New $defs: CellCompanyType, CellCompanyDetails, ParentCellCompanyReference.
+  LegalPerson extended with cellCompanyDetails, parentCellCompanyReference,
+  cellRiskProfileOverride, cellSourceOfFundsWealth, cellAuditMetadata.
+  All additions are strictly additive and backward-compatible.
+
+standards:
+  - name: "FATF Recommendation 24"
+    description: "Transparency and beneficial ownership of legal persons."
+    url: "https://www.fatf-gafi.org/en/recommendations/fatfrecommendations.html"
+  - name: "FATF Recommendation 25"
+    description: "Transparency and beneficial ownership of legal arrangements."
+    url: "https://www.fatf-gafi.org/en/recommendations/fatfrecommendations.html"
+  - name: "AMLR 2024 Art. 26"
+    description: "Customer due diligence on legal entities — ownership and control structure verification."
+    url: "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A32024R1624"
+  - name: "AMLR 2024 Art. 29"
+    description: "Enhanced due diligence — source of funds and wealth."
+    url: "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A32024R1624"
+  - name: "AMLR 2024 Art. 56"
+    description: "Record retention — minimum 5 years."
+    url: "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A32024R1624"
+  - name: "FATF Recommendation 16"
+    description: "Wire transfers / Travel Rule — counterparty identification."
+    url: "https://www.fatf-gafi.org/en/recommendations/fatfrecommendations.html"
+  - name: "IVMS 101"
+    url: "https://intervasp.org/"
+  - name: "eIDAS 2.0 LPID"
+    url: "https://digital-strategy.ec.europa.eu/en/policies/eudi-wallet-implementation"
+
+cell_company_types:
+  - value: NONE
+    description: Ordinary non-cell company (default)
+    independent_legal_personality: true
+  - value: PCC_CORE
+    description: Overarching Protected Cell Company entity
+    independent_legal_personality: true
+    typical_jurisdictions: [GG, JE, IM, KY, MT, GI]
+  - value: PCC_CELL
+    description: Non-incorporated cell within a PCC
+    independent_legal_personality: false
+    typical_jurisdictions: [GG, JE, IM, KY, MT, GI]
+  - value: ICC_CORE
+    description: Incorporated Cell Company coordinating core
+    independent_legal_personality: true
+    typical_jurisdictions: [GG, JE, IM, KY]
+  - value: ICC_CELL
+    description: Incorporated cell with own legal personality and registration
+    independent_legal_personality: true
+    typical_jurisdictions: [GG, JE, IM, KY]
+
+new_defs:
+  - name: CellCompanyType
+    type: string (enum)
+    values: [NONE, PCC_CORE, PCC_CELL, ICC_CORE, ICC_CELL]
+    added_in: "1.11.0"
+
+  - name: CellCompanyDetails
+    type: object
+    required: [cellCompanyType]
+    added_in: "1.11.0"
+    fields:
+      - field: cellCompanyType
+        ref: CellCompanyType
+        required: true
+      - field: cellIdentifier
+        type: string
+        pattern: "^[A-Za-z0-9 \\-]{1,64}$"
+        max_length: 64
+      - field: cellName
+        type: string
+        max_length: 128
+      - field: cellRegistrationNumber
+        type: string
+        pattern: "^[A-Z0-9]{1,35}$"
+        max_length: 35
+        notes: ICC cells only
+      - field: hasIndependentLegalPersonality
+        type: boolean
+      - field: isCellCompanyIssuer
+        type: boolean
+      - field: issuancePurpose
+        type: string (enum)
+        values: [INSURANCE_LINKED_SECURITY, CATASTROPHE_BOND, STRUCTURED_NOTE, DEBT_INSTRUMENT, OTHER]
+      - field: cellSpecificInstrumentReference
+        type: string
+        format: uri
+
+  - name: ParentCellCompanyReference
+    type: object
+    required: [legalEntityIdentifier, jurisdiction]
+    added_in: "1.11.0"
+    fields:
+      - field: legalEntityIdentifier
+        type: string
+        pattern: "^[A-Z0-9]{1,35}$"
+        max_length: 35
+        required: true
+      - field: jurisdiction
+        type: string
+        pattern: "^[A-Z]{2}$"
+        required: true
+      - field: parentName
+        type: string
+        max_length: 128
+
+legal_person_extensions:
+  - field: cellCompanyDetails
+    ref: CellCompanyDetails
+    optional: true
+    added_in: "1.11.0"
+  - field: parentCellCompanyReference
+    ref: ParentCellCompanyReference
+    optional: true
+    added_in: "1.11.0"
+  - field: cellRiskProfileOverride
+    ref: RiskSnapshot
+    optional: true
+    added_in: "1.11.0"
+  - field: cellSourceOfFundsWealth
+    ref: SourceOfFundsWealth
+    optional: true
+    added_in: "1.11.0"
+  - field: cellAuditMetadata
+    ref: AuditMetadata
+    optional: true
+    added_in: "1.11.0"

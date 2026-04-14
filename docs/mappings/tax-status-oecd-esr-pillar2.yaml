@@ -1,0 +1,181 @@
+standard: "OECD CRS/CARF TIN | EU VAT/GST/PST | ESR | OECD Pillar 2 GloBE"
+openkycaml_version: "1.9.0"
+last_updated: "2026-04-07"
+description: >
+  Machine-readable mapping of OECD CRS/CARF TIN, EU VAT/national GST-PST,
+  Economic Substance Regulations (ESR), and OECD Pillar 2 GloBE fields to
+  OpenKYCAML v1.9.0 taxStatus schema fields. For full narrative see
+  tax-status-oecd-esr-pillar2.md.
+
+mappings:
+  # ── §2  OECD CRS / CARF — TIN Identifiers ──────────────────────────────
+
+  - standard_section: "OECD CRS — TIN (account holder)"
+    regime: "OECD CRS / CARF / FATCA"
+    openkycaml_field: "taxStatus.tinIdentifiers[].tinValue"
+    coverage: full
+    notes: >
+      Structured replacement for IVMS 101 nationalIdentification.TXID.
+      Supports multi-jurisdiction arrays for dual-residency and MNE reporting.
+
+  - standard_section: "OECD CRS — TIN issuing jurisdiction"
+    regime: "OECD CRS / CARF / FATCA"
+    openkycaml_field: "taxStatus.tinIdentifiers[].jurisdiction"
+    coverage: full
+    notes: "ISO 3166-1 alpha-2 country code of issuing tax authority."
+
+  - standard_section: "OECD CRS — TIN type"
+    regime: "OECD CRS / CARF / FATCA"
+    openkycaml_field: "taxStatus.tinIdentifiers[].tinType"
+    coverage: full
+    notes: >
+      Enum: TIN | VAT | GST | PST | EIN | functionalEquivalent | other.
+      Use functionalEquivalent for jurisdictions without standard TINs (UK UTR, Chile RUT, AU TFN).
+
+  - standard_section: "OECD CRS — TIN verification status"
+    regime: "OECD CRS / CARF / FATCA"
+    openkycaml_field: "taxStatus.tinIdentifiers[].verificationStatus"
+    coverage: full
+    notes: "Enum: verified | unverified | revoked | suspended."
+
+  - standard_section: "OECD CRS — TIN verification source"
+    regime: "OECD CRS / CARF / FATCA"
+    openkycaml_field: "taxStatus.tinIdentifiers[].verificationSource"
+    coverage: full
+    notes: "e.g. OECD-TIN-list, HMRC-API, IRS-TIN-Matching, Revenue-IE."
+
+  - standard_section: "OECD CRS — TIN issuance date"
+    regime: "OECD CRS / CARF / FATCA"
+    openkycaml_field: "taxStatus.tinIdentifiers[].issuanceDate"
+    coverage: full
+    notes: "ISO 8601 date-time when TIN was issued or last confirmed."
+
+  # ── §3  EU VAT / National GST-PST ───────────────────────────────────────
+
+  - standard_section: "EU VAT — VIES registration"
+    regime: "EU VAT (VIES)"
+    openkycaml_field: "taxStatus.indirectTaxRegistrations[taxType=VAT]"
+    coverage: full
+    notes: "registrationNumber e.g. DE123456789. status: active | suspended | revoked | exempt."
+
+  - standard_section: "India GSTIN"
+    regime: "India GST"
+    openkycaml_field: "taxStatus.indirectTaxRegistrations[taxType=GST]"
+    coverage: full
+    notes: "registrationNumber e.g. 27AAPFU0939F1ZV. Verified via GST portal."
+
+  - standard_section: "Australia ABN/GST"
+    regime: "Australia GST"
+    openkycaml_field: "taxStatus.indirectTaxRegistrations[taxType=GST]"
+    coverage: full
+    notes: "registrationNumber = ABN e.g. 12 345 678 901. Verified via ABN Lookup."
+
+  - standard_section: "Canada HST"
+    regime: "Canada HST"
+    openkycaml_field: "taxStatus.indirectTaxRegistrations[taxType=HST]"
+    coverage: full
+    notes: "CRA Business Number HST component."
+
+  - standard_section: "Canada PST"
+    regime: "Canada PST"
+    openkycaml_field: "taxStatus.indirectTaxRegistrations[taxType=PST]"
+    coverage: full
+    notes: "Provincial Sales Tax registration number."
+
+  - standard_section: "US state sales tax"
+    regime: "US Sales Tax"
+    openkycaml_field: "taxStatus.indirectTaxRegistrations[taxType=salesTax]"
+    coverage: full
+    notes: "State-level sales tax registration; jurisdiction = US (or sub-code)."
+
+  # ── §4  Economic Substance Regulations ──────────────────────────────────
+
+  - standard_section: "ESR — jurisdiction"
+    regime: "ESR (BVI / Cayman / UAE / Jersey / Guernsey / Isle of Man)"
+    openkycaml_field: "taxStatus.economicSubstance.jurisdiction"
+    coverage: full
+    notes: "ISO 3166-1 alpha-2. KY=Cayman, VG=BVI, AE=UAE, JE=Jersey, GG=Guernsey, IM=Isle of Man."
+
+  - standard_section: "ESR — entity classification"
+    regime: "ESR (all jurisdictions)"
+    openkycaml_field: "taxStatus.economicSubstance.status"
+    coverage: full
+    notes: >
+      Enum: inScope-RelevantEntity | exempt-TaxResidentElsewhere |
+      exempt-PureEquityHolding | compliant | nonCompliant.
+      nonCompliant triggers EDD + possible SAR.
+
+  - standard_section: "ESR — relevant activities"
+    regime: "ESR (all jurisdictions)"
+    openkycaml_field: "taxStatus.economicSubstance.relevantActivities[]"
+    coverage: full
+    notes: >
+      String array: holdingCompany | bankingBusiness | insuranceBusiness |
+      fundManagement | financingLeasing | headquartersBusiness |
+      shippingBusiness | distributionServiceCentre | intellectualProperty.
+
+  - standard_section: "ESR — CIGAs performed"
+    regime: "ESR (all jurisdictions)"
+    openkycaml_field: "taxStatus.economicSubstance.coreIncomeGeneratingActivitiesPerformed"
+    coverage: full
+    notes: "Boolean. Must be true for substance test to be satisfied."
+
+  - standard_section: "ESR — last annual notification date"
+    regime: "ESR (all jurisdictions)"
+    openkycaml_field: "taxStatus.economicSubstance.lastNotificationDate"
+    coverage: full
+    notes: "ISO 8601 date of most recent annual ESR notification/filing."
+
+  - standard_section: "ESR — report reference"
+    regime: "ESR (all jurisdictions)"
+    openkycaml_field: "taxStatus.economicSubstance.lastReportReference"
+    coverage: full
+    notes: "Opaque reference number or URI of most recent ESR annual report."
+
+  # ── §5  OECD Pillar 2 GloBE ─────────────────────────────────────────────
+
+  - standard_section: "Pillar 2 — in-scope MNE flag"
+    regime: "OECD Pillar 2 GloBE (BEPS 2.0)"
+    openkycaml_field: "taxStatus.pillarTwo.inScopeMNE"
+    coverage: full
+    notes: "Boolean. True if group consolidated revenue >= EUR 750 m (Art. 1.1 GloBE Model Rules)."
+
+  - standard_section: "Pillar 2 — consolidated revenue (EUR)"
+    regime: "OECD Pillar 2 GloBE"
+    openkycaml_field: "taxStatus.pillarTwo.consolidatedRevenueEUR"
+    coverage: full
+    notes: "Annual group revenue in EUR from most recent GIR or consolidated accounts."
+
+  - standard_section: "Pillar 2 — constituent entity status"
+    regime: "OECD Pillar 2 GloBE"
+    openkycaml_field: "taxStatus.pillarTwo.constituentEntityStatus"
+    coverage: full
+    notes: "Enum: inScope | excluded | QDMTT."
+
+  - standard_section: "Pillar 2 — ETR per jurisdiction"
+    regime: "OECD Pillar 2 GloBE"
+    openkycaml_field: "taxStatus.pillarTwo.etrJurisdictions[]"
+    coverage: full
+    notes: >
+      Array of {jurisdiction (ISO alpha-2), etr (decimal 0-1)}.
+      ETR < 0.15 indicates top-up tax liability. ETR < 0.10 is an AML BEPS red flag.
+
+  - standard_section: "Pillar 2 — safe harbour election"
+    regime: "OECD Pillar 2 GloBE"
+    openkycaml_field: "taxStatus.pillarTwo.safeHarbourApplied"
+    coverage: full
+    notes: "Enum: SimplifiedETR | SubstanceBased | DeMinimis | none."
+
+  - standard_section: "Pillar 2 — GIR filing reference"
+    regime: "OECD Pillar 2 GloBE"
+    openkycaml_field: "taxStatus.pillarTwo.girFilingReference"
+    coverage: full
+    notes: >
+      Reference number or URI of most recent GloBE Information Return.
+      Required when inScopeMNE = true (absence triggers validator warning).
+
+  - standard_section: "Pillar 2 — GIR filing date"
+    regime: "OECD Pillar 2 GloBE"
+    openkycaml_field: "taxStatus.pillarTwo.lastGIRDate"
+    coverage: full
+    notes: "ISO 8601 date-time of most recent GIR filing."

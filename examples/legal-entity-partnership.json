@@ -1,0 +1,238 @@
+{
+  "$schema": "https://openkycaml.org/schema/v1.4.0/kyc-aml-hybrid-extended.json",
+  "version": "1.18.0",
+  "messageId": "f9e8d7c6-b5a4-3210-fedc-ba9876543210",
+  "messageDateTime": "2026-04-06T11:00:00Z",
+  "_comment_scenario": "ISO 20275 Partnership Example — Scotland-registered Limited Liability Partnership (LLP) onboarded as VASP originator. Demonstrates: (1) legalFormCode using ISO 20275 ELF code 'XLCT' (Scotland LLP); (2) entityType: PARTNERSHIP with partnershipDetails.partnershipType LLP and members array; (3) ISO_20275_ELF_CODE in nationalIdentification for IVMS 101 interoperability via nationalIdentifierType. This example satisfies FATF Recommendation 24 typed disclosure for partnership legal forms.",
+  "ivms101": {
+    "originator": {
+      "originatorPersons": [
+        {
+          "legalPerson": {
+            "name": {
+              "nameIdentifier": [
+                {
+                  "legalPersonName": "Cairn Digital Ventures LLP",
+                  "legalPersonNameIdentifierType": "LEGL"
+                }
+              ]
+            },
+            "nationalIdentification": {
+              "nationalIdentifier": "SO300447",
+              "nationalIdentifierType": "RAID",
+              "countryOfIssue": "GB"
+            },
+            "countryOfRegistration": "GB",
+            "legalFormCode": "XLCT",
+            "legalFormDescription": "Scotland Limited Liability Partnership (LLP) registered with Companies House",
+            "entityType": "PARTNERSHIP",
+            "partnershipDetails": {
+              "partnershipType": "LLP",
+              "members": [
+                {
+                  "naturalPerson": {
+                    "name": {
+                      "nameIdentifier": [
+                        {
+                          "primaryIdentifier": "MacAlister",
+                          "secondaryIdentifier": "Fiona Jean",
+                          "nameIdentifierType": "LEGL"
+                        }
+                      ]
+                    },
+                    "nationalIdentification": {
+                      "nationalIdentifier": "GB-PASS-0012344321",
+                      "nationalIdentifierType": "CCPT",
+                      "countryOfIssue": "GB"
+                    },
+                    "dateAndPlaceOfBirth": {
+                      "dateOfBirth": "1978-11-22",
+                      "placeOfBirth": "Edinburgh, United Kingdom"
+                    },
+                    "countryOfResidence": "GB"
+                  }
+                },
+                {
+                  "naturalPerson": {
+                    "name": {
+                      "nameIdentifier": [
+                        {
+                          "primaryIdentifier": "Drummond",
+                          "secondaryIdentifier": "Robert Alistair",
+                          "nameIdentifierType": "LEGL"
+                        }
+                      ]
+                    },
+                    "nationalIdentification": {
+                      "nationalIdentifier": "GB-PASS-0056788765",
+                      "nationalIdentifierType": "CCPT",
+                      "countryOfIssue": "GB"
+                    },
+                    "dateAndPlaceOfBirth": {
+                      "dateOfBirth": "1975-06-09",
+                      "placeOfBirth": "Glasgow, United Kingdom"
+                    },
+                    "countryOfResidence": "GB"
+                  }
+                },
+                {
+                  "legalPerson": {
+                    "name": {
+                      "nameIdentifier": [
+                        {
+                          "legalPersonName": "Cairn Capital Management Ltd",
+                          "legalPersonNameIdentifierType": "LEGL"
+                        }
+                      ]
+                    },
+                    "nationalIdentification": {
+                      "nationalIdentifier": "SC512233",
+                      "nationalIdentifierType": "RAID",
+                      "countryOfIssue": "GB"
+                    },
+                    "countryOfRegistration": "GB",
+                    "legalFormCode": "8888",
+                    "legalFormDescription": "Scotland Private Limited Company"
+                  }
+                }
+              ],
+              "dateEstablished": "2021-03-18",
+              "jurisdictionOfRegistration": "GB"
+            }
+          }
+        }
+      ],
+      "accountNumber": [
+        "0xD4E5F6A7B8C901234567890123456789012345EF"
+      ]
+    },
+    "beneficiary": {
+      "beneficiaryPersons": [
+        {
+          "legalPerson": {
+            "name": {
+              "nameIdentifier": [
+                {
+                  "legalPersonName": "Northstar Digital Exchange Ltd",
+                  "legalPersonNameIdentifierType": "LEGL"
+                }
+              ]
+            },
+            "nationalIdentification": {
+              "nationalIdentifier": "GB-CH-13456781",
+              "nationalIdentifierType": "RAID",
+              "countryOfIssue": "GB"
+            },
+            "countryOfRegistration": "GB"
+          }
+        }
+      ],
+      "accountNumber": [
+        "0xE5F6A7B8C9D012345678901234567890123456FA"
+      ]
+    },
+    "originatingVASP": {
+      "name": "Cairn Digital Ventures LLP",
+      "vaspIdentifier": "GB-Cairn Digital Ventures LLP"
+    },
+    "beneficiaryVASP": {
+      "name": "Northstar Digital Exchange Ltd",
+      "vaspIdentifier": "GB-Northstar Digital Exchange Ltd"
+    },
+    "transferredAmount": {
+      "amount": "120000.00",
+      "assetType": "BTC"
+    }
+  },
+  "kycProfile": {
+    "customerId": "CUST-CDV-LLP-0031",
+    "onboardingDate": "2026-02-10",
+    "onboardingChannel": "IN_PERSON",
+    "dueDiligenceType": "EDD",
+    "customerRiskRating": "MEDIUM",
+    "customerClassification": {
+      "customerType": "LEGAL_ENTITY",
+      "industrySector": "CRYPTO_ASSETS",
+      "relationshipPurpose": "TRADING"
+    },
+    "riskAssessment": {
+      "overallRiskRating": "MEDIUM",
+      "riskScore": 42,
+      "riskFactors": [
+        "LLP structure with corporate member",
+        "Crypto asset trading activity"
+      ]
+    },
+    "beneficialOwnership": [
+      {
+        "person": {
+          "naturalPerson": {
+            "name": {
+              "nameIdentifier": [
+                {
+                  "primaryIdentifier": "MacAlister",
+                  "secondaryIdentifier": "Fiona Jean",
+                  "nameIdentifierType": "LEGL"
+                }
+              ]
+            },
+            "nationalIdentification": {
+              "nationalIdentifier": "GB-PASS-0012344321",
+              "nationalIdentifierType": "CCPT",
+              "countryOfIssue": "GB"
+            },
+            "dateAndPlaceOfBirth": {
+              "dateOfBirth": "1978-11-22",
+              "placeOfBirth": "Edinburgh, United Kingdom"
+            },
+            "countryOfResidence": "GB"
+          }
+        },
+        "ownershipPercentage": 40,
+        "ownershipType": "DIRECT",
+        "controlMechanism": "VOTING_RIGHTS",
+        "verificationDate": "2026-02-10",
+        "isPEP": false,
+        "ownershipChainDepth": 1
+      },
+      {
+        "person": {
+          "naturalPerson": {
+            "name": {
+              "nameIdentifier": [
+                {
+                  "primaryIdentifier": "Drummond",
+                  "secondaryIdentifier": "Robert Alistair",
+                  "nameIdentifierType": "LEGL"
+                }
+              ]
+            },
+            "nationalIdentification": {
+              "nationalIdentifier": "GB-PASS-0056788765",
+              "nationalIdentifierType": "CCPT",
+              "countryOfIssue": "GB"
+            },
+            "dateAndPlaceOfBirth": {
+              "dateOfBirth": "1975-06-09",
+              "placeOfBirth": "Glasgow, United Kingdom"
+            },
+            "countryOfResidence": "GB"
+          }
+        },
+        "ownershipPercentage": 35,
+        "ownershipType": "DIRECT",
+        "controlMechanism": "VOTING_RIGHTS",
+        "verificationDate": "2026-02-10",
+        "isPEP": false,
+        "ownershipChainDepth": 1
+      }
+    ],
+    "auditMetadata": {
+      "recordCreatedAt": "2026-02-10T09:00:00Z",
+      "recordVersion": 1,
+      "dataRetentionDate": "2031-02-10",
+      "lastReviewDate": "2026-02-10",
+      "reviewedBy": "CDV-CO-KYC-003"
+    }
+  }
+}

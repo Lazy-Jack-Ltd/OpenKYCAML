@@ -1,0 +1,270 @@
+{
+  "_comment_format": "SD-JWT Compact Token — Annotated Reference Example. This file documents the structure of an OpenKYCAML SD-JWT VC in its compact serialisation as it travels between an issuer, an EUDI Wallet, and a relying party (VASP/bank). The compact token is a single ASCII string in the form: <Issuer-JWT>~<Disclosure-1>~<Disclosure-2>~...~<KB-JWT>. Each component is a Base64url-encoded value. This JSON file decodes all components for readability and developer tooling.",
+  "_disclaimer": "STRUCTURAL REFERENCE ONLY — NOT FOR PRODUCTION USE. This file contains placeholder/stub cryptographic signature values (see _comment_placeholder_signatures below) that CANNOT be cryptographically verified. It is a developer documentation aid demonstrating SD-JWT field structure and selective-disclosure patterns. It is intentionally excluded from automated schema-correctness assertions that depend on cryptographic validity. Real implementations MUST replace all placeholder values with genuine signatures produced by the issuer's and holder's private keys.",
+  "_comment_scenario": "Anna Müller presents her OpenKYCAML KYC Attestation at Beneficiary VASP (NL). She selectively discloses her legal name and residential address (FATF Travel Rule minimum) and withholds her date of birth, national identifier, and nationality under GDPR data-minimisation. The relying party requests only the mandatory Travel Rule claims via an OpenID4VP Presentation Definition.",
+  "$schema": "https://openkycaml.org/schema/v1.3.0/kyc-aml-hybrid-extended.json",
+  "version": "1.18.0",
+  "messageId": "f1a5b964-7c8d-6e9f-0a1b-2c3d4e5f6a7b",
+  "messageDateTime": "2025-10-01T10:00:00Z",
+  "kycProfile": {
+    "customerRiskRating": "LOW",
+    "dueDiligenceType": "SDD",
+    "onboardingChannel": "EUDI_WALLET",
+    "kycCompletionDate": "2025-10-01",
+    "pepStatus": {
+      "isPEP": false,
+      "pepCategory": "NOT_PEP",
+      "screeningDate": "2025-10-01",
+      "screeningProvider": "ComplyAdvantage"
+    },
+    "sanctionsScreening": {
+      "screeningStatus": "CLEAR",
+      "screeningDate": "2025-10-01T09:55:00Z",
+      "screeningProvider": "Refinitiv World-Check",
+      "listsChecked": [
+        "OFAC_SDN",
+        "EU_CONSOLIDATED",
+        "UN_CONSOLIDATED"
+      ]
+    },
+    "auditMetadata": {
+      "recordId": "f1a5b964-7c8d-6e9f-0a1b-2c3d4e5f6a7b",
+      "recordCreatedAt": "2025-10-01T10:00:00Z",
+      "recordUpdatedAt": "2025-10-01T10:00:00Z",
+      "recordVersion": 1,
+      "dataProvider": "Acme Crypto Exchange BV",
+      "dataRetentionDate": "2030-10-01"
+    }
+  },
+  "_compactToken": {
+    "_comment": "The actual compact SD-JWT token transmitted between wallet and relying party. The string below is broken into its logical parts for annotation; in production it is one continuous string with no whitespace.",
+    "format": "dc+sd-jwt",
+    "encodedToken": "eyJhbGciOiJFUzI1NiIsInR5cCI6ImRjK3NkLWp3dCIsImtpZCI6ImRpZDp3ZWI6YWNtZS1jcnlwdG8uZXhhbXBsZS5ubCNrZXktMSJ9.eyJpc3MiOiJkaWQ6d2ViOmFjbWUtY3J5cHRvLmV4YW1wbGUubmwiLCJzdWIiOiJkaWQ6ZWJzaTp6MkxTelQ3TGlVTk14S0t5R0NuTmpOVCIsInZjdCI6Imh0dHBzOi8vb3BlbmtpY2FtbC5vcmcvY3JlZGVudGlhbHMvdjEvT3BlbktZQ0FNTENSTGF0aW9uIiwiaWF0IjoxNzU3MDM0NjAwLCJleHAiOjE3ODg1NzA2MDAsIl9zZF9hbGciOiJzaGEtMjU2IiwiY25mIjp7Imp3ayI6eyJrdHkiOiJFQyIsImNydiI6IlAtMjU2IiwieCI6IkFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUE9IiwieSI6IkFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUE9In19LCJfc2QiOlsieEcyd1JkVENJakRueFJ6LWZQRnEuLi4iLCJ5SDN4U2RVREplRW95S2EtZ1FHci4uLiIsIlBjMzNKTTJMY2hjVV9sSGdndl91ZlEuLi4iXSwib25ib2FyZGluZ19jaGFubmVsIjoiRVVESV9XQUxMRVQiLCJzYW5jdGlvbnNfc3RhdHVzIjoiQ0xFQVIiLCJjdXN0b21lcl9yaXNrX3JhdGluZyI6IkxPVyIsImR1ZV9kaWxpZ2VuY2VfdHlwZSI6IlNERCJ9.AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA~WyIyR0xDNDJzS1F2ZUNmR2ZyeU5STjl3IiwiZmFtaWx5X25hbWUiLCJNXHUwMGZjbGxlciJd~WyJlbHVWNU9nM2dTTklJOEVZbnN4QV9BIiwiZ2l2ZW5fbmFtZSIsIkFubmEgS2F0aGFyaW5hIl0~WyI2SWo3dE0tYTVpVlBHYm9TNXRtdlZBIiwiYWRkcmVzcyIseyJzdHJlZXRfYWRkcmVzcyI6IlVudGVyIGRlbiBMaW5kZW4gNzciLCJsb2NhbGl0eSI6IkJlcmxpbiIsInBvc3RhbF9jb2RlIjoiMTAxMTciLCJjb3VudHJ5IjoiREUifV0~eyJhbGciOiJFUzI1NiIsInR5cCI6ImtiK2p3dCJ9.eyJub25jZSI6Ijk0MmIxYjUyLWZkNTgtNGIzZi04ZTJhLTU2ZGIzOGVkN2Y0NCIsImF1ZCI6ImRpZDp3ZWI6YmVuZWZpY2lhcnktdmFzcC5leGFtcGxlLmNvbSIsImlhdCI6MTc1NzAzNDYwMH0.BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+    "_comment_placeholder_signatures": "IMPORTANT: The signature portions of this token (the 'AAAA...' Issuer-JWT signature and 'BBBB...' Key Binding JWT signature) are placeholder values that CANNOT be cryptographically verified. This is a documentation and developer-tooling reference only. Real implementations MUST replace these placeholders with actual ES256 signatures produced by the issuer's and holder's private keys respectively.",
+    "_comment_token_structure": "The encoded token above has 5 parts separated by '~': [0] Issuer-JWT (header.payload.signature), [1] disclosure for family_name, [2] disclosure for given_name, [3] disclosure for address, [4] Key Binding JWT (kb-JWT). The withheld claims (birthdate, national_identifier, nationalities) have NO disclosure appended — their digests remain only in the _sd array inside the Issuer-JWT payload."
+  },
+  "_decodedIssuerJWT": {
+    "_comment": "Decoded Issuer-JWT — the signed part of the SD-JWT. The '_sd' array contains SHA-256 digests of the disclosable claims (one digest per claim that was made selectively disclosable at issuance). Non-selectively-disclosable claims (onboarding_channel, sanctions_status, etc.) appear in plaintext.",
+    "header": {
+      "alg": "ES256",
+      "typ": "dc+sd-jwt",
+      "kid": "did:web:acme-crypto.example.nl#key-1"
+    },
+    "payload": {
+      "iss": "did:web:acme-crypto.example.nl",
+      "sub": "did:ebsi:z2LSzT7LiUNMxKKyGCnNjNT",
+      "vct": "https://openkycaml.org/credentials/v1/OpenKYCAMLCredential",
+      "iat": 1757034600,
+      "exp": 1788570600,
+      "_sd_alg": "sha-256",
+      "cnf": {
+        "jwk": {
+          "kty": "EC",
+          "crv": "P-256",
+          "_comment": "Holder public key for key binding. The wallet signs the kb-JWT with the corresponding private key to prove possession."
+        }
+      },
+      "_comment_sd_array": "The '_sd' array contains one SHA-256 digest per selectively-disclosable claim. Each digest is computed as SHA-256(base64url(['<salt>', '<claim-name>', <claim-value>])). The relying party recomputes the digest from the disclosure and checks it against this array.",
+      "_sd": [
+        "xG2wRdTCIjDnxJz-fPFqLm1NkVxYhQoAd3TbSr8uWc4",
+        "yH3xSdUDJeEoyKa-gQGrNn2OlWyZiRpBe4UcTt9vXd5",
+        "Pc33JM2LchcU_lHggv_ufQAe5VdFmBgKj6YwHr7NxEp"
+      ],
+      "_comment_sd_mapping": "Digest index 0 → family_name='Müller' (disclosed). Index 1 → given_name='Anna Katharina' (disclosed). Index 2 → address={...} (disclosed). The withheld claims (birthdate='1990-11-20', national_identifier='DE-IDCARD-T220001293', nationalities=['DE']) have separate digests in a _sd sub-array inside the originator block; their disclosures are NOT appended to this presentation token.",
+      "onboarding_channel": "EUDI_WALLET",
+      "sanctions_status": "CLEAR",
+      "customer_risk_rating": "LOW",
+      "due_diligence_type": "SDD",
+      "_comment_originator_sd": "Inside the nested originator block, selective disclosure is applied per claim. Name and address are always-disclosed claims in this presentation; dateOfBirth, nationalIdentifier, and nationalities are withheld.",
+      "originator": {
+        "_sd": [
+          "Qg_O64zqAxe412a108iroA_birthdate_digest",
+          "AJx-095VPrpTtN4QMOqROA_placeOfBirth_digest",
+          "Pc33JM2LchcU_lHggv_ufQ_nationalities_digest"
+        ]
+      }
+    }
+  },
+  "_decodedDisclosures": {
+    "_comment": "Disclosures appended after '~' in the compact token. Each disclosure is a Base64url-encoded JSON array ['<salt>', '<claim-name>', <claim-value>]. Only the three disclosures below are appended in this presentation (family_name, given_name, address). The withheld claims have NO disclosure appended.",
+    "released": [
+      {
+        "_comment": "Disclosure 1 — family_name (released). Base64url: WyIyR0xDNDJzS1F2ZUNmR2ZyeU5STjl3IiwiZmFtaWx5X25hbWUiLCJNXHUwMGZjbGxlciJd",
+        "salt": "2GLC42sKQveCfGfryNRN9w",
+        "claimName": "family_name",
+        "claimValue": "Müller",
+        "digest": "xG2wRdTCIjDnxJz-fPFqLm1NkVxYhQoAd3TbSr8uWc4"
+      },
+      {
+        "_comment": "Disclosure 2 — given_name (released). Base64url: WyJlbHVWNU9nM2dTTklJOEVZbnN4QV9BIiwiZ2l2ZW5fbmFtZSIsIkFubmEgS2F0aGFyaW5hIl0",
+        "salt": "eluV5Og3gSNII8EYnsxA_A",
+        "claimName": "given_name",
+        "claimValue": "Anna Katharina",
+        "digest": "yH3xSdUDJeEoyKa-gQGrNn2OlWyZiRpBe4UcTt9vXd5"
+      },
+      {
+        "_comment": "Disclosure 3 — address (released). Base64url: WyI2SWo3dE0tYTVpVlBHYm9TNXRtdlZBIiwiYWRkcmVzcyIseyJzdHJlZXRfYWRkcmVzcyI6IlVudGVyIGRlbiBMaW5kZW4gNzciLCJsb2NhbGl0eSI6IkJlcmxpbiIsInBvc3RhbF9jb2RlIjoiMTAxMTciLCJjb3VudHJ5IjoiREUifV0",
+        "salt": "6Ij7tM-a5iVPGboS5tmvVA",
+        "claimName": "address",
+        "claimValue": {
+          "street_address": "Unter den Linden 77",
+          "locality": "Berlin",
+          "postal_code": "10117",
+          "country": "DE"
+        },
+        "digest": "Pc33JM2LchcU_lHggv_ufQAe5VdFmBgKj6YwHr7NxEp"
+      }
+    ],
+    "withheld": {
+      "_comment": "The following disclosures exist on the holder's device but are NOT appended to this presentation token. The relying party sees only their SHA-256 digests inside the _sd array and cannot derive the values.",
+      "claims": [
+        {
+          "salt": "Qg_O64zqAxe412a108iroA",
+          "claimName": "birthdate",
+          "claimValue": "1990-11-20",
+          "digest": "Qg_O64zqAxe412a108iroA_birthdate_digest",
+          "reason": "GDPR data-minimisation — not required for FATF Travel Rule minimum"
+        },
+        {
+          "salt": "AJx-095VPrpTtN4QMOqROA",
+          "claimName": "national_identifier",
+          "claimValue": "DE-IDCARD-T220001293",
+          "digest": "AJx-095VPrpTtN4QMOqROA_placeOfBirth_digest",
+          "reason": "GDPR data-minimisation — high-sensitivity attribute; not requested by beneficiary VASP"
+        },
+        {
+          "salt": "Pc33JM2LchcU_lHggv_ufQ",
+          "claimName": "nationalities",
+          "claimValue": [
+            "DE"
+          ],
+          "digest": "Pc33JM2LchcU_lHggv_ufQ_nationalities_digest",
+          "reason": "GDPR data-minimisation — not required for standard Travel Rule message"
+        }
+      ]
+    }
+  },
+  "_decodedKeyBindingJWT": {
+    "_comment": "Key Binding JWT (kb-JWT) — appended last after the final '~'. Signed by the holder's private key (corresponding to the public key in the Issuer-JWT cnf.jwk). Proves that the SD-JWT was presented by its legitimate holder and was not replayed. The 'aud' MUST match the relying party DID sent in the OpenID4VP Authorization Request. The 'nonce' MUST match the nonce from the Authorization Request.",
+    "header": {
+      "alg": "ES256",
+      "typ": "kb+jwt"
+    },
+    "payload": {
+      "nonce": "942b1b52-fd58-4b3f-8e2a-56db38ed7f44",
+      "aud": "did:web:beneficiary-vasp.example.com",
+      "iat": 1757034600,
+      "_sd_hash": "sha-256 hash of the Issuer-JWT + all released disclosures concatenated with '~'"
+    }
+  },
+  "_verificationSteps": {
+    "_comment": "Steps a relying party (beneficiary VASP) follows to verify this SD-JWT VC presentation.",
+    "steps": [
+      {
+        "step": 1,
+        "action": "Split compact token on '~' separator",
+        "result": "Parts: [Issuer-JWT, Disclosure-1, Disclosure-2, Disclosure-3, KB-JWT]"
+      },
+      {
+        "step": 2,
+        "action": "Decode and verify Issuer-JWT signature",
+        "detail": "Resolve DID 'did:web:acme-crypto.example.nl', retrieve public key for kid '#key-1', verify ES256 signature."
+      },
+      {
+        "step": 3,
+        "action": "Check typ claim in Issuer-JWT header",
+        "detail": "MUST be 'dc+sd-jwt'."
+      },
+      {
+        "step": 4,
+        "action": "Verify vct claim",
+        "detail": "MUST equal 'https://openkycaml.org/credentials/v1/OpenKYCAMLCredential'."
+      },
+      {
+        "step": 5,
+        "action": "Check iat / exp",
+        "detail": "Credential MUST not be expired."
+      },
+      {
+        "step": 6,
+        "action": "Process each disclosure",
+        "detail": "Base64url-decode each disclosure, compute SHA-256, check it appears in the Issuer-JWT payload's '_sd' array. Bind claim name and value to the verified payload."
+      },
+      {
+        "step": 7,
+        "action": "Verify Key Binding JWT",
+        "detail": "Decode KB-JWT, verify signature using the key in Issuer-JWT cnf.jwk. Check 'nonce' matches the nonce sent in the Authorization Request. Check 'aud' matches the relying party DID. Compute SHA-256 of (Issuer-JWT + '~' + released disclosures joined with '~') and compare to '_sd_hash'."
+      },
+      {
+        "step": 8,
+        "action": "Optional: Trust list check",
+        "detail": "Validate 'iss' ('did:web:acme-crypto.example.nl') against the configured trustedIssuers list and, if trustFramework is 'eIDAS_2.0', against the applicable EU Trusted List at tspServiceUri."
+      },
+      {
+        "step": 9,
+        "action": "Optional: Status list check",
+        "detail": "Fetch the StatusList2021 credential at credentialStatus.statusListCredential and verify the bit at statusListIndex is not set (not revoked)."
+      },
+      {
+        "step": 10,
+        "action": "Accept credential",
+        "detail": "The released claims (family_name='Müller', given_name='Anna Katharina', address={...}) are now cryptographically verified and can be used for CDD reliance and Travel Rule compliance."
+      }
+    ]
+  },
+  "_openid4vpPresentationRequest": {
+    "_comment": "Example OpenID4VP Authorization Request sent by the beneficiary VASP to the EUDI Wallet to request this selective disclosure presentation.",
+    "response_type": "vp_token",
+    "response_mode": "direct_post",
+    "client_id": "did:web:beneficiary-vasp.example.com",
+    "nonce": "942b1b52-fd58-4b3f-8e2a-56db38ed7f44",
+    "presentation_definition": {
+      "id": "openkycaml-travel-rule-request",
+      "input_descriptors": [
+        {
+          "id": "kyc_attestation",
+          "format": {
+            "dc+sd-jwt": {
+              "alg": [
+                "ES256",
+                "EdDSA"
+              ]
+            }
+          },
+          "constraints": {
+            "fields": [
+              {
+                "path": [
+                  "$.vct"
+                ],
+                "filter": {
+                  "type": "string",
+                  "const": "https://openkycaml.org/credentials/v1/OpenKYCAMLCredential"
+                }
+              },
+              {
+                "path": [
+                  "$.family_name"
+                ],
+                "intent_to_retain": true
+              },
+              {
+                "path": [
+                  "$.given_name"
+                ],
+                "intent_to_retain": true
+              },
+              {
+                "path": [
+                  "$.address"
+                ],
+                "intent_to_retain": false
+              }
+            ],
+            "limit_disclosure": "required"
+          }
+        }
+      ]
+    }
+  }
+}

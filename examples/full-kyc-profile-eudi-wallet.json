@@ -1,0 +1,396 @@
+{
+  "$schema": "https://openkycaml.org/schema/v1.3.0/kyc-aml-hybrid-extended.json",
+  "version": "1.18.0",
+  "messageId": "f1a2b3c4-d5e6-4f7a-8b9c-0d1e2f3a4b5c",
+  "messageDateTime": "2025-11-05T16:00:00Z",
+  "_comment_eudi": "EUDI Wallet — Full KYC Profile, EDD, PEP Case. Fatima Noor Al-Rashidi (AE) is a foreign PEP onboarding at DIFC Digital Asset Exchange. She is a UAE national but also holds residency in the EU and presents her Austrian EUDI Wallet PID for remote CDD (AMLR Art. 22(5)). The EUDI Wallet PID combined with EDD enables high-assurance remote onboarding. Four DIDs: (1) Customer's EUDI Wallet DID (Austrian), (2) Austrian PID Issuer DID, (3) DIFC VASP DID, (4) Third-party CDD provider DID referenced in audit. The EUDI PID does NOT reduce the risk rating for a PEP — EDD is always required per AMLR Art. 28.",
+  "ivms101": {
+    "originator": {
+      "originatorPersons": [
+        {
+          "naturalPerson": {
+            "name": {
+              "nameIdentifier": [
+                {
+                  "primaryIdentifier": "Al-Rashidi",
+                  "secondaryIdentifier": "Fatima Noor",
+                  "nameIdentifierType": "LEGL"
+                }
+              ]
+            },
+            "geographicAddress": [
+              {
+                "addressType": "HOME",
+                "streetName": "Sheikh Zayed Road",
+                "buildingNumber": "15A",
+                "townName": "Dubai",
+                "postCode": "00000",
+                "country": "AE"
+              },
+              {
+                "addressType": "HOME",
+                "streetName": "Ringstrasse",
+                "buildingNumber": "4",
+                "townName": "Vienna",
+                "postCode": "1010",
+                "country": "AT"
+              }
+            ],
+            "nationalIdentification": {
+              "nationalIdentifier": "AE-EMIRATESID-784-1978-1234567-8",
+              "nationalIdentifierType": "IDCD",
+              "countryOfIssue": "AE"
+            },
+            "customerIdentification": "CUST-AE-HNW-00042",
+            "dateAndPlaceOfBirth": {
+              "dateOfBirth": "1978-03-12",
+              "placeOfBirth": "Abu Dhabi"
+            },
+            "countryOfResidence": "AE",
+            "nationality": "AE"
+          }
+        }
+      ],
+      "accountNumber": [
+        "0x3fC91A3afd70395Cd496C647d5a6CC9D4B2b7FAD"
+      ]
+    },
+    "beneficiary": {
+      "beneficiaryPersons": [
+        {
+          "legalPerson": {
+            "name": {
+              "nameIdentifier": [
+                {
+                  "legalPersonName": "Geneva Capital Management SA",
+                  "legalPersonNameIdentifierType": "LEGL"
+                }
+              ]
+            },
+            "nationalIdentification": {
+              "nationalIdentifier": "54930084UKLVMY22DS16",
+              "nationalIdentifierType": "LEIX"
+            },
+            "countryOfRegistration": "CH"
+          }
+        }
+      ],
+      "accountNumber": [
+        "CH5604835012345678009"
+      ]
+    },
+    "originatingVASP": {
+      "name": "DIFC Digital Asset Exchange LLC",
+      "lei": "529900T8BM49AAMSDO55",
+      "vaspIdentifier": "AE-DIFC Digital Asset Exchange LLC"
+    },
+    "beneficiaryVASP": {
+      "name": "Swiss Digital Finance AG",
+      "lei": "549300FJPOIUJ7U9LV82",
+      "vaspIdentifier": "CH-Swiss Digital Finance AG"
+    },
+    "transferredAmount": {
+      "amount": "125000.00",
+      "assetType": "USDC"
+    }
+  },
+  "verifiableCredential": {
+    "@context": [
+      "https://www.w3.org/ns/credentials/v2",
+      "https://openkycaml.org/contexts/v1",
+      "https://europa.eu/2018/credentials/eudi/v1"
+    ],
+    "id": "urn:uuid:f1a2b3c4-d5e6-4f7a-8b9c-0d1e2f3a4b5c",
+    "type": [
+      "VerifiableCredential",
+      "OpenKYCAMLCredential",
+      "EDDAttestation",
+      "PEPAttestation"
+    ],
+    "_comment_issuer": "DID #3 — DIFC Digital Asset Exchange LLC (VASP, issuer of this OpenKYCAML VC after EDD + EUDI PID verification)",
+    "issuer": {
+      "id": "did:web:difc-dax.example.ae",
+      "name": "DIFC Digital Asset Exchange LLC"
+    },
+    "credentialSubject": {
+      "_comment_subject": "DID #1 — Fatima Al-Rashidi's Austrian EUDI Wallet DID. She registered her Austrian residency PID to satisfy EU remote CDD requirements (AMLR Art. 22(5)) while operating from Dubai.",
+      "id": "did:ebsi:z4MrTwQ9nVyXkBFaLdZhGpJ8",
+      "ivms101": {
+        "originator": {
+          "originatorPersons": [
+            {
+              "naturalPerson": {
+                "name": {
+                  "nameIdentifier": [
+                    {
+                      "primaryIdentifier": "Al-Rashidi",
+                      "secondaryIdentifier": "Fatima Noor",
+                      "nameIdentifierType": "LEGL"
+                    }
+                  ]
+                },
+                "geographicAddress": [
+                  {
+                    "addressType": "HOME",
+                    "streetName": "Sheikh Zayed Road",
+                    "buildingNumber": "15A",
+                    "townName": "Dubai",
+                    "postCode": "00000",
+                    "country": "AE"
+                  }
+                ],
+                "nationalIdentification": {
+                  "nationalIdentifier": "AE-EMIRATESID-784-1978-1234567-8",
+                  "nationalIdentifierType": "IDCD",
+                  "countryOfIssue": "AE"
+                },
+                "customerIdentification": "CUST-AE-HNW-00042",
+                "dateAndPlaceOfBirth": {
+                  "dateOfBirth": "1978-03-12",
+                  "placeOfBirth": "Abu Dhabi"
+                },
+                "countryOfResidence": "AE",
+                "nationality": "AE"
+              }
+            }
+          ],
+          "accountNumber": [
+            "0x3fC91A3afd70395Cd496C647d5a6CC9D4B2b7FAD"
+          ]
+        },
+        "beneficiary": {
+          "beneficiaryPersons": [
+            {
+              "legalPerson": {
+                "name": {
+                  "nameIdentifier": [
+                    {
+                      "legalPersonName": "Geneva Capital Management SA",
+                      "legalPersonNameIdentifierType": "LEGL"
+                    }
+                  ]
+                },
+                "nationalIdentification": {
+                  "nationalIdentifier": "54930084UKLVMY22DS16",
+                  "nationalIdentifierType": "LEIX"
+                },
+                "countryOfRegistration": "CH"
+              }
+            }
+          ],
+          "accountNumber": [
+            "CH5604835012345678009"
+          ]
+        },
+        "originatingVASP": {
+          "name": "DIFC Digital Asset Exchange LLC",
+          "lei": "529900T8BM49AAMSDO55",
+          "vaspIdentifier": "AE-DIFC Digital Asset Exchange LLC"
+        },
+        "beneficiaryVASP": {
+          "name": "Swiss Digital Finance AG",
+          "lei": "549300FJPOIUJ7U9LV82",
+          "vaspIdentifier": "CH-Swiss Digital Finance AG"
+        },
+        "transferredAmount": {
+          "amount": "125000.00",
+          "assetType": "USDC"
+        }
+      },
+      "kycProfile": {
+        "customerRiskRating": "HIGH",
+        "riskRatingDetail": {
+          "riskScore": 720,
+          "riskRatingDate": "2025-05-01",
+          "riskFactors": {
+            "geographicRisk": "HIGH",
+            "productRisk": "HIGH",
+            "channelRisk": "MEDIUM",
+            "customerTypeRisk": "HIGH",
+            "transactionRisk": "HIGH"
+          },
+          "ratingMethodology": "EBA Risk Factor Guidelines 2024 + Internal EDD Model v4.0. EUDI Wallet PID provides high-assurance identity but does NOT reduce PEP risk (AMLR Art. 28 — EDD mandatory)."
+        },
+        "customerClassification": {
+          "customerType": "HIGH_NET_WORTH",
+          "industrySector": "PRIVATE_INVESTMENT_HOLDING",
+          "occupationOrPurpose": "Former senior government official; current private sector advisor and investor in GCC region.",
+          "relationshipPurpose": "Investment management and diversification of personal and corporate assets across regional equities, real estate, and digital assets."
+        },
+        "dueDiligenceType": "EDD",
+        "pepStatus": {
+          "isPEP": true,
+          "pepCategory": "FOREIGN_PEP",
+          "pepRole": "Former Minister of Finance, UAE Federal Government (2015–2020)",
+          "screeningDate": "2025-10-15",
+          "screeningProvider": "Dow Jones Risk & Compliance"
+        },
+        "sanctionsScreening": {
+          "screeningStatus": "CLEAR",
+          "screeningDate": "2025-11-05T08:00:00Z",
+          "screeningProvider": "Refinitiv World-Check",
+          "listsChecked": [
+            "OFAC_SDN",
+            "OFAC_NON_SDN",
+            "EU_CONSOLIDATED",
+            "UN_CONSOLIDATED",
+            "HMT",
+            "AUSTRAC",
+            "CBB_BAHRAIN"
+          ],
+          "matchDetails": []
+        },
+        "adverseMedia": {
+          "screeningStatus": "CLEAR",
+          "screeningDate": "2025-11-05T08:05:00Z",
+          "screeningProvider": "ComplyAdvantage",
+          "categories": [],
+          "summary": "No adverse media found. Comprehensive search across 100,000+ global news sources."
+        },
+        "sourceOfFundsWealthDetail": {
+          "sourceOfFunds": [
+            "INVESTMENT_RETURNS",
+            "BUSINESS_INCOME"
+          ],
+          "sourceOfWealthNarrative": "Client accumulated wealth through senior government positions (salary, pension, legitimate investments) and subsequent private sector advisory roles in the GCC region. Business income from three wholly-owned holding companies (UAE and BVI). Investment returns from diversified portfolio of regional equities, real estate, and digital assets.",
+          "verificationStatus": "FULLY_VERIFIED",
+          "supportingDocuments": [
+            {
+              "documentType": "TAX_RETURN",
+              "documentReference": "AE-TAX-2024-FAR-001",
+              "verifiedDate": "2025-04-15"
+            },
+            {
+              "documentType": "AUDITED_ACCOUNTS",
+              "documentReference": "AUDIT-2024-GCCHOLDCO",
+              "verifiedDate": "2025-04-20"
+            },
+            {
+              "documentType": "BANK_STATEMENT",
+              "documentReference": "ADIB-STMT-Q32025",
+              "verifiedDate": "2025-10-01"
+            }
+          ]
+        },
+        "beneficialOwnership": [],
+        "monitoringInfo": {
+          "monitoringLevel": "ENHANCED",
+          "monitoringStatus": "ACTIVE",
+          "eddRequired": true,
+          "lastReviewDate": "2025-10-15",
+          "nextReviewDate": "2026-04-15",
+          "reviewFrequency": "SEMI_ANNUAL",
+          "alerts": []
+        },
+        "onboardingChannel": "EUDI_WALLET",
+        "kycCompletionDate": "2025-01-20",
+        "consentRecord": {
+          "consentGiven": true,
+          "consentDate": "2025-01-20T14:00:00Z",
+          "consentPurpose": [
+            "AML_SCREENING",
+            "DATA_SHARING_TRAVEL_RULE",
+            "THIRD_PARTY_CDD"
+          ]
+        },
+        "auditMetadata": {
+          "recordId": "f1a2b3c4-d5e6-4f7a-8b9c-0d1e2f3a4b5c",
+          "recordCreatedAt": "2025-01-20T14:00:00Z",
+          "recordUpdatedAt": "2025-11-05T08:10:00Z",
+          "recordVersion": 8,
+          "createdBy": "edd-team@difc-dax.example.ae",
+          "updatedBy": "senior-compliance@difc-dax.example.ae",
+          "dataSourceSystem": "FinStar KYC Platform v5.0 + EUDI Wallet Verification Gateway",
+          "dataProvider": "DIFC Digital Asset Exchange LLC",
+          "sharingConsentReference": "RELIANCE-AGREE-2025-DIFC-GCM-001",
+          "dataRetentionDate": "2030-11-05",
+          "changeLog": [
+            {
+              "timestamp": "2025-01-20T14:00:00Z",
+              "changedBy": "eudi-onboarding-system",
+              "changeType": "CREATED",
+              "fieldsChanged": [
+                "all"
+              ],
+              "notes": "Initial EDD record created. EUDI Wallet Austrian PID presented via OpenID4VP. PEP status identified at onboarding."
+            },
+            {
+              "timestamp": "2025-10-15T11:22:00Z",
+              "changedBy": "senior-compliance@difc-dax.example.ae",
+              "changeType": "REVIEWED",
+              "fieldsChanged": [
+                "kycProfile.pepStatus",
+                "kycProfile.sanctionsScreening",
+                "kycProfile.adverseMedia",
+                "kycProfile.sourceOfFundsWealthDetail",
+                "kycProfile.monitoringInfo"
+              ],
+              "notes": "Semi-annual EDD review completed. Risk rating maintained at HIGH. EUDI Wallet PID re-verified — no changes. PEP status confirmed. Senior management sign-off obtained per AMLR Art. 28(3)."
+            }
+          ]
+        }
+      }
+    },
+    "_comment_evidence": "Evidence block — three source credentials. (A) Austrian PID from Austrian PID Provider (DID #2) — provides high-assurance remote identity verification per AMLR Art. 22(5). (B) UAE Emirates ID cross-reference for primary nationality/residence. (C) Third-party EDD provider attestation (DID #4).",
+    "evidence": [
+      {
+        "id": "urn:uuid:pid-at-fatima-rashidi-2025-01-20",
+        "type": [
+          "PIDCredential",
+          "EUDIWalletPresentationEvidence"
+        ],
+        "verifier": "did:web:difc-dax.example.ae",
+        "credentialIssuer": "did:web:pid-provider.bmi.example.at",
+        "evidenceDocument": "Austrian Residence-based PID (eIDAS 2.0 PID — Regulation (EU) 2024/1183) — issued by Austrian Federal Ministry of the Interior",
+        "subjectPresence": "Digital",
+        "documentPresence": "Digital",
+        "presentationMethod": "OpenID4VP",
+        "presentationDate": "2025-01-20T13:45:00Z"
+      },
+      {
+        "id": "urn:uuid:eid-ae-fatima-rashidi-2025-01-20",
+        "type": [
+          "NationalIDVerification"
+        ],
+        "verifier": "did:web:difc-dax.example.ae",
+        "credentialIssuer": "did:web:icp.example.ae",
+        "evidenceDocument": "UAE National Identity Card (Emirates ID) — cross-reference verification",
+        "subjectPresence": "Digital",
+        "documentPresence": "Digital",
+        "presentationMethod": "Digital",
+        "presentationDate": "2025-01-20T13:50:00Z"
+      },
+      {
+        "id": "urn:uuid:edd-report-fatima-rashidi-2025-11-05",
+        "type": [
+          "EDDAttestation",
+          "ThirdPartyVerificationEvidence"
+        ],
+        "verifier": "did:web:difc-dax.example.ae",
+        "credentialIssuer": "did:web:dj-risk-compliance.example.com",
+        "evidenceDocument": "Enhanced Due Diligence Report — Dow Jones Risk & Compliance. PEP confirmed (FOREIGN_PEP). No sanctions matches. Adverse media clear.",
+        "subjectPresence": "Digital",
+        "documentPresence": "Digital",
+        "presentationMethod": "Digital",
+        "presentationDate": "2025-10-15T10:00:00Z"
+      }
+    ],
+    "credentialStatus": {
+      "id": "https://difc-dax.example.ae/status/v1#0042",
+      "type": "StatusList2021Entry"
+    },
+    "credentialSchema": {
+      "id": "https://openkycaml.org/schema/v1.3.0/kyc-aml-hybrid-extended.json",
+      "type": "JsonSchemaValidator2018"
+    },
+    "proof": {
+      "type": "Ed25519Signature2020",
+      "created": "2025-11-05T16:00:06Z",
+      "verificationMethod": "did:web:difc-dax.example.ae#key-1",
+      "proofPurpose": "assertionMethod",
+      "proofValue": "zEq7Py3bRzSu8WhJ0LnZ5YfM9GtD4CoA1KiF6IvO2NrQ"
+    },
+    "validFrom": "2025-11-05T16:00:00Z",
+    "validUntil": "2026-05-05T16:00:00Z"
+  }
+}

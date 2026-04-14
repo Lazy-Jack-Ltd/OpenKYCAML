@@ -1,0 +1,303 @@
+{
+  "$schema": "https://openkycaml.org/schema/v1.3.0/kyc-aml-hybrid-extended.json",
+  "version": "1.18.0",
+  "messageId": "d9e3f742-5a6b-4c7d-8e9f-0a1b2c3d4e5f",
+  "messageDateTime": "2025-09-10T11:00:00Z",
+  "_comment_scenario": "SD-JWT Selective Disclosure — Natural Person (EUDI Wallet). Anna Müller presents a German eIDAS 2.0 PID via SD-JWT VC in OpenID4VP. She discloses her legal name and residential address (required for FATF Travel Rule minimum) but withholds her date of birth, place of birth, and nationality (GDPR data-minimisation). This file shows the DECODED SD-JWT payload form: in the actual compact SD-JWT token the selectively-disclosable claim values are replaced by their SHA-256 digests inside _sd arrays and the plaintext disclosures are appended after the '~' separator.",
+  "ivms101": {
+    "originator": {
+      "originatorPersons": [
+        {
+          "naturalPerson": {
+            "name": {
+              "nameIdentifier": [
+                {
+                  "primaryIdentifier": "Müller",
+                  "secondaryIdentifier": "Anna Katharina",
+                  "nameIdentifierType": "LEGL"
+                }
+              ]
+            },
+            "geographicAddress": [
+              {
+                "addressType": "HOME",
+                "streetName": "Unter den Linden",
+                "buildingNumber": "77",
+                "townName": "Berlin",
+                "postCode": "10117",
+                "country": "DE"
+              }
+            ],
+            "nationalIdentification": {
+              "nationalIdentifier": "DE-IDCARD-T220001293",
+              "nationalIdentifierType": "IDCD",
+              "countryOfIssue": "DE"
+            },
+            "customerIdentification": "CUST-NL-EU-0048211",
+            "countryOfResidence": "DE"
+          }
+        }
+      ],
+      "accountNumber": [
+        "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
+      ]
+    },
+    "beneficiary": {
+      "beneficiaryPersons": [
+        {
+          "naturalPerson": {
+            "name": {
+              "nameIdentifier": [
+                {
+                  "primaryIdentifier": "Van der Berg",
+                  "secondaryIdentifier": "Pieter",
+                  "nameIdentifierType": "LEGL"
+                }
+              ]
+            },
+            "countryOfResidence": "NL"
+          }
+        }
+      ],
+      "accountNumber": [
+        "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"
+      ]
+    },
+    "originatingVASP": {
+      "name": "Acme Crypto Exchange BV",
+      "lei": "724500VNNHZHYDLFMO70",
+      "vaspIdentifier": "NL-Acme Crypto Exchange BV"
+    },
+    "beneficiaryVASP": {
+      "name": "Acme Crypto Exchange BV",
+      "lei": "724500VNNHZHYDLFMO70",
+      "vaspIdentifier": "NL-Acme Crypto Exchange BV"
+    },
+    "transferredAmount": {
+      "amount": "0.15",
+      "assetType": "ETH"
+    }
+  },
+  "verifiableCredential": {
+    "@context": [
+      "https://www.w3.org/ns/credentials/v2",
+      "https://openkycaml.org/contexts/v1",
+      "https://europa.eu/2018/credentials/eudi/v1"
+    ],
+    "id": "urn:uuid:d9e3f742-5a6b-4c7d-8e9f-0a1b2c3d4e5f",
+    "type": [
+      "VerifiableCredential",
+      "OpenKYCAMLCredential",
+      "KYCAttestation"
+    ],
+    "issuer": {
+      "id": "did:web:acme-crypto.example.nl",
+      "name": "Acme Crypto Exchange BV"
+    },
+    "credentialSubject": {
+      "id": "did:ebsi:z2LSzT7LiUNMxKKyGCnNjNT",
+      "ivms101": {
+        "originator": {
+          "originatorPersons": [
+            {
+              "naturalPerson": {
+                "name": {
+                  "nameIdentifier": [
+                    {
+                      "primaryIdentifier": "Müller",
+                      "secondaryIdentifier": "Anna Katharina",
+                      "nameIdentifierType": "LEGL"
+                    }
+                  ]
+                },
+                "geographicAddress": [
+                  {
+                    "addressType": "HOME",
+                    "streetName": "Unter den Linden",
+                    "buildingNumber": "77",
+                    "townName": "Berlin",
+                    "postCode": "10117",
+                    "country": "DE"
+                  }
+                ],
+                "nationalIdentification": {
+                  "nationalIdentifier": "DE-IDCARD-T220001293",
+                  "nationalIdentifierType": "IDCD",
+                  "countryOfIssue": "DE"
+                },
+                "customerIdentification": "CUST-NL-EU-0048211",
+                "countryOfResidence": "DE"
+              }
+            }
+          ],
+          "accountNumber": [
+            "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
+          ]
+        },
+        "beneficiary": {
+          "beneficiaryPersons": [
+            {
+              "naturalPerson": {
+                "name": {
+                  "nameIdentifier": [
+                    {
+                      "primaryIdentifier": "Van der Berg",
+                      "secondaryIdentifier": "Pieter",
+                      "nameIdentifierType": "LEGL"
+                    }
+                  ]
+                },
+                "countryOfResidence": "NL"
+              }
+            }
+          ],
+          "accountNumber": [
+            "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"
+          ]
+        },
+        "originatingVASP": {
+          "name": "Acme Crypto Exchange BV",
+          "lei": "724500VNNHZHYDLFMO70",
+          "vaspIdentifier": "NL-Acme Crypto Exchange BV"
+        },
+        "beneficiaryVASP": {
+          "name": "Acme Crypto Exchange BV",
+          "lei": "724500VNNHZHYDLFMO70",
+          "vaspIdentifier": "NL-Acme Crypto Exchange BV"
+        },
+        "transferredAmount": {
+          "amount": "0.15",
+          "assetType": "ETH"
+        }
+      },
+      "kycProfile": {
+        "customerRiskRating": "LOW",
+        "dueDiligenceType": "SDD",
+        "pepStatus": {
+          "isPEP": false,
+          "pepCategory": "NOT_PEP",
+          "screeningDate": "2025-09-10",
+          "screeningProvider": "ComplyAdvantage"
+        },
+        "sanctionsScreening": {
+          "screeningStatus": "CLEAR",
+          "screeningDate": "2025-09-10T10:55:00Z",
+          "screeningProvider": "Refinitiv World-Check",
+          "listsChecked": [
+            "OFAC_SDN",
+            "EU_CONSOLIDATED",
+            "UN_CONSOLIDATED"
+          ]
+        },
+        "onboardingChannel": "EUDI_WALLET",
+        "kycCompletionDate": "2025-09-10",
+        "consentRecord": {
+          "consentGiven": true,
+          "consentDate": "2025-09-10T10:50:00Z",
+          "consentPurpose": [
+            "AML_SCREENING",
+            "DATA_SHARING_TRAVEL_RULE"
+          ]
+        },
+        "auditMetadata": {
+          "recordId": "d9e3f742-5a6b-4c7d-8e9f-0a1b2c3d4e5f",
+          "recordCreatedAt": "2025-09-10T11:00:00Z",
+          "recordUpdatedAt": "2025-09-10T11:00:00Z",
+          "recordVersion": 1,
+          "createdBy": "eudi-onboarding@acme-crypto.example.nl",
+          "dataSourceSystem": "EUDI Wallet Onboarding Gateway v2.0",
+          "dataProvider": "Acme Crypto Exchange BV",
+          "dataRetentionDate": "2030-09-10"
+        }
+      }
+    },
+    "evidence": [
+      {
+        "id": "urn:uuid:pid-de-anna-muller-sd-jwt-2025-09-10",
+        "type": [
+          "PIDCredential",
+          "EUDIWalletPresentationEvidence",
+          "SDJWTVCPresentation"
+        ],
+        "verifier": "did:web:acme-crypto.example.nl",
+        "credentialIssuer": "did:web:pid-provider.bsi.example.de",
+        "evidenceDocument": "German National Identity Card (eIDAS 2.0 PID — SD-JWT VC, Regulation (EU) 2024/1183)",
+        "subjectPresence": "Digital",
+        "documentPresence": "Digital",
+        "presentationMethod": "OpenID4VP+SD-JWT",
+        "presentationDate": "2025-09-10T10:57:00Z"
+      }
+    ],
+    "selectiveDisclosure": {
+      "_sd_alg": "sha-256",
+      "sdJwtNote": "GDPR data-minimisation: Anna disclosed only her legal name and residential address — the FATF Travel Rule minimum. Date of birth, place of birth, and nationality are withheld. The VASP verified the credential signature without seeing the withheld values. In the compact SD-JWT token the withheld claims appear only as SHA-256 digests in _sd arrays; their plaintext values are present only in the holder's disclosure objects appended after the '~' separator.",
+      "requiredClaimPaths": [
+        "/credentialSubject/ivms101/originator/originatorPersons/0/naturalPerson/name",
+        "/credentialSubject/ivms101/originator/originatorPersons/0/naturalPerson/geographicAddress",
+        "/credentialSubject/ivms101/originator/accountNumber"
+      ],
+      "disclosableClaimPaths": [
+        "/credentialSubject/ivms101/originator/originatorPersons/0/naturalPerson/dateAndPlaceOfBirth",
+        "/credentialSubject/ivms101/originator/originatorPersons/0/naturalPerson/nationality",
+        "/credentialSubject/ivms101/originator/originatorPersons/0/naturalPerson/nationalIdentification"
+      ],
+      "decodedDisclosures": [
+        {
+          "salt": "2GLC42sKQveCfGfryNRN9w",
+          "claimName": "family_name",
+          "claimValue": "Müller"
+        },
+        {
+          "salt": "eluV5Og3gSNII8EYnsxA_A",
+          "claimName": "given_name",
+          "claimValue": "Anna Katharina"
+        },
+        {
+          "salt": "6Ij7tM-a5iVPGboS5tmvVA",
+          "claimName": "address",
+          "claimValue": {
+            "street_address": "Unter den Linden 77",
+            "locality": "Berlin",
+            "postal_code": "10117",
+            "country": "DE"
+          }
+        },
+        {
+          "_comment_withheld": "The following disclosures are NOT released in this presentation (data-minimisation). They are listed here for documentation only.",
+          "salt": "Qg_O64zqAxe412a108iroA",
+          "claimName": "birthdate",
+          "claimValue": "1990-11-20"
+        },
+        {
+          "salt": "AJx-095VPrpTtN4QMOqROA",
+          "claimName": "place_of_birth",
+          "claimValue": "Munich, DE"
+        },
+        {
+          "salt": "Pc33JM2LchcU_lHggv_ufQ",
+          "claimName": "nationalities",
+          "claimValue": [
+            "DE"
+          ]
+        }
+      ]
+    },
+    "credentialStatus": {
+      "id": "https://acme-crypto.example.nl/status/v1#4840",
+      "type": "StatusList2021Entry"
+    },
+    "credentialSchema": {
+      "id": "https://openkycaml.org/schema/v1.3.0/kyc-aml-hybrid-extended.json",
+      "type": "JsonSchemaValidator2018"
+    },
+    "proof": {
+      "type": "Ed25519Signature2020",
+      "created": "2025-09-10T11:00:05Z",
+      "verificationMethod": "did:web:acme-crypto.example.nl#key-1",
+      "proofPurpose": "assertionMethod",
+      "proofValue": "zBm8Lp0yNwRrM4UeG7KjZ9WdF3CsY6VoH5NiS2XoQ1EcB"
+    },
+    "validFrom": "2025-09-10T11:00:00Z",
+    "validUntil": "2026-09-10T11:00:00Z"
+  }
+}

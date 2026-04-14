@@ -1,0 +1,295 @@
+{
+  "$schema": "https://openkycaml.org/schema/v1.6.0/kyc-aml-hybrid-extended.json",
+  "version": "1.18.0",
+  "messageId": "b6c7d8e9-f0a1-4b2c-9d3e-4f5a6b7c8d9e",
+  "messageDateTime": "2026-04-06T09:00:00Z",
+  "ivms101": {
+    "originator": {
+      "originatorPersons": [
+        {
+          "naturalPerson": {
+            "name": {
+              "nameIdentifier": [
+                {
+                  "primaryIdentifier": "Schmidt",
+                  "secondaryIdentifier": "Andreas",
+                  "nameIdentifierType": "LEGL"
+                }
+              ]
+            },
+            "geographicAddress": [
+              {
+                "addressType": "HOME",
+                "streetName": "Hauptstraße",
+                "buildingNumber": "12",
+                "postCode": "10115",
+                "townName": "Berlin",
+                "country": "DE"
+              }
+            ],
+            "nationalIdentification": {
+              "nationalIdentifier": "L01X00T471",
+              "nationalIdentifierType": "IDCD",
+              "countryOfIssue": "DE",
+              "verifyingDocumentRef": "urn:doc:de-nid-andreas-schmidt-001"
+            },
+            "dateAndPlaceOfBirth": {
+              "dateOfBirth": "1985-07-22",
+              "placeOfBirth": "Munich"
+            },
+            "countryOfResidence": "DE",
+            "nationality": "DE"
+          }
+        }
+      ],
+      "accountNumber": [
+        "DE89370400440532013000"
+      ]
+    },
+    "beneficiary": {
+      "beneficiaryPersons": [
+        {
+          "naturalPerson": {
+            "name": {
+              "nameIdentifier": [
+                {
+                  "primaryIdentifier": "Nakamura",
+                  "secondaryIdentifier": "Yuki",
+                  "nameIdentifierType": "LEGL"
+                }
+              ]
+            },
+            "nationalIdentification": {
+              "nationalIdentifier": "JP-MY-900202-3345678",
+              "nationalIdentifierType": "IDCD",
+              "countryOfIssue": "JP"
+            },
+            "countryOfResidence": "JP"
+          }
+        }
+      ],
+      "accountNumber": [
+        "JP12MUFG1234567890123456"
+      ]
+    },
+    "originatingVASP": {
+      "originatingVASP": {
+        "name": {
+          "nameIdentifier": [
+            {
+              "legalPersonName": "Example VASP GmbH",
+              "legalPersonNameIdentifierType": "LEGL"
+            }
+          ]
+        },
+        "nationalIdentification": {
+          "nationalIdentifier": "529900T8BM49AURSDO55",
+          "nationalIdentifierType": "LEIX"
+        },
+        "countryOfRegistration": "DE"
+      }
+    },
+    "beneficiaryVASP": {
+      "beneficiaryVASP": {
+        "name": {
+          "nameIdentifier": [
+            {
+              "legalPersonName": "Tokyo Digital Assets KK",
+              "legalPersonNameIdentifierType": "LEGL"
+            }
+          ]
+        },
+        "nationalIdentification": {
+          "nationalIdentifier": "353800ZPOCFUTVZSFF79",
+          "nationalIdentifierType": "LEIX"
+        },
+        "countryOfRegistration": "JP"
+      }
+    }
+  },
+  "identityDocuments": {
+    "naturalPersonDocuments": [
+      {
+        "documentType": "NATIONAL_ID_CARD",
+        "documentTitle": "Personalausweis (German National Identity Card)",
+        "documentNumber": "L01X00T471",
+        "issuingCountry": "DE",
+        "issuingAuthority": "Bürgeramt Mitte, Berlin",
+        "issueDate": "2021-03-15",
+        "expiryDate": "2031-03-14",
+        "verificationDate": "2026-03-20",
+        "verificationMethod": "DOCUMENT_CHECK",
+        "assuranceLevel": "SUBSTANTIAL",
+        "documentPresence": "Physical",
+        "documentId": "urn:openkycaml:doc:de:national-id:sha256-421149:2021-03",
+        "documentRef": "urn:doc:de-nid-andreas-schmidt-001",
+        "extractedAttributes": [
+          {
+            "attributeName": "familyName",
+            "value": "Schmidt",
+            "matchesRecord": true
+          },
+          {
+            "attributeName": "givenName",
+            "value": "Andreas",
+            "matchesRecord": true
+          },
+          {
+            "attributeName": "dateOfBirth",
+            "value": "1985-07-22",
+            "matchesRecord": true
+          },
+          {
+            "attributeName": "documentNumber",
+            "value": "L01X00T471",
+            "matchesRecord": true
+          },
+          {
+            "attributeName": "nationality",
+            "value": "DE",
+            "matchesRecord": true
+          }
+        ]
+      },
+      {
+        "documentType": "PROOF_OF_ADDRESS",
+        "documentTitle": "Electricity bill — Vattenfall GmbH",
+        "issuingCountry": "DE",
+        "issuingAuthority": "Vattenfall GmbH",
+        "issueDate": "2026-02-28",
+        "verificationDate": "2026-03-20",
+        "verificationMethod": "DOCUMENT_CHECK",
+        "documentPresence": "Physical",
+        "documentId": "urn:openkycaml:doc:de:proof-of-address:sha256-421149:2026-02",
+        "documentRef": "urn:doc:de-poa-andreas-schmidt-vattenfall-2026-02",
+        "extractedAttributes": [
+          {
+            "attributeName": "streetName",
+            "value": "Hauptstraße",
+            "matchesRecord": true
+          },
+          {
+            "attributeName": "buildingNumber",
+            "value": "12",
+            "matchesRecord": true
+          },
+          {
+            "attributeName": "postCode",
+            "value": "10115",
+            "matchesRecord": true
+          },
+          {
+            "attributeName": "townName",
+            "value": "Berlin",
+            "matchesRecord": true
+          },
+          {
+            "attributeName": "country",
+            "value": "DE",
+            "matchesRecord": true
+          }
+        ]
+      },
+      {
+        "documentType": "EIDAS_PID_CREDENTIAL",
+        "documentTitle": "German eIDAS 2.0 PID Verifiable Credential",
+        "issuingCountry": "DE",
+        "issuingAuthority": "Bundesdruckerei GmbH (BSI-certified PID Provider)",
+        "issueDate": "2026-01-10",
+        "expiryDate": "2027-01-09",
+        "verificationDate": "2026-03-20",
+        "verificationMethod": "EUDI_WALLET_PID",
+        "assuranceLevel": "HIGH",
+        "documentPresence": "Digital",
+        "credentialId": "urn:credential:de-pid-7f3a9c2b-4e12-4f8a-b6d1-9a0c8e3f1d5e",
+        "credentialIssuer": "did:web:pid-provider.bundesdruckerei.de",
+        "documentId": "urn:openkycaml:doc:de:eidas-pid:sha256-421149:2026-01",
+        "documentRef": "urn:doc:eidas-pid-andreas-schmidt-2026",
+        "extractedAttributes": [
+          {
+            "attributeName": "family_name",
+            "value": "Schmidt",
+            "matchesRecord": true
+          },
+          {
+            "attributeName": "given_name",
+            "value": "Andreas",
+            "matchesRecord": true
+          },
+          {
+            "attributeName": "birth_date",
+            "value": "1985-07-22",
+            "matchesRecord": true
+          },
+          {
+            "attributeName": "birth_place",
+            "value": "Munich",
+            "matchesRecord": true
+          },
+          {
+            "attributeName": "resident_address.country",
+            "value": "DE",
+            "matchesRecord": true
+          },
+          {
+            "attributeName": "personal_administrative_number",
+            "value": "L01X00T471",
+            "matchesRecord": true
+          }
+        ]
+      }
+    ],
+    "legalEntityDocuments": [],
+    "bundleCompleteness": "COMPLETE",
+    "bundleValidatedBy": "AutoKYC v3.2 — Example VASP GmbH Compliance Engine",
+    "bundleValidationDate": "2026-03-20",
+    "requiredDocumentTypes": [
+      "NATIONAL_ID_CARD",
+      "PROOF_OF_ADDRESS"
+    ]
+  },
+  "kycProfile": {
+    "customerRiskRating": "LOW",
+    "customerClassification": {
+      "customerType": "RETAIL"
+    },
+    "dueDiligenceType": "CDD",
+    "kycCompletionDate": "2026-03-20",
+    "onboardingChannel": "EUDI_WALLET",
+    "dueDiligenceRequirements": {
+      "appliedTier": "CDD",
+      "verifiedAttributes": [
+        "naturalPerson.name",
+        "naturalPerson.dateAndPlaceOfBirth",
+        "naturalPerson.nationalIdentification",
+        "naturalPerson.geographicAddress",
+        "naturalPerson.countryOfResidence"
+      ],
+      "verificationMethods": [
+        {
+          "attribute": "naturalPerson.name",
+          "method": "EUDI_WALLET_PID",
+          "assuranceLevel": "HIGH",
+          "verificationDate": "2026-03-20",
+          "verificationProvider": "Bundesdruckerei GmbH",
+          "documentRef": "urn:doc:eidas-pid-andreas-schmidt-2026"
+        },
+        {
+          "attribute": "naturalPerson.nationalIdentification",
+          "method": "DOCUMENT_CHECK",
+          "assuranceLevel": "SUBSTANTIAL",
+          "verificationDate": "2026-03-20",
+          "verificationProvider": "Example VASP GmbH Compliance Team",
+          "documentRef": "urn:doc:de-nid-andreas-schmidt-001"
+        },
+        {
+          "attribute": "naturalPerson.geographicAddress",
+          "method": "DOCUMENT_CHECK",
+          "verificationDate": "2026-03-20",
+          "verificationProvider": "Example VASP GmbH Compliance Team",
+          "documentRef": "urn:doc:de-poa-andreas-schmidt-vattenfall-2026-02"
+        }
+      ]
+    }
+  }
+}

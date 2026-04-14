@@ -1,0 +1,334 @@
+{
+  "$schema": "https://openkycaml.org/schema/v1.3.0/kyc-aml-hybrid-extended.json",
+  "version": "1.18.0",
+  "messageId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+  "messageDateTime": "2025-11-05T14:00:00Z",
+  "_comment_scenario": "SAR Restriction + Tipping-Off Protection. Acme Crypto Exchange BV (NL) has filed a Suspicious Activity Report (SAR) on customer Pieter Van Houten after detecting anomalous transaction patterns. The KYC profile retains all standard CDD data but the SAR-related fields (adverse media, internal flags, and the SAR filing reference) are classified as 'sar_restricted' with tippingOffProtected:true. When this VC is stored in or presented from an EUDI Wallet, wallet software and relying parties MUST NOT disclose the existence or content of the SAR to the data subject or any party other than authorised FIU/LEA recipients. The credential uses SD-JWT selective disclosure to cryptographically withhold the SAR-restricted fields — they appear only as SHA-256 digests in the Issuer-JWT _sd array and are never appended as disclosures in any presentation token.",
+  "ivms101": {
+    "originator": {
+      "originatorPersons": [
+        {
+          "naturalPerson": {
+            "name": {
+              "nameIdentifier": [
+                {
+                  "primaryIdentifier": "Van Houten",
+                  "secondaryIdentifier": "Pieter Jan",
+                  "nameIdentifierType": "LEGL"
+                }
+              ]
+            },
+            "geographicAddress": [
+              {
+                "addressType": "HOME",
+                "streetName": "Keizersgracht",
+                "buildingNumber": "123",
+                "townName": "Amsterdam",
+                "postCode": "1015 CJ",
+                "country": "NL"
+              }
+            ],
+            "nationalIdentification": {
+              "nationalIdentifier": "NL-BSN-012345678",
+              "nationalIdentifierType": "TXID",
+              "countryOfIssue": "NL"
+            },
+            "customerIdentification": "CUST-NL-EU-0019847",
+            "dateAndPlaceOfBirth": {
+              "dateOfBirth": "1985-03-22",
+              "placeOfBirth": "Rotterdam"
+            },
+            "countryOfResidence": "NL",
+            "nationality": "NL"
+          }
+        }
+      ],
+      "accountNumber": [
+        "0x9F8e7D6c5B4A3E2f1d0C9b8A7e6F5d4C3b2A1e0F"
+      ]
+    },
+    "beneficiary": {
+      "beneficiaryPersons": [
+        {
+          "naturalPerson": {
+            "name": {
+              "nameIdentifier": [
+                {
+                  "primaryIdentifier": "Unknown",
+                  "nameIdentifierType": "MISC"
+                }
+              ]
+            },
+            "countryOfResidence": "NL"
+          }
+        }
+      ],
+      "accountNumber": [
+        "0x1A2b3C4d5E6f7A8b9C0d1E2f3A4b5C6d7E8f9A0b"
+      ]
+    },
+    "originatingVASP": {
+      "name": "Acme Crypto Exchange BV",
+      "lei": "724500VNNHZHYDLFMO70",
+      "vaspIdentifier": "NL-Acme Crypto Exchange BV"
+    },
+    "beneficiaryVASP": {
+      "name": "Unknown External Wallet",
+      "vaspIdentifier": "UNKNOWN"
+    }
+  },
+  "verifiableCredential": {
+    "@context": [
+      "https://www.w3.org/ns/credentials/v2",
+      "https://openkycaml.org/contexts/v1",
+      "https://europa.eu/2018/credentials/eudi/v1"
+    ],
+    "id": "urn:uuid:a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "type": [
+      "VerifiableCredential",
+      "OpenKYCAMLCredential",
+      "KYCAttestation"
+    ],
+    "issuer": {
+      "id": "did:web:acme-crypto.example.nl",
+      "name": "Acme Crypto Exchange BV"
+    },
+    "credentialSubject": {
+      "id": "did:ebsi:z5KMnPq9rLtUvWxYz3NjRsT",
+      "ivms101": {
+        "originator": {
+          "originatorPersons": [
+            {
+              "naturalPerson": {
+                "name": {
+                  "nameIdentifier": [
+                    {
+                      "primaryIdentifier": "Van Houten",
+                      "secondaryIdentifier": "Pieter Jan",
+                      "nameIdentifierType": "LEGL"
+                    }
+                  ]
+                },
+                "geographicAddress": [
+                  {
+                    "addressType": "HOME",
+                    "streetName": "Keizersgracht",
+                    "buildingNumber": "123",
+                    "townName": "Amsterdam",
+                    "postCode": "1015 CJ",
+                    "country": "NL"
+                  }
+                ],
+                "nationalIdentification": {
+                  "nationalIdentifier": "NL-BSN-012345678",
+                  "nationalIdentifierType": "TXID",
+                  "countryOfIssue": "NL"
+                },
+                "customerIdentification": "CUST-NL-EU-0019847",
+                "dateAndPlaceOfBirth": {
+                  "dateOfBirth": "1985-03-22",
+                  "placeOfBirth": "Rotterdam"
+                },
+                "countryOfResidence": "NL",
+                "nationality": "NL"
+              }
+            }
+          ],
+          "accountNumber": [
+            "0x9F8e7D6c5B4A3E2f1d0C9b8A7e6F5d4C3b2A1e0F"
+          ]
+        },
+        "beneficiary": {
+          "beneficiaryPersons": [
+            {
+              "naturalPerson": {
+                "name": {
+                  "nameIdentifier": [
+                    {
+                      "primaryIdentifier": "Unknown",
+                      "nameIdentifierType": "MISC"
+                    }
+                  ]
+                },
+                "countryOfResidence": "NL"
+              }
+            }
+          ],
+          "accountNumber": [
+            "0x1A2b3C4d5E6f7A8b9C0d1E2f3A4b5C6d7E8f9A0b"
+          ]
+        },
+        "originatingVASP": {
+          "name": "Acme Crypto Exchange BV",
+          "lei": "724500VNNHZHYDLFMO70",
+          "vaspIdentifier": "NL-Acme Crypto Exchange BV"
+        },
+        "beneficiaryVASP": {
+          "name": "Unknown External Wallet",
+          "vaspIdentifier": "UNKNOWN"
+        }
+      },
+      "kycProfile": {
+        "customerRiskRating": "HIGH",
+        "riskRatingDetail": {
+          "riskScore": 740,
+          "riskRatingDate": "2025-11-05",
+          "riskFactors": {
+            "geographicRisk": "MEDIUM",
+            "productRisk": "HIGH",
+            "channelRisk": "MEDIUM",
+            "customerTypeRisk": "HIGH",
+            "transactionRisk": "HIGH"
+          },
+          "ratingMethodology": "EBA Risk Factor Guidelines 2024 — anomalous transaction patterns detected"
+        },
+        "dueDiligenceType": "EDD",
+        "pepStatus": {
+          "isPEP": false,
+          "pepCategory": "NOT_PEP",
+          "screeningDate": "2025-11-05",
+          "screeningProvider": "ComplyAdvantage"
+        },
+        "sanctionsScreening": {
+          "screeningStatus": "CLEAR",
+          "screeningDate": "2025-11-05T13:45:00Z",
+          "screeningProvider": "Refinitiv World-Check",
+          "listsChecked": [
+            "OFAC_SDN",
+            "EU_CONSOLIDATED",
+            "UN_CONSOLIDATED",
+            "HMT"
+          ],
+          "matchDetails": []
+        },
+        "onboardingChannel": "IN_PERSON",
+        "kycCompletionDate": "2023-08-14",
+        "consentRecord": {
+          "consentGiven": true,
+          "consentDate": "2023-08-14T10:00:00Z",
+          "consentPurpose": [
+            "AML_SCREENING",
+            "DATA_SHARING_TRAVEL_RULE"
+          ]
+        },
+        "auditMetadata": {
+          "recordId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+          "recordCreatedAt": "2023-08-14T10:00:00Z",
+          "recordUpdatedAt": "2025-11-05T14:00:00Z",
+          "recordVersion": 4,
+          "createdBy": "kyc-team@acme-crypto.example.nl",
+          "dataSourceSystem": "KYC Platform v3.1",
+          "dataProvider": "Acme Crypto Exchange BV",
+          "dataRetentionDate": "2030-11-05"
+        }
+      }
+    },
+    "evidence": [
+      {
+        "id": "urn:uuid:b2c3d4e5-f6a7-8901-bcde-f12345678901",
+        "type": [
+          "IDDocumentVerification"
+        ],
+        "verifier": "did:web:acme-crypto.example.nl",
+        "credentialIssuer": "did:web:id-verification.example.nl",
+        "evidenceDocument": "Dutch National Identity Card",
+        "subjectPresence": "Physical",
+        "documentPresence": "Physical",
+        "presentationMethod": "InPerson",
+        "presentationDate": "2023-08-14T09:50:00Z"
+      }
+    ],
+    "_comment_selectiveDisclosure": "The SAR-restricted fields (adverseMedia, sarFilingReference, internalSuspicionFlag) are included in disclosableClaimPaths but intentionally have NO corresponding decodedDisclosures entry — their digests appear only inside the _sd array of the Issuer-JWT and are NEVER appended to any presentation token. This is the cryptographic mechanism that enforces tipping-off protection: the relying party (or data subject) cannot reconstruct the SAR field values even if they receive the SD-JWT VC.",
+    "selectiveDisclosure": {
+      "_sd_alg": "sha-256",
+      "requiredClaimPaths": [
+        "/credentialSubject/ivms101/originator/originatorPersons/0/naturalPerson/name",
+        "/credentialSubject/ivms101/originator/accountNumber",
+        "/credentialSubject/kycProfile/customerRiskRating",
+        "/credentialSubject/kycProfile/dueDiligenceType"
+      ],
+      "disclosableClaimPaths": [
+        "/credentialSubject/ivms101/originator/originatorPersons/0/naturalPerson/geographicAddress",
+        "/credentialSubject/ivms101/originator/originatorPersons/0/naturalPerson/dateAndPlaceOfBirth",
+        "/credentialSubject/kycProfile/sanctionsScreening"
+      ],
+      "_comment_sar_restricted_paths": "The following paths are listed here for documentation only. They correspond to _sd digests in the Issuer-JWT but MUST NEVER be disclosed. No decodedDisclosures entry is provided for them.",
+      "_sarRestrictedPaths": [
+        "/credentialSubject/kycProfile/adverseMedia",
+        "/credentialSubject/kycProfile/sarFilingReference",
+        "/credentialSubject/kycProfile/internalSuspicionFlag"
+      ],
+      "decodedDisclosures": [
+        {
+          "salt": "hK9pQr3sLmNvWx7uYz2tAb",
+          "claimName": "address",
+          "claimValue": {
+            "street_address": "Keizersgracht 123",
+            "locality": "Amsterdam",
+            "postal_code": "1015 CJ",
+            "country": "NL"
+          }
+        },
+        {
+          "salt": "cD5eF8gH1iJ4kL7mNoPqRs",
+          "claimName": "birthdate",
+          "claimValue": "1985-03-22"
+        },
+        {
+          "salt": "tU2vW5xY8zA1bC4dE7fGhI",
+          "claimName": "sanctions_status",
+          "claimValue": "CLEAR"
+        }
+      ]
+    },
+    "credentialStatus": {
+      "id": "https://acme-crypto.example.nl/status/v1#9847",
+      "type": "StatusList2021Entry"
+    },
+    "credentialSchema": {
+      "id": "https://openkycaml.org/schema/v1.3.0/kyc-aml-hybrid-extended.json",
+      "type": "JsonSchemaValidator2018"
+    },
+    "proof": {
+      "type": "Ed25519Signature2020",
+      "created": "2025-11-05T14:00:05Z",
+      "verificationMethod": "did:web:acme-crypto.example.nl#key-1",
+      "proofPurpose": "assertionMethod",
+      "proofValue": "zKn9Lp1yOwSsN5VfH8MkA0WeBtZ7UqI6PjR3XmQ2DdC"
+    },
+    "validFrom": "2025-11-05T14:00:00Z",
+    "validUntil": "2026-11-05T14:00:00Z"
+  },
+  "gdprSensitivityMetadata": {
+    "classification": "sar_restricted",
+    "restrictedFields": [
+      "/kycProfile/adverseMedia",
+      "/kycProfile/sarFilingReference",
+      "/kycProfile/internalSuspicionFlag",
+      "/verifiableCredential/credentialSubject/kycProfile/adverseMedia",
+      "/verifiableCredential/credentialSubject/kycProfile/sarFilingReference",
+      "/verifiableCredential/credentialSubject/kycProfile/internalSuspicionFlag"
+    ],
+    "tippingOffProtected": true,
+    "legalBasis": "AMLR-Art73",
+    "retentionPeriod": "P5Y",
+    "consentRecord": {
+      "consentGiven": false,
+      "withdrawalPossible": false
+    },
+    "disclosurePolicy": {
+      "allowedRecipients": [
+        "fiu_only",
+        "law_enforcement_authority",
+        "aml_compliance_team_internal"
+      ],
+      "prohibitedRecipients": [
+        "data_subject",
+        "third_party_without_supervisory_approval",
+        "counterparty_vasp"
+      ],
+      "requiresExplicitConsent": false
+    },
+    "auditReference": "sar-case-ref:sha256:c7f3e2a1b9d8f45e6c0912ab3de47f810293c6d5a7b8e4f901234c5d6e7f8901"
+  }
+}

@@ -1,0 +1,181 @@
+{
+  "$schema": "https://openkycaml.org/schema/v1.3.0/kyc-aml-hybrid-extended.json",
+  "version": "1.18.0",
+  "messageId": "a3f7c210-1b2d-4e56-9f87-cc3344556677",
+  "messageDateTime": "2024-09-01T10:30:00Z",
+  "verifiableCredential": {
+    "@context": [
+      "https://www.w3.org/ns/credentials/v2",
+      "https://openkycaml.org/contexts/v1"
+    ],
+    "id": "urn:uuid:a3f7c210-1b2d-4e56-9f87-cc3344556677",
+    "type": [
+      "VerifiableCredential",
+      "OpenKYCAMLCredential",
+      "TravelRuleAttestation"
+    ],
+    "issuer": {
+      "id": "did:web:acme-crypto.example.nl",
+      "name": "Acme Crypto Exchange BV"
+    },
+    "credentialSubject": {
+      "id": "did:example:customer:CUST-NL-0000042",
+      "ivms101": {
+        "originator": {
+          "originatorPersons": [
+            {
+              "naturalPerson": {
+                "name": {
+                  "nameIdentifier": [
+                    {
+                      "primaryIdentifier": "Van Dijk",
+                      "secondaryIdentifier": "Pieter Jan",
+                      "nameIdentifierType": "LEGL"
+                    }
+                  ]
+                },
+                "geographicAddress": [
+                  {
+                    "addressType": "HOME",
+                    "streetName": "Blockchain Avenue",
+                    "buildingNumber": "21",
+                    "townName": "Amsterdam",
+                    "postCode": "1012AB",
+                    "country": "NL"
+                  }
+                ],
+                "nationalIdentification": {
+                  "nationalIdentifier": "NL-PASSPORT-AB123456",
+                  "nationalIdentifierType": "CCPT",
+                  "countryOfIssue": "NL"
+                },
+                "customerIdentification": "CUST-NL-0000042",
+                "dateAndPlaceOfBirth": {
+                  "dateOfBirth": "1985-04-05",
+                  "placeOfBirth": "Amsterdam"
+                },
+                "countryOfResidence": "NL"
+              }
+            }
+          ],
+          "accountNumber": [
+            "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh"
+          ]
+        },
+        "beneficiary": {
+          "beneficiaryPersons": [
+            {
+              "naturalPerson": {
+                "name": {
+                  "nameIdentifier": [
+                    {
+                      "primaryIdentifier": "Hargreaves",
+                      "secondaryIdentifier": "Thomas James",
+                      "nameIdentifierType": "LEGL"
+                    }
+                  ]
+                },
+                "geographicAddress": [
+                  {
+                    "addressType": "HOME",
+                    "streetName": "Pieter Jan Street",
+                    "buildingNumber": "10",
+                    "townName": "London",
+                    "postCode": "EC2V 8RF",
+                    "country": "GB"
+                  }
+                ],
+                "nationalIdentification": {
+                  "nationalIdentifier": "GB-PASSPORT-HF987654",
+                  "nationalIdentifierType": "CCPT",
+                  "countryOfIssue": "GB"
+                },
+                "countryOfResidence": "GB"
+              }
+            }
+          ],
+          "accountNumber": [
+            "3J98t1WpEZ73CNmQviecrnyiWrnqRhWNLy"
+          ]
+        },
+        "originatingVASP": {
+          "name": "Acme Crypto Exchange BV",
+          "lei": "724500VNNHZHYDLFMO70",
+          "vaspIdentifier": "NL-Acme Crypto Exchange BV"
+        },
+        "beneficiaryVASP": {
+          "name": "FinTech Exchange Ltd",
+          "lei": "213800WSGIIZCXF1P572",
+          "vaspIdentifier": "GB-FinTech Exchange Ltd"
+        },
+        "transferredAmount": {
+          "amount": "0.5",
+          "assetType": "BTC"
+        }
+      }
+    },
+    "credentialStatus": {
+      "id": "https://acme-crypto.example.nl/status/v1#99",
+      "type": "StatusList2021Entry"
+    },
+    "credentialSchema": {
+      "id": "https://openkycaml.org/schema/v1.3.0/kyc-aml-hybrid-extended.json",
+      "type": "JsonSchemaValidator2018"
+    },
+    "proof": {
+      "type": "Ed25519Signature2020",
+      "created": "2024-09-01T10:30:05Z",
+      "verificationMethod": "did:web:acme-crypto.example.nl#key-1",
+      "proofPurpose": "assertionMethod",
+      "proofValue": "zABC123DEF456GHI789JKL012MNO345PQR678STU901VWX234YZA567BCD890EFG123HIJ456"
+    },
+    "validFrom": "2024-09-01T10:30:00Z",
+    "validUntil": "2025-09-01T10:30:00Z"
+  },
+  "transactionMonitoring": {
+    "transactionReference": "TXN-NL-GB-2024-0042-001",
+    "monitoringDate": "2024-09-01T10:30:08Z",
+    "monitoringEngine": "Acme TM Suite v2.3",
+    "overallOutcome": "CLEAR",
+    "rulesEvaluated": [
+      {
+        "ruleId": "RULE-VEL-001",
+        "ruleName": "Velocity – 7-day rolling window (crypto)",
+        "ruleCategory": "VELOCITY",
+        "ruleResult": "PASS",
+        "threshold": "5 BTC / 7 days",
+        "actualValue": "0.5 BTC"
+      },
+      {
+        "ruleId": "RULE-TR-001",
+        "ruleName": "Travel Rule threshold (EUR equivalent)",
+        "ruleCategory": "TRAVEL_RULE",
+        "ruleResult": "PASS",
+        "threshold": "1000 EUR",
+        "actualValue": "~14750 EUR",
+        "notes": "Travel Rule applicable; IVMS 101 message embedded in VC and transmitted to FinTech Exchange Ltd via TRP."
+      },
+      {
+        "ruleId": "RULE-GEO-001",
+        "ruleName": "High-risk jurisdiction counterparty",
+        "ruleCategory": "GEOGRAPHY",
+        "ruleResult": "PASS",
+        "notes": "NL and GB are low-risk jurisdictions."
+      }
+    ],
+    "alerts": [],
+    "travelRuleCompliance": {
+      "travelRuleApplicable": true,
+      "jurisdictionThreshold": {
+        "amount": "1000",
+        "currency": "EUR",
+        "jurisdiction": "NL"
+      },
+      "complianceStatus": "COMPLIANT",
+      "ivms101MessageId": "a3f7c210-1b2d-4e56-9f87-cc3344556677",
+      "beneficiaryVaspVerified": true,
+      "notes": "IVMS 101 payload embedded in VC credentialSubject. VC signed by originating VASP DID and accepted by beneficiary VASP."
+    },
+    "reportingObligations": []
+  }
+}

@@ -1,0 +1,288 @@
+{
+  "$schema": "https://openkycaml.org/schema/v1.3.0/kyc-aml-hybrid-extended.json",
+  "version": "1.18.0",
+  "messageId": "c7d2e841-3f4a-4b5c-9d6e-7f8a9b0c1d2e",
+  "messageDateTime": "2025-07-15T09:30:00Z",
+  "_comment_eudi": "EUDI Wallet KYC Onboarding — Natural Person. Anna Müller (DE) onboards at Acme Crypto Exchange BV (NL) by presenting her German eIDAS 2.0 PID from her EU Digital Identity Wallet via OpenID4VP. Three DIDs triangulate the identity chain: (1) Subject wallet DID, (2) PID Issuer DID (DE national PID Provider), (3) VASP issuer DID.",
+  "ivms101": {
+    "originator": {
+      "originatorPersons": [
+        {
+          "naturalPerson": {
+            "name": {
+              "nameIdentifier": [
+                {
+                  "primaryIdentifier": "Müller",
+                  "secondaryIdentifier": "Anna Katharina",
+                  "nameIdentifierType": "LEGL"
+                }
+              ]
+            },
+            "geographicAddress": [
+              {
+                "addressType": "HOME",
+                "streetName": "Unter den Linden",
+                "buildingNumber": "77",
+                "townName": "Berlin",
+                "postCode": "10117",
+                "country": "DE"
+              }
+            ],
+            "nationalIdentification": {
+              "nationalIdentifier": "DE-IDCARD-T220001293",
+              "nationalIdentifierType": "IDCD",
+              "countryOfIssue": "DE"
+            },
+            "customerIdentification": "CUST-NL-EU-0048211",
+            "dateAndPlaceOfBirth": {
+              "dateOfBirth": "1990-11-20",
+              "placeOfBirth": "Munich"
+            },
+            "countryOfResidence": "DE",
+            "nationality": "DE"
+          }
+        }
+      ],
+      "accountNumber": [
+        "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
+      ]
+    },
+    "beneficiary": {
+      "beneficiaryPersons": [
+        {
+          "naturalPerson": {
+            "name": {
+              "nameIdentifier": [
+                {
+                  "primaryIdentifier": "Van der Berg",
+                  "secondaryIdentifier": "Pieter",
+                  "nameIdentifierType": "LEGL"
+                }
+              ]
+            },
+            "nationalIdentification": {
+              "nationalIdentifier": "NL-BSN-987654321",
+              "nationalIdentifierType": "TXID",
+              "countryOfIssue": "NL"
+            },
+            "countryOfResidence": "NL"
+          }
+        }
+      ],
+      "accountNumber": [
+        "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"
+      ]
+    },
+    "originatingVASP": {
+      "name": "Acme Crypto Exchange BV",
+      "lei": "724500VNNHZHYDLFMO70",
+      "vaspIdentifier": "NL-Acme Crypto Exchange BV"
+    },
+    "beneficiaryVASP": {
+      "name": "Acme Crypto Exchange BV",
+      "lei": "724500VNNHZHYDLFMO70",
+      "vaspIdentifier": "NL-Acme Crypto Exchange BV"
+    },
+    "transferredAmount": {
+      "amount": "0.15",
+      "assetType": "ETH"
+    }
+  },
+  "verifiableCredential": {
+    "@context": [
+      "https://www.w3.org/ns/credentials/v2",
+      "https://openkycaml.org/contexts/v1",
+      "https://europa.eu/2018/credentials/eudi/v1"
+    ],
+    "id": "urn:uuid:c7d2e841-3f4a-4b5c-9d6e-7f8a9b0c1d2e",
+    "type": [
+      "VerifiableCredential",
+      "OpenKYCAMLCredential",
+      "KYCAttestation"
+    ],
+    "_comment_issuer": "DID #3 — VASP (issuer of this OpenKYCAML VC, acting as relying party after verifying the PID)",
+    "issuer": {
+      "id": "did:web:acme-crypto.example.nl",
+      "name": "Acme Crypto Exchange BV"
+    },
+    "credentialSubject": {
+      "_comment_subject": "DID #1 — Subject's EU Digital Identity Wallet DID (did:ebsi, issued by EBSI infrastructure)",
+      "id": "did:ebsi:z2LSzT7LiUNMxKKyGCnNjNT",
+      "ivms101": {
+        "originator": {
+          "originatorPersons": [
+            {
+              "naturalPerson": {
+                "name": {
+                  "nameIdentifier": [
+                    {
+                      "primaryIdentifier": "Müller",
+                      "secondaryIdentifier": "Anna Katharina",
+                      "nameIdentifierType": "LEGL"
+                    }
+                  ]
+                },
+                "geographicAddress": [
+                  {
+                    "addressType": "HOME",
+                    "streetName": "Unter den Linden",
+                    "buildingNumber": "77",
+                    "townName": "Berlin",
+                    "postCode": "10117",
+                    "country": "DE"
+                  }
+                ],
+                "nationalIdentification": {
+                  "nationalIdentifier": "DE-IDCARD-T220001293",
+                  "nationalIdentifierType": "IDCD",
+                  "countryOfIssue": "DE"
+                },
+                "customerIdentification": "CUST-NL-EU-0048211",
+                "dateAndPlaceOfBirth": {
+                  "dateOfBirth": "1990-11-20",
+                  "placeOfBirth": "Munich"
+                },
+                "countryOfResidence": "DE",
+                "nationality": "DE"
+              }
+            }
+          ],
+          "accountNumber": [
+            "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
+          ]
+        },
+        "beneficiary": {
+          "beneficiaryPersons": [
+            {
+              "naturalPerson": {
+                "name": {
+                  "nameIdentifier": [
+                    {
+                      "primaryIdentifier": "Van der Berg",
+                      "secondaryIdentifier": "Pieter",
+                      "nameIdentifierType": "LEGL"
+                    }
+                  ]
+                },
+                "nationalIdentification": {
+                  "nationalIdentifier": "NL-BSN-987654321",
+                  "nationalIdentifierType": "TXID",
+                  "countryOfIssue": "NL"
+                },
+                "countryOfResidence": "NL"
+              }
+            }
+          ],
+          "accountNumber": [
+            "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"
+          ]
+        },
+        "originatingVASP": {
+          "name": "Acme Crypto Exchange BV",
+          "lei": "724500VNNHZHYDLFMO70",
+          "vaspIdentifier": "NL-Acme Crypto Exchange BV"
+        },
+        "beneficiaryVASP": {
+          "name": "Acme Crypto Exchange BV",
+          "lei": "724500VNNHZHYDLFMO70",
+          "vaspIdentifier": "NL-Acme Crypto Exchange BV"
+        },
+        "transferredAmount": {
+          "amount": "0.15",
+          "assetType": "ETH"
+        }
+      },
+      "kycProfile": {
+        "customerRiskRating": "LOW",
+        "riskRatingDetail": {
+          "riskScore": 180,
+          "riskRatingDate": "2025-07-15",
+          "riskFactors": {
+            "geographicRisk": "LOW",
+            "productRisk": "LOW",
+            "channelRisk": "LOW",
+            "customerTypeRisk": "LOW",
+            "transactionRisk": "LOW"
+          },
+          "ratingMethodology": "EBA Risk Factor Guidelines 2024 — EUDI Wallet PID onboarding reduces identity risk to minimum"
+        },
+        "customerClassification": {
+          "customerType": "RETAIL"
+        },
+        "dueDiligenceType": "SDD",
+        "pepStatus": {
+          "isPEP": false,
+          "pepCategory": "NOT_PEP",
+          "screeningDate": "2025-07-15",
+          "screeningProvider": "ComplyAdvantage"
+        },
+        "sanctionsScreening": {
+          "screeningStatus": "CLEAR",
+          "screeningDate": "2025-07-15T09:25:00Z",
+          "screeningProvider": "Refinitiv World-Check",
+          "listsChecked": [
+            "OFAC_SDN",
+            "EU_CONSOLIDATED",
+            "UN_CONSOLIDATED",
+            "HMT"
+          ],
+          "matchDetails": []
+        },
+        "onboardingChannel": "EUDI_WALLET",
+        "kycCompletionDate": "2025-07-15",
+        "consentRecord": {
+          "consentGiven": true,
+          "consentDate": "2025-07-15T09:20:00Z",
+          "consentPurpose": [
+            "AML_SCREENING",
+            "DATA_SHARING_TRAVEL_RULE"
+          ]
+        },
+        "auditMetadata": {
+          "recordId": "c7d2e841-3f4a-4b5c-9d6e-7f8a9b0c1d2e",
+          "recordCreatedAt": "2025-07-15T09:30:00Z",
+          "recordUpdatedAt": "2025-07-15T09:30:00Z",
+          "recordVersion": 1,
+          "createdBy": "eudi-onboarding@acme-crypto.example.nl",
+          "dataSourceSystem": "EUDI Wallet Onboarding Gateway v2.0",
+          "dataProvider": "Acme Crypto Exchange BV",
+          "dataRetentionDate": "2030-07-15"
+        }
+      }
+    },
+    "_comment_evidence": "W3C VC evidence block — links back to the PID credential presented by the subject. DID #2 is the German PID Provider (Bundesamt für Sicherheit in der Informationstechnik) who issued the source PID.",
+    "evidence": [
+      {
+        "id": "urn:uuid:pid-de-anna-muller-2025-07-15",
+        "type": [
+          "PIDCredential",
+          "EUDIWalletPresentationEvidence"
+        ],
+        "verifier": "did:web:acme-crypto.example.nl",
+        "credentialIssuer": "did:web:pid-provider.bsi.example.de",
+        "evidenceDocument": "German National Identity Card (eIDAS 2.0 PID — Regulation (EU) 2024/1183)",
+        "subjectPresence": "Digital",
+        "documentPresence": "Digital",
+        "presentationMethod": "OpenID4VP",
+        "presentationDate": "2025-07-15T09:27:00Z"
+      }
+    ],
+    "credentialStatus": {
+      "id": "https://acme-crypto.example.nl/status/v1#4821",
+      "type": "StatusList2021Entry"
+    },
+    "credentialSchema": {
+      "id": "https://openkycaml.org/schema/v1.3.0/kyc-aml-hybrid-extended.json",
+      "type": "JsonSchemaValidator2018"
+    },
+    "proof": {
+      "type": "Ed25519Signature2020",
+      "created": "2025-07-15T09:30:05Z",
+      "verificationMethod": "did:web:acme-crypto.example.nl#key-1",
+      "proofPurpose": "assertionMethod",
+      "proofValue": "zAm7Kp9xNvQrL3TdF6HjY8WcE2BsZ5UoG4MiR1XnP0DbA"
+    },
+    "validFrom": "2025-07-15T09:30:00Z",
+    "validUntil": "2026-07-15T09:30:00Z"
+  }
+}

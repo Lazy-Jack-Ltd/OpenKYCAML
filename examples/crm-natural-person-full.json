@@ -1,0 +1,213 @@
+{
+  "$schema": "https://openkycaml.org/schema/v1.13.0/kyc-aml-hybrid-extended.json",
+  "version": "1.18.0",
+  "messageId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+  "messageDateTime": "2026-04-15T10:00:00Z",
+  "ivms101": {
+    "originator": {
+      "originatorPersons": [
+        {
+          "naturalPerson": {
+            "name": {
+              "nameIdentifier": [
+                {
+                  "primaryIdentifier": "Rosenberg",
+                  "secondaryIdentifier": "Clara",
+                  "nameIdentifierType": "LEGL",
+                  "salutation": "DR",
+                  "middleName": "Maria",
+                  "nameSuffix": "PhD",
+                  "preferredName": "Dr. Clara",
+                  "formerName": "Clara Müller",
+                  "pronouns": "she/her"
+                }
+              ]
+            },
+            "geographicAddress": [
+              {
+                "addressType": "HOME",
+                "streetName": "Beethovenstrasse",
+                "buildingNumber": "14",
+                "postCode": "80805",
+                "townName": "Munich",
+                "country": "DE",
+                "isPrimary": true,
+                "effectiveFrom": "2020-03-01"
+              },
+              {
+                "addressType": "MAILING",
+                "postBox": "PO Box 1234",
+                "postCode": "80001",
+                "townName": "Munich",
+                "country": "DE",
+                "isPrimary": false
+              },
+              {
+                "addressType": "PREVIOUS",
+                "streetName": "Schillerstrasse",
+                "buildingNumber": "7",
+                "postCode": "10115",
+                "townName": "Berlin",
+                "country": "DE",
+                "effectiveFrom": "2015-06-01",
+                "effectiveTo": "2020-02-28"
+              }
+            ],
+            "nationalIdentification": {
+              "nationalIdentifier": "DE-PASSPORT-C1234567",
+              "nationalIdentifierType": "CCPT",
+              "countryOfIssue": "DE"
+            },
+            "customerIdentification": "CUST-DE-0012345",
+            "dateAndPlaceOfBirth": {
+              "dateOfBirth": "1978-11-22",
+              "placeOfBirth": "Berlin",
+              "countryOfBirth": "DE"
+            },
+            "countryOfResidence": "DE",
+            "nationality": "DE",
+            "isDeceased": false,
+            "historicalNames": [
+              {
+                "name": "Clara Müller",
+                "nameType": "MAIDEN",
+                "effectiveFrom": "1978-11-22",
+                "effectiveTo": "2010-05-15"
+              }
+            ],
+            "preferredLanguage": "de-DE",
+            "preferredCommunicationChannel": "EMAIL",
+            "marketingOptOut": false,
+            "maritalStatus": "MARRIED",
+            "numberOfDependants": 2,
+            "householdSize": 4,
+            "emergencyContact": {
+              "name": "Klaus Rosenberg",
+              "relationship": "spouse",
+              "phoneNumber": "+4917698765432",
+              "emailAddress": "klaus.rosenberg@example.com"
+            },
+            "emailAddresses": [
+              {
+                "emailType": "WORK",
+                "emailAddress": "c.rosenberg@university-munich.de",
+                "isPrimary": false,
+                "verificationStatus": "VERIFIED"
+              },
+              {
+                "emailType": "PERSONAL",
+                "emailAddress": "clara.rosenberg@example.com",
+                "isPrimary": true,
+                "verificationStatus": "VERIFIED"
+              }
+            ],
+            "phoneNumbers": [
+              {
+                "phoneType": "HOME",
+                "phoneNumber": "+4989123456789",
+                "isPrimary": false
+              },
+              {
+                "phoneType": "MOBILE",
+                "phoneNumber": "+4917612345678",
+                "isPrimary": true
+              },
+              {
+                "phoneType": "WORK",
+                "phoneNumber": "+4989999000111",
+                "isPrimary": false
+              }
+            ],
+            "faxNumber": "+4989123456700",
+            "tags": [
+              "private-banking",
+              "esg-mandate",
+              "german-resident"
+            ],
+            "customAttributes": {
+              "crmAccountId": "ACC-DE-2024-99182",
+              "onboardingAgent": "agent-007",
+              "riskScore": 22
+            }
+          }
+        }
+      ],
+      "accountNumber": [
+        "DE89370400440532013000"
+      ]
+    },
+    "beneficiary": {
+      "beneficiaryPersons": [
+        {
+          "naturalPerson": {
+            "name": {
+              "nameIdentifier": [
+                {
+                  "primaryIdentifier": "Dubois",
+                  "secondaryIdentifier": "Antoine",
+                  "nameIdentifierType": "LEGL"
+                }
+              ]
+            },
+            "geographicAddress": [
+              {
+                "addressType": "HOME",
+                "streetName": "Rue de la Paix",
+                "buildingNumber": "12",
+                "postCode": "75001",
+                "townName": "Paris",
+                "country": "FR"
+              }
+            ],
+            "nationalIdentification": {
+              "nationalIdentifier": "FR-PASSPORT-12AB34567",
+              "nationalIdentifierType": "CCPT",
+              "countryOfIssue": "FR"
+            },
+            "countryOfResidence": "FR"
+          }
+        }
+      ],
+      "accountNumber": [
+        "FR7630006000011234567890189"
+      ]
+    },
+    "originatingVASP": {
+      "name": "Deutsche CryptoBank AG",
+      "lei": "529900T8BM49AURSDO55",
+      "vaspIdentifier": "DE-Deutsche CryptoBank AG"
+    },
+    "beneficiaryVASP": {
+      "name": "Banque Numérique SA",
+      "lei": "969500UEQ0IN4ZW0CL09",
+      "vaspIdentifier": "FR-Banque Numérique SA"
+    },
+    "transferredAmount": {
+      "amount": "2500.00",
+      "assetType": "EUR"
+    }
+  },
+  "kycProfile": {
+    "customerRiskRating": "LOW",
+    "customerClassification": {
+      "customerType": "NATURAL_PERSON"
+    },
+    "dueDiligenceType": "SDD",
+    "relationshipManagerId": "RM-00471",
+    "relationshipManagerName": "Hans Fischer",
+    "primaryBranchCode": "MUC-PRIVATE-01",
+    "servingBusinessUnit": "Private Banking",
+    "customerSegment": "AFFLUENT",
+    "estimatedNetWorth": 850000,
+    "estimatedNetWorthCurrency": "EUR",
+    "estimatedNetWorthDate": "2026-01-10",
+    "tags": [
+      "periodic-review-due-2027",
+      "esg"
+    ],
+    "customAttributes": {
+      "internalTier": "Tier2",
+      "lastContactDate": "2026-03-20"
+    }
+  }
+}

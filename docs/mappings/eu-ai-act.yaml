@@ -1,0 +1,68 @@
+standard: "EU Artificial Intelligence Act"
+regulation: "Regulation (EU) 2024/1689"
+relevant_provisions:
+  - "Annex III point 5(b) — High-risk AML AI systems"
+  - "Art. 6(2) — High-risk classification"
+  - "Art. 13 — Transparency"
+  - "Art. 14 — Human oversight"
+  - "Art. 15 — Accuracy, robustness, cybersecurity"
+  - "Art. 43 — Conformity assessment"
+openkycaml_version: "1.7.0"
+last_updated: "2026-04-07"
+
+classification:
+  annex_iii_point: "5(b)"
+  system_types_in_scope:
+    - Transaction monitoring and anomaly detection
+    - Customer risk scoring (static and dynamic)
+    - UBO graph risk analysis
+    - Predictive fraud detection
+  openkycaml_field: "predictiveAML.modelMetadata.euAiActClassification"
+  value: "high-risk-aml"
+
+mappings:
+  - ai_act_article: "Art. 13(3)(a)"
+    requirement: "Provider identity"
+    openkycaml_field: "predictiveAML.modelMetadata.provider"
+    coverage: full
+
+  - ai_act_article: "Art. 13(3)(b)(i)"
+    requirement: "Intended purpose and use"
+    openkycaml_field: "predictiveAML.predictiveScores[].scoreType"
+    coverage: full
+
+  - ai_act_article: "Art. 13(3)(b)(ii)"
+    requirement: "Accuracy and reliability information"
+    openkycaml_field: "predictiveAML.predictiveScores[].confidence"
+    coverage: full
+
+  - ai_act_article: "Art. 13(3)(b)(iii)"
+    requirement: "Output interpretation guidance"
+    openkycaml_field: "predictiveAML.explainability.values"
+    coverage: full
+
+  - ai_act_article: "Art. 13(3)(b)(iv)"
+    requirement: "Performance metrics"
+    openkycaml_field: "predictiveAML.modelMetadata.modelVersion + trainingDate"
+    coverage: partial
+    notes: "Full metrics in external model card; OpenKYCAML provides traceability reference."
+
+  - ai_act_article: "Art. 13(3)(c)"
+    requirement: "Pre-determined system changes"
+    openkycaml_field: "predictiveAML.modelMetadata.modelVersion"
+    coverage: full
+
+  - ai_act_article: "Art. 14"
+    requirement: "Human oversight mechanisms"
+    openkycaml_field: "kycProfile.monitoringInfo.alerts[].alertStatus + assignedTo"
+    coverage: full
+
+  - ai_act_article: "Art. 15"
+    requirement: "Accuracy and robustness documentation"
+    openkycaml_field: "predictiveAML.predictiveScores[].confidence + explainability"
+    coverage: full
+
+  - ai_act_article: "Art. 43"
+    requirement: "Conformity assessment reference"
+    openkycaml_field: "predictiveAML.modelMetadata.conformityAssessmentReference"
+    coverage: full

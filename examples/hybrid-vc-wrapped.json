@@ -1,63 +1,310 @@
 {
-  "schemaVersion": "1.0.0",
-  "profileType": "naturalPerson",
-  "naturalPerson": {
-    "name": {
-      "firstName": "Satoshi",
-      "lastName": "Tanaka"
+  "$schema": "https://openkycaml.org/schema/v1.3.0/kyc-aml-hybrid-extended.json",
+  "version": "1.18.0",
+  "messageId": "550e8400-e29b-41d4-a716-446655440003",
+  "messageDateTime": "2024-06-15T14:00:00Z",
+  "ivms101": {
+    "originator": {
+      "originatorPersons": [
+        {
+          "naturalPerson": {
+            "name": {
+              "nameIdentifier": [
+                {
+                  "primaryIdentifier": "Müller",
+                  "secondaryIdentifier": "Anna Katharina",
+                  "nameIdentifierType": "LEGL"
+                }
+              ]
+            },
+            "geographicAddress": [
+              {
+                "addressType": "HOME",
+                "streetName": "Unter den Linden",
+                "buildingNumber": "77",
+                "townName": "Berlin",
+                "postCode": "10117",
+                "country": "DE"
+              }
+            ],
+            "nationalIdentification": {
+              "nationalIdentifier": "DE-TAXID-77834455891",
+              "nationalIdentifierType": "TXID",
+              "countryOfIssue": "DE"
+            },
+            "customerIdentification": "CUST-DE-0009823",
+            "dateAndPlaceOfBirth": {
+              "dateOfBirth": "1990-11-20",
+              "placeOfBirth": "Munich"
+            },
+            "countryOfResidence": "DE"
+          }
+        }
+      ],
+      "accountNumber": [
+        "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
+      ]
     },
-    "dateOfBirth": "1992-12-01",
-    "nationality": ["JP"],
-    "address": {
-      "city": "Tokyo",
-      "country": "JP"
+    "beneficiary": {
+      "beneficiaryPersons": [
+        {
+          "naturalPerson": {
+            "name": {
+              "nameIdentifier": [
+                {
+                  "primaryIdentifier": "Rossi",
+                  "secondaryIdentifier": "Marco",
+                  "nameIdentifierType": "LEGL"
+                }
+              ]
+            },
+            "geographicAddress": [
+              {
+                "addressType": "HOME",
+                "streetName": "Via Roma",
+                "buildingNumber": "42",
+                "townName": "Milan",
+                "postCode": "20121",
+                "country": "IT"
+              }
+            ],
+            "nationalIdentification": {
+              "nationalIdentifier": "RSSMRC85T10F205F",
+              "nationalIdentifierType": "TXID",
+              "countryOfIssue": "IT"
+            },
+            "countryOfResidence": "IT"
+          }
+        }
+      ],
+      "accountNumber": [
+        "0xAb5801a7D398351b8bE11C439e05C5B3259aeC9B"
+      ]
     },
-    "identificationDocuments": [
-      {
-        "documentType": "passport",
-        "documentNumber": "TK9876543",
-        "issuingCountry": "JP",
-        "issueDate": "2022-05-01",
-        "expiryDate": "2032-04-30"
-      }
-    ]
+    "originatingVASP": {
+      "name": "BerlinDeFi GmbH",
+      "lei": "724500TEHJJ2L5MWSK89",
+      "vaspIdentifier": "DE-BerlinDeFi GmbH"
+    },
+    "beneficiaryVASP": {
+      "name": "MilanoChain S.p.A.",
+      "lei": "815600E86C0C8A1F1804",
+      "vaspIdentifier": "IT-MilanoChain S.p.A."
+    },
+    "transferredAmount": {
+      "amount": "2.75",
+      "assetType": "ETH"
+    }
   },
   "verifiableCredential": {
     "@context": [
-      "https://www.w3.org/2018/credentials/v1",
-      "https://openkyc.org/contexts/kyc/v1"
+      "https://www.w3.org/ns/credentials/v2",
+      "https://openkycaml.org/contexts/v1"
     ],
-    "type": ["VerifiableCredential", "KYCCredential"],
-    "issuer": "did:web:kyc-provider.example.com",
-    "issuanceDate": "2025-04-10T12:00:00Z",
-    "expirationDate": "2026-04-10T12:00:00Z",
+    "id": "urn:uuid:550e8400-e29b-41d4-a716-446655440003",
+    "type": [
+      "VerifiableCredential",
+      "OpenKYCAMLCredential",
+      "TravelRuleAttestation"
+    ],
+    "issuer": {
+      "id": "did:web:berlindefi.example.com",
+      "name": "BerlinDeFi GmbH"
+    },
     "credentialSubject": {
-      "id": "did:key:z6MkpTHR8VNs4jWVprYE7qWcKalFpRNJfMnGLLuSErHvHN7c",
-      "name": "Satoshi Tanaka",
-      "dateOfBirth": "1992-12-01",
-      "nationality": "JP",
-      "kycStatus": "verified",
-      "verificationLevel": "enhanced"
+      "id": "did:example:customer:CUST-DE-0009823",
+      "ivms101": {
+        "originator": {
+          "originatorPersons": [
+            {
+              "naturalPerson": {
+                "name": {
+                  "nameIdentifier": [
+                    {
+                      "primaryIdentifier": "Müller",
+                      "secondaryIdentifier": "Anna Katharina",
+                      "nameIdentifierType": "LEGL"
+                    }
+                  ]
+                },
+                "geographicAddress": [
+                  {
+                    "addressType": "HOME",
+                    "streetName": "Unter den Linden",
+                    "buildingNumber": "77",
+                    "townName": "Berlin",
+                    "postCode": "10117",
+                    "country": "DE"
+                  }
+                ],
+                "nationalIdentification": {
+                  "nationalIdentifier": "DE-TAXID-77834455891",
+                  "nationalIdentifierType": "TXID",
+                  "countryOfIssue": "DE"
+                },
+                "customerIdentification": "CUST-DE-0009823",
+                "dateAndPlaceOfBirth": {
+                  "dateOfBirth": "1990-11-20",
+                  "placeOfBirth": "Munich"
+                },
+                "countryOfResidence": "DE"
+              }
+            }
+          ],
+          "accountNumber": [
+            "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
+          ]
+        },
+        "beneficiary": {
+          "beneficiaryPersons": [
+            {
+              "naturalPerson": {
+                "name": {
+                  "nameIdentifier": [
+                    {
+                      "primaryIdentifier": "Rossi",
+                      "secondaryIdentifier": "Marco",
+                      "nameIdentifierType": "LEGL"
+                    }
+                  ]
+                },
+                "nationalIdentification": {
+                  "nationalIdentifier": "RSSMRC85T10F205F",
+                  "nationalIdentifierType": "TXID",
+                  "countryOfIssue": "IT"
+                },
+                "countryOfResidence": "IT"
+              }
+            }
+          ],
+          "accountNumber": [
+            "0xAb5801a7D398351b8bE11C439e05C5B3259aeC9B"
+          ]
+        },
+        "originatingVASP": {
+          "name": "BerlinDeFi GmbH",
+          "lei": "724500TEHJJ2L5MWSK89",
+          "vaspIdentifier": "DE-BerlinDeFi GmbH"
+        },
+        "beneficiaryVASP": {
+          "name": "MilanoChain S.p.A.",
+          "lei": "815600E86C0C8A1F1804",
+          "vaspIdentifier": "IT-MilanoChain S.p.A."
+        },
+        "transferredAmount": {
+          "amount": "2.75",
+          "assetType": "ETH"
+        }
+      },
+      "kycProfile": {
+        "customerRiskRating": "MEDIUM",
+        "riskRatingDetail": {
+          "riskScore": 450,
+          "riskRatingDate": "2024-01-10",
+          "riskFactors": {
+            "geographicRisk": "LOW",
+            "productRisk": "MEDIUM",
+            "channelRisk": "MEDIUM",
+            "customerTypeRisk": "LOW",
+            "transactionRisk": "MEDIUM"
+          },
+          "ratingMethodology": "EBA Risk Factor Guidelines 2024 + Internal Risk Model v3.2"
+        },
+        "customerClassification": {
+          "customerType": "RETAIL"
+        },
+        "dueDiligenceType": "CDD",
+        "pepStatus": {
+          "isPEP": false,
+          "pepCategory": "NOT_PEP",
+          "screeningDate": "2024-01-10",
+          "screeningProvider": "Refinitiv World-Check"
+        },
+        "sanctionsScreening": {
+          "screeningStatus": "CLEAR",
+          "screeningDate": "2024-06-15T13:55:00Z",
+          "screeningProvider": "Refinitiv World-Check",
+          "listsChecked": [
+            "OFAC_SDN",
+            "EU_CONSOLIDATED",
+            "UN_CONSOLIDATED",
+            "HMT"
+          ],
+          "matchDetails": []
+        },
+        "kycCompletionDate": "2024-01-15",
+        "consentRecord": {
+          "consentGiven": true,
+          "consentDate": "2024-01-10T09:45:00Z",
+          "consentPurpose": [
+            "AML_SCREENING",
+            "DATA_SHARING_TRAVEL_RULE"
+          ]
+        }
+      }
+    },
+    "credentialStatus": {
+      "id": "https://berlindefi.example.com/status/v1#42",
+      "type": "StatusList2021Entry"
+    },
+    "credentialSchema": {
+      "id": "https://openkycaml.org/schema/v1.3.0/kyc-aml-hybrid-extended.json",
+      "type": "JsonSchemaValidator2018"
     },
     "proof": {
       "type": "Ed25519Signature2020",
-      "created": "2025-04-10T12:00:00Z",
+      "created": "2024-06-15T14:00:05Z",
+      "verificationMethod": "did:web:berlindefi.example.com#key-1",
       "proofPurpose": "assertionMethod",
-      "verificationMethod": "did:web:kyc-provider.example.com#key-1",
-      "jws": "eyJhbGciOiJFZERTQSIsImI2NCI6ZmFsc2UsImNyaXQiOlsiYjY0Il19..EXAMPLE_SIGNATURE"
-    }
+      "proofValue": "z5hvHDmSNJMwLRGRjzGHnVXaP3yBjmHDGXtRJmWzXjHT7b3tYnKzPWLxEtRJmN5Q9xPdCzS"
+    },
+    "validFrom": "2024-06-15T14:00:00Z",
+    "validUntil": "2025-06-15T14:00:00Z"
   },
-  "riskAssessment": {
-    "riskLevel": "low",
-    "riskScore": 10,
-    "assessmentDate": "2025-04-10T12:00:00Z",
-    "nextReviewDate": "2026-04-10"
-  },
-  "metadata": {
-    "createdAt": "2025-04-10T12:00:00Z",
-    "updatedAt": "2025-04-10T12:00:00Z",
-    "source": "vc-issuance-service",
-    "jurisdiction": "JP",
-    "dataClassification": "confidential"
+  "transactionMonitoring": {
+    "transactionReference": "TXN-DE-IT-2024-0009823-001",
+    "monitoringDate": "2024-06-15T14:00:10Z",
+    "monitoringEngine": "FinStar TM Engine v4.1",
+    "overallOutcome": "CLEAR",
+    "rulesEvaluated": [
+      {
+        "ruleId": "RULE-VEL-001",
+        "ruleName": "Velocity – 7-day rolling window (crypto)",
+        "ruleCategory": "VELOCITY",
+        "ruleResult": "PASS",
+        "threshold": "10 ETH / 7 days",
+        "actualValue": "2.75 ETH"
+      },
+      {
+        "ruleId": "RULE-TR-001",
+        "ruleName": "Travel Rule threshold (EUR equivalent)",
+        "ruleCategory": "TRAVEL_RULE",
+        "ruleResult": "PASS",
+        "threshold": "1000 EUR",
+        "actualValue": "~7425 EUR",
+        "notes": "Travel Rule applicable; IVMS 101 message transmitted to beneficiary VASP."
+      },
+      {
+        "ruleId": "RULE-GEO-001",
+        "ruleName": "High-risk jurisdiction counterparty",
+        "ruleCategory": "GEOGRAPHY",
+        "ruleResult": "PASS",
+        "notes": "Both DE and IT are low-risk EU jurisdictions."
+      }
+    ],
+    "alerts": [],
+    "travelRuleCompliance": {
+      "travelRuleApplicable": true,
+      "jurisdictionThreshold": {
+        "amount": "1000",
+        "currency": "EUR",
+        "jurisdiction": "DE"
+      },
+      "complianceStatus": "COMPLIANT",
+      "ivms101MessageId": "550e8400-e29b-41d4-a716-446655440003",
+      "beneficiaryVaspVerified": true,
+      "notes": "IVMS 101 payload transmitted and acknowledged by MilanoChain S.p.A. via TRP protocol."
+    },
+    "reportingObligations": []
   }
 }

@@ -1,0 +1,362 @@
+{
+  "$schema": "https://openkycaml.org/schema/v1.3.0/kyc-aml-hybrid-extended.json",
+  "version": "1.18.0",
+  "messageId": "f3a4b5c6-d7e8-9f0a-1b2c-3d4e5f6a7b8c",
+  "messageDateTime": "2025-10-25T08:00:00Z",
+  "_comment_scenario": "Private Foundation Beneficial Ownership — Liechtenstein Privatstiftung with Founder, Foundation Council and Named Beneficiaries. This example demonstrates AMLR Art. 26(2)(c) disclosure for a foundation structure where Steinberg Asset Management AG (Switzerland) — the subject VASP entity — is 100% owned by the Steinberg Privatstiftung (Liechtenstein). Liechtenstein private foundations (Privatstiftung under PGR Art. 552 §§1–41) are a common wealth-structuring vehicle but present high opacity risk. FATF Recommendation 25 and AMLR Art. 26(2)(c) require identification of: [Founder] Heinrich Steinberg (DE) — settled assets into the foundation and, under the foundation statutes, retains reserved powers including the right to appoint and dismiss foundation council members and to amend the foundation purpose; [Foundation Council] Dr. Andreas Mayer LI (Chairman), Dr. Helga Kirchner DE, Marco Bergomi CH — three natural persons who constitute the governing body, documented via LPID mandates; [Beneficiaries] Heinrich Steinberg and his lineal descendants — identified in the foundation statutes and a supplementary beneficiary declaration. UBO determination: Heinrich Steinberg is the UBO because (i) as founder he retains statutory appointment/dismissal powers over the foundation council under PGR Art. 552 §29, giving him DE_FACTO_CONTROL, and (ii) he and his family are the exclusive beneficiaries. The foundation's charter has been obtained, reviewed and retained on the EDD file.",
+  "ivms101": {
+    "originator": {
+      "originatorPersons": [
+        {
+          "legalPerson": {
+            "name": {
+              "nameIdentifier": [
+                {
+                  "legalPersonName": "Steinberg Asset Management AG",
+                  "legalPersonNameIdentifierType": "LEGL"
+                },
+                {
+                  "legalPersonName": "SAM AG",
+                  "legalPersonNameIdentifierType": "SHRT"
+                }
+              ]
+            },
+            "geographicAddress": [
+              {
+                "addressType": "BIZZ",
+                "streetName": "Bahnhofstrasse",
+                "buildingNumber": "21",
+                "townName": "Zurich",
+                "postCode": "8001",
+                "country": "CH"
+              }
+            ],
+            "nationalIdentification": {
+              "nationalIdentifier": "CHE-456-789-012",
+              "nationalIdentifierType": "RAID",
+              "countryOfIssue": "CH"
+            },
+            "countryOfRegistration": "CH"
+          }
+        }
+      ],
+      "accountNumber": [
+        "0xC4D5E6F7A8B9C0D1E2F3A4B5C6D7E8F9A0B1C2D3"
+      ]
+    },
+    "beneficiary": {
+      "beneficiaryPersons": [
+        {
+          "legalPerson": {
+            "name": {
+              "nameIdentifier": [
+                {
+                  "legalPersonName": "Frankfurt Digital Assets GmbH",
+                  "legalPersonNameIdentifierType": "LEGL"
+                }
+              ]
+            },
+            "nationalIdentification": {
+              "nationalIdentifier": "DE-HRB-123456",
+              "nationalIdentifierType": "RAID",
+              "countryOfIssue": "DE"
+            },
+            "countryOfRegistration": "DE"
+          }
+        }
+      ],
+      "accountNumber": [
+        "DE89370400440532013000"
+      ]
+    },
+    "originatingVASP": {
+      "name": "Steinberg Asset Management AG",
+      "lei": "529900SAMCHZH00001CH",
+      "vaspIdentifier": "CH-Steinberg Asset Management AG"
+    },
+    "beneficiaryVASP": {
+      "name": "Frankfurt Digital Assets GmbH",
+      "lei": "529900FDADE000001DE0",
+      "vaspIdentifier": "DE-Frankfurt Digital Assets GmbH"
+    },
+    "transferredAmount": {
+      "amount": "1200000.00",
+      "assetType": "USDC"
+    }
+  },
+  "verifiableCredential": {
+    "@context": [
+      "https://www.w3.org/ns/credentials/v2",
+      "https://openkycaml.org/contexts/v1"
+    ],
+    "id": "urn:uuid:f3a4b5c6-d7e8-9f0a-1b2c-3d4e5f6a7b8c",
+    "type": [
+      "VerifiableCredential",
+      "OpenKYCAMLCredential",
+      "KYCAttestation"
+    ],
+    "issuer": {
+      "id": "did:web:frankfurt-digital-assets.example.de",
+      "name": "Frankfurt Digital Assets GmbH"
+    },
+    "credentialSubject": {
+      "ivms101": {
+        "originator": {
+          "originatorPersons": [
+            {
+              "legalPerson": {
+                "name": {
+                  "nameIdentifier": [
+                    {
+                      "legalPersonName": "Steinberg Asset Management AG",
+                      "legalPersonNameIdentifierType": "LEGL"
+                    },
+                    {
+                      "legalPersonName": "SAM AG",
+                      "legalPersonNameIdentifierType": "SHRT"
+                    }
+                  ]
+                },
+                "geographicAddress": [
+                  {
+                    "addressType": "BIZZ",
+                    "streetName": "Bahnhofstrasse",
+                    "buildingNumber": "21",
+                    "townName": "Zurich",
+                    "postCode": "8001",
+                    "country": "CH"
+                  }
+                ],
+                "nationalIdentification": {
+                  "nationalIdentifier": "CHE-456-789-012",
+                  "nationalIdentifierType": "RAID",
+                  "countryOfIssue": "CH"
+                },
+                "countryOfRegistration": "CH"
+              }
+            }
+          ],
+          "accountNumber": [
+            "0xC4D5E6F7A8B9C0D1E2F3A4B5C6D7E8F9A0B1C2D3"
+          ]
+        },
+        "beneficiary": {
+          "beneficiaryPersons": [
+            {
+              "legalPerson": {
+                "name": {
+                  "nameIdentifier": [
+                    {
+                      "legalPersonName": "Frankfurt Digital Assets GmbH",
+                      "legalPersonNameIdentifierType": "LEGL"
+                    }
+                  ]
+                },
+                "nationalIdentification": {
+                  "nationalIdentifier": "DE-HRB-123456",
+                  "nationalIdentifierType": "RAID",
+                  "countryOfIssue": "DE"
+                },
+                "countryOfRegistration": "DE"
+              }
+            }
+          ],
+          "accountNumber": [
+            "DE89370400440532013000"
+          ]
+        },
+        "originatingVASP": {
+          "name": "Steinberg Asset Management AG",
+          "lei": "529900SAMCHZH00001CH",
+          "vaspIdentifier": "CH-Steinberg Asset Management AG"
+        },
+        "beneficiaryVASP": {
+          "name": "Frankfurt Digital Assets GmbH",
+          "lei": "529900FDADE000001DE0",
+          "vaspIdentifier": "DE-Frankfurt Digital Assets GmbH"
+        },
+        "transferredAmount": {
+          "amount": "1200000.00",
+          "assetType": "USDC"
+        }
+      },
+      "kycProfile": {
+        "customerRiskRating": "HIGH",
+        "riskRatingDetail": {
+          "riskScore": 730,
+          "riskRatingDate": "2025-10-20",
+          "riskFactors": {
+            "geographicRisk": "HIGH",
+            "productRisk": "HIGH",
+            "channelRisk": "MEDIUM",
+            "customerTypeRisk": "HIGH",
+            "transactionRisk": "HIGH"
+          },
+          "ratingMethodology": "EBA Risk Factor Guidelines 2024 — private foundation ownership structure with high statutory opacity (Liechtenstein PGR), large-value crypto transfer, cross-border DACH jurisdictions"
+        },
+        "customerClassification": {
+          "customerType": "LEGAL_ENTITY",
+          "industrySector": "FINANCIAL_SERVICES",
+          "occupationOrPurpose": "Swiss-registered VASP and asset management firm, 100% owned by a Liechtenstein private foundation (Privatstiftung). Manages digital asset portfolios for the Steinberg family.",
+          "relationshipPurpose": "Family office digital asset management, crypto-asset settlement and investment execution."
+        },
+        "dueDiligenceType": "EDD",
+        "pepStatus": {
+          "isPEP": false,
+          "pepCategory": "NOT_PEP",
+          "screeningDate": "2025-10-20",
+          "screeningProvider": "ComplyAdvantage"
+        },
+        "sanctionsScreening": {
+          "screeningStatus": "CLEAR",
+          "screeningDate": "2025-10-20T07:30:00Z",
+          "screeningProvider": "ComplyAdvantage",
+          "listsChecked": [
+            "OFAC_SDN",
+            "EU_CONSOLIDATED",
+            "UN_CONSOLIDATED",
+            "HMT",
+            "SECO"
+          ]
+        },
+        "onboardingChannel": "IN_PERSON",
+        "kycCompletionDate": "2025-10-20",
+        "consentRecord": {
+          "consentGiven": true,
+          "consentDate": "2025-10-15T14:00:00Z",
+          "consentPurpose": [
+            "AML_SCREENING",
+            "DATA_SHARING_TRAVEL_RULE",
+            "EDD_REVIEW"
+          ]
+        },
+        "beneficialOwnership": [
+          {
+            "_comment_ubo_founder": "UBO: Heinrich Steinberg (DE) — 100% effective control through the Steinberg Privatstiftung (Liechtenstein) by virtue of: (1) founder reservation powers under PGR Art. 552 §29 — the right to appoint and dismiss all foundation council members at any time; (2) exclusive family beneficiary class — only Heinrich Steinberg and his lineal descendants are named beneficiaries; (3) de facto control over the foundation's investment decisions through council appointment power. AMLR Art. 26(2)(c) requires identification of the founder as the beneficial owner of a private foundation. The foundation charter and beneficiary declaration have been reviewed.",
+            "person": {
+              "naturalPerson": {
+                "name": {
+                  "nameIdentifier": [
+                    {
+                      "primaryIdentifier": "Steinberg",
+                      "secondaryIdentifier": "Heinrich Klaus",
+                      "nameIdentifierType": "LEGL"
+                    }
+                  ]
+                },
+                "geographicAddress": [
+                  {
+                    "addressType": "HOME",
+                    "streetName": "Unter den Linden",
+                    "buildingNumber": "77",
+                    "townName": "Berlin",
+                    "postCode": "10117",
+                    "country": "DE"
+                  }
+                ],
+                "nationalIdentification": {
+                  "nationalIdentifier": "DE-PASS-C01X00T47",
+                  "nationalIdentifierType": "CCPT",
+                  "countryOfIssue": "DE"
+                },
+                "dateAndPlaceOfBirth": {
+                  "dateOfBirth": "1951-03-12",
+                  "placeOfBirth": "Munich"
+                },
+                "countryOfResidence": "DE"
+              }
+            },
+            "ownershipPercentage": 100,
+            "ownershipType": "INDIRECT",
+            "controlMechanism": "DE_FACTO_CONTROL",
+            "ownershipChainDepth": 2,
+            "intermediateEntities": [
+              {
+                "_comment_foundation_entity": "Steinberg Privatstiftung (Liechtenstein) — private foundation established under Liechtenstein PGR (Personen- und Gesellschaftsrecht) Art. 552 §§1–41 on 5 September 2008. The foundation holds 100% of the issued share capital of Steinberg Asset Management AG (subject entity). Under PGR Art. 552 §29, the founder Heinrich Steinberg retains the power to appoint and dismiss foundation council members, conferring de facto control. Foundation Council members are the formal governing body and are documented as mandates below. The foundation statutes designate Heinrich Steinberg and his lineal descendants as sole beneficiaries.",
+                "legalPerson": {
+                  "name": {
+                    "nameIdentifier": [
+                      {
+                        "legalPersonName": "Steinberg Privatstiftung",
+                        "legalPersonNameIdentifierType": "LEGL"
+                      }
+                    ]
+                  },
+                  "nationalIdentification": {
+                    "nationalIdentifier": "FL-OGD-2008-FL-0002.344.671-5",
+                    "nationalIdentifierType": "RAID",
+                    "countryOfIssue": "LI"
+                  },
+                  "countryOfRegistration": "LI",
+                  "lpid": {
+                    "currentLegalName": "Steinberg Privatstiftung",
+                    "uniqueIdentifier": "FL-OGD-2008-FL-0002.344.671-5",
+                    "mandates": [
+                      {
+                        "mandateType": "OTHER",
+                        "signatoryName": "Andreas Josef Mayer",
+                        "scope": "Foundation Council Chairman — Steinberg Privatstiftung; appointed by founder per statutes Art. 8; casting vote at council meetings",
+                        "effectiveFrom": "2008-09-05"
+                      },
+                      {
+                        "mandateType": "OTHER",
+                        "signatoryName": "Helga Maria Kirchner",
+                        "scope": "Foundation Council Member — Steinberg Privatstiftung; appointed by founder per statutes Art. 8; responsible for investment oversight",
+                        "effectiveFrom": "2008-09-05"
+                      },
+                      {
+                        "mandateType": "OTHER",
+                        "signatoryName": "Marco Aurelio Bergomi",
+                        "scope": "Foundation Council Member — Steinberg Privatstiftung; appointed by founder per statutes Art. 8; responsible for compliance and legal oversight",
+                        "effectiveFrom": "2015-01-10"
+                      },
+                      {
+                        "mandateType": "OTHER",
+                        "signatoryName": "Heinrich Klaus Steinberg",
+                        "scope": "Founder — retains appointment and dismissal powers over all foundation council members (PGR Art. 552 §29); also named primary income beneficiary in supplementary beneficiary declaration",
+                        "effectiveFrom": "2008-09-05"
+                      }
+                    ]
+                  }
+                },
+                "ownershipPercentage": 100,
+                "ownershipType": "DIRECT",
+                "controlMechanism": "CONTRACTUAL",
+                "jurisdiction": "LI"
+              }
+            ],
+            "verificationDate": "2025-10-20",
+            "isPEP": false
+          }
+        ],
+        "auditMetadata": {
+          "recordId": "f3a4b5c6-d7e8-9f0a-1b2c-3d4e5f6a7b8c",
+          "recordCreatedAt": "2025-10-25T08:00:00Z",
+          "recordUpdatedAt": "2025-10-25T08:00:00Z",
+          "recordVersion": 1,
+          "createdBy": "edd-team@frankfurt-digital-assets.example.de",
+          "dataSourceSystem": "EDD Entity Registry v4.0",
+          "dataProvider": "Frankfurt Digital Assets GmbH",
+          "dataRetentionDate": "2035-10-25"
+        }
+      }
+    },
+    "credentialStatus": {
+      "id": "https://frankfurt-digital-assets.example.de/status/v1#3301",
+      "type": "StatusList2021Entry"
+    },
+    "credentialSchema": {
+      "id": "https://openkycaml.org/schema/v1.3.0/kyc-aml-hybrid-extended.json",
+      "type": "JsonSchemaValidator2018"
+    },
+    "proof": {
+      "type": "Ed25519Signature2020",
+      "created": "2025-10-25T08:00:05Z",
+      "verificationMethod": "did:web:frankfurt-digital-assets.example.de#key-1",
+      "proofPurpose": "assertionMethod",
+      "proofValue": "zRs6Tu9VwXyZaBcDeFgHiJkLmNo1PqRsTuVwXyZaBcDe"
+    },
+    "validFrom": "2025-10-25T08:00:00Z",
+    "validUntil": "2026-10-25T08:00:00Z"
+  }
+}

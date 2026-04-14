@@ -1,0 +1,345 @@
+{
+  "$schema": "https://openkycaml.org/schema/v1.3.0/kyc-aml-hybrid-extended.json",
+  "version": "1.18.0",
+  "messageId": "e2f3a4b5-c6d7-8e9f-0a1b-2c3d4e5f6a7b",
+  "messageDateTime": "2025-10-20T09:00:00Z",
+  "_comment_scenario": "Discretionary Trust Beneficial Ownership — Jersey Discretionary Trust with Corporate Trustee, Named Protector, Settlor and Beneficiaries. This example demonstrates EDD disclosure for a trust structure where Windermere Digital Assets Ltd (BVI) — the subject VASP entity — is 100% owned by the Windermere Discretionary Trust (Jersey). The schema captures all four categories of trust principal required by FATF Recommendation 25 and AMLR Art. 26(2)(b): [Settlor] Sir James Hartley (UK) — contributed the settlement assets and retains a letter of wishes; [Trustee] Windermere Trustees Ltd (Jersey) — a professional corporate trustee whose natural person directors (Margaret Forsyth and David Okonkwo) are documented via LPID mandates; [Protector] Lady Catherine Hartley (UK) — holds the power to remove and replace trustees under the trust deed; [Beneficiaries] Sir James Hartley (life interest), James Hartley Jr. and Emma Hartley (remainder). UBO determination: Sir James Hartley is identified as the effective UBO because (i) he is the settlor and primary beneficiary, (ii) Lady Catherine Hartley, the protector, acts in accordance with his letter of wishes and can remove trustees, and (iii) the combination of settlor reservation and protector influence constitutes DE_FACTO_CONTROL under AMLR Art. 26(2)(b). FATF R.25 and AMLR Art. 26(2)(b) require VASPs to identify all these roles and trace effective control.",
+  "ivms101": {
+    "originator": {
+      "originatorPersons": [
+        {
+          "legalPerson": {
+            "name": {
+              "nameIdentifier": [
+                {
+                  "legalPersonName": "Windermere Digital Assets Ltd",
+                  "legalPersonNameIdentifierType": "LEGL"
+                }
+              ]
+            },
+            "nationalIdentification": {
+              "nationalIdentifier": "VG-BC-2021-000887",
+              "nationalIdentifierType": "RAID",
+              "countryOfIssue": "VG"
+            },
+            "countryOfRegistration": "VG"
+          }
+        }
+      ],
+      "accountNumber": [
+        "0xB3C4D5E6F7A8091011121314151617181920A1B2"
+      ]
+    },
+    "beneficiary": {
+      "beneficiaryPersons": [
+        {
+          "legalPerson": {
+            "name": {
+              "nameIdentifier": [
+                {
+                  "legalPersonName": "Caledonian Digital Bank plc",
+                  "legalPersonNameIdentifierType": "LEGL"
+                }
+              ]
+            },
+            "nationalIdentification": {
+              "nationalIdentifier": "GB-CH-14789632",
+              "nationalIdentifierType": "RAID",
+              "countryOfIssue": "GB"
+            },
+            "countryOfRegistration": "GB"
+          }
+        }
+      ],
+      "accountNumber": [
+        "GB29NWBK60161331926819"
+      ]
+    },
+    "originatingVASP": {
+      "name": "Windermere Digital Assets Ltd",
+      "lei": "213800WDAVG00001VG00",
+      "vaspIdentifier": "VG-Windermere Digital Assets Ltd"
+    },
+    "beneficiaryVASP": {
+      "name": "Caledonian Digital Bank plc",
+      "lei": "213800CALDBGB000GB00",
+      "vaspIdentifier": "GB-Caledonian Digital Bank plc"
+    },
+    "transferredAmount": {
+      "amount": "250000.00",
+      "assetType": "BTC"
+    }
+  },
+  "verifiableCredential": {
+    "@context": [
+      "https://www.w3.org/ns/credentials/v2",
+      "https://openkycaml.org/contexts/v1"
+    ],
+    "id": "urn:uuid:e2f3a4b5-c6d7-8e9f-0a1b-2c3d4e5f6a7b",
+    "type": [
+      "VerifiableCredential",
+      "OpenKYCAMLCredential",
+      "KYCAttestation"
+    ],
+    "issuer": {
+      "id": "did:web:caledonian-digital-bank.example.co.uk",
+      "name": "Caledonian Digital Bank plc"
+    },
+    "credentialSubject": {
+      "ivms101": {
+        "originator": {
+          "originatorPersons": [
+            {
+              "legalPerson": {
+                "name": {
+                  "nameIdentifier": [
+                    {
+                      "legalPersonName": "Windermere Digital Assets Ltd",
+                      "legalPersonNameIdentifierType": "LEGL"
+                    }
+                  ]
+                },
+                "nationalIdentification": {
+                  "nationalIdentifier": "VG-BC-2021-000887",
+                  "nationalIdentifierType": "RAID",
+                  "countryOfIssue": "VG"
+                },
+                "countryOfRegistration": "VG"
+              }
+            }
+          ],
+          "accountNumber": [
+            "0xB3C4D5E6F7A8091011121314151617181920A1B2"
+          ]
+        },
+        "beneficiary": {
+          "beneficiaryPersons": [
+            {
+              "legalPerson": {
+                "name": {
+                  "nameIdentifier": [
+                    {
+                      "legalPersonName": "Caledonian Digital Bank plc",
+                      "legalPersonNameIdentifierType": "LEGL"
+                    }
+                  ]
+                },
+                "nationalIdentification": {
+                  "nationalIdentifier": "GB-CH-14789632",
+                  "nationalIdentifierType": "RAID",
+                  "countryOfIssue": "GB"
+                },
+                "countryOfRegistration": "GB"
+              }
+            }
+          ],
+          "accountNumber": [
+            "GB29NWBK60161331926819"
+          ]
+        },
+        "originatingVASP": {
+          "name": "Windermere Digital Assets Ltd",
+          "lei": "213800WDAVG00001VG00",
+          "vaspIdentifier": "VG-Windermere Digital Assets Ltd"
+        },
+        "beneficiaryVASP": {
+          "name": "Caledonian Digital Bank plc",
+          "lei": "213800CALDBGB000GB00",
+          "vaspIdentifier": "GB-Caledonian Digital Bank plc"
+        },
+        "transferredAmount": {
+          "amount": "250000.00",
+          "assetType": "BTC"
+        }
+      },
+      "kycProfile": {
+        "customerRiskRating": "HIGH",
+        "riskRatingDetail": {
+          "riskScore": 710,
+          "riskRatingDate": "2025-10-15",
+          "riskFactors": {
+            "geographicRisk": "HIGH",
+            "productRisk": "HIGH",
+            "channelRisk": "MEDIUM",
+            "customerTypeRisk": "HIGH",
+            "transactionRisk": "HIGH"
+          },
+          "ratingMethodology": "EBA Risk Factor Guidelines 2024 — trust ownership structure, offshore holding, high-value crypto transfer; FATF R.25 trust transparency obligations apply"
+        },
+        "customerClassification": {
+          "customerType": "TRUST",
+          "industrySector": "CRYPTO_ASSETS",
+          "occupationOrPurpose": "BVI-incorporated VASP held under Jersey discretionary trust for family wealth preservation and crypto-asset investment.",
+          "relationshipPurpose": "Cross-border crypto-asset settlement and digital wealth management."
+        },
+        "dueDiligenceType": "EDD",
+        "pepStatus": {
+          "isPEP": false,
+          "pepCategory": "NOT_PEP",
+          "screeningDate": "2025-10-15",
+          "screeningProvider": "Dow Jones Risk & Compliance"
+        },
+        "sanctionsScreening": {
+          "screeningStatus": "CLEAR",
+          "screeningDate": "2025-10-15T07:45:00Z",
+          "screeningProvider": "Dow Jones Risk & Compliance",
+          "listsChecked": [
+            "OFAC_SDN",
+            "EU_CONSOLIDATED",
+            "UN_CONSOLIDATED",
+            "HMT"
+          ]
+        },
+        "onboardingChannel": "REMOTE_AUTOMATED",
+        "kycCompletionDate": "2025-10-15",
+        "consentRecord": {
+          "consentGiven": true,
+          "consentDate": "2025-10-12T11:00:00Z",
+          "consentPurpose": [
+            "AML_SCREENING",
+            "DATA_SHARING_TRAVEL_RULE",
+            "EDD_REVIEW"
+          ]
+        },
+        "beneficialOwnership": [
+          {
+            "_comment_ubo_settlor": "UBO: Sir James Hartley (UK) — effective control through combination of settlor reservation rights, letter of wishes, and influence over the protector (Lady Catherine Hartley, his spouse). FATF R.25 and AMLR Art. 26(2)(b) require identification of the settlor as a trust principal. Sir James retains a life-interest in income distributions and his letter of wishes, while non-binding on the trustee, has been followed in every distribution to date. Control mechanism is assessed as DE_FACTO_CONTROL in conjunction with CONTRACTUAL (trust deed powers).",
+            "person": {
+              "naturalPerson": {
+                "name": {
+                  "nameIdentifier": [
+                    {
+                      "primaryIdentifier": "Hartley",
+                      "secondaryIdentifier": "James Edward",
+                      "nameIdentifierType": "LEGL"
+                    }
+                  ]
+                },
+                "geographicAddress": [
+                  {
+                    "addressType": "HOME",
+                    "streetName": "Park Lane",
+                    "buildingNumber": "14",
+                    "townName": "London",
+                    "postCode": "W1K 1QH",
+                    "country": "GB"
+                  }
+                ],
+                "nationalIdentification": {
+                  "nationalIdentifier": "GB-PASS-PX1234567",
+                  "nationalIdentifierType": "CCPT",
+                  "countryOfIssue": "GB"
+                },
+                "dateAndPlaceOfBirth": {
+                  "dateOfBirth": "1955-07-23",
+                  "placeOfBirth": "London"
+                },
+                "countryOfResidence": "GB"
+              }
+            },
+            "ownershipPercentage": 100,
+            "ownershipType": "INDIRECT",
+            "controlMechanism": "DE_FACTO_CONTROL",
+            "ownershipChainDepth": 2,
+            "intermediateEntities": [
+              {
+                "_comment_trust_entity": "Windermere Discretionary Trust (Jersey). Established 12 March 2015 under Jersey trust law (Trusts (Jersey) Law 1984). The trust holds 100% of the issued share capital of Windermere Digital Assets Ltd. The corporate trustee (Windermere Trustees Ltd) has formal legal title; however, effective control rests with the settlor/UBO as described above. FATF R.25 trust principals documented below in the LPID mandates field: (1) Trustee: Windermere Trustees Ltd — Directors Margaret Forsyth and David Okonkwo; (2) Protector: Lady Catherine Hartley; (3) Beneficiaries: Sir James Hartley (life interest), James Hartley Jr. and Emma Hartley (remainder). The trust deed grants the protector power to remove and replace trustees, and the trustee may only make distributions consistent with the letter of wishes.",
+                "legalPerson": {
+                  "name": {
+                    "nameIdentifier": [
+                      {
+                        "legalPersonName": "Windermere Discretionary Trust",
+                        "legalPersonNameIdentifierType": "LEGL"
+                      }
+                    ]
+                  },
+                  "nationalIdentification": {
+                    "nationalIdentifier": "JE-RT-2015-00341",
+                    "nationalIdentifierType": "RAID",
+                    "countryOfIssue": "JE"
+                  },
+                  "countryOfRegistration": "JE",
+                  "lpid": {
+                    "currentLegalName": "Windermere Discretionary Trust",
+                    "uniqueIdentifier": "JE-RT-2015-00341",
+                    "mandates": [
+                      {
+                        "mandateType": "OTHER",
+                        "signatoryName": "Margaret Anne Forsyth",
+                        "scope": "Director of Corporate Trustee — Windermere Trustees Ltd (Jersey); authorised signatory for trust administration",
+                        "effectiveFrom": "2015-03-12"
+                      },
+                      {
+                        "mandateType": "OTHER",
+                        "signatoryName": "David Chukwuemeka Okonkwo",
+                        "scope": "Director of Corporate Trustee — Windermere Trustees Ltd (Jersey); authorised signatory for trust administration",
+                        "effectiveFrom": "2019-06-15"
+                      },
+                      {
+                        "mandateType": "OTHER",
+                        "signatoryName": "Catherine Rose Hartley",
+                        "scope": "Protector — power to remove and replace trustees (trust deed Clause 14); spouse of settlor Sir James Hartley",
+                        "effectiveFrom": "2015-03-12"
+                      },
+                      {
+                        "mandateType": "OTHER",
+                        "signatoryName": "James Edward Hartley",
+                        "scope": "Beneficiary — life interest in trust income; also the settlor and UBO",
+                        "effectiveFrom": "2015-03-12"
+                      },
+                      {
+                        "mandateType": "OTHER",
+                        "signatoryName": "James William Hartley",
+                        "scope": "Beneficiary — remainder interest in trust capital; son of settlor",
+                        "effectiveFrom": "2015-03-12"
+                      },
+                      {
+                        "mandateType": "OTHER",
+                        "signatoryName": "Emma Louise Hartley",
+                        "scope": "Beneficiary — remainder interest in trust capital; daughter of settlor",
+                        "effectiveFrom": "2015-03-12"
+                      }
+                    ]
+                  }
+                },
+                "ownershipPercentage": 100,
+                "ownershipType": "DIRECT",
+                "controlMechanism": "CONTRACTUAL",
+                "jurisdiction": "JE"
+              }
+            ],
+            "verificationDate": "2025-10-15",
+            "isPEP": false
+          }
+        ],
+        "auditMetadata": {
+          "recordId": "e2f3a4b5-c6d7-8e9f-0a1b-2c3d4e5f6a7b",
+          "recordCreatedAt": "2025-10-20T09:00:00Z",
+          "recordUpdatedAt": "2025-10-20T09:00:00Z",
+          "recordVersion": 1,
+          "createdBy": "edd-team@caledonian-digital-bank.example.co.uk",
+          "dataSourceSystem": "EDD Trust Registry v2.4",
+          "dataProvider": "Caledonian Digital Bank plc",
+          "dataRetentionDate": "2035-10-20"
+        }
+      }
+    },
+    "credentialStatus": {
+      "id": "https://caledonian-digital-bank.example.co.uk/status/v1#5501",
+      "type": "StatusList2021Entry"
+    },
+    "credentialSchema": {
+      "id": "https://openkycaml.org/schema/v1.3.0/kyc-aml-hybrid-extended.json",
+      "type": "JsonSchemaValidator2018"
+    },
+    "proof": {
+      "type": "Ed25519Signature2020",
+      "created": "2025-10-20T09:00:05Z",
+      "verificationMethod": "did:web:caledonian-digital-bank.example.co.uk#key-1",
+      "proofPurpose": "assertionMethod",
+      "proofValue": "zPq4Rs7TuVwXyZaBcDeFgHiJkL2mNoPqRsTuVwXy3ZaB"
+    },
+    "validFrom": "2025-10-20T09:00:00Z",
+    "validUntil": "2026-10-20T09:00:00Z"
+  }
+}

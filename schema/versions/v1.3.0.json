@@ -1,0 +1,2661 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://openkycaml.org/schema/v1.3.0/kyc-aml-hybrid-extended.json",
+  "title": "OpenKYCAML Hybrid KYC/AML Schema",
+  "description": "Root OpenKYCAML document. At least one of 'ivms101' or 'verifiableCredential' MUST be present.",
+  "version": "1.3.0",
+  "$defs": {
+    "NaturalPersonNameIdentifier": {
+      "title": "NaturalPersonNameIdentifier",
+      "description": "Structured name components for a natural person (IVMS 101 §3.2).",
+      "type": "object",
+      "required": [
+        "primaryIdentifier",
+        "nameIdentifierType"
+      ],
+      "properties": {
+        "primaryIdentifier": {
+          "type": "string",
+          "description": "Family name / surname of the natural person. Maps to eIDAS 2.0 PID attribute 'family_name' when nameIdentifierType is LEGL.",
+          "maxLength": 100
+        },
+        "secondaryIdentifier": {
+          "type": "string",
+          "description": "Given name(s) / forename(s) of the natural person. Maps to eIDAS 2.0 PID attribute 'given_name'.",
+          "maxLength": 100
+        },
+        "nameIdentifierType": {
+          "type": "string",
+          "description": "IVMS 101 NameIdentifierType code.",
+          "enum": [
+            "ALIA",
+            "BIRT",
+            "MAID",
+            "LEGL",
+            "MISC"
+          ]
+        }
+      }
+    },
+    "Address": {
+      "title": "Address",
+      "description": "Structured postal address (IVMS 101 §3.5).",
+      "type": "object",
+      "required": [
+        "country"
+      ],
+      "properties": {
+        "addressType": {
+          "type": "string",
+          "description": "IVMS 101 AddressType code.",
+          "enum": [
+            "HOME",
+            "BIZZ",
+            "GEOG"
+          ]
+        },
+        "department": {
+          "type": "string",
+          "maxLength": 70
+        },
+        "subDepartment": {
+          "type": "string",
+          "maxLength": 70
+        },
+        "streetName": {
+          "type": "string",
+          "maxLength": 70
+        },
+        "buildingNumber": {
+          "type": "string",
+          "maxLength": 16
+        },
+        "buildingName": {
+          "type": "string",
+          "maxLength": 35
+        },
+        "floor": {
+          "type": "string",
+          "maxLength": 70
+        },
+        "postBox": {
+          "type": "string",
+          "maxLength": 16
+        },
+        "room": {
+          "type": "string",
+          "maxLength": 70
+        },
+        "postCode": {
+          "type": "string",
+          "maxLength": 16
+        },
+        "townName": {
+          "type": "string",
+          "maxLength": 35
+        },
+        "townLocationName": {
+          "type": "string",
+          "maxLength": 35
+        },
+        "districtName": {
+          "type": "string",
+          "maxLength": 35
+        },
+        "countrySubDivision": {
+          "type": "string",
+          "maxLength": 35
+        },
+        "country": {
+          "type": "string",
+          "description": "ISO 3166-1 alpha-2 country code.",
+          "pattern": "^[A-Z]{2}$"
+        },
+        "addressLine": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 70
+          },
+          "maxItems": 7,
+          "description": "Unstructured address lines (up to 7), used when structured fields are unavailable."
+        }
+      }
+    },
+    "NationalIdentification": {
+      "title": "NationalIdentification",
+      "description": "National identification document (IVMS 101 §3.6).",
+      "type": "object",
+      "required": [
+        "nationalIdentifier",
+        "nationalIdentifierType"
+      ],
+      "properties": {
+        "nationalIdentifier": {
+          "type": "string",
+          "description": "Identifier value (e.g., passport number, tax ID). Maps to eIDAS 2.0 PID attribute 'person_identifier' or 'personal_administrative_number'. For legal entities with LEIX type, maps to eIDAS 2.0 LPID attribute 'unique_identifier'.",
+          "maxLength": 35
+        },
+        "nationalIdentifierType": {
+          "type": "string",
+          "description": "IVMS 101 NationalIdentifierType code.",
+          "enum": [
+            "ARNU",
+            "CCPT",
+            "RAID",
+            "DRLC",
+            "FIIN",
+            "TXID",
+            "SOCS",
+            "IDCD",
+            "LEIX",
+            "MISC"
+          ]
+        },
+        "countryOfIssue": {
+          "type": "string",
+          "description": "ISO 3166-1 alpha-2 country code of issuing country.",
+          "pattern": "^[A-Z]{2}$"
+        },
+        "registrationAuthority": {
+          "type": "string",
+          "description": "Registration authority (required when nationalIdentifierType is LEIX).",
+          "maxLength": 8
+        }
+      }
+    },
+    "DateAndPlaceOfBirth": {
+      "title": "DateAndPlaceOfBirth",
+      "description": "Birth information for a natural person (IVMS 101 §3.3).",
+      "type": "object",
+      "required": [
+        "dateOfBirth",
+        "placeOfBirth"
+      ],
+      "properties": {
+        "dateOfBirth": {
+          "type": "string",
+          "format": "date",
+          "description": "Date of birth in ISO 8601 format (YYYY-MM-DD). Maps to eIDAS 2.0 PID attribute 'birth_date'."
+        },
+        "placeOfBirth": {
+          "type": "string",
+          "description": "City or municipality of birth. Maps to eIDAS 2.0 PID attribute 'birth_place' (optional in eIDAS; required by IVMS 101 §3.3).",
+          "maxLength": 70
+        }
+      }
+    },
+    "NaturalPerson": {
+      "title": "NaturalPerson",
+      "description": "IVMS 101 NaturalPerson entity.",
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "object",
+          "description": "Name of the natural person.",
+          "required": [
+            "nameIdentifier"
+          ],
+          "properties": {
+            "nameIdentifier": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/NaturalPersonNameIdentifier"
+              },
+              "minItems": 1,
+              "description": "One or more name identifiers for the natural person."
+            },
+            "localNameIdentifier": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/NaturalPersonNameIdentifier"
+              },
+              "description": "Local-script name identifiers."
+            },
+            "phoneticNameIdentifier": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/NaturalPersonNameIdentifier"
+              },
+              "description": "Phonetic name identifiers."
+            }
+          }
+        },
+        "geographicAddress": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Address"
+          },
+          "description": "Geographic address(es) of the natural person. Maps to eIDAS 2.0 PID attribute 'resident_address' (structured)."
+        },
+        "nationalIdentification": {
+          "$ref": "#/$defs/NationalIdentification",
+          "description": "Primary national identification document."
+        },
+        "customerIdentification": {
+          "type": "string",
+          "description": "Internal customer reference number assigned by the originating VASP/institution.",
+          "maxLength": 50
+        },
+        "dateAndPlaceOfBirth": {
+          "$ref": "#/$defs/DateAndPlaceOfBirth"
+        },
+        "countryOfResidence": {
+          "type": "string",
+          "description": "ISO 3166-1 alpha-2 country of residence. Maps to eIDAS 2.0 PID attribute 'resident_country'.",
+          "pattern": "^[A-Z]{2}$"
+        },
+        "nationality": {
+          "type": "string",
+          "description": "ISO 3166-1 alpha-2 nationality of the natural person. Maps to eIDAS 2.0 PID attribute 'nationality'. Use when nationality differs from country of residence.",
+          "pattern": "^[A-Z]{2}$"
+        }
+      }
+    },
+    "LegalPersonNameIdentifier": {
+      "title": "LegalPersonNameIdentifier",
+      "description": "Structured name identifier for a legal person (IVMS 101 §3.8).",
+      "type": "object",
+      "required": [
+        "legalPersonName",
+        "legalPersonNameIdentifierType"
+      ],
+      "properties": {
+        "legalPersonName": {
+          "type": "string",
+          "description": "Registered legal name of the entity. Maps to eIDAS 2.0 LPID attribute 'current_legal_name' when legalPersonNameIdentifierType is LEGL.",
+          "maxLength": 100
+        },
+        "legalPersonNameIdentifierType": {
+          "type": "string",
+          "description": "IVMS 101 LegalPersonNameIdentifierType code.",
+          "enum": [
+            "LEGL",
+            "SHRT",
+            "TRAD"
+          ]
+        }
+      }
+    },
+    "LegalPersonIdentificationData": {
+      "title": "LegalPersonIdentificationData",
+      "description": "eIDAS 2.0 Legal Person Identification Data (LPID) as defined in the EU Digital Identity Architecture and Reference Framework (ARF). Issued by Member State-appointed PID Providers for legal entities and accepted under AMLR Articles 22 and 26 as high-assurance electronic identification.",
+      "type": "object",
+      "required": [
+        "currentLegalName",
+        "uniqueIdentifier"
+      ],
+      "properties": {
+        "currentLegalName": {
+          "type": "string",
+          "description": "Current legal name of the entity as registered. Mandatory LPID attribute. Maps to legalPerson.name.nameIdentifier[0].legalPersonName (LEGL).",
+          "maxLength": 100
+        },
+        "uniqueIdentifier": {
+          "type": "string",
+          "description": "Member State-issued unique identifier for the legal entity, constructed for cross-border compatibility per eIDAS 2.0 ARF. Mandatory LPID attribute. Maps to legalPerson.nationalIdentification.nationalIdentifier.",
+          "maxLength": 50
+        },
+        "currentAddress": {
+          "$ref": "#/$defs/Address",
+          "description": "Current registered address of the legal entity. Optional LPID attribute. Maps to legalPerson.geographicAddress[]."
+        },
+        "vatRegistrationNumber": {
+          "type": "string",
+          "description": "VAT registration number of the legal entity. Optional LPID attribute.",
+          "maxLength": 50
+        },
+        "taxReferenceNumber": {
+          "type": "string",
+          "description": "Tax reference number of the legal entity. Optional LPID attribute.",
+          "maxLength": 50
+        },
+        "europeanUniqueIdentifier": {
+          "type": "string",
+          "description": "European Unique Identifier (EUID) per Directive (EU) 2017/1132 (company register cross-border identifier). Optional LPID attribute.",
+          "maxLength": 50
+        },
+        "lei": {
+          "type": "string",
+          "description": "Legal Entity Identifier (LEI) per ISO 17442. Optional LPID attribute. Maps to legalPerson.lei and/or legalPerson.nationalIdentification with nationalIdentifierType LEIX.",
+          "pattern": "^[A-Z0-9]{20}$"
+        },
+        "eoriNumber": {
+          "type": "string",
+          "description": "Economic Operators Registration and Identification (EORI) number. Optional LPID attribute used for customs and trade identification.",
+          "maxLength": 50
+        },
+        "mandates": {
+          "type": "array",
+          "description": "Representation and mandate records — natural persons authorised to act on behalf of the legal entity. Supports AMLR authorised representative and beneficial owner verification. May be conveyed as QEAAs in EUDI Wallet flows.",
+          "items": {
+            "type": "object",
+            "required": [
+              "naturalPerson",
+              "roleOrPower"
+            ],
+            "properties": {
+              "naturalPerson": {
+                "$ref": "#/$defs/NaturalPerson",
+                "description": "The natural person holding the mandate or representation power."
+              },
+              "roleOrPower": {
+                "type": "string",
+                "description": "Description of the role or power of representation (e.g. 'Director', 'Authorised Signatory', 'Power of Attorney').",
+                "maxLength": 200
+              },
+              "validFrom": {
+                "type": "string",
+                "format": "date",
+                "description": "Date from which the mandate is effective (ISO 8601)."
+              },
+              "validUntil": {
+                "type": "string",
+                "format": "date",
+                "description": "Date on which the mandate expires (ISO 8601). Omit if open-ended."
+              }
+            }
+          }
+        }
+      }
+    },
+    "LegalPerson": {
+      "title": "LegalPerson",
+      "description": "IVMS 101 LegalPerson entity.",
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "object",
+          "required": [
+            "nameIdentifier"
+          ],
+          "properties": {
+            "nameIdentifier": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/LegalPersonNameIdentifier"
+              },
+              "minItems": 1
+            },
+            "localNameIdentifier": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/LegalPersonNameIdentifier"
+              }
+            },
+            "phoneticNameIdentifier": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/LegalPersonNameIdentifier"
+              }
+            }
+          }
+        },
+        "geographicAddress": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Address"
+          },
+          "description": "Geographic address(es) of the legal person. Maps to eIDAS 2.0 LPID attribute 'current_address'."
+        },
+        "customerNumber": {
+          "type": "string",
+          "description": "Internal customer or account reference number assigned by the originating VASP/institution to the legal entity. Also used to carry optional eIDAS 2.0 LPID attributes such as VAT number, tax reference, or EORI number when applicable. To distinguish identifier types use a recognised prefix followed by a colon, e.g. 'VAT:GB123456789', 'EORI:GB123456789000', or 'TAX:DE123456789'.",
+          "maxLength": 50
+        },
+        "lei": {
+          "type": "string",
+          "description": "Legal Entity Identifier (LEI) per ISO 17442. Maps directly to eIDAS 2.0 LPID attribute 'lei'. Also expressible via nationalIdentification with nationalIdentifierType LEIX; this field provides an explicit top-level mapping for LPID interoperability.",
+          "pattern": "^[A-Z0-9]{20}$"
+        },
+        "nationalIdentification": {
+          "$ref": "#/$defs/NationalIdentification",
+          "description": "LEI or other entity identification."
+        },
+        "countryOfRegistration": {
+          "type": "string",
+          "description": "ISO 3166-1 alpha-2 country of registration. Derivable from the LEI or unique_identifier in eIDAS 2.0 LPID.",
+          "pattern": "^[A-Z]{2}$"
+        },
+        "lpid": {
+          "$ref": "#/$defs/LegalPersonIdentificationData",
+          "description": "Optional eIDAS 2.0 Legal Person Identification Data (LPID) block. Carries LPID-specific attributes (current legal name, unique identifier, VAT, EORI, LEI, mandates) for EUDI Wallet and AMLR high-assurance CDD flows. Backward-compatible — omit for pure IVMS 101 usage."
+        }
+      }
+    },
+    "Originator": {
+      "title": "Originator",
+      "description": "IVMS 101 originator — the sending party in a virtual asset transfer.",
+      "type": "object",
+      "required": [
+        "originatorPersons"
+      ],
+      "properties": {
+        "originatorPersons": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "properties": {
+              "naturalPerson": {
+                "$ref": "#/$defs/NaturalPerson"
+              },
+              "legalPerson": {
+                "$ref": "#/$defs/LegalPerson"
+              }
+            },
+            "oneOf": [
+              {
+                "required": [
+                  "naturalPerson"
+                ]
+              },
+              {
+                "required": [
+                  "legalPerson"
+                ]
+              }
+            ]
+          }
+        },
+        "accountNumber": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "description": "Account numbers or virtual asset wallet addresses of the originator."
+        }
+      }
+    },
+    "Beneficiary": {
+      "title": "Beneficiary",
+      "description": "IVMS 101 beneficiary — the receiving party in a virtual asset transfer.",
+      "type": "object",
+      "required": [
+        "beneficiaryPersons"
+      ],
+      "properties": {
+        "beneficiaryPersons": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "properties": {
+              "naturalPerson": {
+                "$ref": "#/$defs/NaturalPerson"
+              },
+              "legalPerson": {
+                "$ref": "#/$defs/LegalPerson"
+              }
+            },
+            "oneOf": [
+              {
+                "required": [
+                  "naturalPerson"
+                ]
+              },
+              {
+                "required": [
+                  "legalPerson"
+                ]
+              }
+            ]
+          }
+        },
+        "accountNumber": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "description": "Account numbers or virtual asset wallet addresses of the beneficiary."
+        }
+      }
+    },
+    "VASP": {
+      "title": "VASP",
+      "description": "Virtual Asset Service Provider identifier (IVMS 101 §3.14).",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Registered legal or trading name of the VASP.",
+          "maxLength": 100
+        },
+        "vaspIdentifier": {
+          "type": "string",
+          "description": "Internal or network-assigned identifier for this VASP.",
+          "maxLength": 100
+        },
+        "lei": {
+          "type": "string",
+          "description": "Legal Entity Identifier (LEI) of the VASP (ISO 17442).",
+          "pattern": "^[A-Z0-9]{20}$"
+        }
+      }
+    },
+    "IVMS101Payload": {
+      "title": "IVMS101Payload",
+      "description": "Root IVMS 101 Travel Rule message payload.",
+      "type": "object",
+      "required": [
+        "originator",
+        "beneficiary",
+        "originatingVASP",
+        "beneficiaryVASP"
+      ],
+      "properties": {
+        "originator": {
+          "$ref": "#/$defs/Originator"
+        },
+        "beneficiary": {
+          "$ref": "#/$defs/Beneficiary"
+        },
+        "originatingVASP": {
+          "$ref": "#/$defs/VASP",
+          "description": "The VASP transmitting the Travel Rule message."
+        },
+        "beneficiaryVASP": {
+          "$ref": "#/$defs/VASP",
+          "description": "The VASP receiving the Travel Rule message."
+        },
+        "transferPath": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/VASP"
+          },
+          "description": "Ordered list of intermediate VASPs in the transfer chain (IVMS 101 §3.15)."
+        },
+        "payloadMetadata": {
+          "type": "object",
+          "description": "Metadata describing this IVMS 101 message.",
+          "properties": {
+            "transactionIdentifier": {
+              "type": "string",
+              "description": "Unique identifier for this transaction assigned by the originating VASP.",
+              "maxLength": 100
+            },
+            "timestamp": {
+              "type": "string",
+              "format": "date-time",
+              "description": "ISO 8601 datetime when this payload was created."
+            },
+            "version": {
+              "type": "string",
+              "const": "IVMS101.2023",
+              "description": "IVMS 101 version identifier."
+            }
+          }
+        },
+        "transferredAmount": {
+          "type": "object",
+          "description": "Value and asset type of the transfer.",
+          "required": [
+            "amount",
+            "assetType"
+          ],
+          "properties": {
+            "amount": {
+              "type": "string",
+              "description": "Transfer amount as a decimal string.",
+              "pattern": "^[0-9]+(\\.[0-9]+)?$"
+            },
+            "assetType": {
+              "type": "string",
+              "description": "Asset type code (e.g., BTC, ETH, USD, EUR).",
+              "maxLength": 20
+            }
+          }
+        }
+      }
+    },
+    "VerifiableCredentialProof": {
+      "title": "VerifiableCredentialProof",
+      "description": "Cryptographic proof section conforming to W3C VC Data Model v1.1 / v2-compatible structure / eIDAS 2.0 ARF.",
+      "type": "object",
+      "required": [
+        "type",
+        "created",
+        "verificationMethod",
+        "proofPurpose"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "Proof type (e.g., Ed25519Signature2020, JsonWebSignature2020).",
+          "examples": [
+            "Ed25519Signature2020",
+            "JsonWebSignature2020",
+            "DataIntegrityProof",
+            "CLSignature2019",
+            "AnonCredsProof2023"
+          ]
+        },
+        "created": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 datetime when the proof was created."
+        },
+        "verificationMethod": {
+          "type": "string",
+          "format": "uri",
+          "description": "DID URL of the key used to create the proof."
+        },
+        "proofPurpose": {
+          "type": "string",
+          "description": "Purpose of the proof.",
+          "enum": [
+            "assertionMethod",
+            "authentication",
+            "keyAgreement",
+            "capabilityInvocation",
+            "capabilityDelegation"
+          ]
+        },
+        "proofValue": {
+          "type": "string",
+          "description": "Base58- or Base64url-encoded proof value."
+        },
+        "jws": {
+          "type": "string",
+          "description": "JSON Web Signature (compact serialization) for JsonWebSignature2020."
+        }
+      }
+    },
+    "VerifiableCredentialWrapper": {
+      "title": "VerifiableCredentialWrapper",
+      "description": "Optional W3C Verifiable Credential envelope conforming to W3C VC Data Model v1.1 (v2-compatible structure) and eIDAS 2.0 ARF §6.3. When present, the IVMS101 payload and kycProfile are transported as credentialSubject. Note: the @context[0] uses the W3C VC DM v1.1 URL; migration to the v2 URL is planned for v2.0.0.",
+      "type": "object",
+      "required": [
+        "@context",
+        "type",
+        "issuer",
+        "issuanceDate",
+        "credentialSubject"
+      ],
+      "properties": {
+        "@context": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uri"
+          },
+          "description": "JSON-LD context URIs.",
+          "contains": {
+            "const": "https://www.w3.org/2018/credentials/v1"
+          }
+        },
+        "id": {
+          "type": "string",
+          "format": "uri",
+          "description": "Unique identifier for this Verifiable Credential."
+        },
+        "type": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "contains": {
+            "const": "VerifiableCredential"
+          },
+          "description": "Credential type(s)."
+        },
+        "issuer": {
+          "oneOf": [
+            {
+              "type": "string",
+              "format": "uri"
+            },
+            {
+              "type": "object",
+              "required": [
+                "id"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "name": {
+                  "type": "string"
+                }
+              }
+            }
+          ],
+          "description": "DID or URL of the issuing institution."
+        },
+        "issuanceDate": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 datetime of credential issuance."
+        },
+        "expirationDate": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 datetime when the credential expires."
+        },
+        "credentialSubject": {
+          "type": "object",
+          "description": "The subject of this credential. Embeds the IVMS 101 Travel Rule payload and/or the KYC profile directly so that a single signed VC carries all required AML identity data for eIDAS 2.0 / EUDIW wallet flows. Maps to W3C VC Data Model v1.1 credentialSubject.",
+          "properties": {
+            "id": {
+              "type": "string",
+              "format": "uri",
+              "description": "DID of the credential subject (the customer or legal entity)."
+            },
+            "ivms101": {
+              "$ref": "#/$defs/IVMS101Payload",
+              "description": "Full IVMS 101 Travel Rule payload embedded inside the VC for hybrid Travel-Rule / eIDAS 2.0 use. Enables mapping to eIDAS PID / LPID attributes without losing FATF Rec 16 compliance."
+            },
+            "kycProfile": {
+              "$ref": "#/$defs/KYCProfile",
+              "description": "Optional KYC/AML profile embedded inside the VC, enabling CDD reliance and risk-data portability across institutions via a signed attestation."
+            },
+            "lpid": {
+              "$ref": "#/$defs/LegalPersonIdentificationData",
+              "description": "Optional eIDAS 2.0 LPID block at the VC credentialSubject level. Enables a standalone LPID Verifiable Credential for legal entity identification in EUDI Wallet flows without requiring a full IVMS 101 payload."
+            }
+          }
+        },
+        "credentialStatus": {
+          "type": "object",
+          "description": "Credential revocation status endpoint.",
+          "required": [
+            "id",
+            "type"
+          ],
+          "properties": {
+            "id": {
+              "type": "string",
+              "format": "uri"
+            },
+            "type": {
+              "type": "string",
+              "description": "Revocation status type. 'StatusList2021Entry' for W3C Status List 2021; 'RevocationList2020Status' for earlier W3C spec; 'AnonCredsCredentialStatusList2023' for Hyperledger AnonCreds CL_ACCUM accumulator-based revocation (Sovrin/Indy).",
+              "examples": [
+                "StatusList2021Entry",
+                "RevocationList2020Status",
+                "AnonCredsCredentialStatusList2023"
+              ]
+            }
+          }
+        },
+        "credentialSchema": {
+          "type": "object",
+          "description": "Schema identifier for this credential. For W3C JSON Schema credentials use type 'JsonSchemaValidator2018'. For Hyperledger AnonCreds (Sovrin/Indy) credentials use type 'AnonCredsDefinition' with the Sovrin ledger schema ID in 'id' and the Credential Definition ID in 'credDefId'.",
+          "required": [
+            "id",
+            "type"
+          ],
+          "properties": {
+            "id": {
+              "type": "string",
+              "format": "uri",
+              "description": "URI of the credential schema. For JSON Schema credentials: an HTTPS URI resolving to the JSON Schema. For AnonCreds credentials: the Sovrin/Indy schema ledger identifier in the format '<issuerDID>:2:<schemaName>:<schemaVersion>' (e.g. 'Gs6cQcvrtWoZKsbBhD3dQJ:2:KYCCredential:1.0')."
+            },
+            "type": {
+              "type": "string",
+              "description": "Schema validator type. 'JsonSchemaValidator2018' for W3C JSON Schema credentials; 'AnonCredsDefinition' for Hyperledger AnonCreds / Sovrin credentials.",
+              "enum": [
+                "JsonSchemaValidator2018",
+                "AnonCredsDefinition",
+                "JsonSchema"
+              ]
+            },
+            "credDefId": {
+              "type": "string",
+              "description": "Hyperledger AnonCreds / Sovrin Credential Definition ID. Format: '<issuerDID>:3:<signatureType>:<schemaSeqNo>:<tag>' (e.g. 'Gs6cQcvrtWoZKsbBhD3dQJ:3:CL:1234:default'). Only required when type is 'AnonCredsDefinition'. Uniquely identifies the public key and non-revocation parameters used to issue the AnonCreds credential."
+            }
+          }
+        },
+        "evidence": {
+          "type": "array",
+          "description": "W3C VC §6.4 evidence block. Used in EUDI Wallet flows to reference the source credential(s) — typically a PID or LPID — that were presented by the subject and from which the IVMS 101 / kycProfile data was derived. Enables triangulation of the identity chain: PID Issuer → Subject Wallet → VASP.",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "type"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "uri",
+                "description": "Unique identifier of the source credential or presentation event."
+              },
+              "type": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Type(s) of the evidence record (e.g. ['PIDCredential', 'EUDIWalletPresentationEvidence'])."
+              },
+              "verifier": {
+                "type": "string",
+                "format": "uri",
+                "description": "DID of the relying party / verifier that received the original presentation (typically the VASP)."
+              },
+              "credentialIssuer": {
+                "type": "string",
+                "format": "uri",
+                "description": "DID of the authority that originally issued the source credential (e.g. national PID Provider, Bundesanzeiger LPID Issuer)."
+              },
+              "evidenceDocument": {
+                "type": "string",
+                "description": "Human-readable description of the source document or credential (e.g. 'German National Identity Card (eIDAS 2.0 PID)').",
+                "maxLength": 200
+              },
+              "subjectPresence": {
+                "type": "string",
+                "enum": [
+                  "Physical",
+                  "Digital"
+                ],
+                "description": "Whether the subject was physically or digitally present during the presentation."
+              },
+              "documentPresence": {
+                "type": "string",
+                "enum": [
+                  "Physical",
+                  "Digital"
+                ],
+                "description": "Whether the document was presented physically or digitally."
+              },
+              "presentationMethod": {
+                "type": "string",
+                "description": "Protocol used for the presentation (e.g. 'OpenID4VP', 'MDOC', 'ISO-18013-5').",
+                "maxLength": 100
+              },
+              "presentationDate": {
+                "type": "string",
+                "format": "date-time",
+                "description": "ISO 8601 datetime when the credential was presented."
+              }
+            }
+          }
+        },
+        "proof": {
+          "$ref": "#/$defs/VerifiableCredentialProof"
+        },
+        "selectiveDisclosure": {
+          "type": "object",
+          "description": "SD-JWT VC selective disclosure metadata (IETF draft-ietf-oauth-sd-jwt-vc / ARF §6.3.4). Present when this credential is issued or presented as an SD-JWT VC.",
+          "properties": {
+            "_sd_alg": {
+              "type": "string",
+              "enum": [
+                "sha-256",
+                "sha-384"
+              ],
+              "description": "Hash algorithm used for SD-JWT disclosure digests (sha-256 required by ARF)."
+            },
+            "disclosableClaimPaths": {
+              "type": "array",
+              "description": "JSON Pointer paths (RFC 6901) of claims that MAY be selectively withheld. FATF-mandatory fields MUST NOT appear here.",
+              "items": {
+                "type": "string"
+              }
+            },
+            "requiredClaimPaths": {
+              "type": "array",
+              "description": "JSON Pointer paths always revealed — never withheld. Includes FATF Travel Rule mandatory fields.",
+              "items": {
+                "type": "string"
+              }
+            },
+            "decodedDisclosures": {
+              "type": "array",
+              "description": "Human-readable decoded SD-JWT disclosures for documentation/reference. In an actual SD-JWT the values are base64url-encoded and the claim values are replaced by their SHA-256 digests.",
+              "items": {
+                "type": "object",
+                "required": [
+                  "salt",
+                  "claimName"
+                ],
+                "properties": {
+                  "salt": {
+                    "type": "string",
+                    "description": "Random salt value (base64url, ≥128 bits entropy)."
+                  },
+                  "claimName": {
+                    "type": "string",
+                    "description": "Name of the claim being disclosed."
+                  },
+                  "claimValue": {
+                    "description": "Plaintext value of the claim."
+                  }
+                }
+              }
+            },
+            "sdJwtNote": {
+              "type": "string",
+              "description": "Human-readable note about the SD-JWT presentation context."
+            }
+          }
+        }
+      }
+    },
+    "PEPStatus": {
+      "title": "PEPStatus",
+      "description": "Politically Exposed Person screening result.",
+      "type": "object",
+      "required": [
+        "isPEP"
+      ],
+      "properties": {
+        "isPEP": {
+          "type": "boolean",
+          "description": "Whether the subject is classified as a PEP."
+        },
+        "isPep": {
+          "type": "boolean",
+          "description": "Alias for isPEP (reference schema interoperability). When both are present, isPEP takes precedence."
+        },
+        "pepCategory": {
+          "type": "string",
+          "description": "PEP classification category aligned to the AMLA draft RTS taxonomy (AMLR Art. 28–31). Primary values: DOMESTIC_PEP, FOREIGN_PEP, INTERNATIONAL_ORGANISATION, FAMILY_MEMBER_OF_PEP, CLOSE_ASSOCIATE_OF_PEP, FORMER_PEP, NOT_PEP. Legacy aliases INTERNATIONAL_ORG_PEP and RCA are retained for backward compatibility.",
+          "enum": [
+            "DOMESTIC_PEP",
+            "FOREIGN_PEP",
+            "INTERNATIONAL_ORGANISATION",
+            "FAMILY_MEMBER_OF_PEP",
+            "CLOSE_ASSOCIATE_OF_PEP",
+            "FORMER_PEP",
+            "NOT_PEP",
+            "INTERNATIONAL_ORG_PEP",
+            "RCA"
+          ]
+        },
+        "pepRole": {
+          "type": "string",
+          "description": "Specific role or position that triggers PEP classification.",
+          "maxLength": 200
+        },
+        "screeningDate": {
+          "type": "string",
+          "format": "date",
+          "description": "Date of the most recent PEP screening."
+        },
+        "lastPepCheckDate": {
+          "type": "string",
+          "format": "date",
+          "description": "Alias for screeningDate (reference schema interoperability)."
+        },
+        "screeningProvider": {
+          "type": "string",
+          "description": "Name of the screening data provider.",
+          "maxLength": 100
+        }
+      }
+    },
+    "SanctionsScreening": {
+      "title": "SanctionsScreening",
+      "description": "Sanctions list screening result.",
+      "type": "object",
+      "required": [
+        "screeningStatus",
+        "screeningDate"
+      ],
+      "properties": {
+        "screeningStatus": {
+          "type": "string",
+          "description": "Outcome of the sanctions screening.",
+          "enum": [
+            "CLEAR",
+            "HIT",
+            "POTENTIAL_MATCH",
+            "FALSE_POSITIVE",
+            "PENDING",
+            "ESCALATED"
+          ]
+        },
+        "status": {
+          "type": "string",
+          "description": "Alias for screeningStatus (reference schema interoperability). Accepts all screeningStatus values.",
+          "enum": [
+            "CLEAR",
+            "HIT",
+            "POTENTIAL_MATCH",
+            "FALSE_POSITIVE",
+            "PENDING",
+            "ESCALATED"
+          ]
+        },
+        "screeningDate": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 datetime of the screening."
+        },
+        "lastScreenedDate": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Alias for screeningDate (reference schema interoperability)."
+        },
+        "screeningProvider": {
+          "type": "string",
+          "description": "Sanctions list provider (e.g., Refinitiv, Dow Jones, Comply Advantage).",
+          "maxLength": 100
+        },
+        "listsChecked": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Sanctions lists checked (e.g., OFAC SDN, EU Consolidated, UN Consolidated, HMT).",
+          "examples": [
+            [
+              "OFAC_SDN",
+              "EU_CONSOLIDATED",
+              "UN_CONSOLIDATED",
+              "HMT"
+            ]
+          ]
+        },
+        "hits": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Names or identifiers of matched sanctions entries."
+        },
+        "matchDetails": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "listName",
+              "matchScore"
+            ],
+            "properties": {
+              "listName": {
+                "type": "string"
+              },
+              "matchScore": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 100
+              },
+              "matchedName": {
+                "type": "string"
+              },
+              "disposition": {
+                "type": "string",
+                "enum": [
+                  "CONFIRMED_HIT",
+                  "FALSE_POSITIVE",
+                  "UNDER_REVIEW"
+                ]
+              },
+              "reviewedBy": {
+                "type": "string"
+              },
+              "reviewDate": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          }
+        }
+      }
+    },
+    "AdverseMedia": {
+      "title": "AdverseMedia",
+      "description": "Adverse media / negative news screening result.",
+      "type": "object",
+      "required": [
+        "screeningStatus",
+        "screeningDate"
+      ],
+      "properties": {
+        "hasHits": {
+          "type": "boolean",
+          "description": "Whether any adverse media hits were found."
+        },
+        "screeningStatus": {
+          "type": "string",
+          "enum": [
+            "CLEAR",
+            "ADVERSE_FOUND",
+            "UNDER_REVIEW",
+            "FALSE_POSITIVE",
+            "PENDING"
+          ]
+        },
+        "screeningDate": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "lastCheckedDate": {
+          "type": "string",
+          "format": "date",
+          "description": "Date of the most recent adverse media check (reference schema interoperability)."
+        },
+        "screeningProvider": {
+          "type": "string",
+          "maxLength": 100
+        },
+        "categories": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "FINANCIAL_CRIME",
+              "FRAUD",
+              "CORRUPTION",
+              "MONEY_LAUNDERING",
+              "TERRORISM_FINANCING",
+              "DRUG_TRAFFICKING",
+              "HUMAN_TRAFFICKING",
+              "CYBERCRIME",
+              "TAX_EVASION",
+              "OTHER"
+            ]
+          },
+          "description": "Categories of adverse media found."
+        },
+        "summary": {
+          "type": "string",
+          "description": "Brief summary of adverse media findings.",
+          "maxLength": 1000
+        },
+        "articles": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "url": {
+                "type": "string",
+                "format": "uri"
+              },
+              "headline": {
+                "type": "string",
+                "maxLength": 300
+              },
+              "publicationDate": {
+                "type": "string",
+                "format": "date"
+              },
+              "source": {
+                "type": "string",
+                "maxLength": 200
+              }
+            }
+          }
+        }
+      }
+    },
+    "SourceOfFundsWealth": {
+      "title": "SourceOfFundsWealth",
+      "description": "Declared and verified source of funds and source of wealth.",
+      "type": "object",
+      "properties": {
+        "sourceOfFunds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "EMPLOYMENT_INCOME",
+              "BUSINESS_INCOME",
+              "INVESTMENT_RETURNS",
+              "INHERITANCE",
+              "GIFT",
+              "SALE_OF_PROPERTY",
+              "SALE_OF_ASSETS",
+              "LOAN",
+              "PENSION",
+              "RENTAL_INCOME",
+              "CRYPTOCURRENCY_GAINS",
+              "OTHER"
+            ]
+          },
+          "description": "Declared source(s) of funds for the account or transaction."
+        },
+        "sourceOfWealthNarrative": {
+          "type": "string",
+          "description": "Free-text description of how wealth was accumulated.",
+          "maxLength": 2000
+        },
+        "verificationStatus": {
+          "type": "string",
+          "enum": [
+            "DECLARED_ONLY",
+            "PARTIALLY_VERIFIED",
+            "FULLY_VERIFIED",
+            "INCONSISTENT"
+          ],
+          "description": "Verification status of the declared source of funds/wealth."
+        },
+        "supportingDocuments": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "documentType"
+            ],
+            "properties": {
+              "documentType": {
+                "type": "string",
+                "enum": [
+                  "TAX_RETURN",
+                  "BANK_STATEMENT",
+                  "PAYSLIP",
+                  "AUDITED_ACCOUNTS",
+                  "COMPANY_ACCOUNTS",
+                  "INHERITANCE_DOCUMENTS",
+                  "SALE_AGREEMENT",
+                  "OTHER"
+                ]
+              },
+              "documentReference": {
+                "type": "string",
+                "maxLength": 100
+              },
+              "verifiedDate": {
+                "type": "string",
+                "format": "date"
+              }
+            }
+          }
+        }
+      }
+    },
+    "BeneficialOwner": {
+      "title": "BeneficialOwner",
+      "description": "Ultimate Beneficial Owner (UBO) record.",
+      "type": "object",
+      "required": [
+        "ownershipPercentage"
+      ],
+      "if": {
+        "required": [
+          "person"
+        ]
+      },
+      "then": {
+        "not": {
+          "required": [
+            "naturalPerson"
+          ]
+        },
+        "description": "When 'person' is present, the legacy 'naturalPerson' field must not be used to avoid ambiguity."
+      },
+      "properties": {
+        "person": {
+          "type": "object",
+          "description": "The beneficial owner as a natural or legal person (reference schema interoperability).",
+          "properties": {
+            "naturalPerson": {
+              "$ref": "#/$defs/NaturalPerson"
+            },
+            "legalPerson": {
+              "$ref": "#/$defs/LegalPerson"
+            }
+          },
+          "oneOf": [
+            {
+              "required": [
+                "naturalPerson"
+              ]
+            },
+            {
+              "required": [
+                "legalPerson"
+              ]
+            }
+          ]
+        },
+        "naturalPerson": {
+          "$ref": "#/$defs/NaturalPerson",
+          "description": "The beneficial owner as a natural person. Legacy field — use 'person' when natural or legal person support is needed. Do not use alongside 'person'."
+        },
+        "ownershipPercentage": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Direct or indirect ownership percentage."
+        },
+        "ownershipType": {
+          "type": "string",
+          "enum": [
+            "DIRECT",
+            "INDIRECT",
+            "BOTH"
+          ],
+          "description": "Nature of the ownership or control."
+        },
+        "controlMechanism": {
+          "type": "string",
+          "enum": [
+            "SHAREHOLDING",
+            "VOTING_RIGHTS",
+            "CONTRACTUAL",
+            "DE_FACTO_CONTROL",
+            "OTHER"
+          ],
+          "description": "Mechanism by which control is exercised."
+        },
+        "verificationDate": {
+          "type": "string",
+          "format": "date"
+        },
+        "isPEP": {
+          "type": "boolean"
+        },
+        "ownershipChainDepth": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Number of tiers in the ownership chain: 1 = UBO owns subject entity directly, 2+ = ownership via one or more intermediate holding entities."
+        },
+        "intermediateEntities": {
+          "type": "array",
+          "description": "Ordered chain of intermediate holding entities between this UBO and the subject legal entity (AMLR Art. 26 enhanced transparency). First element is the entity directly holding an interest in the subject; last element is the entity directly owned by the UBO.",
+          "items": {
+            "type": "object",
+            "required": [
+              "legalPerson"
+            ],
+            "properties": {
+              "legalPerson": {
+                "$ref": "#/$defs/LegalPerson",
+                "description": "The intermediate holding entity."
+              },
+              "ownershipPercentage": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 100,
+                "description": "Ownership or voting interest percentage held at this tier."
+              },
+              "ownershipType": {
+                "type": "string",
+                "enum": [
+                  "DIRECT",
+                  "INDIRECT"
+                ],
+                "description": "Nature of control at this tier."
+              },
+              "controlMechanism": {
+                "type": "string",
+                "enum": [
+                  "SHAREHOLDING",
+                  "VOTING_RIGHTS",
+                  "CONTRACTUAL",
+                  "DE_FACTO_CONTROL",
+                  "OTHER"
+                ],
+                "description": "Mechanism by which control is exercised at this tier."
+              },
+              "jurisdiction": {
+                "type": "string",
+                "pattern": "^[A-Z]{2}$",
+                "description": "ISO 3166-1 alpha-2 country of incorporation of this entity."
+              }
+            }
+          }
+        }
+      }
+    },
+    "MonitoringInfo": {
+      "title": "MonitoringInfo",
+      "description": "Ongoing AML monitoring metadata.",
+      "type": "object",
+      "properties": {
+        "monitoringLevel": {
+          "type": "string",
+          "enum": [
+            "STANDARD",
+            "ENHANCED",
+            "SIMPLIFIED",
+            "CONTINUOUS"
+          ],
+          "description": "Intensity of the ongoing monitoring regime."
+        },
+        "monitoringStatus": {
+          "type": "string",
+          "enum": [
+            "ACTIVE",
+            "SUSPENDED",
+            "TERMINATED"
+          ],
+          "description": "Current operational status of the business relationship. ACTIVE = relationship ongoing; SUSPENDED = temporarily restricted pending review; TERMINATED = relationship closed."
+        },
+        "eddRequired": {
+          "type": "boolean",
+          "description": "Whether Enhanced Due Diligence (EDD) has been triggered for this customer. True when the customer is a PEP, is from a high-risk third country, or other EDD triggers under AMLR Article 22 apply."
+        },
+        "lastReviewDate": {
+          "type": "string",
+          "format": "date",
+          "description": "Date of the last periodic review."
+        },
+        "lastKycReviewDate": {
+          "type": "string",
+          "format": "date",
+          "description": "Alias for lastReviewDate (reference schema interoperability)."
+        },
+        "nextReviewDate": {
+          "type": "string",
+          "format": "date",
+          "description": "Date of the next scheduled review."
+        },
+        "reviewFrequency": {
+          "type": "string",
+          "enum": [
+            "MONTHLY",
+            "QUARTERLY",
+            "SEMI_ANNUAL",
+            "ANNUAL",
+            "BIENNIAL",
+            "RISK_TRIGGERED"
+          ],
+          "description": "Frequency of periodic reviews."
+        },
+        "alerts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "alertId",
+              "alertDate",
+              "alertType",
+              "alertStatus"
+            ],
+            "properties": {
+              "alertId": {
+                "type": "string"
+              },
+              "alertDate": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "alertType": {
+                "type": "string",
+                "enum": [
+                  "UNUSUAL_TRANSACTION",
+                  "VELOCITY_BREACH",
+                  "PATTERN_CHANGE",
+                  "SANCTIONS_HIT",
+                  "PEP_CHANGE",
+                  "ADVERSE_MEDIA",
+                  "SAR_TRIGGER",
+                  "OTHER"
+                ]
+              },
+              "alertStatus": {
+                "type": "string",
+                "enum": [
+                  "OPEN",
+                  "UNDER_REVIEW",
+                  "CLOSED_NO_ACTION",
+                  "SAR_FILED",
+                  "ESCALATED"
+                ]
+              },
+              "description": {
+                "type": "string",
+                "maxLength": 1000
+              },
+              "assignedTo": {
+                "type": "string",
+                "maxLength": 100
+              }
+            }
+          }
+        }
+      }
+    },
+    "AuditMetadata": {
+      "title": "AuditMetadata",
+      "description": "Audit trail and provenance metadata for this KYC record.",
+      "type": "object",
+      "required": [
+        "recordCreatedAt",
+        "recordVersion"
+      ],
+      "properties": {
+        "recordId": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Globally unique identifier for this KYC/AML record."
+        },
+        "recordCreatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 datetime when this record was first created."
+        },
+        "recordUpdatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 datetime of the most recent update."
+        },
+        "recordVersion": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Monotonically increasing version number of this record."
+        },
+        "createdBy": {
+          "type": "string",
+          "description": "Identifier of the system or operator that created this record.",
+          "maxLength": 100
+        },
+        "updatedBy": {
+          "type": "string",
+          "description": "Identifier of the system or operator that last updated this record.",
+          "maxLength": 100
+        },
+        "dataSourceSystem": {
+          "type": "string",
+          "description": "Source system identifier (e.g., core banking system, CRM, KYC platform).",
+          "maxLength": 100
+        },
+        "dataProvider": {
+          "type": "string",
+          "description": "Name or DID of the institution that originally collected and verified the KYC data. Populated when this record is shared under AMLR Article 48 third-party reliance or a KYC utility arrangement.",
+          "maxLength": 200
+        },
+        "sharingConsentReference": {
+          "type": "string",
+          "description": "Reference to the consent or data-sharing agreement under which this record is being disclosed to a third party (e.g., reliance agreement ID, data-sharing framework reference). Required for AMLR Article 48 reliance and GDPR Article 6 lawful basis documentation.",
+          "maxLength": 200
+        },
+        "dataRetentionDate": {
+          "type": "string",
+          "format": "date",
+          "description": "Date after which this record may be deleted per data retention policy."
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 datetime of this audit record (reference schema interoperability; see also recordCreatedAt)."
+        },
+        "changeLog": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "timestamp",
+              "changedBy",
+              "changeType"
+            ],
+            "properties": {
+              "timestamp": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "changedBy": {
+                "type": "string",
+                "maxLength": 100
+              },
+              "changeType": {
+                "type": "string",
+                "enum": [
+                  "CREATED",
+                  "UPDATED",
+                  "REVIEWED",
+                  "APPROVED",
+                  "REJECTED",
+                  "ARCHIVED"
+                ]
+              },
+              "fieldsChanged": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "notes": {
+                "type": "string",
+                "maxLength": 500
+              }
+            }
+          }
+        }
+      }
+    },
+    "TransactionMonitoring": {
+      "title": "TransactionMonitoring",
+      "description": "Transaction-level AML monitoring data. Captures the outcome of automated rule evaluation, rule-triggered alerts, travel-rule compliance status, and any resulting regulatory reporting obligations (CTR, SAR/STR). Aligns with FATF Rec 16, EU AMLR Article 59, and national CTR/STR thresholds.",
+      "type": "object",
+      "properties": {
+        "transactionReference": {
+          "type": "string",
+          "description": "Internal or network-level transaction reference number.",
+          "maxLength": 100
+        },
+        "monitoringDate": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 datetime when the transaction was evaluated by the monitoring engine."
+        },
+        "monitoringEngine": {
+          "type": "string",
+          "description": "Name and version of the transaction monitoring system that produced this result.",
+          "maxLength": 100
+        },
+        "overallOutcome": {
+          "type": "string",
+          "description": "Aggregate outcome of all rules evaluated against this transaction.",
+          "enum": [
+            "CLEAR",
+            "FLAGGED",
+            "BLOCKED",
+            "PENDING_REVIEW"
+          ]
+        },
+        "rulesEvaluated": {
+          "type": "array",
+          "description": "Results for each individual AML monitoring rule evaluated.",
+          "items": {
+            "type": "object",
+            "required": [
+              "ruleId",
+              "ruleResult"
+            ],
+            "properties": {
+              "ruleId": {
+                "type": "string",
+                "description": "Unique identifier of the monitoring rule.",
+                "maxLength": 50
+              },
+              "ruleName": {
+                "type": "string",
+                "description": "Human-readable name of the rule (e.g., 'Velocity – 7-day rolling window').",
+                "maxLength": 200
+              },
+              "ruleCategory": {
+                "type": "string",
+                "description": "Functional category of the rule.",
+                "enum": [
+                  "VELOCITY",
+                  "THRESHOLD",
+                  "STRUCTURING",
+                  "GEOGRAPHY",
+                  "COUNTERPARTY_RISK",
+                  "BEHAVIOUR_CHANGE",
+                  "PEP_SANCTIONS",
+                  "TRAVEL_RULE",
+                  "CTF",
+                  "IDENTITY",
+                  "OTHER"
+                ]
+              },
+              "ruleResult": {
+                "type": "string",
+                "description": "Outcome for this individual rule.",
+                "enum": [
+                  "PASS",
+                  "FAIL",
+                  "MANUAL_REVIEW",
+                  "NOT_APPLICABLE"
+                ]
+              },
+              "threshold": {
+                "type": "string",
+                "description": "Configured threshold or parameter value for this rule (e.g., '10000 USD', '3 transactions / 7 days').",
+                "maxLength": 100
+              },
+              "actualValue": {
+                "type": "string",
+                "description": "Actual value observed for this transaction against the threshold.",
+                "maxLength": 100
+              },
+              "notes": {
+                "type": "string",
+                "description": "Analyst notes or system commentary on this rule result.",
+                "maxLength": 500
+              }
+            }
+          }
+        },
+        "alerts": {
+          "type": "array",
+          "description": "Transaction-level alerts generated by the monitoring engine.",
+          "items": {
+            "type": "object",
+            "required": [
+              "alertId",
+              "alertDate",
+              "alertType",
+              "alertStatus"
+            ],
+            "properties": {
+              "alertId": {
+                "type": "string",
+                "description": "Unique identifier of the alert.",
+                "maxLength": 50
+              },
+              "alertDate": {
+                "type": "string",
+                "format": "date-time",
+                "description": "ISO 8601 datetime when the alert was generated."
+              },
+              "alertType": {
+                "type": "string",
+                "description": "Classification of the alert trigger.",
+                "enum": [
+                  "UNUSUAL_TRANSACTION",
+                  "VELOCITY_BREACH",
+                  "STRUCTURING_SUSPICION",
+                  "SANCTIONS_HIT",
+                  "HIGH_RISK_JURISDICTION",
+                  "COUNTERPARTY_RISK",
+                  "PATTERN_CHANGE",
+                  "PEP_INVOLVEMENT",
+                  "ADVERSE_MEDIA",
+                  "SAR_TRIGGER",
+                  "OTHER"
+                ]
+              },
+              "alertStatus": {
+                "type": "string",
+                "description": "Current disposition of the alert.",
+                "enum": [
+                  "OPEN",
+                  "UNDER_REVIEW",
+                  "CLOSED_NO_ACTION",
+                  "SAR_FILED",
+                  "ESCALATED",
+                  "FALSE_POSITIVE"
+                ]
+              },
+              "riskScore": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 1000,
+                "description": "Numeric risk score assigned to this specific alert."
+              },
+              "description": {
+                "type": "string",
+                "description": "Narrative description of the alert and supporting rationale.",
+                "maxLength": 1000
+              },
+              "assignedTo": {
+                "type": "string",
+                "description": "Analyst or team responsible for reviewing this alert.",
+                "maxLength": 100
+              },
+              "reviewDate": {
+                "type": "string",
+                "format": "date-time",
+                "description": "ISO 8601 datetime when the alert review was completed."
+              },
+              "reviewOutcome": {
+                "type": "string",
+                "description": "Final decision after review.",
+                "enum": [
+                  "NO_ACTION",
+                  "SAR_FILED",
+                  "ACCOUNT_BLOCKED",
+                  "ENHANCED_MONITORING",
+                  "REFERRED_TO_FIU"
+                ]
+              }
+            }
+          }
+        },
+        "travelRuleCompliance": {
+          "type": "object",
+          "description": "Travel Rule (FATF Rec 16 / IVMS 101) compliance status for this transaction.",
+          "properties": {
+            "travelRuleApplicable": {
+              "type": "boolean",
+              "description": "Whether the Travel Rule threshold is met and IVMS 101 data must be transmitted."
+            },
+            "jurisdictionThreshold": {
+              "type": "object",
+              "description": "Jurisdiction-specific Travel Rule threshold applied.",
+              "properties": {
+                "amount": {
+                  "type": "string",
+                  "description": "Threshold value as a decimal string.",
+                  "pattern": "^[0-9]+(\\.[0-9]+)?$"
+                },
+                "currency": {
+                  "type": "string",
+                  "description": "ISO 4217 currency code or virtual asset code.",
+                  "maxLength": 10
+                },
+                "jurisdiction": {
+                  "type": "string",
+                  "description": "ISO 3166-1 alpha-2 jurisdiction code.",
+                  "pattern": "^[A-Z]{2}$"
+                }
+              }
+            },
+            "complianceStatus": {
+              "type": "string",
+              "description": "Travel Rule compliance outcome.",
+              "enum": [
+                "COMPLIANT",
+                "NON_COMPLIANT",
+                "PENDING_COUNTERPARTY_DATA",
+                "EXEMPT",
+                "SUNRISE_PERIOD"
+              ]
+            },
+            "ivms101MessageId": {
+              "type": "string",
+              "format": "uuid",
+              "description": "UUID reference to the IVMS 101 message transmitted for this transaction."
+            },
+            "beneficiaryVaspVerified": {
+              "type": "boolean",
+              "description": "Whether the beneficiary VASP identity has been verified (e.g., via GLEIF, OpenVASP, or TRP)."
+            },
+            "notes": {
+              "type": "string",
+              "maxLength": 500
+            }
+          }
+        },
+        "reportingObligations": {
+          "type": "array",
+          "description": "Regulatory reporting obligations triggered by this transaction (CTR, SAR/STR, etc.).",
+          "items": {
+            "type": "object",
+            "required": [
+              "reportType",
+              "reportingJurisdiction"
+            ],
+            "properties": {
+              "reportType": {
+                "type": "string",
+                "description": "Type of regulatory report.",
+                "enum": [
+                  "CTR",
+                  "SAR",
+                  "STR",
+                  "FATF_REPORT",
+                  "DATR",
+                  "CMIR",
+                  "OTHER"
+                ]
+              },
+              "reportingJurisdiction": {
+                "type": "string",
+                "description": "ISO 3166-1 alpha-2 jurisdiction where the report is filed.",
+                "pattern": "^[A-Z]{2}$"
+              },
+              "reportingThreshold": {
+                "type": "object",
+                "description": "Threshold that triggered the reporting obligation.",
+                "properties": {
+                  "amount": {
+                    "type": "string",
+                    "pattern": "^[0-9]+(\\.[0-9]+)?$"
+                  },
+                  "currency": {
+                    "type": "string",
+                    "maxLength": 10
+                  }
+                }
+              },
+              "reportFiled": {
+                "type": "boolean",
+                "description": "Whether the report has been filed with the relevant authority."
+              },
+              "reportReference": {
+                "type": "string",
+                "description": "Reference number assigned by the reporting institution or authority.",
+                "maxLength": 100
+              },
+              "filingDate": {
+                "type": "string",
+                "format": "date-time",
+                "description": "ISO 8601 datetime when the report was filed."
+              },
+              "filingAuthority": {
+                "type": "string",
+                "description": "Name of the Financial Intelligence Unit (FIU) or authority receiving the report.",
+                "maxLength": 100
+              }
+            }
+          }
+        }
+      }
+    },
+    "ThirdPartyCDDReliance": {
+      "title": "ThirdPartyCDDReliance",
+      "description": "Records the conditions under which CDD measures were performed by a third party and relied upon by the obliged entity. Aligns with AMLR Article 48(3): the obliged entity remains liable, must obtain immediate access to underlying data, and must document that the providing party meets AMLR Article 48(1) eligibility conditions.",
+      "type": "object",
+      "required": [
+        "relyingPartyId",
+        "providingPartyId",
+        "relianceScope",
+        "relianceDate"
+      ],
+      "properties": {
+        "relyingPartyId": {
+          "type": "string",
+          "description": "Identifier (LEI, DID, or institution name) of the obliged entity relying on the third-party CDD.",
+          "maxLength": 200
+        },
+        "providingPartyId": {
+          "type": "string",
+          "description": "Identifier (LEI, DID, or institution name) of the third party that performed the CDD measures.",
+          "maxLength": 200
+        },
+        "relianceScope": {
+          "type": "string",
+          "description": "Due diligence tier that was performed by the providing party and is being relied upon.",
+          "enum": [
+            "SDD",
+            "CDD",
+            "EDD"
+          ]
+        },
+        "relianceContractRef": {
+          "type": "string",
+          "description": "Reference to the written arrangement or outsourcing contract between the relying and providing party as required by AMLR Article 48(3)(a).",
+          "maxLength": 200
+        },
+        "relianceDate": {
+          "type": "string",
+          "format": "date",
+          "description": "Date on which reliance on the third-party CDD was formally established."
+        },
+        "independentVerificationRequired": {
+          "type": "boolean",
+          "description": "Whether the relying entity must perform any independent verification steps beyond accepting the providing party's results (e.g. additional EDD measures for high-risk customers)."
+        },
+        "accessToUnderlyingDataConfirmed": {
+          "type": "boolean",
+          "description": "Confirms that the relying entity has obtained, or has documented right of immediate access to, the underlying CDD information and documentation held by the providing party, as required by AMLR Article 48(3)(b)."
+        },
+        "providingPartyEligibilityConfirmed": {
+          "type": "boolean",
+          "description": "Confirms that the providing party has been assessed as meeting the eligibility conditions of AMLR Article 48(1) (i.e. is itself subject to equivalent AML/CFT obligations and supervision in its jurisdiction)."
+        },
+        "providingPartyJurisdiction": {
+          "type": "string",
+          "description": "ISO 3166-1 alpha-2 country code of the jurisdiction in which the providing party is authorised and supervised.",
+          "pattern": "^[A-Z]{2}$"
+        },
+        "liabilityNote": {
+          "type": "string",
+          "description": "Free-text note documenting that ultimate CDD liability remains with the relying party, per AMLR Article 48(4).",
+          "maxLength": 500
+        }
+      }
+    },
+    "DueDiligenceRequirements": {
+      "title": "DueDiligenceRequirements",
+      "description": "Machine-readable record of which customer attributes were collected and verified at each due diligence tier. Enables downstream systems and supervisors to confirm that the obliged entity satisfied the attribute-level requirements expected under AMLR Article 22 and the forthcoming AMLA RTS on CDD attribute sets.",
+      "type": "object",
+      "required": [
+        "appliedTier",
+        "verifiedAttributes"
+      ],
+      "properties": {
+        "appliedTier": {
+          "type": "string",
+          "description": "The due diligence tier that was applied to this customer.",
+          "enum": [
+            "SDD",
+            "CDD",
+            "EDD"
+          ]
+        },
+        "verifiedAttributes": {
+          "type": "array",
+          "description": "List of customer attributes that were collected and verified. Each entry names an attribute path within the ivms101 or kycProfile blocks (e.g. 'naturalPerson.name', 'naturalPerson.dateOfBirth', 'sourceOfFundsWealth').",
+          "items": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "minItems": 1
+        },
+        "verificationMethods": {
+          "type": "array",
+          "description": "Methods used to verify the collected attributes.",
+          "items": {
+            "type": "object",
+            "required": [
+              "attribute",
+              "method"
+            ],
+            "properties": {
+              "attribute": {
+                "type": "string",
+                "description": "Attribute path that was verified (e.g. 'naturalPerson.name').",
+                "maxLength": 100
+              },
+              "method": {
+                "type": "string",
+                "description": "Verification method applied.",
+                "enum": [
+                  "EIDAS_HIGH",
+                  "EIDAS_SUBSTANTIAL",
+                  "EUDI_WALLET_PID",
+                  "DOCUMENT_CHECK",
+                  "BIOMETRIC_MATCH",
+                  "DATABASE_CHECK",
+                  "THIRD_PARTY_RELIANCE",
+                  "SELF_DECLARATION",
+                  "OTHER"
+                ]
+              },
+              "assuranceLevel": {
+                "type": "string",
+                "description": "eIDAS assurance level achieved, where applicable.",
+                "enum": [
+                  "LOW",
+                  "SUBSTANTIAL",
+                  "HIGH"
+                ]
+              },
+              "verificationDate": {
+                "type": "string",
+                "format": "date",
+                "description": "Date the attribute was verified."
+              },
+              "verificationProvider": {
+                "type": "string",
+                "description": "Name or DID of the identity verification service or PID Provider that performed verification.",
+                "maxLength": 200
+              }
+            }
+          }
+        },
+        "rtsComplianceNote": {
+          "type": "string",
+          "description": "Free-text note documenting the basis for the attribute set and tier selection, pending publication of the AMLA RTS on CDD attribute sets under AMLR Article 22. Update this field once the binding RTS is in force.",
+          "maxLength": 1000
+        }
+      }
+    },
+    "KYCProfile": {
+      "title": "KYCProfile",
+      "description": "Full KYC/AML profile extending IVMS 101 with risk classification, screening, and monitoring data. Aligns with FATF Rec 10/16, EU AMLR Articles 22 and 26, and EBA Risk Factor Guidelines.",
+      "type": "object",
+      "required": [
+        "customerRiskRating"
+      ],
+      "properties": {
+        "customerRiskRating": {
+          "type": "string",
+          "description": "Overall customer risk rating. Required for FATF Rec 10 CDD and AMLR Article 22 risk-based approach.",
+          "enum": [
+            "LOW",
+            "MEDIUM",
+            "HIGH",
+            "VERY_HIGH",
+            "UNACCEPTABLE",
+            "PROHIBITED"
+          ]
+        },
+        "riskRatingDetail": {
+          "type": "object",
+          "description": "Detailed risk scoring breakdown. Use customerRiskRating for the top-level rating.",
+          "properties": {
+            "riskScore": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 1000,
+              "description": "Numeric risk score (0–1000)."
+            },
+            "riskRatingDate": {
+              "type": "string",
+              "format": "date",
+              "description": "Date when the current risk rating was assigned."
+            },
+            "riskFactors": {
+              "type": "object",
+              "description": "Breakdown of individual risk factor scores.",
+              "properties": {
+                "geographicRisk": {
+                  "type": "string",
+                  "enum": [
+                    "LOW",
+                    "MEDIUM",
+                    "HIGH",
+                    "VERY_HIGH"
+                  ]
+                },
+                "productRisk": {
+                  "type": "string",
+                  "enum": [
+                    "LOW",
+                    "MEDIUM",
+                    "HIGH",
+                    "VERY_HIGH"
+                  ]
+                },
+                "channelRisk": {
+                  "type": "string",
+                  "enum": [
+                    "LOW",
+                    "MEDIUM",
+                    "HIGH",
+                    "VERY_HIGH"
+                  ]
+                },
+                "customerTypeRisk": {
+                  "type": "string",
+                  "enum": [
+                    "LOW",
+                    "MEDIUM",
+                    "HIGH",
+                    "VERY_HIGH"
+                  ]
+                },
+                "transactionRisk": {
+                  "type": "string",
+                  "enum": [
+                    "LOW",
+                    "MEDIUM",
+                    "HIGH",
+                    "VERY_HIGH"
+                  ]
+                }
+              }
+            },
+            "ratingMethodology": {
+              "type": "string",
+              "description": "Reference to the risk rating methodology applied.",
+              "maxLength": 200
+            }
+          }
+        },
+        "customerClassification": {
+          "type": "object",
+          "description": "Customer classification containing type, industry, and relationship purpose.",
+          "properties": {
+            "customerType": {
+              "type": "string",
+              "description": "Regulatory or internal customer type classification.",
+              "enum": [
+                "NATURAL_PERSON",
+                "LEGAL_ENTITY",
+                "TRUST",
+                "OTHER",
+                "RETAIL",
+                "CORPORATE",
+                "FINANCIAL_INSTITUTION",
+                "VASP",
+                "CHARITY_NGO",
+                "PEP",
+                "HIGH_NET_WORTH",
+                "CORRESPONDENT_BANK"
+              ]
+            },
+            "industrySector": {
+              "type": "string",
+              "description": "Industry or sector of the customer's primary business activity (e.g., REAL_ESTATE, CRYPTO_ASSETS, FINANCIAL_SERVICES).",
+              "maxLength": 100
+            },
+            "occupationOrPurpose": {
+              "type": "string",
+              "description": "Occupation (natural persons) or business purpose (legal entities) as declared by the customer.",
+              "maxLength": 200
+            },
+            "relationshipPurpose": {
+              "type": "string",
+              "description": "Nature and intended purpose of the business relationship (e.g., INVESTMENT, TRADE_FINANCE, PAYMENTS).",
+              "maxLength": 200
+            },
+            "accreditedInvestor": {
+              "type": "boolean",
+              "description": "Whether the investor has been assessed as an accredited, professional, or otherwise eligible investor under the applicable securities regulation. Maps to ERC-3643 claim topic 101 (Accredited / Eligible Investor). True = eligible to hold regulated/security tokens; False = retail investor, subject to stricter distribution rules."
+            },
+            "investorCategoryJurisdiction": {
+              "type": "string",
+              "description": "ISO 3166-1 alpha-2 jurisdiction code under which the investor category or accredited-investor determination was made (e.g. 'US' for SEC Rule 501, 'GB' for FCA Professional Client, 'EU' for MiFID II Professional Client).",
+              "pattern": "^[A-Z]{2}$"
+            }
+          }
+        },
+        "dueDiligenceType": {
+          "type": "string",
+          "description": "Type of due diligence applied per AMLR Article 22.",
+          "enum": [
+            "SDD",
+            "CDD",
+            "EDD"
+          ]
+        },
+        "pepStatus": {
+          "$ref": "#/$defs/PEPStatus"
+        },
+        "sanctionsScreening": {
+          "$ref": "#/$defs/SanctionsScreening"
+        },
+        "adverseMedia": {
+          "$ref": "#/$defs/AdverseMedia"
+        },
+        "sourceOfFundsWealth": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "description": "Declared source(s) of funds or wealth as free-text or coded values (e.g., EMPLOYMENT_INCOME, INHERITANCE). When sourceOfFundsWealthDetail is also present, it supersedes this field and the values here should match sourceOfFundsWealthDetail.sourceOfFunds."
+        },
+        "sourceOfFundsWealthDetail": {
+          "$ref": "#/$defs/SourceOfFundsWealth",
+          "description": "Detailed and verified source of funds and wealth record including supporting documents. Supersedes sourceOfFundsWealth when present."
+        },
+        "beneficialOwnership": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/BeneficialOwner"
+          },
+          "description": "Ultimate Beneficial Owners (UBOs). Required for legal entities per AMLR Article 26."
+        },
+        "monitoringInfo": {
+          "$ref": "#/$defs/MonitoringInfo"
+        },
+        "auditMetadata": {
+          "$ref": "#/$defs/AuditMetadata"
+        },
+        "onboardingChannel": {
+          "type": "string",
+          "enum": [
+            "IN_PERSON",
+            "REMOTE_VIDEO",
+            "REMOTE_AUTOMATED",
+            "THIRD_PARTY_CDD",
+            "CORRESPONDENT",
+            "EUDI_WALLET"
+          ],
+          "description": "Channel through which the customer was onboarded (relevant to AMLR Article 22 remote onboarding requirements)."
+        },
+        "kycCompletionDate": {
+          "type": "string",
+          "format": "date",
+          "description": "Date on which the initial KYC process was completed."
+        },
+        "consentRecord": {
+          "type": "object",
+          "description": "GDPR / data privacy consent metadata.",
+          "properties": {
+            "consentGiven": {
+              "type": "boolean"
+            },
+            "consentDate": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "consentPurpose": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "examples": [
+                [
+                  "AML_SCREENING",
+                  "DATA_SHARING_TRAVEL_RULE",
+                  "THIRD_PARTY_CDD"
+                ]
+              ]
+            },
+            "consentWithdrawnDate": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        },
+        "dueDiligenceRequirements": {
+          "$ref": "#/$defs/DueDiligenceRequirements",
+          "description": "Structured record of which attributes were collected and verified at each DD tier. Supports AMLR Article 22 attribute-set obligations and the forthcoming AMLA RTS on CDD attribute sets."
+        },
+        "thirdPartyCDDReliance": {
+          "$ref": "#/$defs/ThirdPartyCDDReliance",
+          "description": "CDD reliance record when due diligence was performed by a third party. Required when onboardingChannel is THIRD_PARTY_CDD. Aligns with AMLR Article 48(3)."
+        },
+        "isEligible": {
+          "type": "boolean",
+          "description": "Whether the investor was found eligible / whitelisted at the time of `eligibilityLastConfirmed`. This is the off-chain equivalent of the ERC-3643 `isVerified(address)` call in the Identity Registry: true = verified, KYC/AML checks passed, investor may hold the security token; false = not eligible or de-listed."
+        },
+        "eligibilityLastConfirmed": {
+          "type": "string",
+          "format": "date",
+          "description": "Date on which the `isEligible` determination was last confirmed. Should be refreshed on each periodic review or re-KYC. Maps to the timestamp of the last `isVerified()` check in an ERC-3643 Identity Registry."
+        },
+        "blockchainAccountIds": {
+          "type": "array",
+          "description": "Blockchain wallet addresses associated with this investor. In ERC-3643, the `investorAddress` (Ethereum address) is the primary identifier in the Identity Registry; each address maps 1:1 to an ONCHAINID contract. This array enables multi-wallet and multi-chain registrations to be documented in a single KYC record.",
+          "items": {
+            "type": "object",
+            "required": [
+              "address",
+              "network"
+            ],
+            "properties": {
+              "address": {
+                "type": "string",
+                "description": "The blockchain wallet address (e.g. Ethereum checksummed hex address '0x...' or Solana base58 address).",
+                "maxLength": 200
+              },
+              "network": {
+                "type": "string",
+                "description": "Network or chain identifier (e.g. 'ethereum', 'polygon', 'avalanche'). Use CAIP-2 chain IDs where available (e.g. 'eip155:1' for Ethereum mainnet, 'eip155:137' for Polygon).",
+                "maxLength": 100
+              },
+              "onchainIDAddress": {
+                "type": "string",
+                "description": "Address of the ONCHAINID smart contract (ERC-734/735) linked to this wallet in an ERC-3643 Identity Registry. This is the `identity` parameter in `IIdentityRegistry.registerIdentity(investorAddress, identity, country)`.",
+                "maxLength": 200
+              },
+              "registeredAt": {
+                "type": "string",
+                "format": "date",
+                "description": "Date on which this wallet was registered in the Identity Registry."
+              },
+              "isFrozen": {
+                "type": "boolean",
+                "description": "Whether this wallet address is currently frozen in the associated ERC-3643 Identity Registry or token contract. Mirrors the `isFrozen(address)` state of the IERC3643 token."
+              },
+              "frozenTokenAmount": {
+                "type": "string",
+                "description": "Amount of tokens frozen on this wallet, as a decimal string. Mirrors `getFrozenTokens(address)` in IERC3643.",
+                "pattern": "^[0-9]+(\\.[0-9]+)?$"
+              },
+              "xrplCredentialType": {
+                "type": "string",
+                "description": "XRPL on-ledger credential type associated with this wallet, stored as a hexadecimal string (1–64 bytes, 2–128 hex characters, case-insensitive). Mirrors the `CredentialType` field of an XRPL `Credential` ledger object (XLS-40d). Enables round-trip reconstruction of the on-ledger XRPL credential without relying on external state. The decoded human-readable equivalent is captured in `verifiableCredential.type[]`. Examples: '4b594343726564656e7469616c' (KYCCredential), '4f70656e4b5943414d4c43726564656e7469616c' (OpenKYCAMLCredential).",
+                "pattern": "^[0-9a-fA-F]{2,128}$",
+                "maxLength": 128
+              },
+              "mptIssuanceId": {
+                "type": "string",
+                "description": "XRPL Multi-Purpose Token issuance identifier (MPTokenIssuanceID) for which this wallet holds or has been authorised, stored as a 48-character hexadecimal string (case-insensitive; Hash192 = 24 bytes). Mirrors the `MPTokenIssuanceID` field of XRPL `MPTIssuance` and `MPToken` ledger objects (XLS-33d). Useful for multi-issuance scenarios where a single investor holds authorisation for multiple regulated asset pools via separate `MPTokenAuthorize` transactions.",
+                "pattern": "^[0-9a-fA-F]{48}$"
+              }
+            }
+          }
+        }
+      }
+    },
+    "TrustedIssuer": {
+      "title": "TrustedIssuer",
+      "description": "An entry in the issuer allowlist used for eIDAS-qualified TSP validation. Relying parties check that the OpenKYCAML credential issuer DID appears in this list and (where trustFramework is eIDAS_2.0) on the applicable EU Trusted List (TSL) before accepting a credential for CDD reliance.",
+      "type": "object",
+      "required": [
+        "issuerId",
+        "trustFramework"
+      ],
+      "properties": {
+        "issuerId": {
+          "type": "string",
+          "description": "DID or URI uniquely identifying the issuer. Must match verifiableCredential.issuer.id exactly. Examples: 'did:web:pid-provider.bsi.example.de', 'did:ebsi:znHeZWvhAK2FK2Dk1jXNe2G'.",
+          "maxLength": 256
+        },
+        "issuerName": {
+          "type": "string",
+          "description": "Human-readable name of the issuer organisation (e.g. 'Bundesamt für Sicherheit in der Informationstechnik — PID Provider').",
+          "maxLength": 256
+        },
+        "countryCode": {
+          "type": "string",
+          "description": "ISO 3166-1 alpha-2 country code of the Member State or jurisdiction responsible for this issuer.",
+          "pattern": "^[A-Z]{2}$"
+        },
+        "trustFramework": {
+          "type": "string",
+          "description": "Trust framework under which the issuer is accredited.",
+          "enum": [
+            "eIDAS_2.0",
+            "eIDAS_1.0",
+            "FATF_VASP",
+            "ISO_29003",
+            "NIST_800-63",
+            "OTHER"
+          ]
+        },
+        "eIDASAssuranceLevel": {
+          "type": "string",
+          "description": "eIDAS assurance level at which this issuer is accredited to issue credentials. Required when trustFramework is eIDAS_2.0.",
+          "enum": [
+            "low",
+            "substantial",
+            "high"
+          ]
+        },
+        "qtspServiceType": {
+          "type": "string",
+          "description": "ETSI TS 119 612 TSP Service Type identifier for the qualified trust service provided by this issuer. Used to validate the issuer against the EU Trusted List (TSL). Common values: 'QCertESig' (qualified certificate for electronic signatures), 'QCertESeal' (qualified certificate for electronic seals), 'PIDSQ' (PID issuer qualified).",
+          "examples": [
+            "QCertESig",
+            "QCertESeal",
+            "PIDSQ",
+            "QTimestamp"
+          ]
+        },
+        "tspServiceUri": {
+          "type": "string",
+          "format": "uri",
+          "description": "URI of the Trusted List (TSL) XML document where this issuer's service entry can be validated. Relying parties SHOULD fetch this TSL and verify that the issuer's service has ServiceStatus 'http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/granted'. For EU issuers, this will be a Member State TSL linked from the EU LOTL at https://ec.europa.eu/tools/lotl/eu-lotl.xml."
+        },
+        "validFrom": {
+          "type": "string",
+          "format": "date",
+          "description": "ISO 8601 date from which this trust list entry is valid. Credentials issued before this date by the listed issuer are not covered."
+        },
+        "validUntil": {
+          "type": "string",
+          "format": "date",
+          "description": "ISO 8601 date until which this trust list entry is valid. Credentials issued after this date by the listed issuer require a renewed entry."
+        },
+        "credentialTypes": {
+          "type": "array",
+          "description": "Credential types (vct URIs or W3C VC type strings) that this issuer is trusted to issue. If omitted, the issuer is trusted for all OpenKYCAML credential types.",
+          "items": {
+            "type": "string",
+            "maxLength": 256
+          }
+        },
+        "additionalChecks": {
+          "type": "object",
+          "description": "Relying-party-specific validation rules extending the base trust framework check.",
+          "properties": {
+            "requireKeyBinding": {
+              "type": "boolean",
+              "description": "When true, the relying party MUST verify the holder key binding JWT (SD-JWT `kb-JWT`) proving the credential was presented by its legitimate holder."
+            },
+            "requireStatusCheck": {
+              "type": "boolean",
+              "description": "When true, the relying party MUST verify the credential status (StatusList2021) before accepting it for CDD reliance."
+            },
+            "minimumAssuranceLevel": {
+              "type": "string",
+              "description": "Minimum eIDAS assurance level that the issuer must have achieved for the credential to be accepted by this relying party.",
+              "enum": ["low", "substantial", "high"]
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "GdprSensitivityMetadata": {
+      "title": "GdprSensitivityMetadata",
+      "description": "Machine-readable GDPR/AML sensitivity classification for the OpenKYCAML payload or specific fields. Enables automated enforcement of tipping-off protection (AMLR Art. 73 / FATF Rec. 21), GDPR Art. 9/10 criminal-data safeguards, and disclosure-policy rules in EUDI Wallet presentation flows. When present at payload level the classification applies to the entire document; use restrictedFields to narrow scope to specific JSON Pointer paths.",
+      "type": "object",
+      "required": [
+        "classification"
+      ],
+      "properties": {
+        "classification": {
+          "type": "string",
+          "description": "Primary sensitivity class. 'standard' — ordinary personal data (GDPR Art. 6). 'sensitive_personal' — special-category data requiring Art. 9 safeguards (e.g. biometrics, health). 'criminal_offence' — data relating to criminal convictions or offences under GDPR Art. 10. 'sar_restricted' — Suspicious Activity Report or STR material; subject to tipping-off prohibition (AMLR Art. 73 / FATF Rec. 21). 'internal_suspicion' — internal AML suspicion flag not yet escalated to a formal SAR. 'confidential_aml' — AML/CFT investigation data protected from broader disclosure.",
+          "enum": [
+            "standard",
+            "sensitive_personal",
+            "criminal_offence",
+            "sar_restricted",
+            "internal_suspicion",
+            "confidential_aml"
+          ]
+        },
+        "restrictedFields": {
+          "type": "array",
+          "description": "JSON Pointer (RFC 6901) paths to individual fields or sub-objects within this payload that carry the stated classification. When absent the classification applies to the entire payload. Example: [\"/kycProfile/sanctionsScreening\", \"/ivms101/originator\"].",
+          "items": {
+            "type": "string",
+            "description": "A valid RFC 6901 JSON Pointer such as '/kycProfile/sanctionsScreening'."
+          }
+        },
+        "tippingOffProtected": {
+          "type": "boolean",
+          "description": "When true, any disclosure of this payload (or the referenced restrictedFields) MUST NOT reveal the existence of a SAR, STR, or internal suspicion to the data subject or any unauthorised party. Mandatory for classification 'sar_restricted' or 'internal_suspicion'. Wallets and relying parties that receive a VC with this flag set MUST NOT render or share the affected claims without explicit supervisory authority approval."
+        },
+        "legalBasis": {
+          "type": "string",
+          "description": "Primary legal basis for processing this data. 'GDPR-Art6-1c' — legal obligation. 'GDPR-Art6-1e' — public task. 'GDPR-Art9-2g' — substantial public interest. 'GDPR-Art10' — criminal-offence data under official authority. 'AMLR-Art55' — AML data-sharing obligation. 'AMLR-Art73' — tipping-off prohibition compliance. 'national_AML_law' — national transposition of AML directives.",
+          "enum": [
+            "GDPR-Art6-1c",
+            "GDPR-Art6-1e",
+            "GDPR-Art9-2g",
+            "GDPR-Art10",
+            "AMLR-Art55",
+            "AMLR-Art73",
+            "national_AML_law"
+          ]
+        },
+        "retentionPeriod": {
+          "type": "string",
+          "description": "ISO 8601 duration specifying how long this data must be retained. Overrides any retention hint in kycProfile.auditMetadata.dataRetentionDate. AMLR Art. 55 requires a minimum of 5 years ('P5Y'). SAR-related records may require longer retention per national law.",
+          "pattern": "^P(?:\\d+Y)?(?:\\d+M)?(?:\\d+W)?(?:\\d+D)?(?:T(?:\\d+H)?(?:\\d+M)?(?:\\d+S)?)?$",
+          "examples": [
+            "P5Y",
+            "P7Y",
+            "P10Y"
+          ]
+        },
+        "consentRecord": {
+          "type": "object",
+          "description": "Explicit consent record for processing this sensitive data. Required when legalBasis is GDPR-Art6-1a (consent) or where national law requires documented consent for Art. 9/10 data.",
+          "required": [
+            "consentGiven"
+          ],
+          "properties": {
+            "consentGiven": {
+              "type": "boolean",
+              "description": "Whether the data subject has given explicit consent to process this sensitive data."
+            },
+            "consentDate": {
+              "type": "string",
+              "format": "date-time",
+              "description": "ISO 8601 date-time when consent was obtained."
+            },
+            "withdrawalPossible": {
+              "type": "boolean",
+              "description": "Whether the data subject may withdraw consent. For AML/SAR data this is typically false (legal obligation overrides consent withdrawal)."
+            }
+          },
+          "additionalProperties": false
+        },
+        "disclosurePolicy": {
+          "type": "object",
+          "description": "Machine-readable policy governing which parties may receive this data. Wallets and relying-party systems SHOULD enforce these rules automatically before presenting or forwarding a credential.",
+          "properties": {
+            "allowedRecipients": {
+              "type": "array",
+              "description": "Identifiers of permitted recipient categories or specific entities. Examples: 'regulated_fi' (any regulated financial institution), 'fiu_only' (Financial Intelligence Unit only), 'did:web:counterparty.example.com' (a specific VASP).",
+              "items": {
+                "type": "string",
+                "maxLength": 256
+              }
+            },
+            "prohibitedRecipients": {
+              "type": "array",
+              "description": "Categories or entities explicitly prohibited from receiving this data. 'data_subject' MUST be set when tippingOffProtected is true to prevent self-disclosure of SAR existence.",
+              "items": {
+                "type": "string",
+                "maxLength": 256
+              }
+            },
+            "requiresExplicitConsent": {
+              "type": "boolean",
+              "description": "When true, the recipient must obtain explicit consent from the data subject (or supervisory authority approval for SAR data) before accessing the affected fields."
+            }
+          },
+          "additionalProperties": false
+        },
+        "auditReference": {
+          "type": "string",
+          "description": "Opaque reference to the DPO record, internal audit log entry, or SAR case identifier that governs this classification. MUST NOT contain the SAR narrative or case content (tipping-off risk). Recommended format: an opaque UUID or hash. Example: 'sar-case-ref:sha256:e3b0c44298fc1c149afb...'. Maximum 256 characters.",
+          "maxLength": 256
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "Reference to the OpenKYCAML JSON Schema URI."
+    },
+    "version": {
+      "type": "string",
+      "description": "OpenKYCAML schema version used (semantic versioning).",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$",
+      "examples": [
+        "1.1.0"
+      ]
+    },
+    "messageId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique message identifier for deduplication and tracing."
+    },
+    "messageDateTime": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 datetime when this message was created."
+    },
+    "ivms101": {
+      "$ref": "#/$defs/IVMS101Payload",
+      "description": "IVMS 101 Travel Rule payload. Required when transmitting under FATF Recommendation 16."
+    },
+    "verifiableCredential": {
+      "$ref": "#/$defs/VerifiableCredentialWrapper",
+      "description": "Optional W3C Verifiable Credential wrapper for eIDAS 2.0 / EUDIW-compatible attestation."
+    },
+    "kycProfile": {
+      "$ref": "#/$defs/KYCProfile",
+      "description": "Optional KYC/AML profile providing full customer risk data for CDD reliance, EDD, and cross-system interoperability under AMLR 2027."
+    },
+    "transactionMonitoring": {
+      "$ref": "#/$defs/TransactionMonitoring",
+      "description": "Optional transaction-level AML monitoring results, rule evaluations, travel-rule compliance status, and reporting obligations for this specific transaction."
+    },
+    "trustedIssuers": {
+      "type": "array",
+      "description": "Optional allowlist of trusted credential issuers with eIDAS qualified TSP validation rules. Relying parties use this list to validate that the verifiableCredential.issuer appears on the applicable EU Trusted List (TSL) before accepting a credential for CDD reliance under AMLR Art. 22 and eIDAS 2.0.",
+      "items": {
+        "$ref": "#/$defs/TrustedIssuer"
+      },
+      "minItems": 1
+    },
+    "gdprSensitivityMetadata": {
+      "$ref": "#/$defs/GdprSensitivityMetadata",
+      "description": "Optional GDPR/AML sensitivity classification block. Provides machine-readable tipping-off protection flags (AMLR Art. 73 / FATF Rec. 21), legal-basis references (GDPR Art. 9/10), retention rules, and disclosure policies. When present, wallets and relying parties MUST apply the stated classification before rendering or forwarding any credential fields."
+    }
+  },
+  "anyOf": [
+    {
+      "required": [
+        "ivms101"
+      ]
+    },
+    {
+      "required": [
+        "verifiableCredential"
+      ]
+    },
+    {
+      "required": [
+        "kycProfile"
+      ]
+    }
+  ]
+}

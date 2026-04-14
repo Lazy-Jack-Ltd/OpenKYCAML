@@ -1,0 +1,316 @@
+{
+  "$schema": "https://openkycaml.org/schema/v1.3.0/kyc-aml-hybrid-extended.json",
+  "version": "1.18.0",
+  "messageId": "e0f4a853-6b7c-5d8e-9f0a-1b2c3d4e5f6a",
+  "messageDateTime": "2025-09-11T14:00:00Z",
+  "_comment_scenario": "SD-JWT Selective Disclosure — Legal Entity (EUDI Wallet LPID). Acme Digital Trading SL (ES) onboards at a Swiss VASP by presenting a Spanish LPID credential via SD-JWT VC / OpenID4VP. The entity discloses its legal name, LEI, and country of registration (required for FATF Travel Rule). VAT number and registered address are selectively withheld in this presentation (GDPR data-minimisation for the counterparty VASP). This file shows the DECODED SD-JWT payload; in the compact token withheld claim values appear only as SHA-256 digests.",
+  "ivms101": {
+    "originator": {
+      "originatorPersons": [
+        {
+          "legalPerson": {
+            "name": {
+              "nameIdentifier": [
+                {
+                  "legalPersonName": "Acme Digital Trading SL",
+                  "legalPersonNameIdentifierType": "LEGL"
+                }
+              ]
+            },
+            "nationalIdentification": {
+              "nationalIdentifier": "ES-CIF-B87654321",
+              "nationalIdentifierType": "RAID",
+              "countryOfIssue": "ES"
+            },
+            "countryOfRegistration": "ES"
+          }
+        }
+      ],
+      "accountNumber": [
+        "0xAbCd1234EfGh5678IjKl9012MnOp3456QrSt7890"
+      ]
+    },
+    "beneficiary": {
+      "beneficiaryPersons": [
+        {
+          "legalPerson": {
+            "name": {
+              "nameIdentifier": [
+                {
+                  "legalPersonName": "Swiss Digital Finance AG",
+                  "legalPersonNameIdentifierType": "LEGL"
+                }
+              ]
+            },
+            "nationalIdentification": {
+              "nationalIdentifier": "549300FJPOIUJ7U9LV82",
+              "nationalIdentifierType": "LEIX",
+              "countryOfIssue": "CH"
+            },
+            "countryOfRegistration": "CH"
+          }
+        }
+      ],
+      "accountNumber": [
+        "CH5604835012345678009"
+      ]
+    },
+    "originatingVASP": {
+      "name": "Acme Digital Trading SL",
+      "lei": "549300XY1234ABCD5678",
+      "vaspIdentifier": "ES-Acme Digital Trading SL"
+    },
+    "beneficiaryVASP": {
+      "name": "Swiss Digital Finance AG",
+      "lei": "549300FJPOIUJ7U9LV82",
+      "vaspIdentifier": "CH-Swiss Digital Finance AG"
+    },
+    "transferredAmount": {
+      "amount": "25000.00",
+      "assetType": "USDC"
+    }
+  },
+  "verifiableCredential": {
+    "@context": [
+      "https://www.w3.org/ns/credentials/v2",
+      "https://openkycaml.org/contexts/v1",
+      "https://europa.eu/2018/credentials/eudi/v1"
+    ],
+    "id": "urn:uuid:e0f4a853-6b7c-5d8e-9f0a-1b2c3d4e5f6a",
+    "type": [
+      "VerifiableCredential",
+      "OpenKYCAMLCredential",
+      "KYCAttestation"
+    ],
+    "issuer": {
+      "id": "did:web:swiss-digital-finance.example.ch",
+      "name": "Swiss Digital Finance AG"
+    },
+    "credentialSubject": {
+      "id": "did:web:acme-digital-trading.example.es",
+      "ivms101": {
+        "originator": {
+          "originatorPersons": [
+            {
+              "legalPerson": {
+                "name": {
+                  "nameIdentifier": [
+                    {
+                      "legalPersonName": "Acme Digital Trading SL",
+                      "legalPersonNameIdentifierType": "LEGL"
+                    }
+                  ]
+                },
+                "nationalIdentification": {
+                  "nationalIdentifier": "ES-CIF-B87654321",
+                  "nationalIdentifierType": "RAID",
+                  "countryOfIssue": "ES"
+                },
+                "countryOfRegistration": "ES"
+              }
+            }
+          ],
+          "accountNumber": [
+            "0xAbCd1234EfGh5678IjKl9012MnOp3456QrSt7890"
+          ]
+        },
+        "beneficiary": {
+          "beneficiaryPersons": [
+            {
+              "legalPerson": {
+                "name": {
+                  "nameIdentifier": [
+                    {
+                      "legalPersonName": "Swiss Digital Finance AG",
+                      "legalPersonNameIdentifierType": "LEGL"
+                    }
+                  ]
+                },
+                "nationalIdentification": {
+                  "nationalIdentifier": "549300FJPOIUJ7U9LV82",
+                  "nationalIdentifierType": "LEIX",
+                  "countryOfIssue": "CH"
+                },
+                "countryOfRegistration": "CH"
+              }
+            }
+          ],
+          "accountNumber": [
+            "CH5604835012345678009"
+          ]
+        },
+        "originatingVASP": {
+          "name": "Acme Digital Trading SL",
+          "lei": "549300XY1234ABCD5678",
+          "vaspIdentifier": "ES-Acme Digital Trading SL"
+        },
+        "beneficiaryVASP": {
+          "name": "Swiss Digital Finance AG",
+          "lei": "549300FJPOIUJ7U9LV82",
+          "vaspIdentifier": "CH-Swiss Digital Finance AG"
+        },
+        "transferredAmount": {
+          "amount": "25000.00",
+          "assetType": "USDC"
+        }
+      },
+      "kycProfile": {
+        "customerRiskRating": "MEDIUM",
+        "riskRatingDetail": {
+          "riskScore": 310,
+          "riskRatingDate": "2025-09-11",
+          "riskFactors": {
+            "geographicRisk": "LOW",
+            "productRisk": "MEDIUM",
+            "channelRisk": "LOW",
+            "customerTypeRisk": "MEDIUM",
+            "transactionRisk": "MEDIUM"
+          },
+          "ratingMethodology": "EBA Risk Factor Guidelines 2024"
+        },
+        "customerClassification": {
+          "customerType": "CORPORATE"
+        },
+        "dueDiligenceType": "CDD",
+        "pepStatus": {
+          "isPEP": false,
+          "pepCategory": "NOT_PEP",
+          "screeningDate": "2025-09-11",
+          "screeningProvider": "ComplyAdvantage"
+        },
+        "sanctionsScreening": {
+          "screeningStatus": "CLEAR",
+          "screeningDate": "2025-09-11T13:55:00Z",
+          "screeningProvider": "Refinitiv World-Check",
+          "listsChecked": [
+            "OFAC_SDN",
+            "EU_CONSOLIDATED",
+            "UN_CONSOLIDATED",
+            "HMT"
+          ]
+        },
+        "onboardingChannel": "EUDI_WALLET",
+        "kycCompletionDate": "2025-09-11",
+        "consentRecord": {
+          "consentGiven": true,
+          "consentDate": "2025-09-11T13:45:00Z",
+          "consentPurpose": [
+            "AML_SCREENING",
+            "DATA_SHARING_TRAVEL_RULE"
+          ]
+        },
+        "auditMetadata": {
+          "recordId": "e0f4a853-6b7c-5d8e-9f0a-1b2c3d4e5f6a",
+          "recordCreatedAt": "2025-09-11T14:00:00Z",
+          "recordUpdatedAt": "2025-09-11T14:00:00Z",
+          "recordVersion": 1,
+          "createdBy": "kyc@swiss-digital-finance.example.ch",
+          "dataSourceSystem": "EUDI Wallet Corporate Onboarding Gateway v1.5",
+          "dataProvider": "Swiss Digital Finance AG",
+          "dataRetentionDate": "2030-09-11"
+        }
+      },
+      "lpid": {
+        "currentLegalName": "Acme Digital Trading SL",
+        "uniqueIdentifier": "ES-CIF-B87654321",
+        "currentAddress": {
+          "addressType": "BIZZ",
+          "streetName": "Calle Gran Via",
+          "buildingNumber": "28",
+          "townName": "Madrid",
+          "postCode": "28013",
+          "country": "ES"
+        },
+        "lei": "549300XY1234ABCD5678",
+        "vatRegistrationNumber": "ESB87654321"
+      }
+    },
+    "evidence": [
+      {
+        "id": "urn:uuid:lpid-es-acme-digital-2025-09-11",
+        "type": [
+          "LPIDCredential",
+          "EUDIWalletPresentationEvidence",
+          "SDJWTVCPresentation"
+        ],
+        "verifier": "did:web:swiss-digital-finance.example.ch",
+        "credentialIssuer": "did:web:lpid-provider.agencia-tributaria.example.es",
+        "evidenceDocument": "Spanish LPID (eIDAS 2.0 Legal Person Identification Data — SD-JWT VC, Regulation (EU) 2024/1183)",
+        "subjectPresence": "Digital",
+        "documentPresence": "Digital",
+        "presentationMethod": "OpenID4VP+SD-JWT",
+        "presentationDate": "2025-09-11T13:57:00Z"
+      }
+    ],
+    "selectiveDisclosure": {
+      "_sd_alg": "sha-256",
+      "sdJwtNote": "GDPR data-minimisation: Acme Digital Trading SL disclosed its legal name, registration identifier, country of registration, and LEI (required for FATF Travel Rule legal entity identification). The VAT number and registered address are withheld from this particular presentation; the verifier has confirmed they are present in the credential via the SHA-256 digest. If the receiving VASP later requires address verification for enhanced due diligence it may request a new presentation with those claims revealed.",
+      "requiredClaimPaths": [
+        "/credentialSubject/ivms101/originator/originatorPersons/0/legalPerson/name",
+        "/credentialSubject/ivms101/originator/originatorPersons/0/legalPerson/nationalIdentification",
+        "/credentialSubject/ivms101/originator/originatorPersons/0/legalPerson/countryOfRegistration",
+        "/credentialSubject/ivms101/originator/accountNumber"
+      ],
+      "disclosableClaimPaths": [
+        "/credentialSubject/lpid/currentAddress",
+        "/credentialSubject/lpid/vatRegistrationNumber",
+        "/credentialSubject/ivms101/originator/originatorPersons/0/legalPerson/geographicAddresses"
+      ],
+      "decodedDisclosures": [
+        {
+          "salt": "3TkW9pL1mQvXsRn8uYeC5g",
+          "claimName": "legal_name",
+          "claimValue": "Acme Digital Trading SL"
+        },
+        {
+          "salt": "7HjF2oK4nZwBtMa6vPqD0r",
+          "claimName": "legal_person_identifier",
+          "claimValue": "ES-CIF-B87654321"
+        },
+        {
+          "salt": "9GmN5rS7xAuCwLb3eOhJ1t",
+          "claimName": "country_of_registration",
+          "claimValue": "ES"
+        },
+        {
+          "salt": "1PqE8vT3yDkFzMn6cRiH4s",
+          "claimName": "lei",
+          "claimValue": "549300XY1234ABCD5678"
+        },
+        {
+          "_comment_withheld": "The following disclosures are NOT released in this presentation. Digests appear in the SD-JWT _sd array; plaintext values are listed here for documentation only.",
+          "salt": "4UcV6wQ2zElGyNo7dSjK8p",
+          "claimName": "registered_address",
+          "claimValue": {
+            "street_address": "Calle Gran Via 28",
+            "locality": "Madrid",
+            "postal_code": "28013",
+            "country": "ES"
+          }
+        },
+        {
+          "salt": "5XdW7xR3aFmHzOp8eTkL9q",
+          "claimName": "vat_number",
+          "claimValue": "ESB87654321"
+        }
+      ]
+    },
+    "credentialStatus": {
+      "id": "https://swiss-digital-finance.example.ch/status/v1#3301",
+      "type": "StatusList2021Entry"
+    },
+    "credentialSchema": {
+      "id": "https://openkycaml.org/schema/v1.3.0/kyc-aml-hybrid-extended.json",
+      "type": "JsonSchemaValidator2018"
+    },
+    "proof": {
+      "type": "Ed25519Signature2020",
+      "created": "2025-09-11T14:00:05Z",
+      "verificationMethod": "did:web:swiss-digital-finance.example.ch#key-1",
+      "proofPurpose": "assertionMethod",
+      "proofValue": "zCn9Mq1yOwSsN5VfH8LkA0XeG4DtZ7UpI6JiT3YrR2FbD"
+    },
+    "validFrom": "2025-09-11T14:00:00Z",
+    "validUntil": "2026-09-11T14:00:00Z"
+  }
+}

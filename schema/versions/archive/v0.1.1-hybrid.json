@@ -1,0 +1,158 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://example.com/kyc-aml-data-standard-hybrid-extended.json",
+  "title": "KYC/AML Data Standard (IVMS 101 + eIDAS 2.0 VC + KYC Monitoring & Classifications)",
+  "description": "Extended hybrid schema: identity (IVMS 101), verifiable credentials, PLUS optional KYC monitoring, risk classifications, and screening results for full inter-system sharing and AMLR compliance.",
+  "type": "object",
+  "oneOf": [
+    { "required": ["ivms101"] },
+    { "required": ["verifiableCredential"] }
+  ],
+  "properties": {
+    "ivms101": { "$ref": "#/definitions/Ivms101Payload" },
+    "verifiableCredential": { "$ref": "#/definitions/VerifiableCredential" },
+    "kycProfile": { "$ref": "#/definitions/KycProfile" }
+  },
+  "definitions": {
+    "Ivms101Payload": {
+      "type": "object",
+      "properties": {
+        "originator": { "$ref": "#/definitions/Originator" },
+        "beneficiary": { "$ref": "#/definitions/Beneficiary" },
+        "originatingVASP": { "$ref": "#/definitions/VASP" },
+        "beneficiaryVASP": { "$ref": "#/definitions/VASP" },
+        "transferPath": { "$ref": "#/definitions/TransferPath" },
+        "payloadMetadata": { "$ref": "#/definitions/PayloadMetadata" }
+      },
+      "required": ["originator", "beneficiary", "originatingVASP", "beneficiaryVASP"]
+    },
+    "VerifiableCredential": {
+      "type": "object",
+      "properties": {
+        "@context": {
+          "type": "array",
+          "items": { "type": "string" },
+          "minItems": 1,
+          "contains": { "const": "https://www.w3.org/ns/credentials/v2" }
+        },
+        "id": { "type": "string", "format": "uri" },
+        "type": {
+          "type": "array",
+          "items": { "type": "string" },
+          "contains": { "const": "VerifiableCredential" }
+        },
+        "issuer": {
+          "oneOf": [
+            { "type": "string", "format": "uri" },
+            { "type": "object", "properties": { "id": { "type": "string", "format": "uri" } } }
+          ]
+        },
+        "validFrom": { "type": "string", "format": "date-time" },
+        "validUntil": { "type": "string", "format": "date-time" },
+        "credentialSubject": {
+          "type": "object",
+          "properties": {
+            "id": { "type": "string", "format": "uri" },
+            "ivms101": { "$ref": "#/definitions/Ivms101Payload" },
+            "kycProfile": { "$ref": "#/definitions/KycProfile" }
+          },
+          "required": ["ivms101"]
+        },
+        "proof": { "type": "object" }
+      },
+      "required": ["@context", "type", "issuer", "credentialSubject"]
+    },
+    "KycProfile": {
+      "type": "object",
+      "properties": {
+        "customerRiskRating": {
+          "type": "string",
+          "enum": ["LOW", "MEDIUM", "HIGH", "PROHIBITED"]
+        },
+        "customerClassification": {
+          "type": "object",
+          "properties": {
+            "customerType": { "type": "string", "enum": ["NATURAL_PERSON", "LEGAL_ENTITY", "TRUST", "OTHER"] },
+            "industrySector": { "type": "string", "pattern": "^.{1,100}$" },
+            "occupationOrPurpose": { "type": "string", "pattern": "^.{1,200}$" },
+            "relationshipPurpose": { "type": "string", "pattern": "^.{1,200}$" }
+          }
+        },
+        "pepStatus": {
+          "type": "object",
+          "properties": {
+            "isPep": { "type": "boolean" },
+            "pepCategory": { "type": "string", "enum": ["FOREIGN", "DOMESTIC", "INTERNATIONAL_ORG", "FAMILY", "CLOSE_ASSOCIATE", "NONE"] },
+            "lastPepCheckDate": { "type": "string", "format": "date" }
+          }
+        },
+        "sanctionsScreening": {
+          "type": "object",
+          "properties": {
+            "status": { "type": "string", "enum": ["CLEAR", "HIT", "PENDING", "ESCALATED"] },
+            "lastScreenedDate": { "type": "string", "format": "date-time" },
+            "listsChecked": { "type": "array", "items": { "type": "string" } },
+            "hits": { "type": "array", "items": { "type": "string" } }
+          }
+        },
+        "adverseMedia": {
+          "type": "object",
+          "properties": {
+            "hasHits": { "type": "boolean" },
+            "lastCheckedDate": { "type": "string", "format": "date" },
+            "summary": { "type": "string" }
+          }
+        },
+        "sourceOfFundsWealth": {
+          "type": "array",
+          "items": { "type": "string", "pattern": "^.{1,100}$" }
+        },
+        "beneficialOwnership": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "person": { "$ref": "#/definitions/Person" },
+              "ownershipPercentage": { "type": "number", "minimum": 0, "maximum": 100 }
+            }
+          }
+        },
+        "monitoringInfo": {
+          "type": "object",
+          "properties": {
+            "lastKycReviewDate": { "type": "string", "format": "date" },
+            "nextReviewDate": { "type": "string", "format": "date" },
+            "eddRequired": { "type": "boolean" },
+            "monitoringStatus": { "type": "string", "enum": ["ACTIVE", "SUSPENDED", "TERMINATED"] }
+          }
+        },
+        "auditMetadata": {
+          "type": "object",
+          "properties": {
+            "dataProvider": { "type": "string" },
+            "sharingConsentReference": { "type": "string" },
+            "timestamp": { "type": "string", "format": "date-time" }
+          }
+        }
+      },
+      "required": ["customerRiskRating"]
+    },
+    "Originator": { "type": "object", "description": "IVMS 101 Originator (see current schema)" },
+    "Beneficiary": { "type": "object", "description": "IVMS 101 Beneficiary (see current schema)" },
+    "Person": { "type": "object", "description": "IVMS 101 Person (see current schema)" },
+    "NaturalPerson": { "type": "object", "description": "IVMS 101 NaturalPerson (see current schema)" },
+    "NaturalPersonName": { "type": "object", "description": "IVMS 101 NaturalPersonName (see current schema)" },
+    "NaturalPersonNameId": { "type": "object", "description": "IVMS 101 NaturalPersonNameId (see current schema)" },
+    "LocalNaturalPersonNameId": { "type": "object", "description": "IVMS 101 LocalNaturalPersonNameId (see current schema)" },
+    "LegalPerson": { "type": "object", "description": "IVMS 101 LegalPerson (see current schema)" },
+    "LegalPersonName": { "type": "object", "description": "IVMS 101 LegalPersonName (see current schema)" },
+    "LegalPersonNameId": { "type": "object", "description": "IVMS 101 LegalPersonNameId (see current schema)" },
+    "LocalLegalPersonNameId": { "type": "object", "description": "IVMS 101 LocalLegalPersonNameId (see current schema)" },
+    "Address": { "type": "object", "description": "IVMS 101 Address (see current schema)" },
+    "NationalIdentification": { "type": "object", "description": "IVMS 101 NationalIdentification (see current schema)" },
+    "DateAndPlaceOfBirth": { "type": "object", "description": "IVMS 101 DateAndPlaceOfBirth (see current schema)" },
+    "VASP": { "type": "object", "description": "IVMS 101 VASP (see current schema)" },
+    "TransferPath": { "type": "object", "description": "IVMS 101 TransferPath (see current schema)" },
+    "PayloadMetadata": { "type": "object", "description": "IVMS 101 PayloadMetadata (see current schema)" }
+  }
+}

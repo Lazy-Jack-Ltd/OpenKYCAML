@@ -1,0 +1,92 @@
+standard: "Wolfsberg FCCQ v1.2 / CBDDQ v1.4"
+openkycaml_version: "1.7.0"
+last_updated: "2026-04-07"
+description: >
+  Machine-readable mapping of Wolfsberg FCCQ v1.2 and CBDDQ v1.4 questionnaire
+  sections to OpenKYCAML v1.7.0 schema fields. For human-readable narrative see
+  wolfsberg-fccq-cbddq.md.
+
+mappings:
+  - wolfsberg_section: "A — Organisation & Structure"
+    questions: ["Q1", "Q2", "Q3"]
+    openkycaml_field: "ivms101.originator.originatorPersons[].legalPerson.name.nameIdentifiers[]"
+    coverage: full
+    notes: "Use LEGL nameIdentifierType. legalPerson.legalFormCode for ISO 20275 ELF."
+
+  - wolfsberg_section: "A — Organisation & Structure"
+    questions: ["Q4"]
+    openkycaml_field: "ivms101.originator.originatorPersons[].legalPerson.countryOfRegistration"
+    coverage: full
+    notes: "ISO 3166-1 alpha-2."
+
+  - wolfsberg_section: "A — Organisation & Structure"
+    questions: ["Q5"]
+    openkycaml_field: "ivms101.originator.originatorPersons[].legalPerson.nationalIdentification"
+    coverage: full
+    notes: "Use nationalIdentifierType: LEIX for LEI."
+
+  - wolfsberg_section: "B — Ownership and Control"
+    questions: ["Q6", "Q7", "Q8"]
+    openkycaml_field: "kycProfile.beneficialOwnership[]"
+    coverage: full
+    notes: "ownershipChainDepth + intermediateEntities[] for deep chains."
+
+  - wolfsberg_section: "B — Bearer Shares"
+    questions: ["Q8b"]
+    openkycaml_field: "kycProfile.beneficialOwnership[].nomineeFlags.bearerShareFlag"
+    coverage: full
+    notes: "New in v1.7.0. true triggers FATF R.24 immobilisation requirement."
+
+  - wolfsberg_section: "B — Nominee Arrangements"
+    questions: ["Q8c"]
+    openkycaml_field: "kycProfile.beneficialOwnership[].nomineeFlags"
+    coverage: full
+    notes: "isNominee + nominatorIdentified per FATF R.24 (2023 revision)."
+
+  - wolfsberg_section: "C — AML Programme"
+    questions: ["Q22"]
+    openkycaml_field: "predictiveAML.modelMetadata + kycProfile.monitoringInfo.tmModelVersion"
+    coverage: full
+    notes: "EU AI Act classification in euAiActClassification."
+
+  - wolfsberg_section: "D — Customer Due Diligence"
+    questions: ["Q19a"]
+    openkycaml_field: "ivms101.originator.originatorPersons[]"
+    coverage: full
+    notes: "Full IVMS 101 v1.0 natural/legal person support."
+
+  - wolfsberg_section: "D — Risk Categorisation"
+    questions: ["Q20"]
+    openkycaml_field: "kycProfile.customerRiskRating + kycProfile.dueDiligenceType"
+    coverage: full
+    notes: "LOW/MEDIUM/HIGH/VERY_HIGH x SDD/CDD/EDD."
+
+  - wolfsberg_section: "E — Sanctions"
+    questions: ["Q22j"]
+    openkycaml_field: "kycProfile.sanctionsScreening"
+    coverage: full
+    notes: "screeningStatus, screeningProvider, listsChecked[], matchDetails[]."
+
+  - wolfsberg_section: "E — PEP"
+    questions: ["Q22k"]
+    openkycaml_field: "kycProfile.pepStatus"
+    coverage: full
+    notes: "pepCategory aligned to AMLA draft taxonomy."
+
+  - wolfsberg_section: "F — Transaction Monitoring"
+    questions: ["Q24", "Q25"]
+    openkycaml_field: "kycProfile.monitoringInfo + predictiveAML.predictiveScores[]"
+    coverage: full
+    notes: "ruleTriggerHistory[] new in v1.7.0."
+
+  - wolfsberg_section: "G — Information Sharing"
+    questions: ["Q27"]
+    openkycaml_field: "informationSharingFlags.section314bSafeHarbor"
+    coverage: full
+    notes: "New in v1.7.0. US correspondent banks."
+
+  - wolfsberg_section: "G — Third-Party CDD"
+    questions: ["Q28"]
+    openkycaml_field: "kycProfile.thirdPartyCDDReliance"
+    coverage: full
+    notes: "Full AMLR Art. 48 structured record."

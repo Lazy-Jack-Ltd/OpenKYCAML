@@ -1,0 +1,387 @@
+{
+  "$schema": "https://openkycaml.org/schema/v1.3.0/kyc-aml-hybrid-extended.json",
+  "version": "1.18.0",
+  "messageId": "d4e5f6a7-b8c9-4d0e-1f2a-3b4c5d6e7f8a",
+  "messageDateTime": "2025-09-10T10:00:00Z",
+  "_comment_eudi": "EUDI Wallet KYC — Legal Entity. Global Trade Solutions GmbH (DE) onboards at Deutsche Krypto Bank AG by presenting its eIDAS 2.0 LPID from the German company EUDI Wallet, issued by Bundesanzeiger (DE business registry). Director Hans Bauer presents a QEAA mandate confirming his power of representation. Four DIDs triangulate the identity chain: (1) Company wallet DID, (2) LPID Issuer DID (Bundesanzeiger), (3) Director personal wallet DID, (4) VASP DID. LPID mandatory attributes: currentLegalName + uniqueIdentifier. Optional attributes: lei, vatRegistrationNumber, eoriNumber, europeanUniqueIdentifier, currentAddress. Mandates block carries AMLR Art. 26 authorised representative data.",
+  "ivms101": {
+    "originator": {
+      "originatorPersons": [
+        {
+          "legalPerson": {
+            "name": {
+              "nameIdentifier": [
+                {
+                  "legalPersonName": "Global Trade Solutions GmbH",
+                  "legalPersonNameIdentifierType": "LEGL"
+                },
+                {
+                  "legalPersonName": "GTS",
+                  "legalPersonNameIdentifierType": "SHRT"
+                }
+              ]
+            },
+            "geographicAddress": [
+              {
+                "addressType": "BIZZ",
+                "streetName": "Frankfurter Allee",
+                "buildingNumber": "100",
+                "townName": "Frankfurt am Main",
+                "postCode": "60311",
+                "country": "DE"
+              }
+            ],
+            "nationalIdentification": {
+              "nationalIdentifier": "5299002E54U7O0MHZL76",
+              "nationalIdentifierType": "LEIX",
+              "registrationAuthority": "RA000687"
+            },
+            "lei": "5299002E54U7O0MHZL76",
+            "customerNumber": "CORP-DE-0001234",
+            "countryOfRegistration": "DE",
+            "lpid": {
+              "currentLegalName": "Global Trade Solutions GmbH",
+              "uniqueIdentifier": "DE-HRB-12345-FFM",
+              "currentAddress": {
+                "addressType": "BIZZ",
+                "streetName": "Frankfurter Allee",
+                "buildingNumber": "100",
+                "townName": "Frankfurt am Main",
+                "postCode": "60311",
+                "country": "DE"
+              },
+              "lei": "5299002E54U7O0MHZL76",
+              "vatRegistrationNumber": "DE123456789",
+              "taxReferenceNumber": "DE-STEUERNR-111-222-33333",
+              "europeanUniqueIdentifier": "DE-FFM-HRB-12345",
+              "eoriNumber": "DE1234567890123",
+              "mandates": [
+                {
+                  "mandateType": "OTHER",
+                  "signatoryName": "Hans Friedrich Bauer",
+                  "scope": "Geschäftsführer (Managing Director) — full power of representation, individually authorised",
+                  "effectiveFrom": "2023-01-01"
+                }
+              ]
+            }
+          }
+        }
+      ],
+      "accountNumber": [
+        "DE89370400440532013000",
+        "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"
+      ]
+    },
+    "beneficiary": {
+      "beneficiaryPersons": [
+        {
+          "legalPerson": {
+            "name": {
+              "nameIdentifier": [
+                {
+                  "legalPersonName": "Pacific Rim Investments Pte Ltd",
+                  "legalPersonNameIdentifierType": "LEGL"
+                }
+              ]
+            },
+            "nationalIdentification": {
+              "nationalIdentifier": "335800ZETG7B8I3S5X35",
+              "nationalIdentifierType": "LEIX"
+            },
+            "countryOfRegistration": "SG"
+          }
+        }
+      ],
+      "accountNumber": [
+        "SG29DBSS0000000012345678"
+      ]
+    },
+    "originatingVASP": {
+      "name": "Deutsche Krypto Bank AG",
+      "lei": "724500TEHJJ2L5MWSK89",
+      "vaspIdentifier": "DE-Deutsche Krypto Bank AG"
+    },
+    "beneficiaryVASP": {
+      "name": "MAS-Licensed Digital Assets Exchange",
+      "lei": "529900T8BM49AAMSDO55",
+      "vaspIdentifier": "SG-MAS-Licensed Digital Assets Exchange"
+    },
+    "transferredAmount": {
+      "amount": "250000.00",
+      "assetType": "EUR"
+    }
+  },
+  "verifiableCredential": {
+    "@context": [
+      "https://www.w3.org/ns/credentials/v2",
+      "https://openkycaml.org/contexts/v1",
+      "https://europa.eu/2018/credentials/eudi/v1"
+    ],
+    "id": "urn:uuid:d4e5f6a7-b8c9-4d0e-1f2a-3b4c5d6e7f8a",
+    "type": [
+      "VerifiableCredential",
+      "OpenKYCAMLCredential",
+      "LegalEntityKYCAttestation"
+    ],
+    "_comment_issuer": "DID #4 — Deutsche Krypto Bank AG VASP (issuer of this OpenKYCAML VC, acts as relying party after LPID + mandate QEAA verification)",
+    "issuer": {
+      "id": "did:web:deutsche-krypto-bank.example.de",
+      "name": "Deutsche Krypto Bank AG"
+    },
+    "credentialSubject": {
+      "_comment_subject": "DID #1 — Global Trade Solutions GmbH company EUDI Wallet DID. Companies receive a legal entity wallet DID anchored to their EUID/LEI.",
+      "id": "did:ebsi:z2JJFoq4joyXKABBGe7mJmN5",
+      "lpid": {
+        "currentLegalName": "Global Trade Solutions GmbH",
+        "uniqueIdentifier": "DE-HRB-12345-FFM",
+        "currentAddress": {
+          "addressType": "BIZZ",
+          "streetName": "Frankfurter Allee",
+          "buildingNumber": "100",
+          "townName": "Frankfurt am Main",
+          "postCode": "60311",
+          "country": "DE"
+        },
+        "lei": "5299002E54U7O0MHZL76",
+        "vatRegistrationNumber": "DE123456789",
+        "taxReferenceNumber": "DE-STEUERNR-111-222-33333",
+        "europeanUniqueIdentifier": "DE-FFM-HRB-12345",
+        "eoriNumber": "DE1234567890123",
+        "mandates": [
+          {
+            "mandateType": "OTHER",
+            "signatoryName": "Hans Friedrich Bauer",
+            "scope": "Geschäftsführer (Managing Director) — full power of representation, individually authorised",
+            "effectiveFrom": "2023-01-01"
+          }
+        ]
+      },
+      "ivms101": {
+        "originator": {
+          "originatorPersons": [
+            {
+              "legalPerson": {
+                "name": {
+                  "nameIdentifier": [
+                    {
+                      "legalPersonName": "Global Trade Solutions GmbH",
+                      "legalPersonNameIdentifierType": "LEGL"
+                    }
+                  ]
+                },
+                "nationalIdentification": {
+                  "nationalIdentifier": "5299002E54U7O0MHZL76",
+                  "nationalIdentifierType": "LEIX",
+                  "registrationAuthority": "RA000687"
+                },
+                "lei": "5299002E54U7O0MHZL76",
+                "countryOfRegistration": "DE",
+                "lpid": {
+                  "currentLegalName": "Global Trade Solutions GmbH",
+                  "uniqueIdentifier": "DE-HRB-12345-FFM"
+                }
+              }
+            }
+          ],
+          "accountNumber": [
+            "DE89370400440532013000"
+          ]
+        },
+        "beneficiary": {
+          "beneficiaryPersons": [
+            {
+              "legalPerson": {
+                "name": {
+                  "nameIdentifier": [
+                    {
+                      "legalPersonName": "Pacific Rim Investments Pte Ltd",
+                      "legalPersonNameIdentifierType": "LEGL"
+                    }
+                  ]
+                },
+                "nationalIdentification": {
+                  "nationalIdentifier": "335800ZETG7B8I3S5X35",
+                  "nationalIdentifierType": "LEIX"
+                },
+                "countryOfRegistration": "SG"
+              }
+            }
+          ],
+          "accountNumber": [
+            "SG29DBSS0000000012345678"
+          ]
+        },
+        "originatingVASP": {
+          "name": "Deutsche Krypto Bank AG",
+          "lei": "724500TEHJJ2L5MWSK89",
+          "vaspIdentifier": "DE-Deutsche Krypto Bank AG"
+        },
+        "beneficiaryVASP": {
+          "name": "MAS-Licensed Digital Assets Exchange",
+          "lei": "529900T8BM49AAMSDO55",
+          "vaspIdentifier": "SG-MAS-Licensed Digital Assets Exchange"
+        },
+        "transferredAmount": {
+          "amount": "250000.00",
+          "assetType": "EUR"
+        }
+      },
+      "kycProfile": {
+        "customerRiskRating": "MEDIUM",
+        "riskRatingDetail": {
+          "riskScore": 380,
+          "riskRatingDate": "2025-09-10",
+          "riskFactors": {
+            "geographicRisk": "LOW",
+            "productRisk": "MEDIUM",
+            "channelRisk": "LOW",
+            "customerTypeRisk": "MEDIUM",
+            "transactionRisk": "MEDIUM"
+          },
+          "ratingMethodology": "EBA Risk Factor Guidelines 2024 — LPID from Bundesanzeiger provides high-assurance entity verification"
+        },
+        "customerClassification": {
+          "customerType": "CORPORATE",
+          "industrySector": "WHOLESALE_TRADE",
+          "relationshipPurpose": "Import/export settlement and treasury management in digital assets"
+        },
+        "dueDiligenceType": "CDD",
+        "pepStatus": {
+          "isPEP": false,
+          "pepCategory": "NOT_PEP",
+          "screeningDate": "2025-09-10",
+          "screeningProvider": "Refinitiv World-Check"
+        },
+        "sanctionsScreening": {
+          "screeningStatus": "CLEAR",
+          "screeningDate": "2025-09-10T09:45:00Z",
+          "screeningProvider": "Refinitiv World-Check",
+          "listsChecked": [
+            "OFAC_SDN",
+            "EU_CONSOLIDATED",
+            "UN_CONSOLIDATED",
+            "HMT",
+            "BIS_ENTITIES"
+          ],
+          "matchDetails": []
+        },
+        "beneficialOwnership": [
+          {
+            "person": {
+              "naturalPerson": {
+                "name": {
+                  "nameIdentifier": [
+                    {
+                      "primaryIdentifier": "Bauer",
+                      "secondaryIdentifier": "Hans Friedrich",
+                      "nameIdentifierType": "LEGL"
+                    }
+                  ]
+                },
+                "dateAndPlaceOfBirth": {
+                  "dateOfBirth": "1972-03-14",
+                  "placeOfBirth": "Stuttgart"
+                },
+                "nationalIdentification": {
+                  "nationalIdentifier": "DE-IDCARD-T880012456",
+                  "nationalIdentifierType": "IDCD",
+                  "countryOfIssue": "DE"
+                },
+                "countryOfResidence": "DE",
+                "nationality": "DE"
+              }
+            },
+            "ownershipPercentage": 75,
+            "ownershipType": "DIRECT",
+            "controlMechanism": "SHAREHOLDING",
+            "verificationDate": "2025-09-10",
+            "isPEP": false
+          }
+        ],
+        "onboardingChannel": "EUDI_WALLET",
+        "kycCompletionDate": "2025-09-10",
+        "consentRecord": {
+          "consentGiven": true,
+          "consentDate": "2025-09-10T09:00:00Z",
+          "consentPurpose": [
+            "AML_SCREENING",
+            "DATA_SHARING_TRAVEL_RULE",
+            "THIRD_PARTY_CDD"
+          ]
+        },
+        "auditMetadata": {
+          "recordId": "d4e5f6a7-b8c9-4d0e-1f2a-3b4c5d6e7f8a",
+          "recordCreatedAt": "2025-09-10T10:00:00Z",
+          "recordUpdatedAt": "2025-09-10T10:00:00Z",
+          "recordVersion": 1,
+          "createdBy": "kyb-system@deutsche-krypto-bank.example.de",
+          "dataSourceSystem": "EUDI Wallet KYB Gateway v1.5",
+          "dataProvider": "Deutsche Krypto Bank AG",
+          "dataRetentionDate": "2030-09-10"
+        }
+      }
+    },
+    "_comment_evidence": "Evidence block — two source credentials presented. (A) LPID from Bundesanzeiger (DID #2) for the company entity. (B) QEAA mandate from Bundesanzeiger (Director PID cross-referenced to company register). DID #3 is Hans Bauer's personal EUDI Wallet, whose PID underpins the mandate QEAA.",
+    "evidence": [
+      {
+        "id": "urn:uuid:lpid-de-gts-gmbh-2025-09-10",
+        "type": [
+          "LPIDCredential",
+          "EUDIWalletPresentationEvidence"
+        ],
+        "verifier": "did:web:deutsche-krypto-bank.example.de",
+        "credentialIssuer": "did:web:lpid-provider.bundesanzeiger.example.de",
+        "evidenceDocument": "German Commercial Register LPID — Bundesanzeiger (eIDAS 2.0 LPID — Regulation (EU) 2024/1183)",
+        "subjectPresence": "Digital",
+        "documentPresence": "Digital",
+        "presentationMethod": "OpenID4VP",
+        "presentationDate": "2025-09-10T09:50:00Z"
+      },
+      {
+        "id": "urn:uuid:qeaa-mandate-hans-bauer-gts-2025-09-10",
+        "type": [
+          "QEAAMandateCredential",
+          "EUDIWalletPresentationEvidence"
+        ],
+        "verifier": "did:web:deutsche-krypto-bank.example.de",
+        "credentialIssuer": "did:web:lpid-provider.bundesanzeiger.example.de",
+        "evidenceDocument": "QEAA: Power of Representation — Hans Bauer as Geschäftsführer of Global Trade Solutions GmbH (verified against Handelsregister)",
+        "subjectPresence": "Digital",
+        "documentPresence": "Digital",
+        "presentationMethod": "OpenID4VP",
+        "presentationDate": "2025-09-10T09:51:00Z"
+      },
+      {
+        "id": "urn:uuid:pid-de-hans-bauer-director-2025-09-10",
+        "type": [
+          "PIDCredential",
+          "EUDIWalletPresentationEvidence"
+        ],
+        "verifier": "did:web:deutsche-krypto-bank.example.de",
+        "credentialIssuer": "did:web:pid-provider.bsi.example.de",
+        "evidenceDocument": "German National Identity Card (eIDAS 2.0 PID) — Hans Friedrich Bauer (Director)",
+        "subjectPresence": "Digital",
+        "documentPresence": "Digital",
+        "presentationMethod": "OpenID4VP",
+        "presentationDate": "2025-09-10T09:52:00Z"
+      }
+    ],
+    "credentialStatus": {
+      "id": "https://deutsche-krypto-bank.example.de/status/v2#0091",
+      "type": "StatusList2021Entry"
+    },
+    "credentialSchema": {
+      "id": "https://openkycaml.org/schema/v1.3.0/kyc-aml-hybrid-extended.json",
+      "type": "JsonSchemaValidator2018"
+    },
+    "proof": {
+      "type": "Ed25519Signature2020",
+      "created": "2025-09-10T10:00:08Z",
+      "verificationMethod": "did:web:deutsche-krypto-bank.example.de#key-1",
+      "proofPurpose": "assertionMethod",
+      "proofValue": "zCv5Nw1zPxQs6VfH8JmY3WdK7GrB4OtA0LkE2IsX9UeR"
+    },
+    "validFrom": "2025-09-10T10:00:00Z",
+    "validUntil": "2026-09-10T10:00:00Z"
+  }
+}

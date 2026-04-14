@@ -1,0 +1,512 @@
+{
+  "$schema": "https://openkycaml.org/schema/v1.3.0/kyc-aml-hybrid-extended.json",
+  "version": "1.18.0",
+  "messageId": "a4b5c6d7-e8f9-0a1b-2c3d-4e5f6a7b8c9d",
+  "messageDateTime": "2025-11-01T08:30:00Z",
+  "_comment_scenario": "Limited Liability Partnership — UK LLP with Corporate General Partner, Multiple Limited Partners and Natural Person Directors. This example demonstrates AMLR Art. 26 and FATF R.24 beneficial ownership disclosure for Meridian Capital LLP (UK), a private digital asset fund structured as a limited liability partnership. The LLP is itself the originating VASP. Under the LLP agreement (LPA), management and control are exclusively vested in the General Partner (GP); limited partners have no management rights. Partnership interest breakdown: [GP, 0% economic / 100% management control] Meridian Capital GP Ltd (UK); [LP, 45%] Priya Sharma Investments Ltd (Mauritius); [LP, 35%] Ashworth Pension Fund Ltd (UK); [LP, 10%] Dr. Arjun Sharma (UK); [LP, 10%] Sita Patel (UK). UBO determination: Priya Sharma (UK/India) is the sole UBO because (i) she is the sole director and 100% shareholder of Meridian Capital GP Ltd — the General Partner holding all management and voting rights under the LPA; (ii) she also beneficially owns 100% of Priya Sharma Investments Ltd (the largest LP). Despite GP partners in an LLP having no formal ownership stake, control through the GP role constitutes DE_FACTO_CONTROL and CONTRACTUAL control for UBO purposes under AMLR Art. 26(1). FATF Guidance on Transparency of LPs (June 2023) explicitly requires identification of GP controllers as UBOs.",
+  "ivms101": {
+    "originator": {
+      "originatorPersons": [
+        {
+          "legalPerson": {
+            "name": {
+              "nameIdentifier": [
+                {
+                  "legalPersonName": "Meridian Capital LLP",
+                  "legalPersonNameIdentifierType": "LEGL"
+                },
+                {
+                  "legalPersonName": "Meridian Capital",
+                  "legalPersonNameIdentifierType": "TRAD"
+                }
+              ]
+            },
+            "geographicAddress": [
+              {
+                "addressType": "BIZZ",
+                "streetName": "Bishopsgate",
+                "buildingNumber": "100",
+                "townName": "London",
+                "postCode": "EC2N 4AG",
+                "country": "GB"
+              }
+            ],
+            "nationalIdentification": {
+              "nationalIdentifier": "GB-OC-OC445678",
+              "nationalIdentifierType": "RAID",
+              "countryOfIssue": "GB"
+            },
+            "countryOfRegistration": "GB"
+          }
+        }
+      ],
+      "accountNumber": [
+        "0xD5E6F7A8B9C0D1E2F3A4B5C6D7E8F9A0B1C2D3E4"
+      ]
+    },
+    "beneficiary": {
+      "beneficiaryPersons": [
+        {
+          "legalPerson": {
+            "name": {
+              "nameIdentifier": [
+                {
+                  "legalPersonName": "Singapore Digital Securities Pte Ltd",
+                  "legalPersonNameIdentifierType": "LEGL"
+                }
+              ]
+            },
+            "nationalIdentification": {
+              "nationalIdentifier": "SG-ACRA-202312345A",
+              "nationalIdentifierType": "RAID",
+              "countryOfIssue": "SG"
+            },
+            "countryOfRegistration": "SG"
+          }
+        }
+      ],
+      "accountNumber": [
+        "SG29DBSS0000000087654321"
+      ]
+    },
+    "originatingVASP": {
+      "name": "Meridian Capital LLP",
+      "lei": "213800MCLLPGB000GB00",
+      "vaspIdentifier": "GB-Meridian Capital LLP"
+    },
+    "beneficiaryVASP": {
+      "name": "Singapore Digital Securities Pte Ltd",
+      "lei": "335800SDSSG000001SG0",
+      "vaspIdentifier": "SG-Singapore Digital Securities Pte Ltd"
+    },
+    "transferredAmount": {
+      "amount": "2000000.00",
+      "assetType": "USDT"
+    }
+  },
+  "verifiableCredential": {
+    "@context": [
+      "https://www.w3.org/ns/credentials/v2",
+      "https://openkycaml.org/contexts/v1"
+    ],
+    "id": "urn:uuid:a4b5c6d7-e8f9-0a1b-2c3d-4e5f6a7b8c9d",
+    "type": [
+      "VerifiableCredential",
+      "OpenKYCAMLCredential",
+      "KYCAttestation"
+    ],
+    "issuer": {
+      "id": "did:web:singapore-digital-securities.example.sg",
+      "name": "Singapore Digital Securities Pte Ltd"
+    },
+    "credentialSubject": {
+      "ivms101": {
+        "originator": {
+          "originatorPersons": [
+            {
+              "legalPerson": {
+                "name": {
+                  "nameIdentifier": [
+                    {
+                      "legalPersonName": "Meridian Capital LLP",
+                      "legalPersonNameIdentifierType": "LEGL"
+                    },
+                    {
+                      "legalPersonName": "Meridian Capital",
+                      "legalPersonNameIdentifierType": "TRAD"
+                    }
+                  ]
+                },
+                "geographicAddress": [
+                  {
+                    "addressType": "BIZZ",
+                    "streetName": "Bishopsgate",
+                    "buildingNumber": "100",
+                    "townName": "London",
+                    "postCode": "EC2N 4AG",
+                    "country": "GB"
+                  }
+                ],
+                "nationalIdentification": {
+                  "nationalIdentifier": "GB-OC-OC445678",
+                  "nationalIdentifierType": "RAID",
+                  "countryOfIssue": "GB"
+                },
+                "countryOfRegistration": "GB"
+              }
+            }
+          ],
+          "accountNumber": [
+            "0xD5E6F7A8B9C0D1E2F3A4B5C6D7E8F9A0B1C2D3E4"
+          ]
+        },
+        "beneficiary": {
+          "beneficiaryPersons": [
+            {
+              "legalPerson": {
+                "name": {
+                  "nameIdentifier": [
+                    {
+                      "legalPersonName": "Singapore Digital Securities Pte Ltd",
+                      "legalPersonNameIdentifierType": "LEGL"
+                    }
+                  ]
+                },
+                "nationalIdentification": {
+                  "nationalIdentifier": "SG-ACRA-202312345A",
+                  "nationalIdentifierType": "RAID",
+                  "countryOfIssue": "SG"
+                },
+                "countryOfRegistration": "SG"
+              }
+            }
+          ],
+          "accountNumber": [
+            "SG29DBSS0000000087654321"
+          ]
+        },
+        "originatingVASP": {
+          "name": "Meridian Capital LLP",
+          "lei": "213800MCLLPGB000GB00",
+          "vaspIdentifier": "GB-Meridian Capital LLP"
+        },
+        "beneficiaryVASP": {
+          "name": "Singapore Digital Securities Pte Ltd",
+          "lei": "335800SDSSG000001SG0",
+          "vaspIdentifier": "SG-Singapore Digital Securities Pte Ltd"
+        },
+        "transferredAmount": {
+          "amount": "2000000.00",
+          "assetType": "USDT"
+        }
+      },
+      "kycProfile": {
+        "customerRiskRating": "HIGH",
+        "riskRatingDetail": {
+          "riskScore": 695,
+          "riskRatingDate": "2025-10-28",
+          "riskFactors": {
+            "geographicRisk": "HIGH",
+            "productRisk": "HIGH",
+            "channelRisk": "MEDIUM",
+            "customerTypeRisk": "HIGH",
+            "transactionRisk": "HIGH"
+          },
+          "ratingMethodology": "EBA Risk Factor Guidelines 2024 — LLP fund structure with offshore LP vehicle (Mauritius), large-value transfer, multi-jurisdictional investor base, FCA-registered VASP"
+        },
+        "customerClassification": {
+          "customerType": "LEGAL_ENTITY",
+          "industrySector": "CRYPTO_ASSETS",
+          "occupationOrPurpose": "UK-registered LLP operating as a private digital asset fund and VASP. Managed exclusively by corporate General Partner Meridian Capital GP Ltd.",
+          "relationshipPurpose": "Institutional digital asset fund management; cross-border crypto-asset settlement and portfolio rebalancing."
+        },
+        "dueDiligenceType": "EDD",
+        "pepStatus": {
+          "isPEP": false,
+          "pepCategory": "NOT_PEP",
+          "screeningDate": "2025-10-28",
+          "screeningProvider": "Refinitiv World-Check"
+        },
+        "sanctionsScreening": {
+          "screeningStatus": "CLEAR",
+          "screeningDate": "2025-10-28T09:00:00Z",
+          "screeningProvider": "Refinitiv World-Check",
+          "listsChecked": [
+            "OFAC_SDN",
+            "EU_CONSOLIDATED",
+            "UN_CONSOLIDATED",
+            "HMT",
+            "MAS"
+          ]
+        },
+        "onboardingChannel": "REMOTE_AUTOMATED",
+        "kycCompletionDate": "2025-10-28",
+        "consentRecord": {
+          "consentGiven": true,
+          "consentDate": "2025-10-25T10:00:00Z",
+          "consentPurpose": [
+            "AML_SCREENING",
+            "DATA_SHARING_TRAVEL_RULE",
+            "EDD_REVIEW"
+          ]
+        },
+        "beneficialOwnership": [
+          {
+            "_comment_ubo_gp_controller": "UBO: Priya Sharma (UK/India) — 100% effective control over Meridian Capital LLP through her sole ownership and directorship of Meridian Capital GP Ltd (the General Partner). Under the LLP Agreement (LPA) Clause 5, the General Partner has exclusive authority to manage the LLP's business, make all investment decisions, and bind the LLP in contracts. Limited partners have no management rights whatsoever (LPA Clause 7). Priya Sharma also beneficially owns 100% of Priya Sharma Investments Ltd (the 45% LP), but it is her GP control — not LP economic interest — that triggers the UBO determination. AMLR Art. 26(1) and FATF June 2023 LP Transparency Guidance both require identification of the natural person(s) controlling the General Partner as the LLP's UBO.",
+            "person": {
+              "naturalPerson": {
+                "name": {
+                  "nameIdentifier": [
+                    {
+                      "primaryIdentifier": "Sharma",
+                      "secondaryIdentifier": "Priya Anita",
+                      "nameIdentifierType": "LEGL"
+                    }
+                  ]
+                },
+                "geographicAddress": [
+                  {
+                    "addressType": "HOME",
+                    "streetName": "Kensington Palace Gardens",
+                    "buildingNumber": "8A",
+                    "townName": "London",
+                    "postCode": "W8 4QP",
+                    "country": "GB"
+                  }
+                ],
+                "nationalIdentification": {
+                  "nationalIdentifier": "GB-PASS-PD7788990",
+                  "nationalIdentifierType": "CCPT",
+                  "countryOfIssue": "GB"
+                },
+                "dateAndPlaceOfBirth": {
+                  "dateOfBirth": "1976-02-28",
+                  "placeOfBirth": "Mumbai"
+                },
+                "countryOfResidence": "GB",
+                "nationality": "IN"
+              }
+            },
+            "ownershipPercentage": 100,
+            "ownershipType": "INDIRECT",
+            "controlMechanism": "DE_FACTO_CONTROL",
+            "ownershipChainDepth": 2,
+            "intermediateEntities": [
+              {
+                "_comment_gp_entity": "General Partner: Meridian Capital GP Ltd (UK Companies House No. 14112233). Holds all management rights and executive authority over Meridian Capital LLP under the LPA. Sole director and 100% shareholder: Priya Sharma. A second non-executive director, Robert Ashworth (UK), serves on the GP board for governance purposes but holds no ownership interest. The GP has no economic entitlement to LLP profits (the GP fee is a management expense paid by the LLP) but exercises complete operational and investment control.",
+                "legalPerson": {
+                  "name": {
+                    "nameIdentifier": [
+                      {
+                        "legalPersonName": "Meridian Capital GP Ltd",
+                        "legalPersonNameIdentifierType": "LEGL"
+                      }
+                    ]
+                  },
+                  "geographicAddress": [
+                    {
+                      "addressType": "BIZZ",
+                      "streetName": "Bishopsgate",
+                      "buildingNumber": "100",
+                      "townName": "London",
+                      "postCode": "EC2N 4AG",
+                      "country": "GB"
+                    }
+                  ],
+                  "nationalIdentification": {
+                    "nationalIdentifier": "GB-CH-14112233",
+                    "nationalIdentifierType": "RAID",
+                    "countryOfIssue": "GB"
+                  },
+                  "countryOfRegistration": "GB",
+                  "lpid": {
+                    "currentLegalName": "Meridian Capital GP Ltd",
+                    "uniqueIdentifier": "GB-CH-14112233",
+                    "mandates": [
+                      {
+                        "mandateType": "OTHER",
+                        "signatoryName": "Priya Anita Sharma",
+                        "scope": "Sole Director and 100% Shareholder of General Partner — exclusive management authority over Meridian Capital LLP under LPA Clause 5",
+                        "effectiveFrom": "2022-04-01"
+                      },
+                      {
+                        "mandateType": "OTHER",
+                        "signatoryName": "Robert James Ashworth",
+                        "scope": "Non-Executive Director of General Partner (governance role; no ownership interest in GP or LLP)",
+                        "effectiveFrom": "2022-04-01"
+                      }
+                    ]
+                  }
+                },
+                "ownershipPercentage": 0,
+                "ownershipType": "DIRECT",
+                "controlMechanism": "CONTRACTUAL",
+                "jurisdiction": "GB"
+              }
+            ],
+            "verificationDate": "2025-10-28",
+            "isPEP": false
+          },
+          {
+            "_comment_lp1_offshore": "Limited Partner 1: Priya Sharma Investments Ltd (Mauritius, 45% LP interest). 100% owned by UBO Priya Sharma. The Mauritius LP vehicle is the largest economic interest holder in the LLP. Although LP status confers no management rights, this entity is disclosed as it brings Priya Sharma's combined economic exposure to 45% of LLP profits plus GP control, reinforcing the UBO determination. The entity has been verified via GBR Mauritius company extract and shareholder register.",
+            "person": {
+              "legalPerson": {
+                "name": {
+                  "nameIdentifier": [
+                    {
+                      "legalPersonName": "Priya Sharma Investments Ltd",
+                      "legalPersonNameIdentifierType": "LEGL"
+                    }
+                  ]
+                },
+                "nationalIdentification": {
+                  "nationalIdentifier": "MU-ROC-C200234567",
+                  "nationalIdentifierType": "RAID",
+                  "countryOfIssue": "MU"
+                },
+                "countryOfRegistration": "MU",
+                "lpid": {
+                  "currentLegalName": "Priya Sharma Investments Ltd",
+                  "uniqueIdentifier": "MU-ROC-C200234567",
+                  "mandates": [
+                    {
+                      "mandateType": "OTHER",
+                      "signatoryName": "Priya Anita Sharma",
+                      "scope": "Sole Director and 100% Shareholder",
+                      "effectiveFrom": "2018-11-15"
+                    }
+                  ]
+                }
+              }
+            },
+            "ownershipPercentage": 45,
+            "ownershipType": "DIRECT",
+            "controlMechanism": "SHAREHOLDING",
+            "ownershipChainDepth": 1,
+            "verificationDate": "2025-10-28",
+            "isPEP": false
+          },
+          {
+            "_comment_lp2_pension": "Limited Partner 2: Ashworth Pension Fund Ltd (UK, 35% LP interest). A UK occupational pension scheme vehicle; no individual natural person controls more than 25%. Disclosed as a significant LP per EDD policy. No natural person UBO identified within the fund above the threshold — confirmed by review of the scheme register. Robert Ashworth (NED of the GP) is also a trustee of this pension fund; this connection has been noted in the EDD file as a potential conflict of interest and reviewed.",
+            "person": {
+              "legalPerson": {
+                "name": {
+                  "nameIdentifier": [
+                    {
+                      "legalPersonName": "Ashworth Pension Fund Ltd",
+                      "legalPersonNameIdentifierType": "LEGL"
+                    }
+                  ]
+                },
+                "nationalIdentification": {
+                  "nationalIdentifier": "GB-CH-07112345",
+                  "nationalIdentifierType": "RAID",
+                  "countryOfIssue": "GB"
+                },
+                "countryOfRegistration": "GB"
+              }
+            },
+            "ownershipPercentage": 35,
+            "ownershipType": "DIRECT",
+            "controlMechanism": "SHAREHOLDING",
+            "ownershipChainDepth": 1,
+            "verificationDate": "2025-10-28",
+            "isPEP": false
+          },
+          {
+            "_comment_lp3_individual": "Limited Partner 3: Dr. Arjun Sharma (UK, 10% LP interest). Natural person. Brother of UBO Priya Sharma. Invested directly as an individual limited partner. No management rights. PEP screening: CLEAR. Verified via UK passport.",
+            "person": {
+              "naturalPerson": {
+                "name": {
+                  "nameIdentifier": [
+                    {
+                      "primaryIdentifier": "Sharma",
+                      "secondaryIdentifier": "Arjun Dev",
+                      "nameIdentifierType": "LEGL"
+                    }
+                  ]
+                },
+                "geographicAddress": [
+                  {
+                    "addressType": "HOME",
+                    "streetName": "Sloane Square",
+                    "buildingNumber": "22",
+                    "townName": "London",
+                    "postCode": "SW1W 8BB",
+                    "country": "GB"
+                  }
+                ],
+                "nationalIdentification": {
+                  "nationalIdentifier": "GB-PASS-PF3344556",
+                  "nationalIdentifierType": "CCPT",
+                  "countryOfIssue": "GB"
+                },
+                "dateAndPlaceOfBirth": {
+                  "dateOfBirth": "1974-11-15",
+                  "placeOfBirth": "Mumbai"
+                },
+                "countryOfResidence": "GB",
+                "nationality": "IN"
+              }
+            },
+            "ownershipPercentage": 10,
+            "ownershipType": "DIRECT",
+            "controlMechanism": "CONTRACTUAL",
+            "ownershipChainDepth": 1,
+            "verificationDate": "2025-10-28",
+            "isPEP": false
+          },
+          {
+            "_comment_lp4_individual": "Limited Partner 4: Sita Patel (UK, 10% LP interest). Natural person. An independent investor with no family connection to the other partners. No management rights. PEP screening: CLEAR. Verified via UK passport.",
+            "person": {
+              "naturalPerson": {
+                "name": {
+                  "nameIdentifier": [
+                    {
+                      "primaryIdentifier": "Patel",
+                      "secondaryIdentifier": "Sita Rani",
+                      "nameIdentifierType": "LEGL"
+                    }
+                  ]
+                },
+                "geographicAddress": [
+                  {
+                    "addressType": "HOME",
+                    "streetName": "Marylebone High Street",
+                    "buildingNumber": "45",
+                    "townName": "London",
+                    "postCode": "W1U 5HD",
+                    "country": "GB"
+                  }
+                ],
+                "nationalIdentification": {
+                  "nationalIdentifier": "GB-PASS-PG5566778",
+                  "nationalIdentifierType": "CCPT",
+                  "countryOfIssue": "GB"
+                },
+                "dateAndPlaceOfBirth": {
+                  "dateOfBirth": "1980-06-20",
+                  "placeOfBirth": "Leicester"
+                },
+                "countryOfResidence": "GB"
+              }
+            },
+            "ownershipPercentage": 10,
+            "ownershipType": "DIRECT",
+            "controlMechanism": "CONTRACTUAL",
+            "ownershipChainDepth": 1,
+            "verificationDate": "2025-10-28",
+            "isPEP": false
+          }
+        ],
+        "auditMetadata": {
+          "recordId": "a4b5c6d7-e8f9-0a1b-2c3d-4e5f6a7b8c9d",
+          "recordCreatedAt": "2025-11-01T08:30:00Z",
+          "recordUpdatedAt": "2025-11-01T08:30:00Z",
+          "recordVersion": 1,
+          "createdBy": "edd-team@singapore-digital-securities.example.sg",
+          "dataSourceSystem": "EDD Partnership Registry v2.1",
+          "dataProvider": "Singapore Digital Securities Pte Ltd",
+          "dataRetentionDate": "2035-11-01"
+        }
+      }
+    },
+    "credentialStatus": {
+      "id": "https://singapore-digital-securities.example.sg/status/v1#1101",
+      "type": "StatusList2021Entry"
+    },
+    "credentialSchema": {
+      "id": "https://openkycaml.org/schema/v1.3.0/kyc-aml-hybrid-extended.json",
+      "type": "JsonSchemaValidator2018"
+    },
+    "proof": {
+      "type": "Ed25519Signature2020",
+      "created": "2025-11-01T08:30:05Z",
+      "verificationMethod": "did:web:singapore-digital-securities.example.sg#key-1",
+      "proofPurpose": "assertionMethod",
+      "proofValue": "zWx9Yz2AbCdEfGhIjKlMnOpQrStUvWxYz3AbCdEfGhIj"
+    },
+    "validFrom": "2025-11-01T08:30:00Z",
+    "validUntil": "2026-11-01T08:30:00Z"
+  }
+}

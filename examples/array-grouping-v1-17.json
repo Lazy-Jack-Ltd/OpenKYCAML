@@ -1,0 +1,299 @@
+{
+  "$schema": "https://openkycaml.org/schema/v1.17.0/kyc-aml-hybrid-extended.json",
+  "version": "1.18.0",
+  "messageId": "c3d4e5f6-a7b8-49c0-d1e2-f3a4b5c6d7e8",
+  "messageDateTime": "2026-04-14T09:00:00Z",
+  "messageType": "KYC_PROFILE",
+  "ivms101": {
+    "originator": {
+      "originatorPersons": [
+        {
+          "naturalPerson": {
+            "name": {
+              "nameIdentifier": [
+                {
+                  "primaryIdentifier": "SMITH",
+                  "secondaryIdentifier": "JAMES",
+                  "nameIdentifierType": "LEGL"
+                }
+              ]
+            },
+            "geographicAddress": [
+              {
+                "addressType": "HOME",
+                "streetName": "10 Downing Street",
+                "townName": "London",
+                "postCode": "SW1A 2AA",
+                "country": "GB"
+              }
+            ],
+            "nationalIdentification": {
+              "nationalIdentifier": "GB12345678",
+              "nationalIdentifierType": "CCPT",
+              "countryOfIssue": "GB"
+            },
+            "naturalPersonIdentifiers": [
+              {
+                "identifierType": "CCPT",
+                "identifierValue": "GB12345678",
+                "countryOfIssue": "GB",
+                "identifierIssuingBody": "HM Passport Office",
+                "expiryDate": "2033-03-14",
+                "isPrimary": true,
+                "verificationDate": "2024-01-15",
+                "verificationSource": "HM Passport Office API"
+              },
+              {
+                "identifierType": "DRLC",
+                "identifierValue": "SMITH789012JA9AB",
+                "countryOfIssue": "GB",
+                "identifierIssuingBody": "DVLA",
+                "expiryDate": "2030-03-14",
+                "verificationDate": "2024-01-15",
+                "verificationSource": "DVLA VEDI"
+              },
+              {
+                "identifierType": "TXID",
+                "identifierValue": "QQ123456C",
+                "countryOfIssue": "GB",
+                "identifierIssuingBody": "HMRC",
+                "verificationDate": "2024-01-15",
+                "verificationSource": "HMRC RTI"
+              }
+            ],
+            "dateAndPlaceOfBirth": {
+              "dateOfBirth": "1978-03-14",
+              "placeOfBirth": "London",
+              "countryOfBirth": "GB"
+            },
+            "countryOfResidence": "GB",
+            "countriesOfResidence": [
+              "GB",
+              "AE"
+            ],
+            "nationality": "GB",
+            "nationalitiesAlpha3": [
+              "GBR"
+            ],
+            "nationalities": [
+              "GB",
+              "IE"
+            ],
+            "customerIdentification": "CUST-NP-2024-001",
+            "occupation": {
+              "occupationCode": "EMPLOYED",
+              "occupationDescription": "Senior Software Engineer"
+            },
+            "occupations": [
+              {
+                "occupationCode": "EMPLOYED",
+                "occupationDescription": "Senior Software Engineer",
+                "employerName": "Acme Technologies Ltd",
+                "isPrimary": true
+              },
+              {
+                "occupationCode": "BUSINESS_OWNER",
+                "occupationDescription": "Non-Executive Director",
+                "employerName": "Smith Consulting Ltd"
+              }
+            ],
+            "emergencyContact": {
+              "name": "Sarah Smith",
+              "relationship": "Spouse",
+              "phoneNumber": "+447700900001"
+            },
+            "emergencyContacts": [
+              {
+                "name": "Sarah Smith",
+                "relationship": "Spouse",
+                "phoneNumber": "+447700900001",
+                "emailAddress": "sarah.smith@example.com"
+              },
+              {
+                "name": "Robert Smith",
+                "relationship": "Parent",
+                "phoneNumber": "+447700900002"
+              }
+            ],
+            "emailAddresses": [
+              {
+                "emailAddress": "james.smith@example.com",
+                "isPrimary": true
+              }
+            ],
+            "phoneNumbers": [
+              {
+                "phoneNumber": "+447700900000",
+                "isPrimary": true
+              }
+            ]
+          }
+        }
+      ],
+      "accountNumber": [
+        "GB29NWBK60161331926819"
+      ]
+    },
+    "beneficiary": {
+      "beneficiaryPersons": [
+        {
+          "naturalPerson": {
+            "name": {
+              "nameIdentifier": [
+                {
+                  "primaryIdentifier": "JONES",
+                  "secondaryIdentifier": "ALICE",
+                  "nameIdentifierType": "LEGL"
+                }
+              ]
+            },
+            "customerIdentification": "CUST-BENE-001"
+          }
+        }
+      ],
+      "accountNumber": [
+        "GB29NWBK60161331926820"
+      ]
+    },
+    "originatingVASP": {
+      "name": "OpenKYCAML Reference Bank",
+      "lei": "213800RQHF4EPIMZQ349",
+      "vaspIdentifier": "GB-OpenKYCAML-Reference-Bank"
+    },
+    "beneficiaryVASP": {
+      "name": "OpenKYCAML Reference Bank",
+      "lei": "213800RQHF4EPIMZQ349",
+      "vaspIdentifier": "GB-OpenKYCAML-Reference-Bank"
+    }
+  },
+  "kycProfile": {
+    "customerRiskRating": "MEDIUM",
+    "pepStatus": {
+      "isPEP": true,
+      "pepCategory": "CLOSE_ASSOCIATE_OF_PEP",
+      "pepRole": "Business associate of Minister of Finance",
+      "screeningDate": "2024-01-15",
+      "screeningProvider": "Dow Jones Risk & Compliance"
+    },
+    "pepStatuses": [
+      {
+        "isPEP": true,
+        "pepCategory": "CLOSE_ASSOCIATE_OF_PEP",
+        "pepRole": "Business associate of Minister of Finance (jurisdiction A)",
+        "screeningDate": "2024-01-15",
+        "screeningProvider": "Dow Jones Risk & Compliance"
+      },
+      {
+        "isPEP": true,
+        "pepCategory": "FORMER_PEP",
+        "pepRole": "Former Local Councillor London Borough 2010-2016",
+        "screeningDate": "2024-01-15",
+        "screeningProvider": "Refinitiv World-Check"
+      }
+    ],
+    "riskRatingDetail": {
+      "riskScore": 520,
+      "riskRatingDate": "2024-01-15",
+      "riskFactors": {
+        "geographicRisk": "HIGH",
+        "customerTypeRisk": "HIGH",
+        "productRisk": "MEDIUM",
+        "channelRisk": "LOW",
+        "transactionRisk": "MEDIUM"
+      },
+      "ratingMethodology": "AMLR-RISK-MODEL-v2.3"
+    },
+    "riskRatingHistory": [
+      {
+        "customerRiskRating": "LOW",
+        "riskScore": 150,
+        "riskRatingDate": "2022-06-01",
+        "ratingMethodology": "AMLR-RISK-MODEL-v1.0",
+        "ratingChangedBy": "onboarding-system",
+        "ratingChangeReason": "INITIAL_ONBOARDING"
+      },
+      {
+        "customerRiskRating": "MEDIUM",
+        "riskScore": 420,
+        "riskRatingDate": "2023-06-01",
+        "ratingMethodology": "AMLR-RISK-MODEL-v2.0",
+        "ratingChangedBy": "periodic-review-engine",
+        "ratingChangeReason": "PERIODIC_REVIEW",
+        "riskFactors": {
+          "geographicRisk": "MEDIUM",
+          "customerTypeRisk": "MEDIUM",
+          "productRisk": "MEDIUM",
+          "channelRisk": "LOW",
+          "transactionRisk": "LOW"
+        }
+      },
+      {
+        "customerRiskRating": "MEDIUM",
+        "riskScore": 520,
+        "riskRatingDate": "2024-01-15",
+        "ratingMethodology": "AMLR-RISK-MODEL-v2.3",
+        "ratingChangedBy": "analyst-001",
+        "ratingChangeReason": "PEP_IDENTIFIED",
+        "riskFactors": {
+          "geographicRisk": "HIGH",
+          "customerTypeRisk": "HIGH",
+          "productRisk": "MEDIUM",
+          "channelRisk": "LOW",
+          "transactionRisk": "MEDIUM"
+        }
+      }
+    ],
+    "consentRecord": {
+      "consentGiven": true,
+      "consentDate": "2022-06-01T09:00:00Z",
+      "consentPurpose": [
+        "AML_SCREENING",
+        "DATA_SHARING_TRAVEL_RULE"
+      ]
+    },
+    "consentRecords": [
+      {
+        "consentPurpose": "AML_SCREENING",
+        "consentGiven": true,
+        "consentDate": "2022-06-01T09:00:00Z",
+        "consentMethod": "ELECTRONIC",
+        "consentReference": "TERMS-v3.1",
+        "legalBasis": "LEGAL_OBLIGATION"
+      },
+      {
+        "consentPurpose": "DATA_SHARING_TRAVEL_RULE",
+        "consentGiven": true,
+        "consentDate": "2022-06-01T09:00:00Z",
+        "consentMethod": "ELECTRONIC",
+        "consentReference": "TERMS-v3.1",
+        "legalBasis": "LEGAL_OBLIGATION"
+      },
+      {
+        "consentPurpose": "MARKETING",
+        "consentGiven": false,
+        "consentDate": "2022-06-01T09:00:00Z",
+        "consentMethod": "ELECTRONIC",
+        "legalBasis": "CONSENT"
+      }
+    ],
+    "kycCompletionDate": "2024-01-15",
+    "dueDiligenceType": "EDD",
+    "sanctionsScreening": {
+      "screeningStatus": "CLEAR",
+      "screeningDate": "2024-01-15T00:00:00Z",
+      "screeningProvider": "Dow Jones Risk & Compliance",
+      "listsChecked": [
+        "UN",
+        "EU",
+        "OFAC",
+        "HMT"
+      ]
+    },
+    "adverseMedia": {
+      "hasHits": false,
+      "screeningStatus": "CLEAR",
+      "screeningDate": "2024-01-15T00:00:00Z",
+      "screeningProvider": "Refinitiv World-Check"
+    }
+  }
+}
