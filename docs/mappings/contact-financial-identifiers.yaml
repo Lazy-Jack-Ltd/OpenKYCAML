@@ -1,0 +1,186 @@
+# OpenKYCAML v1.10.0 — Contact Fields and Financial Identifiers Mapping
+# See docs/mappings/contact-financial-identifiers.md for full documentation.
+
+schema_version: "1.10.0"
+mapping_name: "contact-financial-identifiers"
+description: >
+  Format and pattern validation for contact fields (email, phone) and financial
+  identifiers (IBAN, BIC, VAT, EORI, EUID, TIN) added in OpenKYCAML v1.10.0.
+  All additions are strictly additive and backward-compatible with v1.9.x payloads.
+
+standards:
+  - name: "ITU-T E.164"
+    url: "https://www.itu.int/rec/T-REC-E.164"
+  - name: "RFC 5321"
+    url: "https://www.rfc-editor.org/rfc/rfc5321"
+  - name: "ISO 13616:2020"
+    url: "https://www.iso.org/standard/81090.html"
+  - name: "ISO 9362:2022"
+    url: "https://www.iso.org/standard/84850.html"
+  - name: "ISO 4217"
+    url: "https://www.iso.org/iso-4217-currency-codes.html"
+  - name: "FATF Recommendation 16"
+    url: "https://www.fatf-gafi.org/en/recommendations/fatfrecommendations.html"
+  - name: "AMLR 2024 Art. 22"
+    url: "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A32024R1624"
+  - name: "eIDAS 2.0 LPID"
+    url: "https://digital-strategy.ec.europa.eu/en/policies/eudi-wallet-implementation"
+  - name: "EU VAT Directive 2006/112/EC"
+    url: "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A32006L0112"
+  - name: "EU Regulation 952/2013 (Union Customs Code)"
+    url: "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A32013R0952"
+  - name: "Directive (EU) 2017/1132 Art. 16"
+    url: "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A32017L1132"
+  - name: "GLEIF RAL"
+    url: "https://www.gleif.org/en/about-lei/gleif-registration-authority-list"
+  - name: "IVMS 101"
+    url: "https://intervasp.org/"
+
+field_mappings:
+  # Contact fields
+  - field: emailAddress
+    defs: [NaturalPerson, LegalPerson]
+    type: string
+    format: email
+    max_length: 254
+    optional: true
+    added_in: "1.10.0"
+    standards: [RFC 5321, FATF Recommendation 16, AMLR 2024 Art. 22]
+
+  - field: phoneNumber
+    defs: [NaturalPerson, LegalPerson]
+    type: string
+    pattern: "^\\+[1-9]\\d{1,14}$"
+    max_length: 16
+    optional: true
+    added_in: "1.10.0"
+    standards: [ITU-T E.164, FATF Recommendation 16, AMLR 2024 Art. 22]
+
+  - field: mobileNumber
+    defs: [NaturalPerson, LegalPerson]
+    type: string
+    pattern: "^\\+[1-9]\\d{1,14}$"
+    max_length: 16
+    optional: true
+    added_in: "1.10.0"
+    standards: [ITU-T E.164, AMLR 2024 Art. 22(5)]
+
+  # BankingDetails $def
+  - field: iban
+    def: BankingDetails
+    type: string
+    pattern: "^[A-Z]{2}[0-9]{2}[A-Z0-9]{4,30}$"
+    max_length: 34
+    optional: true
+    added_in: "1.10.0"
+    standards: [ISO 13616:2020, FATF Recommendation 16]
+
+  - field: bic
+    def: BankingDetails
+    type: string
+    pattern: "^[A-Z]{6}[A-Z0-9]{2}([A-Z0-9]{3})?$"
+    max_length: 11
+    optional: true
+    added_in: "1.10.0"
+    standards: [ISO 9362:2022, FATF Recommendation 16]
+
+  - field: accountCurrency
+    def: BankingDetails
+    type: string
+    pattern: "^[A-Z]{3}$"
+    max_length: 3
+    optional: true
+    added_in: "1.10.0"
+    standards: [ISO 4217]
+
+  - field: bankingCountry
+    def: BankingDetails
+    type: string
+    pattern: "^[A-Z]{2}$"
+    optional: true
+    added_in: "1.10.0"
+    standards: [ISO 3166-1]
+
+  # Regulatory identifier pattern additions
+  - field: vatRegistrationNumber
+    def: LegalPersonIdentificationData
+    pattern_added: "^[A-Z]{2}[A-Z0-9]{2,12}$"
+    added_in: "1.10.0"
+    standards: [EU VAT Directive 2006/112/EC, eIDAS 2.0 LPID]
+
+  - field: eoriNumber
+    def: LegalPersonIdentificationData
+    pattern_added: "^[A-Z]{2}[A-Z0-9]{1,15}$"
+    added_in: "1.10.0"
+    standards: [EU Regulation 952/2013 (Union Customs Code), eIDAS 2.0 LPID]
+
+  - field: europeanUniqueIdentifier
+    def: LegalPersonIdentificationData
+    pattern_added: "^[A-Z]{2}-[A-Za-z0-9.\\-]{6,40}$"
+    added_in: "1.10.0"
+    standards: [Directive (EU) 2017/1132 Art. 16]
+
+  - field: tinValue
+    def: TinIdentifier
+    pattern_added: "^[A-Z0-9\\-\\/]{5,20}$"
+    added_in: "1.10.0"
+    standards: [OECD CRS, FATCA, AMLR 2024 Art. 22]
+
+  - field: registrationNumber
+    def: IndirectTaxRegistration
+    pattern_added: "^[A-Z0-9\\-\\/]{2,30}$"
+    added_in: "1.10.0"
+    standards: [EU VIES, India GSTIN, Australia ABN, Canada HST/PST]
+
+  - field: withholdingAgentReference
+    def: FatcaStatus
+    pattern_added: "^[A-Z0-9\\-]{1,30}$"
+    added_in: "1.10.0"
+    standards: [FATCA]
+
+  # Document number patterns
+  - field: documentNumber
+    def: NaturalPersonDocument
+    pattern_added: "^[A-Z0-9\\-\\/ ]{1,50}$"
+    added_in: "1.10.0"
+
+  - field: documentNumber
+    def: LegalEntityDocument
+    pattern_added: "^[A-Z0-9\\-\\/ ]{1,100}$"
+    added_in: "1.10.0"
+
+  - field: registrationNumber
+    def: LegalEntityDocument
+    pattern_added: "^[A-Z0-9\\-\\/ ]{1,100}$"
+    added_in: "1.10.0"
+
+  # Miscellaneous tightening
+  - field: "accountNumber items"
+    defs: [Originator, Beneficiary]
+    pattern_added: "^[A-Za-z0-9\\-\\/.]{1,100}$"
+    added_in: "1.10.0"
+    standards: [IVMS 101]
+
+  - field: registrationAuthority
+    def: NationalIdentification
+    pattern_added: "^RA[0-9]{6}$"
+    added_in: "1.10.0"
+    standards: [GLEIF RAL]
+
+  - field: "currency (jurisdiction/reporting threshold)"
+    def: TransactionMonitoring
+    pattern_added: "^[A-Z]{3}$"
+    added_in: "1.10.0"
+    standards: [ISO 4217]
+
+  - field: assetType
+    def: IVMS101Payload
+    pattern_added: "^[A-Z]{3,10}$"
+    added_in: "1.10.0"
+    standards: [ISO 4217, IVMS 101]
+
+  - field: postCode
+    def: Address
+    pattern_added: "^[A-Z0-9\\- ]{2,10}$"
+    added_in: "1.10.0"
+    standards: [IVMS 101]

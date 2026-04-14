@@ -1,0 +1,145 @@
+# OpenKYCAML v1.12.0 — Natural Person Governance Fields Mapping
+# See docs/mappings/natural-person-governance.md for full documentation.
+
+schema_version: "1.12.0"
+mapping_name: "natural-person-governance"
+description: >
+  Schema support for natural-person completeness fields added in v1.12.0.
+  NaturalPerson gains two optional fields: gender (string enum) and occupation (object).
+  All additions are strictly additive and backward-compatible.
+
+standards:
+  - name: "eIDAS 2.0 ARF — PID rulebook"
+    description: "PID attribute gender (ISO/IEC 5218); PID attribute occupation (ILO code)."
+    url: "https://digital-strategy.ec.europa.eu/en/policies/eudi-wallet-implementation"
+  - name: "ISO/IEC 5218"
+    description: "Codes for the representation of human sexes — used for gender enum alignment."
+    url: "https://www.iso.org/standard/36266.html"
+  - name: "ILO/ISCO-08"
+    description: "International Standard Classification of Occupations (2008) — broad group alignment for occupationCode enum."
+    url: "https://www.ilo.org/public/english/bureau/stat/isco/isco08/"
+  - name: "IVMS 101 extended CDD"
+    description: "Optional gender and occupation fields for natural person extended CDD data set."
+    url: "https://intervasp.org/"
+  - name: "GDPR Art. 9"
+    description: "Special categories of personal data — gender data (if related to sex life/sexual orientation)."
+    url: "https://gdpr-info.eu/art-9-gdpr/"
+  - name: "GDPR Art. 4(1)"
+    description: "Definition of personal data — all natural person gender and occupation data."
+    url: "https://gdpr-info.eu/art-4-gdpr/"
+  - name: "AMLR 2024 Art. 22"
+    description: "CDD — source of wealth and funds verification; occupation supports risk profiling."
+    url: "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A32024R1624"
+  - name: "FATF Recommendation 12"
+    description: "Politically Exposed Persons — PUBLIC_OFFICIAL occupationCode triggers PEP screening."
+    url: "https://www.fatf-gafi.org/en/recommendations/fatfrecommendations.html"
+
+new_fields:
+  - field: gender
+    location: NaturalPerson
+    type: string (enum)
+    optional: true
+    added_in: "1.12.0"
+    gdpr_sensitivity: "special_category_art9"
+    enum_values:
+      - value: MALE
+        iso_5218_code: 1
+        notes: Biological male / legal male designation
+      - value: FEMALE
+        iso_5218_code: 2
+        notes: Biological female / legal female designation
+      - value: NON_BINARY
+        iso_5218_code: 9
+        notes: ISO/IEC 5218 code 9 (not applicable / other) — extended to non-binary
+      - value: OTHER
+        iso_5218_code: 9
+        notes: Self-described gender outside binary categories
+      - value: PREFER_NOT_TO_SAY
+        iso_5218_code: null
+        notes: Data subject has declined to specify
+    standard_alignment:
+      - standard: "eIDAS 2.0 PID"
+        attribute: "gender"
+        alignment_type: direct
+      - standard: "IVMS 101 extended CDD"
+        element: "gender"
+        alignment_type: optional_extended
+      - standard: "AMLR Art. 22"
+        alignment_type: not_required
+        notes: Included for completeness of natural-person CDD record
+    gdpr_obligations:
+      - Identify lawful basis under Art. 6 (and Art. 9(2) if applicable)
+      - Apply data minimisation — collect only where jurisdictionally required
+      - Document in ROPA (Art. 30) purpose and legal basis
+      - Apply access controls and encryption at rest
+
+  - field: occupation
+    location: NaturalPerson
+    type: object
+    optional: true
+    added_in: "1.12.0"
+    gdpr_sensitivity: "standard_personal_data_art4"
+    sub_fields:
+      - field: occupationCode
+        type: string (enum)
+        optional: true
+        enum_values:
+          - value: EMPLOYED
+            isco08_alignment: "Major groups 1–9 (employed persons)"
+          - value: SELF_EMPLOYED
+            isco08_alignment: "Major groups 1–3, 5 (own-account workers)"
+          - value: BUSINESS_OWNER
+            isco08_alignment: "Major group 1 (managers and proprietors)"
+          - value: STUDENT
+            isco08_alignment: null
+          - value: RETIRED
+            isco08_alignment: null
+          - value: UNEMPLOYED
+            isco08_alignment: null
+          - value: PUBLIC_OFFICIAL
+            isco08_alignment: "Major group 1 sub-group 111 (legislators, senior officials)"
+            notes: "May trigger PEP screening — see FATF Rec. 12"
+          - value: OTHER
+            isco08_alignment: null
+            notes: "Use occupationDescription for free-text detail"
+      - field: occupationDescription
+        type: string
+        max_length: 200
+        optional: true
+    relationship_to_occupationOrPurpose:
+      field_a:
+        path: "kycProfile.customerClassification.occupationOrPurpose"
+        format: free-text (max 200)
+        scope: "NaturalPerson and LegalPerson — shared CDD field"
+      field_b:
+        path: "ivms101.*.naturalPerson.occupation"
+        format: structured object
+        scope: "NaturalPerson only — structured, person-level"
+      precedence: "occupation takes precedence for structured processing; occupationOrPurpose provides human-readable narrative"
+    standard_alignment:
+      - standard: "IVMS 101 extended CDD"
+        element: "occupation"
+        alignment_type: optional_extended
+      - standard: "eIDAS 2.0 PID"
+        attribute: "occupation"
+        alignment_type: optional
+      - standard: "AMLR Art. 22"
+        alignment_type: supporting
+        notes: Source-of-wealth and source-of-funds verification
+      - standard: "FATF Rec. 12"
+        alignment_type: direct
+        notes: PUBLIC_OFFICIAL code directly supports PEP identification
+
+field_mapping_summary:
+  - openkycaml_field: "NaturalPerson.gender"
+    eidas_pid_attribute: "gender (ISO/IEC 5218)"
+    ivms101_element: "Extended CDD (optional)"
+    gdpr_sensitivity: "Art. 9 special category"
+  - openkycaml_field: "NaturalPerson.occupation.occupationCode"
+    eidas_pid_attribute: "occupation (ILO code)"
+    ivms101_element: "Extended CDD (optional)"
+    gdpr_sensitivity: "Standard personal data (Art. 4)"
+  - openkycaml_field: "NaturalPerson.occupation.occupationDescription"
+    eidas_pid_attribute: "occupation (free text)"
+    ivms101_element: "Extended CDD (optional)"
+    gdpr_sensitivity: "Standard personal data (Art. 4)"

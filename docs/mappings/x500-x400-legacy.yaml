@@ -1,0 +1,95 @@
+standard: "X.500 Distinguished Names (ITU-T X.500 / RFC 4514)"
+openkycaml_version: "1.8.0"
+last_updated: "2026-04-07"
+description: >
+  Machine-readable mapping of X.500 Distinguished Name (DN) usage contexts
+  to OpenKYCAML v1.8.0 schema fields. X.400 O/R Addresses are explicitly
+  excluded (no schema field added). For the full human-readable narrative
+  and exclusion rationale see x500-x400-legacy.md.
+
+x400_status: "explicitly_excluded"
+x400_exclusion_reason: >
+  X.400 O/R Addresses carry no current AML predictive or interoperability
+  value. Not referenced in AMLR 2027, eIDAS 2.0, FATF Recommendations,
+  Wolfsberg FCCQ/CBDDQ, BCBS 239, or ISO 20022 business payloads (2026).
+  Replaced by SMTP and ISO 20022 messaging in all production fintech systems.
+
+mappings:
+  - use_case: "X.509 certificate Subject DN"
+    openkycaml_field: "legacyIdentifiers.x500DN"
+    x500dn_type: "certificateSubject"
+    coverage: full
+    regulatory_basis:
+      - "eIDAS 2.0 / ETSI EN 319 412 — QES/QSealC/QWAC/QEAA Subject field"
+      - "AMLR 2027 Art. 22(6) — Qualified Certificate as remote CDD evidence"
+    notes: "RFC 4514 string form. SHOULD match pkiEvidence.x509Certificate.subjectDN."
+
+  - use_case: "X.509 certificate Issuer DN"
+    openkycaml_field: "legacyIdentifiers.x500DN"
+    x500dn_type: "certificateIssuer"
+    coverage: full
+    regulatory_basis:
+      - "eIDAS 2.0 ETSI EN 319 412 — CA/QTSP Issuer field"
+    notes: "Points to the CA or QTSP. Matches pkiEvidence.x509Certificate.issuerDN."
+
+  - use_case: "LDAP / Active Directory entry reference"
+    openkycaml_field: "legacyIdentifiers.x500DN"
+    x500dn_type: "directoryEntry"
+    coverage: full
+    regulatory_basis:
+      - "Enterprise third-party CDD reliance (AMLR Art. 48)"
+    notes: >
+      Legacy bank LDAP directories. Useful for third-party CDD reliance where
+      the counterparty surfaces a DN as their corporate directory identifier.
+
+  - use_case: "SWIFTNet technical addressing DN"
+    openkycaml_field: "legacyIdentifiers.x500DN"
+    x500dn_type: "swiftNetAddress"
+    coverage: full
+    regulatory_basis:
+      - "SWIFTNet Identifiers Directory (ISO 9362 / BIC correlation)"
+    notes: "Format: cn=user1,ou=dept,o=BankName,o=swift. Enables correlation with ISO 20022 supplementary data."
+
+  - use_case: "Full X.509 certificate metadata"
+    openkycaml_field: "pkiEvidence.x509Certificate"
+    coverage: full
+    regulatory_basis:
+      - "AMLR 2027 Art. 22(6) — certificate evidence for remote CDD"
+      - "ETSI TS 119 461 v2.1.1 — identity proofing for QTSPs"
+    notes: "serialNumber + issuerDN uniquely identifies the cert per RFC 5280."
+
+  - use_case: "ETSI QCStatements (eIDAS qualified cert types)"
+    openkycaml_field: "pkiEvidence.x509Certificate.qcStatements[]"
+    coverage: full
+    regulatory_basis:
+      - "ETSI EN 319 412 — id-pe-QCStatements extension (OID 1.3.6.1.5.5.7.1.3)"
+    notes: >
+      Well-known values: id-etsi-qcs-QcCompliance, id-etsi-qcs-QcType-eSign,
+      id-etsi-qcs-QcType-eSeal, id-etsi-qcs-QcType-Web (QWAC),
+      id-etsi-qcs-QcSSCD, id-etsi-qcs-QcCClegislation, id-etsi-qcs-QcPDS.
+
+  - use_case: "ASN.1 OIDs from X.509 extensions and ETSI profiles"
+    openkycaml_field: "pkiEvidence.oids[]"
+    coverage: full
+    regulatory_basis:
+      - "RFC 5280 — X.509 certificate extensions"
+      - "ETSI EN 319 412 — eIDAS QTSP extension OIDs"
+    notes: >
+      Use oid (dotted-decimal), description, and optional value fields.
+      Key OIDs: 1.3.6.1.5.5.7.1.3 (QCStatements), 2.5.4.97 (organizationIdentifier
+      for eIDAS LPID/LEI in Subject DN), 1.3.6.1.5.5.7.48.1 (OCSP access method).
+
+  - use_case: "Certificate to document bundle linkage"
+    openkycaml_field: "pkiEvidence.certificateDocumentRef"
+    coverage: full
+    regulatory_basis:
+      - "AMLR Art. 22 — documentary evidence chain"
+    notes: >
+      URI reference to identityDocuments.naturalPersonDocuments[] or
+      identityDocuments.legalEntityDocuments[] entry. Completes the eIDAS
+      triangulation chain: DN → Certificate → Document → Identity Attributes.
+
+x400_mappings: []
+x400_note: >
+  X.400 O/R Addresses are not modelled. See x500-x400-legacy.md §3 for
+  the full exclusion rationale and a migration note for legacy EDI systems.
