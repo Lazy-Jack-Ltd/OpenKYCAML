@@ -2,7 +2,7 @@
 """
 OpenKYCAML Schema Validator
 ===========================
-Validates JSON payloads against the OpenKYCAML schema (v1.18.0).
+Validates JSON payloads against the OpenKYCAML schema (v1.19.0).
 
 Usage:
     python validator.py <path-to-payload.json>
