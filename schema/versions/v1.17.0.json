@@ -1,10 +1,10 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://openkycaml.org/schema/v1.18.0/kyc-aml-hybrid-extended.json",
+  "$id": "https://openkycaml.org/schema/v1.17.0/kyc-aml-hybrid-extended.json",
   "title": "OpenKYCAML Hybrid KYC/AML Schema",
   "description": "Root OpenKYCAML document. At least one of 'ivms101' or 'verifiableCredential' MUST be present.",
   "version": "1.17.0",
-  "x-changelog": "v1.18.0: W3C VC Data Model 2.0 upgrade — upgraded VerifiableCredentialWrapper from W3C VC DM v1.1 to W3C VC DM 2.0 (W3C Recommendation, May 2024): @context[0] const changed from https://www.w3.org/2018/credentials/v1 to https://www.w3.org/ns/credentials/v2; issuanceDate renamed to validFrom (required); expirationDate renamed to validUntil (optional); description updated to reflect v2.0 compliance. All deferred 'planned for v2.0.0' notes removed. Fully backward-compatible for new issuers; existing payloads must update context URL and field names. | v1.17.0: Array-grouping enhancements (12 items): PersonIdentifier $def + NaturalPerson.naturalPersonIdentifiers[]; LegalPerson.legalNationalIdentifiers[]; KYCProfile.pepStatuses[]; NaturalPerson.countriesOfResidence[]; NaturalPerson.nationalities[]; RiskRatingEntry $def + KYCProfile.riskRatingHistory[]; NaturalPerson.occupations[]; RevenueRecord $def + LegalPerson.revenueHistory[]; ConsentRecord $def + KYCProfile.consentRecords[]; EntityGovernance.parentCompanies[]; NaturalPerson.emergencyContacts[]; LegalPerson.registeredAgents[]. All additions are backward-compatible additive arrays. | v1.16.0: Added CompanyIdentifier $def (23-value identifierType enum covering DUNS, LEI, CRN_GB, SIREN_FR, SIRET_FR, HRB_DE, HRA_DE, CNPJ_BR, ABN_AU, ACN_AU, EIN_US, CIK_US, CAGE_US, PIC_EU, BVDID, ISIN, BIC, CHARITY_GB, KVK_NL, UID_AT, NIF_ES, RCS_LU, OTHER) with if/then constraint requiring identifierIssuingBody when identifierType=OTHER; LegalPerson.companyIdentifiers[] optional array (uniqueItems:true). | v1.15.0: Added root additionalProperties:false; minLength:1 on 10 critical identity string fields; root examples annotation; NaturalPerson deceasedDate conditional (allOf if/then: isDeceased:true requires deceasedDate); uniqueItems:true on NaturalPerson/LegalPerson/KYCProfile tag arrays; added messageType optional root property. Resolved version-field/$id mismatch (version field now tracks $id). Titles/descriptions on all $defs were already complete (no change). Boolean defaults deferred.",
+  "x-changelog": "v1.17.0: Array-grouping enhancements (12 items): PersonIdentifier $def + NaturalPerson.naturalPersonIdentifiers[]; LegalPerson.legalNationalIdentifiers[]; KYCProfile.pepStatuses[]; NaturalPerson.countriesOfResidence[]; NaturalPerson.nationalities[]; RiskRatingEntry $def + KYCProfile.riskRatingHistory[]; NaturalPerson.occupations[]; RevenueRecord $def + LegalPerson.revenueHistory[]; ConsentRecord $def + KYCProfile.consentRecords[]; EntityGovernance.parentCompanies[]; NaturalPerson.emergencyContacts[]; LegalPerson.registeredAgents[]. All additions are backward-compatible additive arrays. | v1.16.0: Added CompanyIdentifier $def (23-value identifierType enum covering DUNS, LEI, CRN_GB, SIREN_FR, SIRET_FR, HRB_DE, HRA_DE, CNPJ_BR, ABN_AU, ACN_AU, EIN_US, CIK_US, CAGE_US, PIC_EU, BVDID, ISIN, BIC, CHARITY_GB, KVK_NL, UID_AT, NIF_ES, RCS_LU, OTHER) with if/then constraint requiring identifierIssuingBody when identifierType=OTHER; LegalPerson.companyIdentifiers[] optional array (uniqueItems:true). | v1.15.0: Added root additionalProperties:false; minLength:1 on 10 critical identity string fields; root examples annotation; NaturalPerson deceasedDate conditional (allOf if/then: isDeceased:true requires deceasedDate); uniqueItems:true on NaturalPerson/LegalPerson/KYCProfile tag arrays; added messageType optional root property. Resolved version-field/$id mismatch (version field now tracks $id). Titles/descriptions on all $defs were already complete (no change). Boolean defaults deferred.",
   "examples": [
     {
       "version": "1.15.0",
@@ -1823,13 +1823,13 @@
     },
     "VerifiableCredentialWrapper": {
       "title": "VerifiableCredentialWrapper",
-      "description": "Optional W3C Verifiable Credential envelope conforming to W3C VC Data Model 2.0 (W3C Recommendation, May 2024) and eIDAS 2.0 ARF §6.3. When present, the IVMS101 payload and kycProfile are transported as credentialSubject. The @context[0] uses the W3C VC DM 2.0 URL (https://www.w3.org/ns/credentials/v2).",
+      "description": "Optional W3C Verifiable Credential envelope conforming to W3C VC Data Model v1.1 (v2-compatible structure) and eIDAS 2.0 ARF §6.3. When present, the IVMS101 payload and kycProfile are transported as credentialSubject. Note: the @context[0] uses the W3C VC DM v1.1 URL; migration to the v2 URL is planned for v2.0.0.",
       "type": "object",
       "required": [
         "@context",
         "type",
         "issuer",
-        "validFrom",
+        "issuanceDate",
         "credentialSubject"
       ],
       "properties": {
@@ -1841,7 +1841,7 @@
           },
           "description": "JSON-LD context URIs.",
           "contains": {
-            "const": "https://www.w3.org/ns/credentials/v2"
+            "const": "https://www.w3.org/2018/credentials/v1"
           }
         },
         "id": {
@@ -1882,6 +1882,16 @@
             }
           ],
           "description": "DID or URL of the issuing institution."
+        },
+        "issuanceDate": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 datetime of credential issuance."
+        },
+        "expirationDate": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 datetime when the credential expires."
         },
         "credentialSubject": {
           "type": "object",
@@ -2085,16 +2095,6 @@
               "description": "Human-readable note about the SD-JWT presentation context."
             }
           }
-        },
-        "validFrom": {
-          "type": "string",
-          "format": "date-time",
-          "description": "ISO 8601 datetime when the credential becomes valid (W3C VC DM 2.0 validFrom, replaces v1.1 issuanceDate)."
-        },
-        "validUntil": {
-          "type": "string",
-          "format": "date-time",
-          "description": "ISO 8601 datetime when the credential expires (W3C VC DM 2.0 validUntil, replaces v1.1 expirationDate)."
         }
       }
     },

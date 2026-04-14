@@ -1,10 +1,10 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://openkycaml.org/schema/v1.18.0/kyc-aml-hybrid-extended.json",
+  "$id": "https://openkycaml.org/schema/v1.15.0/kyc-aml-hybrid-extended.json",
   "title": "OpenKYCAML Hybrid KYC/AML Schema",
   "description": "Root OpenKYCAML document. At least one of 'ivms101' or 'verifiableCredential' MUST be present.",
-  "version": "1.17.0",
-  "x-changelog": "v1.18.0: W3C VC Data Model 2.0 upgrade — upgraded VerifiableCredentialWrapper from W3C VC DM v1.1 to W3C VC DM 2.0 (W3C Recommendation, May 2024): @context[0] const changed from https://www.w3.org/2018/credentials/v1 to https://www.w3.org/ns/credentials/v2; issuanceDate renamed to validFrom (required); expirationDate renamed to validUntil (optional); description updated to reflect v2.0 compliance. All deferred 'planned for v2.0.0' notes removed. Fully backward-compatible for new issuers; existing payloads must update context URL and field names. | v1.17.0: Array-grouping enhancements (12 items): PersonIdentifier $def + NaturalPerson.naturalPersonIdentifiers[]; LegalPerson.legalNationalIdentifiers[]; KYCProfile.pepStatuses[]; NaturalPerson.countriesOfResidence[]; NaturalPerson.nationalities[]; RiskRatingEntry $def + KYCProfile.riskRatingHistory[]; NaturalPerson.occupations[]; RevenueRecord $def + LegalPerson.revenueHistory[]; ConsentRecord $def + KYCProfile.consentRecords[]; EntityGovernance.parentCompanies[]; NaturalPerson.emergencyContacts[]; LegalPerson.registeredAgents[]. All additions are backward-compatible additive arrays. | v1.16.0: Added CompanyIdentifier $def (23-value identifierType enum covering DUNS, LEI, CRN_GB, SIREN_FR, SIRET_FR, HRB_DE, HRA_DE, CNPJ_BR, ABN_AU, ACN_AU, EIN_US, CIK_US, CAGE_US, PIC_EU, BVDID, ISIN, BIC, CHARITY_GB, KVK_NL, UID_AT, NIF_ES, RCS_LU, OTHER) with if/then constraint requiring identifierIssuingBody when identifierType=OTHER; LegalPerson.companyIdentifiers[] optional array (uniqueItems:true). | v1.15.0: Added root additionalProperties:false; minLength:1 on 10 critical identity string fields; root examples annotation; NaturalPerson deceasedDate conditional (allOf if/then: isDeceased:true requires deceasedDate); uniqueItems:true on NaturalPerson/LegalPerson/KYCProfile tag arrays; added messageType optional root property. Resolved version-field/$id mismatch (version field now tracks $id). Titles/descriptions on all $defs were already complete (no change). Boolean defaults deferred.",
+  "version": "1.15.0",
+  "x-changelog": "v1.15.0: Added root additionalProperties:false; minLength:1 on 10 critical identity string fields; root examples annotation; NaturalPerson deceasedDate conditional (allOf if/then: isDeceased:true requires deceasedDate); uniqueItems:true on NaturalPerson/LegalPerson/KYCProfile tag arrays; added messageType optional root property. Resolved version-field/$id mismatch (version field now tracks $id). Titles/descriptions on all $defs were already complete (no change). Boolean defaults deferred.",
   "examples": [
     {
       "version": "1.15.0",
@@ -28,9 +28,7 @@
               }
             }
           ],
-          "accountNumber": [
-            "GB29NWBK60161331926819"
-          ]
+          "accountNumber": ["GB29NWBK60161331926819"]
         },
         "beneficiary": {
           "beneficiaryPersons": [
@@ -48,9 +46,7 @@
               }
             }
           ],
-          "accountNumber": [
-            "DE89370400440532013000"
-          ]
+          "accountNumber": ["DE89370400440532013000"]
         },
         "originatingVASP": {
           "name": "Example VASP UK Ltd.",
@@ -622,121 +618,16 @@
           "type": "object",
           "description": "Extensible key-value store for implementer-defined attributes not covered by the standard schema. Values may be any JSON type.",
           "additionalProperties": true
-        },
-        "naturalPersonIdentifiers": {
-          "type": "array",
-          "description": "Array of typed government-issued or institutional identifiers for this natural person (v1.17.0+). Allows multiple identifiers to be recorded simultaneously (e.g. passport + national ID + tax ID + driving licence). Additive alongside the legacy nationalIdentification scalar (retained as the primary IVMS 101 / travel-rule identifier). Aligns with FATF Rec. 10 CDD identification requirements and eIDAS 2.0 PID multi-identifier attribute set.",
-          "items": {
-            "$ref": "#/$defs/PersonIdentifier"
-          },
-          "uniqueItems": true,
-          "contains": {
-            "required": [
-              "isPrimary"
-            ],
-            "properties": {
-              "isPrimary": {
-                "const": true
-              }
-            }
-          },
-          "maxContains": 1
-        },
-        "countriesOfResidence": {
-          "type": "array",
-          "description": "ISO 3166-1 alpha-2 country codes for all countries in which the natural person is resident (v1.17.0+). Allows dual- or multi-residency to be recorded. Additive alongside the legacy countryOfResidence scalar (retained as the primary IVMS 101 / travel-rule residence field). Required for accurate FATCA/CRS multi-residency reporting and AMLR Art. 20 geographic-risk scoring.",
-          "items": {
-            "type": "string",
-            "pattern": "^[A-Z]{2}$",
-            "description": "ISO 3166-1 alpha-2 country code."
-          },
-          "uniqueItems": true
-        },
-        "nationalities": {
-          "type": "array",
-          "description": "ISO 3166-1 alpha-2 nationality codes for all nationalities held by the natural person (v1.17.0+). Unifies the legacy `nationality` (single alpha-2 scalar) and `nationalitiesAlpha3[]` (alpha-3 array) into a single IVMS 101-compatible array. The legacy fields are retained for backward compatibility; new implementations should use this field. EUDI PID wallets providing alpha-3 codes MUST normalise to alpha-2 before populating this field. Aligns with IVMS 101 §3.3 and eIDAS 2.0 PID attribute 'nationalities'.",
-          "items": {
-            "type": "string",
-            "pattern": "^[A-Z]{2}$",
-            "description": "ISO 3166-1 alpha-2 nationality code."
-          },
-          "uniqueItems": true,
-          "x-nationalityCodeNote": "Preferred over the legacy `nationality` and `nationalitiesAlpha3[]` fields. IVMS 101 §3.3 requires alpha-2. Normalise EUDI PID alpha-3 wallet values to alpha-2 before populating."
-        },
-        "occupations": {
-          "type": "array",
-          "description": "Array of occupation records for the natural person (v1.17.0+). Allows multiple concurrent occupations to be recorded (e.g. employed + company director + self-employed consultant). Additive alongside the legacy occupation scalar (retained as the primary single-occupation field). Use isPrimary: true on the main occupation; at most one entry may be primary.",
-          "items": {
-            "type": "object",
-            "description": "Structured occupation record aligned with ILO/ISCO categories.",
-            "properties": {
-              "occupationCode": {
-                "type": "string",
-                "description": "Broad ILO/ISCO-aligned occupation category code.",
-                "enum": [
-                  "EMPLOYED",
-                  "SELF_EMPLOYED",
-                  "BUSINESS_OWNER",
-                  "STUDENT",
-                  "RETIRED",
-                  "UNEMPLOYED",
-                  "PUBLIC_OFFICIAL",
-                  "OTHER"
-                ]
-              },
-              "occupationDescription": {
-                "type": "string",
-                "description": "Free-text occupation or job-title description.",
-                "maxLength": 200
-              },
-              "employerName": {
-                "type": "string",
-                "description": "Name of the employer or business (if occupationCode is EMPLOYED or BUSINESS_OWNER).",
-                "maxLength": 200
-              },
-              "isPrimary": {
-                "type": "boolean",
-                "description": "Whether this is the primary / declared occupation for CDD purposes. At most one item should set isPrimary: true."
-              }
-            },
-            "additionalProperties": false
-          },
-          "contains": {
-            "required": [
-              "isPrimary"
-            ],
-            "properties": {
-              "isPrimary": {
-                "const": true
-              }
-            }
-          },
-          "maxContains": 1
-        },
-        "emergencyContacts": {
-          "type": "array",
-          "description": "Array of emergency contacts / next-of-kin for the natural person (v1.17.0+). Additive alongside the legacy emergencyContact scalar (retained as the primary contact). GDPR Art. 9 may apply depending on relationship data disclosed.",
-          "items": {
-            "$ref": "#/$defs/EmergencyContact"
-          }
         }
       },
       "allOf": [
         {
           "if": {
-            "properties": {
-              "isDeceased": {
-                "const": true
-              }
-            },
-            "required": [
-              "isDeceased"
-            ]
+            "properties": { "isDeceased": { "const": true } },
+            "required": ["isDeceased"]
           },
           "then": {
-            "required": [
-              "deceasedDate"
-            ]
+            "required": ["deceasedDate"]
           }
         }
       ]
@@ -1126,14 +1017,6 @@
           "type": "string",
           "description": "Fax number in E.164 format."
         },
-        "companyIdentifiers": {
-          "type": "array",
-          "description": "Array of typed company / legal-entity identifiers from any registry or commercial data provider. Supports multiple identifiers per entity (e.g. a D-U-N-S number plus a Companies House CRN plus a BvD Orbis ID). Each entry carries the identifier type, value, issuing body, country, and optional verification metadata. See CompanyIdentifier $def for the full list of supported identifierType codes.",
-          "items": {
-            "$ref": "#/$defs/CompanyIdentifier"
-          },
-          "uniqueItems": true
-        },
         "tags": {
           "type": "array",
           "description": "Free-form tags or labels applied to this record by the implementing system.",
@@ -1147,28 +1030,6 @@
           "type": "object",
           "description": "Extensible key-value store for implementer-defined attributes not covered by the standard schema.",
           "additionalProperties": true
-        },
-        "legalNationalIdentifiers": {
-          "type": "array",
-          "description": "Array of IVMS 101 national identifiers for the legal entity (v1.17.0+). Allows multiple IVMS 101-typed identifiers to be recorded simultaneously (e.g. LEIX + MISC + ISO_20275_ELF_CODE). Additive alongside the legacy nationalIdentification scalar and the companyIdentifiers[] commercial registry array. Use nationalIdentification for the single primary IVMS 101 travel-rule identifier; use this array when the entity has additional IVMS 101-coded identifiers from different jurisdictions or registration authorities.",
-          "items": {
-            "$ref": "#/$defs/NationalIdentification"
-          },
-          "uniqueItems": true
-        },
-        "revenueHistory": {
-          "type": "array",
-          "description": "Multi-year revenue history for the legal entity (v1.17.0+). Each entry records amount, currency, fiscal year, and verification metadata. Additive alongside the legacy annualRevenue / annualRevenueCurrency / annualRevenueVerificationDate scalars (retained for the current-year primary figure). Required for AMLR Art. 29 EDD financial-profile assessments.",
-          "items": {
-            "$ref": "#/$defs/RevenueRecord"
-          }
-        },
-        "registeredAgents": {
-          "type": "array",
-          "description": "Array of registered agents and company secretaries for the legal entity (v1.17.0+). Handles offshore jurisdictions requiring multiple agents (Cayman, BVI, Jersey, Guernsey) or agent-change history. Additive alongside the legacy registeredAgent scalar (retained as the primary agent). Each item carries agentType to distinguish REGISTERED_AGENT, COMPANY_SECRETARY, RESIDENT_DIRECTOR, or OTHER roles.",
-          "items": {
-            "$ref": "#/$defs/RegisteredAgent"
-          }
         }
       },
       "allOf": [
@@ -1823,13 +1684,13 @@
     },
     "VerifiableCredentialWrapper": {
       "title": "VerifiableCredentialWrapper",
-      "description": "Optional W3C Verifiable Credential envelope conforming to W3C VC Data Model 2.0 (W3C Recommendation, May 2024) and eIDAS 2.0 ARF §6.3. When present, the IVMS101 payload and kycProfile are transported as credentialSubject. The @context[0] uses the W3C VC DM 2.0 URL (https://www.w3.org/ns/credentials/v2).",
+      "description": "Optional W3C Verifiable Credential envelope conforming to W3C VC Data Model v1.1 (v2-compatible structure) and eIDAS 2.0 ARF §6.3. When present, the IVMS101 payload and kycProfile are transported as credentialSubject. Note: the @context[0] uses the W3C VC DM v1.1 URL; migration to the v2 URL is planned for v2.0.0.",
       "type": "object",
       "required": [
         "@context",
         "type",
         "issuer",
-        "validFrom",
+        "issuanceDate",
         "credentialSubject"
       ],
       "properties": {
@@ -1841,7 +1702,7 @@
           },
           "description": "JSON-LD context URIs.",
           "contains": {
-            "const": "https://www.w3.org/ns/credentials/v2"
+            "const": "https://www.w3.org/2018/credentials/v1"
           }
         },
         "id": {
@@ -1882,6 +1743,16 @@
             }
           ],
           "description": "DID or URL of the issuing institution."
+        },
+        "issuanceDate": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 datetime of credential issuance."
+        },
+        "expirationDate": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 datetime when the credential expires."
         },
         "credentialSubject": {
           "type": "object",
@@ -2085,16 +1956,6 @@
               "description": "Human-readable note about the SD-JWT presentation context."
             }
           }
-        },
-        "validFrom": {
-          "type": "string",
-          "format": "date-time",
-          "description": "ISO 8601 datetime when the credential becomes valid (W3C VC DM 2.0 validFrom, replaces v1.1 issuanceDate)."
-        },
-        "validUntil": {
-          "type": "string",
-          "format": "date-time",
-          "description": "ISO 8601 datetime when the credential expires (W3C VC DM 2.0 validUntil, replaces v1.1 expirationDate)."
         }
       }
     },
@@ -3727,28 +3588,6 @@
           "type": "object",
           "description": "Extensible key-value store for implementer-defined KYC profile attributes.",
           "additionalProperties": true
-        },
-        "pepStatuses": {
-          "type": "array",
-          "description": "Array of PEP screening results (v1.17.0+). A person may simultaneously hold multiple PEP roles (e.g. spouse of PEP + former domestic PEP + close associate of a second PEP). Each item records an independent screening result with its own pepCategory, pepRole, screeningDate, and screeningProvider. Additive alongside the legacy pepStatus scalar (retained as the primary / single-role field). Aligns with FATF Rec. 12 EDD requirements and Wolfsberg CBDDQ PEP disclosure obligations.",
-          "items": {
-            "$ref": "#/$defs/PEPStatus"
-          },
-          "uniqueItems": true
-        },
-        "riskRatingHistory": {
-          "type": "array",
-          "description": "Chronological history of risk rating assessments (v1.17.0+). Each entry records a point-in-time rating with date, score, methodology, and reason for change. Enables BCBS 239-compliant audit trails and AMLR Art. 21 periodic-review evidence. The current rating remains in customerRiskRating / riskRatingDetail; this array carries the historical record.",
-          "items": {
-            "$ref": "#/$defs/RiskRatingEntry"
-          }
-        },
-        "consentRecords": {
-          "type": "array",
-          "description": "Array of per-purpose consent event records (v1.17.0+). Maintains a full GDPR Art. 7 consent audit trail across multiple processing purposes and time periods. Additive alongside the legacy consentRecord object (retained for backward compatibility). Each entry is an independent consent event for a single processing purpose.",
-          "items": {
-            "$ref": "#/$defs/ConsentRecord"
-          }
         }
       }
     },
@@ -5340,14 +5179,6 @@
           "type": "string",
           "pattern": "^[0-9A-Z]{18}[0-9]{2}$",
           "description": "LEI of the group holding company. 20-character alphanumeric ISO 17442 format."
-        },
-        "parentCompanies": {
-          "type": "array",
-          "description": "Array of parent company references (v1.17.0+). Handles joint-venture parents, dual-listed holding structures, or entities with multiple co-owners. Additive alongside the legacy parentCompany scalar (retained as the single immediate-parent reference). Aligns with FATF Rec. 24 beneficial-ownership chain disclosure.",
-          "items": {
-            "$ref": "#/$defs/EntityReference"
-          },
-          "uniqueItems": true
         }
       },
       "additionalProperties": false
@@ -5759,11 +5590,7 @@
         "mrzLength": {
           "type": "integer",
           "description": "Total character count of the Machine Readable Zone as scanned. Used to cross-validate document type: 88 characters = TD3 (passport, ICAO 9303 Part 4); 90 characters = TD1 (national identity card, ICAO 9303 Part 5); 72 characters = TD2. Persisted as mrz_length in amlData.",
-          "enum": [
-            72,
-            88,
-            90
-          ]
+          "enum": [72, 88, 90]
         },
         "photoImage": {
           "type": "string",
@@ -5789,10 +5616,7 @@
         "sdJwtDisclosureMap": {
           "type": "object",
           "description": "SD-JWT selective disclosure map summarising which claims were disclosed and which were withheld in this presentation. Supports GDPR data minimisation audits and FATF mandatory-disclosure compliance checks. Persisted as sdJwtDisclosureMap in amlData.",
-          "required": [
-            "disclosed",
-            "withheld"
-          ],
+          "required": ["disclosed", "withheld"],
           "properties": {
             "disclosed": {
               "type": "array",
@@ -5824,391 +5648,6 @@
           "type": "string",
           "description": "Human-readable name of the relying party organisation that received the credential presentation. Included in AML records for human-readable audit trails. Persisted as tenantName in amlData.",
           "maxLength": 256
-        }
-      }
-    },
-    "CompanyIdentifier": {
-      "title": "CompanyIdentifier",
-      "description": "A typed company / legal-entity identifier from any registry or commercial data provider (e.g. D&B D-U-N-S, Companies House CRN, GLEIF LEI, BvD Orbis ID). Use an array of these on LegalPerson.companyIdentifiers[] to carry multiple identifiers from different sources.",
-      "type": "object",
-      "required": [
-        "identifierType",
-        "identifierValue"
-      ],
-      "properties": {
-        "identifierType": {
-          "type": "string",
-          "description": "Type code for the company identifier. DUNS=Dun & Bradstreet D-U-N-S Number; LEI=GLEIF Legal Entity Identifier (ISO 17442); CRN_GB=UK Companies House registration number; SIREN_FR=French INSEE SIREN (9-digit); SIRET_FR=French INSEE SIRET (14-digit); HRB_DE=German Handelsregister B (GmbH/AG); HRA_DE=German Handelsregister A (OHG/KG); CNPJ_BR=Brazilian Receita Federal CNPJ; ABN_AU=Australian Business Number (ATO); ACN_AU=Australian Company Number (ASIC); EIN_US=US IRS Employer Identification Number; CIK_US=US SEC EDGAR Central Index Key; CAGE_US=US DoD CAGE Code (SAM.gov); PIC_EU=EU Funding & Tenders Portal Participant Identification Code; BVDID=Bureau van Dijk (Moody's Orbis) entity identifier; ISIN=ISO 6166 International Securities Identification Number; BIC=SWIFT Business Identifier Code (ISO 9362); CHARITY_GB=UK Charity Commission registration number; KVK_NL=Netherlands Chamber of Commerce (KvK) number; UID_AT=Austrian Umsatzsteueridentifikationsnummer (ATU-number); NIF_ES=Spanish Número de Identificación Fiscal / CIF; RCS_LU=Luxembourg Registre de Commerce et des Sociétés number; OTHER=Catch-all — requires identifierIssuingBody.",
-          "enum": [
-            "DUNS",
-            "LEI",
-            "CRN_GB",
-            "SIREN_FR",
-            "SIRET_FR",
-            "HRB_DE",
-            "HRA_DE",
-            "CNPJ_BR",
-            "ABN_AU",
-            "ACN_AU",
-            "EIN_US",
-            "CIK_US",
-            "CAGE_US",
-            "PIC_EU",
-            "BVDID",
-            "ISIN",
-            "BIC",
-            "CHARITY_GB",
-            "KVK_NL",
-            "UID_AT",
-            "NIF_ES",
-            "RCS_LU",
-            "OTHER"
-          ]
-        },
-        "identifierValue": {
-          "type": "string",
-          "description": "The actual identifier string as issued by the registering authority (e.g. '123456789' for DUNS, 'GB12345678' for CRN_GB).",
-          "minLength": 1,
-          "maxLength": 100
-        },
-        "identifierIssuingBody": {
-          "type": "string",
-          "description": "Name of the issuing authority or registry. Required when identifierType is OTHER; optional but recommended for all types to improve auditability.",
-          "maxLength": 200
-        },
-        "countryOfIssue": {
-          "type": "string",
-          "description": "ISO 3166-1 alpha-2 country code of the issuing authority.",
-          "pattern": "^[A-Z]{2}$"
-        },
-        "verificationDate": {
-          "type": "string",
-          "format": "date",
-          "description": "Date on which this identifier was last verified against the issuing registry (ISO 8601 YYYY-MM-DD)."
-        },
-        "verificationSource": {
-          "type": "string",
-          "description": "URI or name of the source used to verify this identifier (e.g. 'https://www.dnb.com' or 'Companies House API').",
-          "maxLength": 500
-        }
-      },
-      "if": {
-        "properties": {
-          "identifierType": {
-            "const": "OTHER"
-          }
-        },
-        "required": [
-          "identifierType"
-        ]
-      },
-      "then": {
-        "required": [
-          "identifierIssuingBody"
-        ],
-        "properties": {
-          "identifierIssuingBody": {
-            "minLength": 1
-          }
-        }
-      }
-    },
-    "PersonIdentifier": {
-      "title": "PersonIdentifier",
-      "description": "A typed government-issued or institutional identifier for a natural person. Use an array of these on NaturalPerson.naturalPersonIdentifiers[] to carry multiple identifiers simultaneously (e.g. passport + national ID card + tax number). Extends the IVMS 101 NationalIdentifierType codes with additional government-document codes and full verification metadata.",
-      "type": "object",
-      "required": [
-        "identifierType",
-        "identifierValue"
-      ],
-      "properties": {
-        "identifierType": {
-          "type": "string",
-          "description": "Type code for the person identifier. CCPT=Passport; IDCD=Identity Card / National ID; ARNU=Alien Registration Number; DRLC=Driver Licence; TXID=Tax Identification Number (TIN); SOCS=Social Security Number / National Insurance Number; FIIN=Foreign Investment Identity Number; RAID=Registration Authority Identifier (eIDAS / EUDI PID); LEIX=Legal Entity Identifier (sole trader); BTHC=Birth Certificate Number; VDOC=Voter ID / Electoral Roll number; RESI=Residence Permit / Visa Number; HLTH=Health / Medical Insurance Number; MILN=Military ID Number; EMPL=Employer-issued staff ID; MISC=Miscellaneous / catch-all (requires identifierIssuingBody); OTHER=Non-enumerated type (requires identifierIssuingBody).",
-          "enum": [
-            "CCPT",
-            "IDCD",
-            "ARNU",
-            "DRLC",
-            "TXID",
-            "SOCS",
-            "FIIN",
-            "RAID",
-            "LEIX",
-            "BTHC",
-            "VDOC",
-            "RESI",
-            "HLTH",
-            "MILN",
-            "EMPL",
-            "MISC",
-            "OTHER"
-          ]
-        },
-        "identifierValue": {
-          "type": "string",
-          "description": "The actual identifier value as issued (e.g. 'P123456789' for a passport number).",
-          "minLength": 1,
-          "maxLength": 100
-        },
-        "identifierIssuingBody": {
-          "type": "string",
-          "description": "Name of the issuing authority (e.g. 'HM Passport Office', 'DVLA', 'HMRC'). Required when identifierType is MISC or OTHER.",
-          "maxLength": 200
-        },
-        "countryOfIssue": {
-          "type": "string",
-          "description": "ISO 3166-1 alpha-2 country code of the issuing authority.",
-          "pattern": "^[A-Z]{2}$"
-        },
-        "expiryDate": {
-          "type": "string",
-          "format": "date",
-          "description": "Document expiry date (ISO 8601 YYYY-MM-DD). Applicable to passports, driving licences, residence permits."
-        },
-        "isPrimary": {
-          "type": "boolean",
-          "description": "Whether this is the primary identifier used for CDD purposes. At most one item in naturalPersonIdentifiers[] should set isPrimary: true."
-        },
-        "verificationDate": {
-          "type": "string",
-          "format": "date",
-          "description": "Date on which this identifier was last verified against an authoritative source (ISO 8601 YYYY-MM-DD)."
-        },
-        "verificationSource": {
-          "type": "string",
-          "description": "URI or name of the source used to verify this identifier (e.g. 'DVLA VEDI', 'HM Passport Office', 'HMRC RTI').",
-          "maxLength": 500
-        },
-        "verifyingDocumentRef": {
-          "type": "string",
-          "format": "uri",
-          "description": "Reference to a document record in identityDocuments.naturalPersonDocuments[] that provided evidence for this identifier."
-        },
-        "registrationAuthorityDetail": {
-          "$ref": "#/$defs/RegistrationAuthorityDetail",
-          "description": "Structured GLEIF RAL reference (required when identifierType is RAID or LEIX)."
-        }
-      },
-      "if": {
-        "properties": {
-          "identifierType": {
-            "enum": [
-              "MISC",
-              "OTHER"
-            ]
-          }
-        },
-        "required": [
-          "identifierType"
-        ]
-      },
-      "then": {
-        "required": [
-          "identifierIssuingBody"
-        ],
-        "properties": {
-          "identifierIssuingBody": {
-            "minLength": 1
-          }
-        }
-      }
-    },
-    "RiskRatingEntry": {
-      "title": "RiskRatingEntry",
-      "description": "A point-in-time risk rating record for use in riskRatingHistory[]. Captures the assigned rating, numeric score, date, methodology reference, and reason for change. Enables BCBS 239-compliant audit trails for periodic and event-driven risk re-assessments (AMLR Art. 21).",
-      "type": "object",
-      "required": [
-        "customerRiskRating",
-        "riskRatingDate"
-      ],
-      "properties": {
-        "customerRiskRating": {
-          "type": "string",
-          "description": "The risk rating assigned at this point in time.",
-          "enum": [
-            "LOW",
-            "MEDIUM",
-            "HIGH",
-            "VERY_HIGH",
-            "UNRATED"
-          ]
-        },
-        "riskScore": {
-          "type": "integer",
-          "minimum": 0,
-          "maximum": 1000,
-          "description": "Numeric risk score (0-1000) at this point in time."
-        },
-        "riskRatingDate": {
-          "type": "string",
-          "format": "date",
-          "description": "Date when this rating was assigned (ISO 8601 YYYY-MM-DD)."
-        },
-        "ratingMethodology": {
-          "type": "string",
-          "description": "Reference to the risk rating methodology applied.",
-          "maxLength": 200
-        },
-        "ratingChangedBy": {
-          "type": "string",
-          "description": "User ID or system identifier that assigned this rating.",
-          "maxLength": 100
-        },
-        "ratingChangeReason": {
-          "type": "string",
-          "description": "Reason for the rating change (e.g. 'PERIODIC_REVIEW', 'EDD_TRIGGERED', 'PEP_IDENTIFIED', 'SAR_FILED').",
-          "maxLength": 500
-        },
-        "riskFactors": {
-          "type": "object",
-          "description": "Breakdown of individual risk factor scores at this point in time.",
-          "properties": {
-            "geographicRisk": {
-              "type": "string",
-              "enum": [
-                "LOW",
-                "MEDIUM",
-                "HIGH",
-                "VERY_HIGH"
-              ]
-            },
-            "productRisk": {
-              "type": "string",
-              "enum": [
-                "LOW",
-                "MEDIUM",
-                "HIGH",
-                "VERY_HIGH"
-              ]
-            },
-            "channelRisk": {
-              "type": "string",
-              "enum": [
-                "LOW",
-                "MEDIUM",
-                "HIGH",
-                "VERY_HIGH"
-              ]
-            },
-            "customerTypeRisk": {
-              "type": "string",
-              "enum": [
-                "LOW",
-                "MEDIUM",
-                "HIGH",
-                "VERY_HIGH"
-              ]
-            },
-            "transactionRisk": {
-              "type": "string",
-              "enum": [
-                "LOW",
-                "MEDIUM",
-                "HIGH",
-                "VERY_HIGH"
-              ]
-            }
-          }
-        }
-      }
-    },
-    "RevenueRecord": {
-      "title": "RevenueRecord",
-      "description": "A point-in-time annual revenue record for a legal entity. Allows revenue history to be maintained across fiscal years for AMLR Art. 29 EDD financial-profile assessments and Wolfsberg CBDDQ entity-revenue tracking.",
-      "type": "object",
-      "required": [
-        "amount",
-        "currency"
-      ],
-      "additionalProperties": false,
-      "properties": {
-        "amount": {
-          "type": "number",
-          "minimum": 0,
-          "description": "Annual revenue / turnover amount."
-        },
-        "currency": {
-          "type": "string",
-          "pattern": "^[A-Z]{3}$",
-          "description": "ISO 4217 three-letter currency code (e.g. USD, EUR, GBP)."
-        },
-        "fiscalYear": {
-          "type": "integer",
-          "minimum": 1900,
-          "maximum": 2100,
-          "description": "Fiscal year to which this revenue figure relates (e.g. 2023)."
-        },
-        "verificationDate": {
-          "type": "string",
-          "format": "date",
-          "description": "Date on which this revenue figure was last verified (ISO 8601 YYYY-MM-DD)."
-        },
-        "verificationSource": {
-          "type": "string",
-          "description": "Source of the revenue figure (e.g. 'AUDITED_ACCOUNTS', 'MANAGEMENT_ACCOUNTS', 'SELF_DECLARED', 'COMPANIES_HOUSE').",
-          "maxLength": 200
-        }
-      }
-    },
-    "ConsentRecord": {
-      "title": "ConsentRecord",
-      "description": "A single data-privacy consent event record per processing purpose. Use consentRecords[] to maintain a full GDPR Art. 7 consent audit trail across multiple purposes and time periods.",
-      "type": "object",
-      "required": [
-        "consentPurpose",
-        "consentGiven",
-        "consentDate"
-      ],
-      "additionalProperties": false,
-      "properties": {
-        "consentPurpose": {
-          "type": "string",
-          "description": "The specific processing purpose for which this consent is recorded (e.g. 'AML_SCREENING', 'DATA_SHARING_TRAVEL_RULE', 'THIRD_PARTY_CDD', 'MARKETING', 'PROFILING').",
-          "minLength": 1,
-          "maxLength": 200
-        },
-        "consentGiven": {
-          "type": "boolean",
-          "description": "Whether consent was given (true) or refused / not obtained (false)."
-        },
-        "consentDate": {
-          "type": "string",
-          "format": "date-time",
-          "description": "ISO 8601 date-time when consent was given or refused."
-        },
-        "consentWithdrawnDate": {
-          "type": "string",
-          "format": "date-time",
-          "description": "ISO 8601 date-time when consent was withdrawn, if applicable."
-        },
-        "consentMethod": {
-          "type": "string",
-          "description": "How consent was obtained.",
-          "enum": [
-            "WRITTEN",
-            "ELECTRONIC",
-            "VERBAL",
-            "IMPLICIT",
-            "OTHER"
-          ]
-        },
-        "consentReference": {
-          "type": "string",
-          "description": "Reference to the consent form, terms version, or policy document under which consent was given.",
-          "maxLength": 500
-        },
-        "legalBasis": {
-          "type": "string",
-          "description": "GDPR Art. 6 legal basis for processing: CONSENT (Art.6(1)(a)), CONTRACT (Art.6(1)(b)), LEGAL_OBLIGATION (Art.6(1)(c)), VITAL_INTERESTS (Art.6(1)(d)), PUBLIC_TASK (Art.6(1)(e)), LEGITIMATE_INTERESTS (Art.6(1)(f)).",
-          "enum": [
-            "CONSENT",
-            "CONTRACT",
-            "LEGAL_OBLIGATION",
-            "VITAL_INTERESTS",
-            "PUBLIC_TASK",
-            "LEGITIMATE_INTERESTS"
-          ]
         }
       }
     }

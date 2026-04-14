@@ -1,0 +1,893 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://openkycaml.org/schema/v1.0.0/kyc-aml-hybrid-extended.json",
+  "title": "OpenKYCAML Hybrid KYC/AML Schema",
+  "description": "A neutral, open hybrid KYC/AML data standard that combines IVMS 101 natural-person and legal-entity payloads with optional eIDAS 2.0 Verifiable Credential wrapping and a full kycProfile section covering risk classification, screening results, beneficial ownership, and monitoring metadata. Fully backward-compatible with the IVMS 101 specification.",
+  "version": "1.0.0",
+  "$defs": {
+    "NaturalPersonNameIdentifier": {
+      "title": "NaturalPersonNameIdentifier",
+      "description": "Structured name components for a natural person (IVMS 101 §3.2).",
+      "type": "object",
+      "required": ["primaryIdentifier", "nameIdentifierType"],
+      "properties": {
+        "primaryIdentifier": {
+          "type": "string",
+          "description": "Family name / surname of the natural person.",
+          "maxLength": 100
+        },
+        "secondaryIdentifier": {
+          "type": "string",
+          "description": "Given name(s) / forename(s) of the natural person.",
+          "maxLength": 100
+        },
+        "nameIdentifierType": {
+          "type": "string",
+          "description": "IVMS 101 NameIdentifierType code.",
+          "enum": ["ALIA", "BIRT", "MAID", "LEGL", "MISC"]
+        }
+      }
+    },
+    "Address": {
+      "title": "Address",
+      "description": "Structured postal address (IVMS 101 §3.5).",
+      "type": "object",
+      "required": ["addressType", "country"],
+      "properties": {
+        "addressType": {
+          "type": "string",
+          "description": "IVMS 101 AddressType code.",
+          "enum": ["HOME", "BIZZ", "GEOG"]
+        },
+        "department": { "type": "string", "maxLength": 70 },
+        "subDepartment": { "type": "string", "maxLength": 70 },
+        "streetName": { "type": "string", "maxLength": 70 },
+        "buildingNumber": { "type": "string", "maxLength": 16 },
+        "buildingName": { "type": "string", "maxLength": 35 },
+        "floor": { "type": "string", "maxLength": 70 },
+        "postBox": { "type": "string", "maxLength": 16 },
+        "room": { "type": "string", "maxLength": 70 },
+        "postCode": { "type": "string", "maxLength": 16 },
+        "townName": { "type": "string", "maxLength": 35 },
+        "townLocationName": { "type": "string", "maxLength": 35 },
+        "districtName": { "type": "string", "maxLength": 35 },
+        "countrySubDivision": { "type": "string", "maxLength": 35 },
+        "country": {
+          "type": "string",
+          "description": "ISO 3166-1 alpha-2 country code.",
+          "pattern": "^[A-Z]{2}$"
+        },
+        "addressLine": {
+          "type": "array",
+          "items": { "type": "string", "maxLength": 70 },
+          "maxItems": 7,
+          "description": "Unstructured address lines (up to 7), used when structured fields are unavailable."
+        }
+      }
+    },
+    "NationalIdentification": {
+      "title": "NationalIdentification",
+      "description": "National identification document (IVMS 101 §3.6).",
+      "type": "object",
+      "required": ["nationalIdentifier", "nationalIdentifierType"],
+      "properties": {
+        "nationalIdentifier": {
+          "type": "string",
+          "description": "Identifier value (e.g., passport number, tax ID).",
+          "maxLength": 35
+        },
+        "nationalIdentifierType": {
+          "type": "string",
+          "description": "IVMS 101 NationalIdentifierType code.",
+          "enum": ["ARNU", "CCPT", "RAID", "DRLC", "FIIN", "TXID", "SOCS", "IDCD", "LEIX", "MISC"]
+        },
+        "countryOfIssue": {
+          "type": "string",
+          "description": "ISO 3166-1 alpha-2 country code of issuing country.",
+          "pattern": "^[A-Z]{2}$"
+        },
+        "registrationAuthority": {
+          "type": "string",
+          "description": "Registration authority (required when nationalIdentifierType is LEIX).",
+          "maxLength": 8
+        }
+      }
+    },
+    "DateAndPlaceOfBirth": {
+      "title": "DateAndPlaceOfBirth",
+      "description": "Birth information for a natural person (IVMS 101 §3.3).",
+      "type": "object",
+      "required": ["dateOfBirth", "placeOfBirth"],
+      "properties": {
+        "dateOfBirth": {
+          "type": "string",
+          "format": "date",
+          "description": "Date of birth in ISO 8601 format (YYYY-MM-DD)."
+        },
+        "placeOfBirth": {
+          "type": "string",
+          "description": "City or municipality of birth.",
+          "maxLength": 70
+        }
+      }
+    },
+    "NaturalPerson": {
+      "title": "NaturalPerson",
+      "description": "IVMS 101 NaturalPerson entity.",
+      "type": "object",
+      "required": ["name"],
+      "properties": {
+        "name": {
+          "type": "object",
+          "description": "Name of the natural person.",
+          "required": ["nameIdentifiers"],
+          "properties": {
+            "nameIdentifiers": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/NaturalPersonNameIdentifier" },
+              "minItems": 1,
+              "description": "One or more name identifiers for the natural person."
+            },
+            "localNameIdentifiers": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/NaturalPersonNameIdentifier" },
+              "description": "Local-script name identifiers."
+            },
+            "phoneticNameIdentifiers": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/NaturalPersonNameIdentifier" },
+              "description": "Phonetic name identifiers."
+            }
+          }
+        },
+        "geographicAddresses": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/Address" },
+          "description": "Geographic address(es) of the natural person."
+        },
+        "nationalIdentification": {
+          "$ref": "#/$defs/NationalIdentification",
+          "description": "Primary national identification document."
+        },
+        "customerIdentification": {
+          "type": "string",
+          "description": "Internal customer reference number assigned by the originating VASP/institution.",
+          "maxLength": 50
+        },
+        "dateAndPlaceOfBirth": {
+          "$ref": "#/$defs/DateAndPlaceOfBirth"
+        },
+        "countryOfResidence": {
+          "type": "string",
+          "description": "ISO 3166-1 alpha-2 country of residence.",
+          "pattern": "^[A-Z]{2}$"
+        }
+      }
+    },
+    "LegalPersonNameIdentifier": {
+      "title": "LegalPersonNameIdentifier",
+      "description": "Structured name identifier for a legal person (IVMS 101 §3.8).",
+      "type": "object",
+      "required": ["legalPersonName", "legalPersonNameIdentifierType"],
+      "properties": {
+        "legalPersonName": {
+          "type": "string",
+          "description": "Registered legal name of the entity.",
+          "maxLength": 100
+        },
+        "legalPersonNameIdentifierType": {
+          "type": "string",
+          "description": "IVMS 101 LegalPersonNameIdentifierType code.",
+          "enum": ["LEGL", "SHRT", "TRAD"]
+        }
+      }
+    },
+    "LegalPerson": {
+      "title": "LegalPerson",
+      "description": "IVMS 101 LegalPerson entity.",
+      "type": "object",
+      "required": ["name"],
+      "properties": {
+        "name": {
+          "type": "object",
+          "required": ["nameIdentifiers"],
+          "properties": {
+            "nameIdentifiers": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/LegalPersonNameIdentifier" },
+              "minItems": 1
+            },
+            "localNameIdentifiers": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/LegalPersonNameIdentifier" }
+            },
+            "phoneticNameIdentifiers": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/LegalPersonNameIdentifier" }
+            }
+          }
+        },
+        "geographicAddresses": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/Address" }
+        },
+        "customerIdentification": {
+          "type": "string",
+          "maxLength": 50
+        },
+        "nationalIdentification": {
+          "$ref": "#/$defs/NationalIdentification",
+          "description": "LEI or other entity identification."
+        },
+        "countryOfRegistration": {
+          "type": "string",
+          "description": "ISO 3166-1 alpha-2 country of registration.",
+          "pattern": "^[A-Z]{2}$"
+        }
+      }
+    },
+    "OriginatorBeneficiary": {
+      "title": "OriginatorBeneficiary",
+      "description": "IVMS 101 originator or beneficiary wrapper.",
+      "type": "object",
+      "properties": {
+        "originatorPersons": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "naturalPerson": { "$ref": "#/$defs/NaturalPerson" },
+              "legalPerson": { "$ref": "#/$defs/LegalPerson" }
+            },
+            "oneOf": [
+              { "required": ["naturalPerson"] },
+              { "required": ["legalPerson"] }
+            ]
+          }
+        },
+        "beneficiaryPersons": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "naturalPerson": { "$ref": "#/$defs/NaturalPerson" },
+              "legalPerson": { "$ref": "#/$defs/LegalPerson" }
+            },
+            "oneOf": [
+              { "required": ["naturalPerson"] },
+              { "required": ["legalPerson"] }
+            ]
+          }
+        },
+        "accountNumber": {
+          "type": "array",
+          "items": { "type": "string", "maxLength": 100 },
+          "description": "Account numbers or virtual asset wallet addresses."
+        }
+      }
+    },
+    "IVMS101Payload": {
+      "title": "IVMS101Payload",
+      "description": "Root IVMS 101 Travel Rule message payload.",
+      "type": "object",
+      "required": ["originator", "beneficiary", "transferredAmount"],
+      "properties": {
+        "originator": { "$ref": "#/$defs/OriginatorBeneficiary" },
+        "beneficiary": { "$ref": "#/$defs/OriginatorBeneficiary" },
+        "originatingVASP": {
+          "type": "object",
+          "description": "The VASP transmitting the Travel Rule message.",
+          "properties": {
+            "originatingVASP": { "$ref": "#/$defs/LegalPerson" }
+          }
+        },
+        "beneficiaryVASP": {
+          "type": "object",
+          "description": "The VASP receiving the Travel Rule message.",
+          "properties": {
+            "beneficiaryVASP": { "$ref": "#/$defs/LegalPerson" }
+          }
+        },
+        "transferredAmount": {
+          "type": "object",
+          "description": "Value and asset type of the transfer.",
+          "required": ["amount", "assetType"],
+          "properties": {
+            "amount": {
+              "type": "string",
+              "description": "Transfer amount as a decimal string.",
+              "pattern": "^[0-9]+(\\.[0-9]+)?$"
+            },
+            "assetType": {
+              "type": "string",
+              "description": "Asset type code (e.g., BTC, ETH, USD, EUR).",
+              "maxLength": 20
+            }
+          }
+        }
+      }
+    },
+    "VerifiableCredentialProof": {
+      "title": "VerifiableCredentialProof",
+      "description": "Cryptographic proof section conforming to W3C VC Data Model v2 / eIDAS 2.0 ARF.",
+      "type": "object",
+      "required": ["type", "created", "verificationMethod", "proofPurpose"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "Proof type (e.g., Ed25519Signature2020, JsonWebSignature2020).",
+          "examples": ["Ed25519Signature2020", "JsonWebSignature2020", "DataIntegrityProof"]
+        },
+        "created": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 datetime when the proof was created."
+        },
+        "verificationMethod": {
+          "type": "string",
+          "format": "uri",
+          "description": "DID URL of the key used to create the proof."
+        },
+        "proofPurpose": {
+          "type": "string",
+          "description": "Purpose of the proof.",
+          "enum": ["assertionMethod", "authentication", "keyAgreement", "capabilityInvocation", "capabilityDelegation"]
+        },
+        "proofValue": {
+          "type": "string",
+          "description": "Base58- or Base64url-encoded proof value."
+        },
+        "jws": {
+          "type": "string",
+          "description": "JSON Web Signature (compact serialization) for JsonWebSignature2020."
+        }
+      }
+    },
+    "VerifiableCredentialWrapper": {
+      "title": "VerifiableCredentialWrapper",
+      "description": "Optional W3C Verifiable Credential envelope conforming to W3C VC Data Model v2 and eIDAS 2.0 ARF §6.3. When present, the IVMS101 payload and kycProfile are transported as credentialSubject.",
+      "type": "object",
+      "required": ["@context", "type", "issuer", "issuanceDate", "credentialSubject"],
+      "properties": {
+        "@context": {
+          "type": "array",
+          "items": { "type": "string", "format": "uri" },
+          "description": "JSON-LD context URIs.",
+          "contains": { "const": "https://www.w3.org/2018/credentials/v1" }
+        },
+        "id": {
+          "type": "string",
+          "format": "uri",
+          "description": "Unique identifier for this Verifiable Credential."
+        },
+        "type": {
+          "type": "array",
+          "items": { "type": "string" },
+          "contains": { "const": "VerifiableCredential" },
+          "description": "Credential type(s)."
+        },
+        "issuer": {
+          "oneOf": [
+            { "type": "string", "format": "uri" },
+            {
+              "type": "object",
+              "required": ["id"],
+              "properties": {
+                "id": { "type": "string", "format": "uri" },
+                "name": { "type": "string" }
+              }
+            }
+          ],
+          "description": "DID or URL of the issuing institution."
+        },
+        "issuanceDate": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 datetime of credential issuance."
+        },
+        "expirationDate": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 datetime when the credential expires."
+        },
+        "credentialSubject": {
+          "type": "object",
+          "description": "The subject of this credential. Contains the OpenKYCAML payload.",
+          "properties": {
+            "id": {
+              "type": "string",
+              "format": "uri",
+              "description": "DID of the credential subject (the customer)."
+            }
+          }
+        },
+        "credentialStatus": {
+          "type": "object",
+          "description": "Credential revocation status endpoint.",
+          "required": ["id", "type"],
+          "properties": {
+            "id": { "type": "string", "format": "uri" },
+            "type": { "type": "string", "examples": ["StatusList2021Entry", "RevocationList2020Status"] }
+          }
+        },
+        "credentialSchema": {
+          "type": "object",
+          "required": ["id", "type"],
+          "properties": {
+            "id": { "type": "string", "format": "uri" },
+            "type": { "type": "string", "const": "JsonSchemaValidator2018" }
+          }
+        },
+        "proof": { "$ref": "#/$defs/VerifiableCredentialProof" }
+      }
+    },
+    "PEPStatus": {
+      "title": "PEPStatus",
+      "description": "Politically Exposed Person screening result.",
+      "type": "object",
+      "required": ["isPEP"],
+      "properties": {
+        "isPEP": {
+          "type": "boolean",
+          "description": "Whether the subject is classified as a PEP."
+        },
+        "pepCategory": {
+          "type": "string",
+          "description": "PEP classification category.",
+          "enum": ["DOMESTIC_PEP", "FOREIGN_PEP", "INTERNATIONAL_ORG_PEP", "RCA", "FORMER_PEP", "NOT_PEP"]
+        },
+        "pepRole": {
+          "type": "string",
+          "description": "Specific role or position that triggers PEP classification.",
+          "maxLength": 200
+        },
+        "screeningDate": {
+          "type": "string",
+          "format": "date",
+          "description": "Date of the most recent PEP screening."
+        },
+        "screeningProvider": {
+          "type": "string",
+          "description": "Name of the screening data provider.",
+          "maxLength": 100
+        }
+      }
+    },
+    "SanctionsScreening": {
+      "title": "SanctionsScreening",
+      "description": "Sanctions list screening result.",
+      "type": "object",
+      "required": ["screeningStatus", "screeningDate"],
+      "properties": {
+        "screeningStatus": {
+          "type": "string",
+          "description": "Outcome of the sanctions screening.",
+          "enum": ["CLEAR", "HIT", "POTENTIAL_MATCH", "FALSE_POSITIVE", "PENDING"]
+        },
+        "screeningDate": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 datetime of the screening."
+        },
+        "screeningProvider": {
+          "type": "string",
+          "description": "Sanctions list provider (e.g., Refinitiv, Dow Jones, Comply Advantage).",
+          "maxLength": 100
+        },
+        "listsChecked": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Sanctions lists checked (e.g., OFAC SDN, EU Consolidated, UN Consolidated, HMT).",
+          "examples": [["OFAC_SDN", "EU_CONSOLIDATED", "UN_CONSOLIDATED", "HMT"]]
+        },
+        "matchDetails": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["listName", "matchScore"],
+            "properties": {
+              "listName": { "type": "string" },
+              "matchScore": { "type": "number", "minimum": 0, "maximum": 100 },
+              "matchedName": { "type": "string" },
+              "disposition": {
+                "type": "string",
+                "enum": ["CONFIRMED_HIT", "FALSE_POSITIVE", "UNDER_REVIEW"]
+              },
+              "reviewedBy": { "type": "string" },
+              "reviewDate": { "type": "string", "format": "date-time" }
+            }
+          }
+        }
+      }
+    },
+    "AdverseMedia": {
+      "title": "AdverseMedia",
+      "description": "Adverse media / negative news screening result.",
+      "type": "object",
+      "required": ["screeningStatus", "screeningDate"],
+      "properties": {
+        "screeningStatus": {
+          "type": "string",
+          "enum": ["CLEAR", "ADVERSE_FOUND", "UNDER_REVIEW", "FALSE_POSITIVE", "PENDING"]
+        },
+        "screeningDate": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "screeningProvider": { "type": "string", "maxLength": 100 },
+        "categories": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "FINANCIAL_CRIME", "FRAUD", "CORRUPTION", "MONEY_LAUNDERING",
+              "TERRORISM_FINANCING", "DRUG_TRAFFICKING", "HUMAN_TRAFFICKING",
+              "CYBERCRIME", "TAX_EVASION", "OTHER"
+            ]
+          },
+          "description": "Categories of adverse media found."
+        },
+        "summary": {
+          "type": "string",
+          "description": "Brief summary of adverse media findings.",
+          "maxLength": 1000
+        },
+        "articles": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "url": { "type": "string", "format": "uri" },
+              "headline": { "type": "string", "maxLength": 300 },
+              "publicationDate": { "type": "string", "format": "date" },
+              "source": { "type": "string", "maxLength": 200 }
+            }
+          }
+        }
+      }
+    },
+    "SourceOfFundsWealth": {
+      "title": "SourceOfFundsWealth",
+      "description": "Declared and verified source of funds and source of wealth.",
+      "type": "object",
+      "properties": {
+        "sourceOfFunds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "EMPLOYMENT_INCOME", "BUSINESS_INCOME", "INVESTMENT_RETURNS",
+              "INHERITANCE", "GIFT", "SALE_OF_PROPERTY", "SALE_OF_ASSETS",
+              "LOAN", "PENSION", "RENTAL_INCOME", "CRYPTOCURRENCY_GAINS", "OTHER"
+            ]
+          },
+          "description": "Declared source(s) of funds for the account or transaction."
+        },
+        "sourceOfWealthNarrative": {
+          "type": "string",
+          "description": "Free-text description of how wealth was accumulated.",
+          "maxLength": 2000
+        },
+        "verificationStatus": {
+          "type": "string",
+          "enum": ["DECLARED_ONLY", "PARTIALLY_VERIFIED", "FULLY_VERIFIED", "INCONSISTENT"],
+          "description": "Verification status of the declared source of funds/wealth."
+        },
+        "supportingDocuments": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["documentType"],
+            "properties": {
+              "documentType": {
+                "type": "string",
+                "enum": [
+                  "TAX_RETURN", "BANK_STATEMENT", "PAYSLIP", "AUDITED_ACCOUNTS",
+                  "COMPANY_ACCOUNTS", "INHERITANCE_DOCUMENTS", "SALE_AGREEMENT", "OTHER"
+                ]
+              },
+              "documentReference": { "type": "string", "maxLength": 100 },
+              "verifiedDate": { "type": "string", "format": "date" }
+            }
+          }
+        }
+      }
+    },
+    "BeneficialOwner": {
+      "title": "BeneficialOwner",
+      "description": "Ultimate Beneficial Owner (UBO) record.",
+      "type": "object",
+      "required": ["naturalPerson", "ownershipPercentage"],
+      "properties": {
+        "naturalPerson": { "$ref": "#/$defs/NaturalPerson" },
+        "ownershipPercentage": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Direct or indirect ownership percentage."
+        },
+        "ownershipType": {
+          "type": "string",
+          "enum": ["DIRECT", "INDIRECT", "BOTH"],
+          "description": "Nature of the ownership or control."
+        },
+        "controlMechanism": {
+          "type": "string",
+          "enum": ["SHAREHOLDING", "VOTING_RIGHTS", "CONTRACTUAL", "DE_FACTO_CONTROL", "OTHER"],
+          "description": "Mechanism by which control is exercised."
+        },
+        "verificationDate": { "type": "string", "format": "date" },
+        "isPEP": { "type": "boolean" }
+      }
+    },
+    "MonitoringInfo": {
+      "title": "MonitoringInfo",
+      "description": "Ongoing AML monitoring metadata.",
+      "type": "object",
+      "properties": {
+        "monitoringLevel": {
+          "type": "string",
+          "enum": ["STANDARD", "ENHANCED", "SIMPLIFIED", "CONTINUOUS"],
+          "description": "Intensity of the ongoing monitoring regime."
+        },
+        "lastReviewDate": {
+          "type": "string",
+          "format": "date",
+          "description": "Date of the last periodic review."
+        },
+        "nextReviewDate": {
+          "type": "string",
+          "format": "date",
+          "description": "Date of the next scheduled review."
+        },
+        "reviewFrequency": {
+          "type": "string",
+          "enum": ["MONTHLY", "QUARTERLY", "SEMI_ANNUAL", "ANNUAL", "BIENNIAL", "RISK_TRIGGERED"],
+          "description": "Frequency of periodic reviews."
+        },
+        "alerts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["alertId", "alertDate", "alertType", "alertStatus"],
+            "properties": {
+              "alertId": { "type": "string" },
+              "alertDate": { "type": "string", "format": "date-time" },
+              "alertType": {
+                "type": "string",
+                "enum": [
+                  "UNUSUAL_TRANSACTION", "VELOCITY_BREACH", "PATTERN_CHANGE",
+                  "SANCTIONS_HIT", "PEP_CHANGE", "ADVERSE_MEDIA", "SAR_TRIGGER", "OTHER"
+                ]
+              },
+              "alertStatus": {
+                "type": "string",
+                "enum": ["OPEN", "UNDER_REVIEW", "CLOSED_NO_ACTION", "SAR_FILED", "ESCALATED"]
+              },
+              "description": { "type": "string", "maxLength": 1000 },
+              "assignedTo": { "type": "string", "maxLength": 100 }
+            }
+          }
+        }
+      }
+    },
+    "AuditMetadata": {
+      "title": "AuditMetadata",
+      "description": "Audit trail and provenance metadata for this KYC record.",
+      "type": "object",
+      "required": ["recordCreatedAt", "recordVersion"],
+      "properties": {
+        "recordId": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Globally unique identifier for this KYC/AML record."
+        },
+        "recordCreatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 datetime when this record was first created."
+        },
+        "recordUpdatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 datetime of the most recent update."
+        },
+        "recordVersion": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Monotonically increasing version number of this record."
+        },
+        "createdBy": {
+          "type": "string",
+          "description": "Identifier of the system or operator that created this record.",
+          "maxLength": 100
+        },
+        "updatedBy": {
+          "type": "string",
+          "description": "Identifier of the system or operator that last updated this record.",
+          "maxLength": 100
+        },
+        "dataSourceSystem": {
+          "type": "string",
+          "description": "Source system identifier (e.g., core banking system, CRM, KYC platform).",
+          "maxLength": 100
+        },
+        "dataRetentionDate": {
+          "type": "string",
+          "format": "date",
+          "description": "Date after which this record may be deleted per data retention policy."
+        },
+        "changeLog": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["timestamp", "changedBy", "changeType"],
+            "properties": {
+              "timestamp": { "type": "string", "format": "date-time" },
+              "changedBy": { "type": "string", "maxLength": 100 },
+              "changeType": {
+                "type": "string",
+                "enum": ["CREATED", "UPDATED", "REVIEWED", "APPROVED", "REJECTED", "ARCHIVED"]
+              },
+              "fieldsChanged": {
+                "type": "array",
+                "items": { "type": "string" }
+              },
+              "notes": { "type": "string", "maxLength": 500 }
+            }
+          }
+        }
+      }
+    },
+    "KYCProfile": {
+      "title": "KYCProfile",
+      "description": "Full KYC/AML profile extending IVMS 101 with risk classification, screening, and monitoring data. Aligns with FATF Rec 10/16, EU AMLR Articles 22 and 26, and EBA Risk Factor Guidelines.",
+      "type": "object",
+      "properties": {
+        "customerRiskRating": {
+          "type": "object",
+          "description": "Customer risk rating and scoring.",
+          "required": ["overallRiskRating"],
+          "properties": {
+            "overallRiskRating": {
+              "type": "string",
+              "enum": ["LOW", "MEDIUM", "HIGH", "VERY_HIGH", "UNACCEPTABLE"],
+              "description": "Overall composite customer risk rating."
+            },
+            "riskScore": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 1000,
+              "description": "Numeric risk score (0–1000)."
+            },
+            "riskRatingDate": {
+              "type": "string",
+              "format": "date",
+              "description": "Date when the current risk rating was assigned."
+            },
+            "riskFactors": {
+              "type": "object",
+              "description": "Breakdown of individual risk factor scores.",
+              "properties": {
+                "geographicRisk": {
+                  "type": "string",
+                  "enum": ["LOW", "MEDIUM", "HIGH", "VERY_HIGH"]
+                },
+                "productRisk": {
+                  "type": "string",
+                  "enum": ["LOW", "MEDIUM", "HIGH", "VERY_HIGH"]
+                },
+                "channelRisk": {
+                  "type": "string",
+                  "enum": ["LOW", "MEDIUM", "HIGH", "VERY_HIGH"]
+                },
+                "customerTypeRisk": {
+                  "type": "string",
+                  "enum": ["LOW", "MEDIUM", "HIGH", "VERY_HIGH"]
+                },
+                "transactionRisk": {
+                  "type": "string",
+                  "enum": ["LOW", "MEDIUM", "HIGH", "VERY_HIGH"]
+                }
+              }
+            },
+            "ratingMethodology": {
+              "type": "string",
+              "description": "Reference to the risk rating methodology applied.",
+              "maxLength": 200
+            }
+          }
+        },
+        "customerClassification": {
+          "type": "string",
+          "description": "Regulatory or internal customer classification.",
+          "enum": [
+            "RETAIL", "CORPORATE", "FINANCIAL_INSTITUTION", "VASP",
+            "TRUST", "CHARITY_NGO", "PEP", "HIGH_NET_WORTH", "CORRESPONDENT_BANK", "OTHER"
+          ]
+        },
+        "dueDiligenceType": {
+          "type": "string",
+          "description": "Type of due diligence applied per AMLR Article 22.",
+          "enum": ["SDD", "CDD", "EDD"]
+        },
+        "pepStatus": { "$ref": "#/$defs/PEPStatus" },
+        "sanctionsScreening": { "$ref": "#/$defs/SanctionsScreening" },
+        "adverseMedia": { "$ref": "#/$defs/AdverseMedia" },
+        "sourceOfFundsWealth": { "$ref": "#/$defs/SourceOfFundsWealth" },
+        "beneficialOwnership": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/BeneficialOwner" },
+          "description": "Ultimate Beneficial Owners (UBOs). Required for legal entities per AMLR Article 26."
+        },
+        "monitoringInfo": { "$ref": "#/$defs/MonitoringInfo" },
+        "auditMetadata": { "$ref": "#/$defs/AuditMetadata" },
+        "onboardingChannel": {
+          "type": "string",
+          "enum": ["IN_PERSON", "REMOTE_VIDEO", "REMOTE_AUTOMATED", "THIRD_PARTY_CDD", "CORRESPONDENT"],
+          "description": "Channel through which the customer was onboarded (relevant to AMLR Article 22 remote onboarding requirements)."
+        },
+        "kycCompletionDate": {
+          "type": "string",
+          "format": "date",
+          "description": "Date on which the initial KYC process was completed."
+        },
+        "consentRecord": {
+          "type": "object",
+          "description": "GDPR / data privacy consent metadata.",
+          "properties": {
+            "consentGiven": { "type": "boolean" },
+            "consentDate": { "type": "string", "format": "date-time" },
+            "consentPurpose": {
+              "type": "array",
+              "items": { "type": "string" },
+              "examples": [["AML_SCREENING", "DATA_SHARING_TRAVEL_RULE", "THIRD_PARTY_CDD"]]
+            },
+            "consentWithdrawnDate": { "type": "string", "format": "date-time" }
+          }
+        }
+      }
+    }
+  },
+  "type": "object",
+  "description": "Root OpenKYCAML document. At least one of 'ivms101' or 'verifiableCredential' MUST be present.",
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "Reference to the OpenKYCAML JSON Schema URI."
+    },
+    "version": {
+      "type": "string",
+      "description": "OpenKYCAML schema version used (semantic versioning).",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$",
+      "examples": ["1.0.0"]
+    },
+    "messageId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique message identifier for deduplication and tracing."
+    },
+    "messageDateTime": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 datetime when this message was created."
+    },
+    "ivms101": {
+      "$ref": "#/$defs/IVMS101Payload",
+      "description": "IVMS 101 Travel Rule payload. Required when transmitting under FATF Recommendation 16."
+    },
+    "verifiableCredential": {
+      "$ref": "#/$defs/VerifiableCredentialWrapper",
+      "description": "Optional W3C Verifiable Credential wrapper for eIDAS 2.0 / EUDIW-compatible attestation."
+    },
+    "kycProfile": {
+      "$ref": "#/$defs/KYCProfile",
+      "description": "Optional KYC/AML profile providing full customer risk data for CDD reliance, EDD, and cross-system interoperability under AMLR 2027."
+    }
+  },
+  "anyOf": [
+    { "required": ["ivms101"] },
+    { "required": ["verifiableCredential"] },
+    { "required": ["kycProfile"] }
+  ]
+}
