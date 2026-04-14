@@ -1,37 +1,80 @@
 {
-  "schemaVersion": "1.0.0",
-  "profileType": "naturalPerson",
-  "naturalPerson": {
-    "name": {
-      "firstName": "Alice",
-      "lastName": "Smith"
-    },
-    "dateOfBirth": "1990-06-15"
-  },
-  "travelRule": {
+  "$schema": "https://openkycaml.org/schema/v1.3.0/kyc-aml-hybrid-extended.json",
+  "version": "1.18.0",
+  "messageId": "550e8400-e29b-41d4-a716-446655440005",
+  "messageDateTime": "2024-06-15T10:00:00Z",
+  "ivms101": {
     "originator": {
-      "name": "Alice Smith",
-      "accountNumber": "0x1234567890abcdef1234567890abcdef12345678"
+      "originatorPersons": [
+        {
+          "naturalPerson": {
+            "name": {
+              "nameIdentifier": [
+                {
+                  "primaryIdentifier": "Tanaka",
+                  "secondaryIdentifier": "Hiroshi",
+                  "nameIdentifierType": "LEGL"
+                }
+              ]
+            },
+            "nationalIdentification": {
+              "nationalIdentifier": "JP-MYNUMBER-1234-5678-9012",
+              "nationalIdentifierType": "TXID",
+              "countryOfIssue": "JP"
+            },
+            "customerIdentification": "CUST-JP-0087231",
+            "countryOfResidence": "JP"
+          }
+        }
+      ],
+      "accountNumber": [
+        "bc1qar0srrr7xfkvy5l643lydnw9re59gtzzwf5mdq"
+      ]
     },
     "beneficiary": {
-      "name": "Bob Johnson",
-      "accountNumber": "0xabcdef1234567890abcdef1234567890abcdef12"
+      "beneficiaryPersons": [
+        {
+          "naturalPerson": {
+            "name": {
+              "nameIdentifier": [
+                {
+                  "primaryIdentifier": "Kim",
+                  "secondaryIdentifier": "Ji-Yeon",
+                  "nameIdentifierType": "LEGL"
+                }
+              ]
+            },
+            "nationalIdentification": {
+              "nationalIdentifier": "KR-RRN-900101-2234567",
+              "nationalIdentifierType": "IDCD",
+              "countryOfIssue": "KR"
+            },
+            "countryOfResidence": "KR"
+          }
+        }
+      ],
+      "accountNumber": [
+        "bc1p0xlxvlhemja6c4dqv22uapctqupfhlxm9h8z3k2e72q4k9hcz7vqzk5jj0"
+      ]
     },
     "originatingVASP": {
-      "name": "ExampleVASP Inc.",
-      "leiCode": "EXAMPLEVASP12345ABCD",
-      "registrationCountry": "US"
+      "name": "Tokyo Digital Assets Co., Ltd.",
+      "lei": "3538003FPHWP7EM5C773",
+      "vaspIdentifier": "JP-Tokyo Digital Assets Co., Ltd."
     },
     "beneficiaryVASP": {
-      "name": "ReceiverVASP Ltd.",
-      "leiCode": "RECEIVERVASP7890CD12",
-      "registrationCountry": "GB"
+      "name": "Seoul Blockchain Exchange Inc.",
+      "lei": "724500YRI6OZO6ELB439",
+      "vaspIdentifier": "KR-Seoul Blockchain Exchange Inc."
     },
-    "transactionReference": "TX-2025-00001",
-    "transferAmount": {
-      "amount": "1500.00",
-      "currency": "USDC"
+    "payloadMetadata": {
+      "transactionIdentifier": "TDAC-20240615-BTC-0000042",
+      "timestamp": "2024-06-15T10:00:00Z",
+      "version": "IVMS101.2023"
     },
-    "transferDate": "2025-04-10T14:30:00Z"
+    "transferredAmount": {
+      "amount": "1.00",
+      "assetType": "BTC"
+    }
   }
 }

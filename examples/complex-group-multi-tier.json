@@ -1,0 +1,446 @@
+{
+  "$schema": "https://openkycaml.org/schema/v1.3.0/kyc-aml-hybrid-extended.json",
+  "version": "1.18.0",
+  "messageId": "d1e2f3a4-b5c6-7d8e-9f0a-1b2c3d4e5f6a",
+  "messageDateTime": "2025-10-15T10:00:00Z",
+  "_comment_scenario": "Complex Multi-Tier Corporate Group — 4-Layer Holding Structure with Natural Person Directors. This example demonstrates AMLR Art. 26 full beneficial ownership disclosure for a complex crypto-native fund group where one natural person UBO (Marcus Van Den Berg, Netherlands, 75%) controls Nexus Global Ventures Ltd (Cayman Islands VASP) through a three-tier chain: [Tier 3, closest to UBO] MVB Family Office BV (NL, 100%) → [Tier 2] Nexus Capital SA (LU, 88%) → [Tier 1, closest to subject] Nexus Holdings Ltd (BVI, 100%) → [Subject] Nexus Global Ventures Ltd (KY, 75%). Natural person directors are documented at every tier via LPID mandates, illustrating how the schema captures the full governance map of a complex group. A secondary shareholder, Ingrid Van Den Berg (NL, 5% direct), is also reported per EDD policy. The remaining 20% is held by institutional investors below the 25% FATF reporting threshold.",
+  "ivms101": {
+    "originator": {
+      "originatorPersons": [
+        {
+          "legalPerson": {
+            "name": {
+              "nameIdentifier": [
+                {
+                  "legalPersonName": "Nexus Global Ventures Ltd",
+                  "legalPersonNameIdentifierType": "LEGL"
+                }
+              ]
+            },
+            "nationalIdentification": {
+              "nationalIdentifier": "KY-CI-NV-2019-000381",
+              "nationalIdentifierType": "RAID",
+              "countryOfIssue": "KY"
+            },
+            "countryOfRegistration": "KY"
+          }
+        }
+      ],
+      "accountNumber": [
+        "0x4A5B6C7D8E9F0A1B2C3D4E5F6A7B8C9D0E1F2A3B"
+      ]
+    },
+    "beneficiary": {
+      "beneficiaryPersons": [
+        {
+          "legalPerson": {
+            "name": {
+              "nameIdentifier": [
+                {
+                  "legalPersonName": "Atlantic Digital Exchange Ltd",
+                  "legalPersonNameIdentifierType": "LEGL"
+                }
+              ]
+            },
+            "nationalIdentification": {
+              "nationalIdentifier": "IE-CRO-987654",
+              "nationalIdentifierType": "RAID",
+              "countryOfIssue": "IE"
+            },
+            "countryOfRegistration": "IE"
+          }
+        }
+      ],
+      "accountNumber": [
+        "0xF1E2D3C4B5A697880817263544536271829A4B5C"
+      ]
+    },
+    "originatingVASP": {
+      "name": "Nexus Global Ventures Ltd",
+      "lei": "549300NXGVKY00001KY0",
+      "vaspIdentifier": "KY-Nexus Global Ventures Ltd"
+    },
+    "beneficiaryVASP": {
+      "name": "Atlantic Digital Exchange Ltd",
+      "lei": "635400ADXIRL00001IE0",
+      "vaspIdentifier": "IE-Atlantic Digital Exchange Ltd"
+    },
+    "transferredAmount": {
+      "amount": "750000.00",
+      "assetType": "ETH"
+    }
+  },
+  "verifiableCredential": {
+    "@context": [
+      "https://www.w3.org/ns/credentials/v2",
+      "https://openkycaml.org/contexts/v1"
+    ],
+    "id": "urn:uuid:d1e2f3a4-b5c6-7d8e-9f0a-1b2c3d4e5f6a",
+    "type": [
+      "VerifiableCredential",
+      "OpenKYCAMLCredential",
+      "KYCAttestation"
+    ],
+    "issuer": {
+      "id": "did:web:atlantic-digital-exchange.example.ie",
+      "name": "Atlantic Digital Exchange Ltd"
+    },
+    "credentialSubject": {
+      "ivms101": {
+        "originator": {
+          "originatorPersons": [
+            {
+              "legalPerson": {
+                "name": {
+                  "nameIdentifier": [
+                    {
+                      "legalPersonName": "Nexus Global Ventures Ltd",
+                      "legalPersonNameIdentifierType": "LEGL"
+                    }
+                  ]
+                },
+                "nationalIdentification": {
+                  "nationalIdentifier": "KY-CI-NV-2019-000381",
+                  "nationalIdentifierType": "RAID",
+                  "countryOfIssue": "KY"
+                },
+                "countryOfRegistration": "KY"
+              }
+            }
+          ],
+          "accountNumber": [
+            "0x4A5B6C7D8E9F0A1B2C3D4E5F6A7B8C9D0E1F2A3B"
+          ]
+        },
+        "beneficiary": {
+          "beneficiaryPersons": [
+            {
+              "legalPerson": {
+                "name": {
+                  "nameIdentifier": [
+                    {
+                      "legalPersonName": "Atlantic Digital Exchange Ltd",
+                      "legalPersonNameIdentifierType": "LEGL"
+                    }
+                  ]
+                },
+                "nationalIdentification": {
+                  "nationalIdentifier": "IE-CRO-987654",
+                  "nationalIdentifierType": "RAID",
+                  "countryOfIssue": "IE"
+                },
+                "countryOfRegistration": "IE"
+              }
+            }
+          ],
+          "accountNumber": [
+            "0xF1E2D3C4B5A697880817263544536271829A4B5C"
+          ]
+        },
+        "originatingVASP": {
+          "name": "Nexus Global Ventures Ltd",
+          "lei": "549300NXGVKY00001KY0",
+          "vaspIdentifier": "KY-Nexus Global Ventures Ltd"
+        },
+        "beneficiaryVASP": {
+          "name": "Atlantic Digital Exchange Ltd",
+          "lei": "635400ADXIRL00001IE0",
+          "vaspIdentifier": "IE-Atlantic Digital Exchange Ltd"
+        },
+        "transferredAmount": {
+          "amount": "750000.00",
+          "assetType": "ETH"
+        }
+      },
+      "kycProfile": {
+        "customerRiskRating": "HIGH",
+        "riskRatingDetail": {
+          "riskScore": 680,
+          "riskRatingDate": "2025-10-10",
+          "riskFactors": {
+            "geographicRisk": "HIGH",
+            "productRisk": "HIGH",
+            "channelRisk": "MEDIUM",
+            "customerTypeRisk": "HIGH",
+            "transactionRisk": "HIGH"
+          },
+          "ratingMethodology": "EBA Risk Factor Guidelines 2024 — multi-jurisdictional offshore holding structure, VASP product risk, high-value transfer"
+        },
+        "customerClassification": {
+          "customerType": "CORPORATE",
+          "industrySector": "CRYPTO_ASSETS",
+          "occupationOrPurpose": "Registered VASP and digital asset trading firm incorporated in the Cayman Islands; CIMA-regulated.",
+          "relationshipPurpose": "Institutional crypto-asset settlement and cross-border virtual asset transfers."
+        },
+        "dueDiligenceType": "EDD",
+        "pepStatus": {
+          "isPEP": false,
+          "pepCategory": "NOT_PEP",
+          "screeningDate": "2025-10-10",
+          "screeningProvider": "Refinitiv World-Check"
+        },
+        "sanctionsScreening": {
+          "screeningStatus": "CLEAR",
+          "screeningDate": "2025-10-10T08:30:00Z",
+          "screeningProvider": "Refinitiv World-Check",
+          "listsChecked": [
+            "OFAC_SDN",
+            "EU_CONSOLIDATED",
+            "UN_CONSOLIDATED",
+            "HMT",
+            "OFAC_CAATSA"
+          ]
+        },
+        "onboardingChannel": "REMOTE_AUTOMATED",
+        "kycCompletionDate": "2025-10-10",
+        "consentRecord": {
+          "consentGiven": true,
+          "consentDate": "2025-10-08T09:00:00Z",
+          "consentPurpose": [
+            "AML_SCREENING",
+            "DATA_SHARING_TRAVEL_RULE",
+            "EDD_REVIEW"
+          ]
+        },
+        "beneficialOwnership": [
+          {
+            "_comment_ubo1": "UBO 1: Marcus Van Den Berg (NL) — 75% ultimate indirect control through a four-tier holding chain. AMLR Art. 26 full chain disclosure applies. At every tier, the natural person directors are documented via LPID mandates, providing a complete governance map from UBO to subject entity.",
+            "person": {
+              "naturalPerson": {
+                "name": {
+                  "nameIdentifier": [
+                    {
+                      "primaryIdentifier": "Van Den Berg",
+                      "secondaryIdentifier": "Marcus Pieter",
+                      "nameIdentifierType": "LEGL"
+                    }
+                  ]
+                },
+                "geographicAddress": [
+                  {
+                    "addressType": "HOME",
+                    "streetName": "Herengracht",
+                    "buildingNumber": "418",
+                    "townName": "Amsterdam",
+                    "postCode": "1017 BZ",
+                    "country": "NL"
+                  }
+                ],
+                "nationalIdentification": {
+                  "nationalIdentifier": "NL-BSN-112233445",
+                  "nationalIdentifierType": "TXID",
+                  "countryOfIssue": "NL"
+                },
+                "dateAndPlaceOfBirth": {
+                  "dateOfBirth": "1969-08-22",
+                  "placeOfBirth": "Rotterdam"
+                },
+                "countryOfResidence": "NL"
+              }
+            },
+            "ownershipPercentage": 75,
+            "ownershipType": "INDIRECT",
+            "controlMechanism": "SHAREHOLDING",
+            "ownershipChainDepth": 4,
+            "intermediateEntities": [
+              {
+                "_comment_tier1": "Tier 1 (directly above subject entity): Nexus Holdings Ltd (BVI) holds 100% of Nexus Global Ventures Ltd. Sole shareholder is Nexus Capital SA. Directors: Sophia Bernstein (CH) and Elena Volkov (CH), both verified via passport.",
+                "legalPerson": {
+                  "name": {
+                    "nameIdentifier": [
+                      {
+                        "legalPersonName": "Nexus Holdings Ltd",
+                        "legalPersonNameIdentifierType": "LEGL"
+                      }
+                    ]
+                  },
+                  "nationalIdentification": {
+                    "nationalIdentifier": "VG-BC-2017-000422",
+                    "nationalIdentifierType": "RAID",
+                    "countryOfIssue": "VG"
+                  },
+                  "countryOfRegistration": "VG",
+                  "lpid": {
+                    "currentLegalName": "Nexus Holdings Ltd",
+                    "uniqueIdentifier": "VG-BC-2017-000422",
+                    "mandates": [
+                      {
+                        "mandateType": "OTHER",
+                        "signatoryName": "Sophia Miriam Bernstein",
+                        "scope": "Director",
+                        "effectiveFrom": "2020-03-01"
+                      },
+                      {
+                        "mandateType": "OTHER",
+                        "signatoryName": "Elena Dmitrievna Volkov",
+                        "scope": "Director",
+                        "effectiveFrom": "2021-07-01"
+                      }
+                    ]
+                  }
+                },
+                "ownershipPercentage": 100,
+                "ownershipType": "DIRECT",
+                "controlMechanism": "SHAREHOLDING",
+                "jurisdiction": "VG"
+              },
+              {
+                "_comment_tier2": "Tier 2: Nexus Capital SA (Luxembourg) holds 88% of Nexus Holdings Ltd. Sole managing shareholder is MVB Family Office BV. Directors: Jean-Pierre Moreau (LU) and Sophia Bernstein (CH), who also serves on the board of Nexus Holdings Ltd — this cross-board appointment is a common indicator of ultimate control and has been noted in the EDD file.",
+                "legalPerson": {
+                  "name": {
+                    "nameIdentifier": [
+                      {
+                        "legalPersonName": "Nexus Capital SA",
+                        "legalPersonNameIdentifierType": "LEGL"
+                      }
+                    ]
+                  },
+                  "nationalIdentification": {
+                    "nationalIdentifier": "LU-RCS-B312456",
+                    "nationalIdentifierType": "RAID",
+                    "countryOfIssue": "LU"
+                  },
+                  "countryOfRegistration": "LU",
+                  "lpid": {
+                    "currentLegalName": "Nexus Capital SA",
+                    "uniqueIdentifier": "LU-RCS-B312456",
+                    "mandates": [
+                      {
+                        "mandateType": "OTHER",
+                        "signatoryName": "Jean-Pierre Luc Moreau",
+                        "scope": "Director",
+                        "effectiveFrom": "2018-09-01"
+                      },
+                      {
+                        "mandateType": "OTHER",
+                        "signatoryName": "Sophia Miriam Bernstein",
+                        "scope": "Director",
+                        "effectiveFrom": "2020-03-01"
+                      }
+                    ]
+                  }
+                },
+                "ownershipPercentage": 88,
+                "ownershipType": "DIRECT",
+                "controlMechanism": "SHAREHOLDING",
+                "jurisdiction": "LU"
+              },
+              {
+                "_comment_tier3": "Tier 3 (closest to UBO): MVB Family Office BV (Netherlands) holds 100% of Nexus Capital SA. Marcus Van Den Berg is the Managing Director and sole shareholder of the family office vehicle. A second director, Hendrik Bauer (NL), is a long-serving family advisor with no independent ownership interest.",
+                "legalPerson": {
+                  "name": {
+                    "nameIdentifier": [
+                      {
+                        "legalPersonName": "MVB Family Office BV",
+                        "legalPersonNameIdentifierType": "LEGL"
+                      }
+                    ]
+                  },
+                  "nationalIdentification": {
+                    "nationalIdentifier": "NL-KVK-80112233",
+                    "nationalIdentifierType": "RAID",
+                    "countryOfIssue": "NL"
+                  },
+                  "countryOfRegistration": "NL",
+                  "lpid": {
+                    "currentLegalName": "MVB Family Office BV",
+                    "uniqueIdentifier": "NL-KVK-80112233",
+                    "mandates": [
+                      {
+                        "mandateType": "OTHER",
+                        "signatoryName": "Marcus Pieter Van Den Berg",
+                        "scope": "Managing Director and Sole Shareholder",
+                        "effectiveFrom": "2014-06-01"
+                      },
+                      {
+                        "mandateType": "OTHER",
+                        "signatoryName": "Hendrik Johannes Bauer",
+                        "scope": "Director (family advisor, no ownership interest)",
+                        "effectiveFrom": "2015-01-15"
+                      }
+                    ]
+                  }
+                },
+                "ownershipPercentage": 100,
+                "ownershipType": "DIRECT",
+                "controlMechanism": "SHAREHOLDING",
+                "jurisdiction": "NL"
+              }
+            ],
+            "verificationDate": "2025-10-10",
+            "isPEP": false
+          },
+          {
+            "_comment_ubo2": "Secondary shareholder: Ingrid Van Den Berg (NL) — 5% direct shareholding in Nexus Global Ventures Ltd. Spouse of UBO Marcus Van Den Berg; below the 25% FATF reporting threshold but disclosed under EDD policy for high-risk corporate clients with PEP-adjacent family connections.",
+            "person": {
+              "naturalPerson": {
+                "name": {
+                  "nameIdentifier": [
+                    {
+                      "primaryIdentifier": "Van Den Berg",
+                      "secondaryIdentifier": "Ingrid Maria",
+                      "nameIdentifierType": "LEGL"
+                    }
+                  ]
+                },
+                "geographicAddress": [
+                  {
+                    "addressType": "HOME",
+                    "streetName": "Herengracht",
+                    "buildingNumber": "418",
+                    "townName": "Amsterdam",
+                    "postCode": "1017 BZ",
+                    "country": "NL"
+                  }
+                ],
+                "nationalIdentification": {
+                  "nationalIdentifier": "NL-BSN-998877665",
+                  "nationalIdentifierType": "TXID",
+                  "countryOfIssue": "NL"
+                },
+                "dateAndPlaceOfBirth": {
+                  "dateOfBirth": "1972-05-10",
+                  "placeOfBirth": "Amsterdam"
+                },
+                "countryOfResidence": "NL"
+              }
+            },
+            "ownershipPercentage": 5,
+            "ownershipType": "DIRECT",
+            "controlMechanism": "SHAREHOLDING",
+            "ownershipChainDepth": 1,
+            "verificationDate": "2025-10-10",
+            "isPEP": false
+          }
+        ],
+        "auditMetadata": {
+          "recordId": "d1e2f3a4-b5c6-7d8e-9f0a-1b2c3d4e5f6a",
+          "recordCreatedAt": "2025-10-15T10:00:00Z",
+          "recordUpdatedAt": "2025-10-15T10:00:00Z",
+          "recordVersion": 1,
+          "createdBy": "edd-team@atlantic-digital-exchange.example.ie",
+          "dataSourceSystem": "EDD Corporate Registry v3.2",
+          "dataProvider": "Atlantic Digital Exchange Ltd",
+          "dataRetentionDate": "2035-10-15"
+        }
+      }
+    },
+    "credentialStatus": {
+      "id": "https://atlantic-digital-exchange.example.ie/status/v1#7001",
+      "type": "StatusList2021Entry"
+    },
+    "credentialSchema": {
+      "id": "https://openkycaml.org/schema/v1.3.0/kyc-aml-hybrid-extended.json",
+      "type": "JsonSchemaValidator2018"
+    },
+    "proof": {
+      "type": "Ed25519Signature2020",
+      "created": "2025-10-15T10:00:05Z",
+      "verificationMethod": "did:web:atlantic-digital-exchange.example.ie#key-1",
+      "proofPurpose": "assertionMethod",
+      "proofValue": "zHm5Kn8LoPqRsTuVwXyZaBcDeFgHiJkLmNoPqRsT0vW"
+    },
+    "validFrom": "2025-10-15T10:00:00Z",
+    "validUntil": "2026-10-15T10:00:00Z"
+  }
+}

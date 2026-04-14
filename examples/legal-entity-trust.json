@@ -1,0 +1,239 @@
+{
+  "$schema": "https://openkycaml.org/schema/v1.4.0/kyc-aml-hybrid-extended.json",
+  "version": "1.18.0",
+  "messageId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+  "messageDateTime": "2026-04-06T10:00:00Z",
+  "_comment_scenario": "ISO 20275 Trust Example — Cayman Islands Discretionary Trust onboarded as VASP originator. Demonstrates: (1) legalFormCode using ISO 20275 ELF code for Cayman Islands Exempted Trust; (2) entityType: TRUST with fully populated trustDetails (settlors, trustees, protector, beneficiaryClass, namedBeneficiaries); (3) ISO_20275_ELF_CODE in nationalIdentification for IVMS 101 interoperability. This example satisfies FATF Recommendation 25 typed disclosure and AMLR Art. 26(2)(b) named-role requirements.",
+  "ivms101": {
+    "originator": {
+      "originatorPersons": [
+        {
+          "legalPerson": {
+            "name": {
+              "nameIdentifier": [
+                {
+                  "legalPersonName": "Harbour Gate Discretionary Trust",
+                  "legalPersonNameIdentifierType": "LEGL"
+                }
+              ]
+            },
+            "nationalIdentification": {
+              "nationalIdentifier": "KY-TR-2019-004421",
+              "nationalIdentifierType": "RAID",
+              "countryOfIssue": "KY"
+            },
+            "countryOfRegistration": "KY",
+            "legalFormCode": "KY39",
+            "legalFormDescription": "Cayman Islands Exempted Discretionary Trust",
+            "entityType": "TRUST",
+            "trustDetails": {
+              "settlors": [
+                {
+                  "naturalPerson": {
+                    "name": {
+                      "nameIdentifier": [
+                        {
+                          "primaryIdentifier": "Whitmore",
+                          "secondaryIdentifier": "Edmund Charles",
+                          "nameIdentifierType": "LEGL"
+                        }
+                      ]
+                    },
+                    "nationalIdentification": {
+                      "nationalIdentifier": "GB-PASS-0045239810",
+                      "nationalIdentifierType": "CCPT",
+                      "countryOfIssue": "GB"
+                    },
+                    "dateAndPlaceOfBirth": {
+                      "dateOfBirth": "1965-03-14",
+                      "placeOfBirth": "London, United Kingdom"
+                    },
+                    "countryOfResidence": "GB"
+                  }
+                }
+              ],
+              "trustees": [
+                {
+                  "legalPerson": {
+                    "name": {
+                      "nameIdentifier": [
+                        {
+                          "legalPersonName": "Harbour Gate Trust Company Ltd",
+                          "legalPersonNameIdentifierType": "LEGL"
+                        }
+                      ]
+                    },
+                    "nationalIdentification": {
+                      "nationalIdentifier": "KY-CO-2005-001188",
+                      "nationalIdentifierType": "RAID",
+                      "countryOfIssue": "KY"
+                    },
+                    "countryOfRegistration": "KY",
+                    "legalFormCode": "BXKK",
+                    "legalFormDescription": "Cayman Islands Exempted Company (licensed trustee)"
+                  }
+                }
+              ],
+              "protectors": [
+                {
+                  "naturalPerson": {
+                    "name": {
+                      "nameIdentifier": [
+                        {
+                          "primaryIdentifier": "Whitmore",
+                          "secondaryIdentifier": "Diana Rose",
+                          "nameIdentifierType": "LEGL"
+                        }
+                      ]
+                    },
+                    "nationalIdentification": {
+                      "nationalIdentifier": "GB-PASS-0067312099",
+                      "nationalIdentifierType": "CCPT",
+                      "countryOfIssue": "GB"
+                    },
+                    "countryOfResidence": "GB"
+                  }
+                }
+              ],
+              "beneficiaryClass": "Primary: Edmund Charles Whitmore (life interest). Remainder: lawful issue of Edmund Charles Whitmore in equal shares.",
+              "namedBeneficiaries": [
+                {
+                  "naturalPerson": {
+                    "name": {
+                      "nameIdentifier": [
+                        {
+                          "primaryIdentifier": "Whitmore",
+                          "secondaryIdentifier": "Edmund Charles",
+                          "nameIdentifierType": "LEGL"
+                        }
+                      ]
+                    },
+                    "countryOfResidence": "GB"
+                  }
+                },
+                {
+                  "naturalPerson": {
+                    "name": {
+                      "nameIdentifier": [
+                        {
+                          "primaryIdentifier": "Whitmore",
+                          "secondaryIdentifier": "Sophia Elaine",
+                          "nameIdentifierType": "LEGL"
+                        }
+                      ]
+                    },
+                    "countryOfResidence": "GB"
+                  }
+                }
+              ],
+              "dateEstablished": "2019-07-01",
+              "jurisdictionOfLaw": "KY",
+              "trustDeedReference": "HGTC-DEED-2019-004421"
+            }
+          }
+        }
+      ],
+      "accountNumber": [
+        "0xC1D2E3F4A5B6789012345678901234567890ABCD"
+      ]
+    },
+    "beneficiary": {
+      "beneficiaryPersons": [
+        {
+          "legalPerson": {
+            "name": {
+              "nameIdentifier": [
+                {
+                  "legalPersonName": "Meridian Digital Custody Ltd",
+                  "legalPersonNameIdentifierType": "LEGL"
+                }
+              ]
+            },
+            "nationalIdentification": {
+              "nationalIdentifier": "GB-CH-10987654",
+              "nationalIdentifierType": "RAID",
+              "countryOfIssue": "GB"
+            },
+            "countryOfRegistration": "GB"
+          }
+        }
+      ],
+      "accountNumber": [
+        "GB61BARC20040473925890"
+      ]
+    },
+    "originatingVASP": {
+      "name": "Harbour Gate Digital Assets Ltd",
+      "vaspIdentifier": "KY-Harbour Gate Digital Assets Ltd"
+    },
+    "beneficiaryVASP": {
+      "name": "Meridian Digital Custody Ltd",
+      "vaspIdentifier": "GB-Meridian Digital Custody Ltd"
+    },
+    "transferredAmount": {
+      "amount": "85000.00",
+      "assetType": "USDC"
+    }
+  },
+  "kycProfile": {
+    "customerId": "CUST-HG-TRUST-0044",
+    "onboardingDate": "2026-01-15",
+    "onboardingChannel": "IN_PERSON",
+    "dueDiligenceType": "EDD",
+    "customerRiskRating": "HIGH",
+    "customerClassification": {
+      "customerType": "TRUST",
+      "industrySector": "CRYPTO_ASSETS",
+      "relationshipPurpose": "CRYPTO_ASSET_CUSTODY"
+    },
+    "riskAssessment": {
+      "overallRiskRating": "HIGH",
+      "riskScore": 72,
+      "riskFactors": [
+        "Offshore discretionary trust (Cayman Islands)",
+        "Complex ownership structure with protector",
+        "Settlor retains beneficial interest"
+      ]
+    },
+    "beneficialOwnership": [
+      {
+        "person": {
+          "naturalPerson": {
+            "name": {
+              "nameIdentifier": [
+                {
+                  "primaryIdentifier": "Whitmore",
+                  "secondaryIdentifier": "Edmund Charles",
+                  "nameIdentifierType": "LEGL"
+                }
+              ]
+            },
+            "nationalIdentification": {
+              "nationalIdentifier": "GB-PASS-0045239810",
+              "nationalIdentifierType": "CCPT",
+              "countryOfIssue": "GB"
+            },
+            "dateAndPlaceOfBirth": {
+              "dateOfBirth": "1965-03-14",
+              "placeOfBirth": "London, United Kingdom"
+            },
+            "countryOfResidence": "GB"
+          }
+        },
+        "ownershipPercentage": 100,
+        "ownershipType": "INDIRECT",
+        "controlMechanism": "DE_FACTO_CONTROL",
+        "verificationDate": "2026-01-15",
+        "isPEP": false,
+        "ownershipChainDepth": 1
+      }
+    ],
+    "auditMetadata": {
+      "recordCreatedAt": "2026-01-15T10:00:00Z",
+      "recordVersion": 1,
+      "dataRetentionDate": "2031-01-15",
+      "lastReviewDate": "2026-01-15",
+      "reviewedBy": "HGDA-CO-KYC-007"
+    }
+  }
+}

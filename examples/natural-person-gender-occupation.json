@@ -1,0 +1,156 @@
+{
+  "$schema": "https://openkycaml.org/schema/v1.12.0/kyc-aml-hybrid-extended.json",
+  "version": "1.18.0",
+  "messageId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+  "messageDateTime": "2026-04-09T14:30:00Z",
+  "messageType": "KYC_NATURAL_PERSON",
+  "ivms101": {
+    "originator": {
+      "originatorPersons": [
+        {
+          "naturalPerson": {
+            "name": {
+              "nameIdentifier": [
+                {
+                  "primaryIdentifier": "MÜLLER",
+                  "secondaryIdentifier": "ANNA MARIA",
+                  "nameIdentifierType": "LEGL"
+                }
+              ]
+            },
+            "geographicAddress": [
+              {
+                "addressType": "HOME",
+                "streetName": "Hauptstraße",
+                "buildingNumber": "42",
+                "postCode": "10115",
+                "townName": "Berlin",
+                "country": "DE"
+              }
+            ],
+            "nationalIdentification": {
+              "nationalIdentifier": "DE123456789",
+              "nationalIdentifierType": "IDCD",
+              "countryOfIssue": "DE"
+            },
+            "customerIdentification": "CUST-NP-20240001",
+            "dateAndPlaceOfBirth": {
+              "dateOfBirth": "1985-07-14",
+              "placeOfBirth": "Munich"
+            },
+            "countryOfResidence": "DE",
+            "nationality": "DE",
+            "gender": "FEMALE",
+            "occupation": {
+              "occupationCode": "SELF_EMPLOYED",
+              "occupationDescription": "Freelance UX designer and digital product consultant"
+            },
+            "emailAddresses": [
+              {
+                "emailType": "WORK",
+                "emailAddress": "anna.mueller@example.de",
+                "isPrimary": true
+              }
+            ],
+            "phoneNumbers": [
+              {
+                "phoneType": "WORK",
+                "phoneNumber": "+4930123456789",
+                "isPrimary": true
+              }
+            ]
+          }
+        }
+      ],
+      "accountNumber": [
+        "DE89370400440532013000"
+      ]
+    },
+    "beneficiary": {
+      "beneficiaryPersons": [
+        {
+          "legalPerson": {
+            "name": {
+              "nameIdentifier": [
+                {
+                  "legalPersonName": "Digital Payments GmbH",
+                  "legalPersonNameIdentifierType": "LEGL"
+                }
+              ]
+            },
+            "countryOfRegistration": "DE"
+          }
+        }
+      ],
+      "accountNumber": [
+        "DE75512108001245126199"
+      ]
+    },
+    "transferredAmount": {
+      "amount": "1500.00",
+      "assetType": "FIAT"
+    },
+    "originatingVASP": {
+      "name": "Example Payments GmbH",
+      "vaspIdentifier": "DE-ExamplePaymentsGmbH"
+    },
+    "beneficiaryVASP": {
+      "name": "Digital Payments GmbH",
+      "vaspIdentifier": "DE-DigitalPaymentsGmbH"
+    }
+  },
+  "kycProfile": {
+    "kycLevel": "STANDARD",
+    "kycStatus": "VERIFIED",
+    "kycCompletionDate": "2026-01-15",
+    "customerRiskRating": "LOW",
+    "customerClassification": {
+      "customerType": "RETAIL",
+      "occupationOrPurpose": "Freelance UX designer — digital services payments",
+      "relationshipPurpose": "PAYMENTS"
+    },
+    "dueDiligenceType": "CDD",
+    "monitoringInfo": {
+      "monitoringLevel": "STANDARD",
+      "monitoringStatus": "ACTIVE",
+      "lastReviewDate": "2026-01-15",
+      "nextReviewDate": "2027-01-15",
+      "reviewFrequency": "ANNUAL",
+      "reviewLifecycle": {
+        "currentState": "PERIODIC_REVIEW",
+        "stateHistory": [
+          {
+            "state": "ONBOARDING",
+            "enteredAt": "2026-01-10T09:00:00Z",
+            "exitedAt": "2026-01-12T17:00:00Z",
+            "triggeredBy": "CUSTOMER_PORTAL",
+            "notes": "Customer initiated onboarding via web portal"
+          },
+          {
+            "state": "INITIAL_REVIEW",
+            "enteredAt": "2026-01-12T17:00:00Z",
+            "exitedAt": "2026-01-15T11:30:00Z",
+            "triggeredBy": "COMPLIANCE_OFFICER_JM",
+            "notes": "Documents verified; sanctions and adverse media clear"
+          },
+          {
+            "state": "PERIODIC_REVIEW",
+            "enteredAt": "2026-01-15T11:30:00Z",
+            "triggeredBy": "COMPLIANCE_OFFICER_JM",
+            "notes": "Annual review schedule initiated"
+          }
+        ]
+      }
+    },
+    "auditMetadata": {
+      "recordId": "550e8400-e29b-41d4-a716-446655440000",
+      "recordCreatedAt": "2026-01-10T09:00:00Z",
+      "recordUpdatedAt": "2026-01-15T11:30:00Z",
+      "recordVersion": 3,
+      "createdBy": "CUSTOMER_PORTAL",
+      "updatedBy": "COMPLIANCE_OFFICER_JM",
+      "dataSourceSystem": "KYC_PLATFORM_v4",
+      "dataProvider": "Example Payments GmbH"
+    }
+  }
+}

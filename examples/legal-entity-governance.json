@@ -1,0 +1,195 @@
+{
+  "$schema": "https://openkycaml.org/schema/v1.12.0/kyc-aml-hybrid-extended.json",
+  "version": "1.18.0",
+  "messageId": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
+  "messageDateTime": "2026-04-09T14:30:00Z",
+  "messageType": "KYC_LEGAL_ENTITY",
+  "ivms101": {
+    "originator": {
+      "originatorPersons": [
+        {
+          "legalPerson": {
+            "name": {
+              "nameIdentifier": [
+                {
+                  "legalPersonName": "Acme Financial Services GmbH",
+                  "legalPersonNameIdentifierType": "LEGL"
+                },
+                {
+                  "legalPersonName": "Acme FS",
+                  "legalPersonNameIdentifierType": "SHRT"
+                }
+              ]
+            },
+            "geographicAddress": [
+              {
+                "addressType": "BIZZ",
+                "streetName": "Bockenheimer Landstraße",
+                "buildingNumber": "10",
+                "postCode": "60323",
+                "townName": "Frankfurt am Main",
+                "country": "DE"
+              }
+            ],
+            "nationalIdentification": {
+              "nationalIdentifier": "529900HNOAA1KXQJUQ27",
+              "nationalIdentifierType": "LEIX"
+            },
+            "countryOfRegistration": "DE",
+            "lei": "529900HNOAA1KXQJUQ27",
+            "legalFormCode": "UF1W",
+            "entityType": "COMPANY",
+            "entityGovernance": {
+              "regulatoryStatus": "REGULATED",
+              "regulators": [
+                {
+                  "regulatorName": "Bundesanstalt für Finanzdienstleistungsaufsicht (BaFin)",
+                  "jurisdiction": "DE",
+                  "licenceNumber": "BAFIN-I-2024-001234"
+                },
+                {
+                  "regulatorName": "Financial Conduct Authority",
+                  "jurisdiction": "GB",
+                  "licenceNumber": "FCA-789012"
+                }
+              ],
+              "listedStatus": {
+                "isListed": true,
+                "marketIdentifier": "XETR",
+                "recognisedMarket": true
+              },
+              "parentCompany": {
+                "legalEntityIdentifier": "529900T8BM49AURSDO55",
+                "jurisdiction": "DE",
+                "parentName": "Acme Group AG"
+              },
+              "parentRegulated": true,
+              "parentListed": true,
+              "majorityOwnedSubsidiary": true,
+              "stateOwned": false
+            }
+          }
+        }
+      ],
+      "accountNumber": [
+        "DE89370400440532013000"
+      ]
+    },
+    "beneficiary": {
+      "beneficiaryPersons": [
+        {
+          "legalPerson": {
+            "name": {
+              "nameIdentifier": [
+                {
+                  "legalPersonName": "European Clearing House SA",
+                  "legalPersonNameIdentifierType": "LEGL"
+                }
+              ]
+            },
+            "nationalIdentification": {
+              "nationalIdentifier": "969500T8IBXIJNAXYS11",
+              "nationalIdentifierType": "LEIX"
+            },
+            "countryOfRegistration": "LU"
+          }
+        }
+      ],
+      "accountNumber": [
+        "LU280019400644750000"
+      ]
+    },
+    "transferredAmount": {
+      "amount": "50000.00",
+      "assetType": "FIAT"
+    },
+    "originatingVASP": {
+      "name": "Acme Financial Services GmbH",
+      "vaspIdentifier": "DE-AcmeFinancialServicesGmbH"
+    },
+    "beneficiaryVASP": {
+      "name": "European Clearing House SA",
+      "vaspIdentifier": "LU-EuropeanClearingHouseSA"
+    }
+  },
+  "kycProfile": {
+    "kycLevel": "ENHANCED",
+    "kycStatus": "VERIFIED",
+    "kycCompletionDate": "2026-02-01",
+    "customerRiskRating": "LOW",
+    "customerClassification": {
+      "customerType": "FINANCIAL_INSTITUTION",
+      "industrySector": "FINANCIAL_SERVICES",
+      "occupationOrPurpose": "Investment services and asset management",
+      "relationshipPurpose": "INVESTMENT"
+    },
+    "dueDiligenceType": "CDD",
+    "sanctionsScreening": {
+      "screeningStatus": "CLEAR",
+      "screeningDate": "2026-02-01T00:00:00Z",
+      "provider": "WorldCheck",
+      "listsChecked": [
+        "EU_CONSOLIDATED",
+        "UN_SECURITY_COUNCIL",
+        "OFAC_SDN",
+        "UK_HMT"
+      ]
+    },
+    "adverseMedia": {
+      "hasHits": false,
+      "screeningStatus": "CLEAR",
+      "screeningDate": "2026-02-01T00:00:00Z"
+    },
+    "beneficialOwnership": [
+      {
+        "ownerType": "LEGAL_PERSON",
+        "fullLegalName": "Acme Group AG",
+        "ownershipPercentage": 100,
+        "isUBO": false,
+        "verificationStatus": "VERIFIED"
+      }
+    ],
+    "monitoringInfo": {
+      "monitoringLevel": "STANDARD",
+      "monitoringStatus": "ACTIVE",
+      "lastReviewDate": "2026-02-01",
+      "nextReviewDate": "2027-02-01",
+      "reviewFrequency": "ANNUAL",
+      "reviewLifecycle": {
+        "currentState": "PERIODIC_REVIEW",
+        "stateHistory": [
+          {
+            "state": "ONBOARDING",
+            "enteredAt": "2026-01-20T08:00:00Z",
+            "exitedAt": "2026-01-25T17:00:00Z",
+            "triggeredBy": "RELATIONSHIP_MANAGER_PB",
+            "notes": "Entity onboarded as institutional client"
+          },
+          {
+            "state": "INITIAL_REVIEW",
+            "enteredAt": "2026-01-25T17:00:00Z",
+            "exitedAt": "2026-02-01T16:00:00Z",
+            "triggeredBy": "COMPLIANCE_TEAM",
+            "notes": "LEI verified, regulatory licences confirmed with BaFin and FCA, UBO chain verified to listed parent"
+          },
+          {
+            "state": "PERIODIC_REVIEW",
+            "enteredAt": "2026-02-01T16:00:00Z",
+            "triggeredBy": "COMPLIANCE_TEAM",
+            "notes": "Annual review cycle initiated"
+          }
+        ]
+      }
+    },
+    "auditMetadata": {
+      "recordId": "660f9511-f30c-52e5-b827-557766551111",
+      "recordCreatedAt": "2026-01-20T08:00:00Z",
+      "recordUpdatedAt": "2026-02-01T16:00:00Z",
+      "recordVersion": 4,
+      "createdBy": "RELATIONSHIP_MANAGER_PB",
+      "updatedBy": "COMPLIANCE_TEAM",
+      "dataSourceSystem": "KYC_PLATFORM_v4",
+      "dataProvider": "Example Payments GmbH"
+    }
+  }
+}

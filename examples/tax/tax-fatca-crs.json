@@ -1,0 +1,138 @@
+{
+  "$schema": "https://openkycaml.org/schema/v1.9.1/kyc-aml-hybrid-extended.json",
+  "version": "1.18.0",
+  "messageId": "e5f6a7b8-c9d0-1e2f-3a4b-5c6d7e8f9a0b",
+  "messageDateTime": "2026-04-07T14:00:00Z",
+  "kycProfile": {
+    "customerRiskRating": "MEDIUM",
+    "dueDiligenceType": "CDD",
+    "onboardingChannel": "REMOTE_AUTOMATED",
+    "sanctionsScreening": {
+      "screeningStatus": "CLEAR",
+      "screeningDate": "2026-04-01T12:00:00Z",
+      "listsChecked": [
+        "OFAC_SDN",
+        "EU_CONSOLIDATED",
+        "UN_CONSOLIDATED"
+      ]
+    },
+    "auditMetadata": {
+      "recordCreatedAt": "2026-04-01T12:30:00Z",
+      "recordVersion": 1,
+      "dataSourceSystem": "FATCA-CRS-Platform-v3"
+    }
+  },
+  "ivms101": {
+    "originator": {
+      "originatorPersons": [
+        {
+          "legalPerson": {
+            "name": {
+              "nameIdentifier": [
+                {
+                  "legalPersonName": "Atlantic Asset Management Ltd",
+                  "legalPersonNameIdentifierType": "LEGL"
+                }
+              ]
+            },
+            "nationalIdentification": {
+              "nationalIdentifier": "213800WAVVOPS85N2205",
+              "nationalIdentifierType": "LEIX",
+              "registrationAuthority": "RA000585"
+            },
+            "countryOfRegistration": "IE"
+          }
+        }
+      ],
+      "accountNumber": [
+        "IE29AIBK93115212345678"
+      ]
+    },
+    "beneficiary": {
+      "beneficiaryPersons": [
+        {
+          "legalPerson": {
+            "name": {
+              "nameIdentifier": [
+                {
+                  "legalPersonName": "Cayman Wealth Fund SPC",
+                  "legalPersonNameIdentifierType": "LEGL"
+                }
+              ]
+            },
+            "countryOfRegistration": "KY"
+          }
+        }
+      ],
+      "accountNumber": [
+        "KY0012345678901234"
+      ]
+    },
+    "originatingVASP": {
+      "originatingVASP": {
+        "name": {
+          "nameIdentifier": [
+            {
+              "legalPersonName": "Atlantic VASP Services Ltd",
+              "legalPersonNameIdentifierType": "LEGL"
+            }
+          ]
+        },
+        "nationalIdentification": {
+          "nationalIdentifier": "635400ATLANTICVASP01",
+          "nationalIdentifierType": "LEIX"
+        },
+        "countryOfRegistration": "IE"
+      }
+    },
+    "beneficiaryVASP": {
+      "beneficiaryVASP": {
+        "name": {
+          "nameIdentifier": [
+            {
+              "legalPersonName": "Cayman Digital VASP Ltd",
+              "legalPersonNameIdentifierType": "LEGL"
+            }
+          ]
+        },
+        "countryOfRegistration": "KY"
+      }
+    }
+  },
+  "taxStatus": {
+    "tinIdentifiers": [
+      {
+        "jurisdiction": "IE",
+        "tinType": "TIN",
+        "tinValue": "IE6336214T",
+        "issuanceDate": "2015-01-01T00:00:00Z",
+        "verificationStatus": "verified",
+        "verificationSource": "Revenue-IE"
+      }
+    ],
+    "crsTaxResidencies": [
+      {
+        "jurisdiction": "IE",
+        "tinValue": "IE6336214T",
+        "tinVerificationStatus": "verified",
+        "selfCertificationDate": "2026-01-15T10:00:00Z",
+        "controllingPersonFlag": false
+      },
+      {
+        "jurisdiction": "US",
+        "tinValue": "98-7654321",
+        "tinVerificationStatus": "verified",
+        "selfCertificationDate": "2026-01-15T10:00:00Z",
+        "controllingPersonFlag": false
+      }
+    ],
+    "fatcaStatus": {
+      "giin": "ABC123.DEF45.LE.372",
+      "chapter4Classification": "registeredDeemedCompliantFFI",
+      "usTinRequired": true,
+      "temporaryReliefApplied": false,
+      "ffiListVerificationTimestamp": "2026-04-01T08:00:00Z",
+      "withholdingAgentReference": "WA-ATLANTIC-VASP-2026-001"
+    }
+  }
+}

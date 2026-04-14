@@ -1,114 +1,226 @@
 {
-  "schemaVersion": "1.0.0",
-  "profileType": "naturalPerson",
-  "naturalPerson": {
-    "name": {
-      "firstName": "John",
-      "lastName": "Doe",
-      "middleName": "Michael"
-    },
-    "dateOfBirth": "1988-07-04",
-    "placeOfBirth": "New York, USA",
-    "nationality": ["US", "IE"],
-    "address": {
-      "streetAddress": "350 Fifth Avenue",
-      "city": "New York",
-      "stateProvince": "NY",
-      "postalCode": "10118",
-      "country": "US"
-    },
-    "identificationDocuments": [
-      {
-        "documentType": "passport",
-        "documentNumber": "C01234567",
-        "issuingCountry": "US",
-        "issueDate": "2021-03-15",
-        "expiryDate": "2031-03-14"
-      },
-      {
-        "documentType": "drivers_license",
-        "documentNumber": "DL-NY-9876543",
-        "issuingCountry": "US",
-        "issueDate": "2022-01-10",
-        "expiryDate": "2030-01-09"
-      }
-    ],
-    "contactDetails": {
-      "email": "john.doe@example.com",
-      "phone": "+12125551234"
-    },
-    "politicallyExposedPerson": false,
-    "sourceOfFunds": "Employment and investments",
-    "sourceOfWealth": "Technology sector employment and stock options",
-    "occupation": "Financial Analyst"
-  },
-  "travelRule": {
+  "$schema": "https://openkycaml.org/schema/v1.3.0/kyc-aml-hybrid-extended.json",
+  "version": "1.18.0",
+  "messageId": "550e8400-e29b-41d4-a716-446655440004",
+  "messageDateTime": "2024-06-15T16:00:00Z",
+  "ivms101": {
     "originator": {
-      "name": "John Doe",
-      "accountNumber": "0xabc123def456789abc123def456789abc123def4",
-      "address": {
-        "streetAddress": "350 Fifth Avenue",
-        "city": "New York",
-        "stateProvince": "NY",
-        "postalCode": "10118",
-        "country": "US"
-      },
-      "dateOfBirth": "1988-07-04",
-      "placeOfBirth": "New York, USA"
+      "originatorPersons": [
+        {
+          "naturalPerson": {
+            "name": {
+              "nameIdentifier": [
+                {
+                  "primaryIdentifier": "Al-Rashidi",
+                  "secondaryIdentifier": "Fatima Noor",
+                  "nameIdentifierType": "LEGL"
+                }
+              ]
+            },
+            "geographicAddress": [
+              {
+                "addressType": "HOME",
+                "streetName": "Sheikh Zayed Road",
+                "buildingNumber": "15A",
+                "townName": "Dubai",
+                "postCode": "00000",
+                "country": "AE"
+              }
+            ],
+            "nationalIdentification": {
+              "nationalIdentifier": "AE-EMIRATESID-784-1990-1234567-8",
+              "nationalIdentifierType": "IDCD",
+              "countryOfIssue": "AE"
+            },
+            "customerIdentification": "CUST-AE-HNW-00042",
+            "dateAndPlaceOfBirth": {
+              "dateOfBirth": "1978-03-12",
+              "placeOfBirth": "Abu Dhabi"
+            },
+            "countryOfResidence": "AE"
+          }
+        }
+      ],
+      "accountNumber": [
+        "0x3fC91A3afd70395Cd496C647d5a6CC9D4B2b7FAD"
+      ]
     },
     "beneficiary": {
-      "name": "Jane Roe",
-      "accountNumber": "0xdef789abc123456def789abc123456def789abc1"
+      "beneficiaryPersons": [
+        {
+          "legalPerson": {
+            "name": {
+              "nameIdentifier": [
+                {
+                  "legalPersonName": "Geneva Capital Management SA",
+                  "legalPersonNameIdentifierType": "LEGL"
+                }
+              ]
+            },
+            "nationalIdentification": {
+              "nationalIdentifier": "54930084UKLVMY22DS16",
+              "nationalIdentifierType": "LEIX"
+            },
+            "countryOfRegistration": "CH"
+          }
+        }
+      ],
+      "accountNumber": [
+        "CH5604835012345678009"
+      ]
     },
     "originatingVASP": {
-      "name": "AlphaExchange Inc.",
-      "leiCode": "ALPHAEXCHANGE12345AB",
-      "registrationCountry": "US",
-      "address": {
-        "streetAddress": "100 Wall Street",
-        "city": "New York",
-        "stateProvince": "NY",
-        "postalCode": "10005",
-        "country": "US"
-      }
+      "name": "DIFC Digital Asset Exchange LLC",
+      "lei": "529900T8BM49AAMSDO55",
+      "vaspIdentifier": "AE-DIFC Digital Asset Exchange LLC"
     },
     "beneficiaryVASP": {
-      "name": "BetaAssets Ltd.",
-      "leiCode": "BETAASSETS1234567890",
-      "registrationCountry": "GB"
+      "name": "Swiss Digital Finance AG",
+      "lei": "549300FJPOIUJ7U9LV82",
+      "vaspIdentifier": "CH-Swiss Digital Finance AG"
     },
-    "transactionReference": "TX-2025-FULL-001",
-    "transferAmount": {
-      "amount": "25000.00",
-      "currency": "USDT"
-    },
-    "transferDate": "2025-04-10T16:00:00Z"
-  },
-  "riskAssessment": {
-    "riskLevel": "medium",
-    "riskScore": 42,
-    "assessmentDate": "2025-04-10T08:00:00Z",
-    "nextReviewDate": "2025-10-10",
-    "sanctions": {
-      "screened": true,
-      "matched": false,
-      "lists": ["OFAC SDN", "EU Sanctions List", "UN Sanctions List"]
-    },
-    "pepStatus": {
-      "screened": true,
-      "matched": false
-    },
-    "adverseMedia": {
-      "screened": true,
-      "matched": false
+    "transferredAmount": {
+      "amount": "125000.00",
+      "assetType": "USDC"
     }
   },
-  "metadata": {
-    "createdAt": "2025-04-10T08:00:00Z",
-    "updatedAt": "2025-04-10T16:30:00Z",
-    "createdBy": "onboarding-service-v2",
-    "source": "api-integration",
-    "jurisdiction": "US",
-    "dataClassification": "confidential"
+  "kycProfile": {
+    "customerRiskRating": "HIGH",
+    "riskRatingDetail": {
+      "riskScore": 720,
+      "riskRatingDate": "2024-05-01",
+      "riskFactors": {
+        "geographicRisk": "HIGH",
+        "productRisk": "HIGH",
+        "channelRisk": "MEDIUM",
+        "customerTypeRisk": "HIGH",
+        "transactionRisk": "HIGH"
+      },
+      "ratingMethodology": "EBA Risk Factor Guidelines 2024 + Internal Risk Model v3.2"
+    },
+    "customerClassification": {
+      "customerType": "HIGH_NET_WORTH",
+      "industrySector": "PRIVATE_INVESTMENT_HOLDING",
+      "occupationOrPurpose": "Former senior government official; current private sector advisor and investor in GCC region.",
+      "relationshipPurpose": "Investment management and diversification of personal and corporate assets across regional equities, real estate, and digital assets."
+    },
+    "dueDiligenceType": "EDD",
+    "pepStatus": {
+      "isPEP": true,
+      "pepCategory": "FOREIGN_PEP",
+      "pepRole": "Former Minister of Finance, UAE Federal Government (2015–2020)",
+      "screeningDate": "2024-06-01",
+      "screeningProvider": "Dow Jones Risk & Compliance"
+    },
+    "sanctionsScreening": {
+      "screeningStatus": "CLEAR",
+      "screeningDate": "2024-06-15T08:00:00Z",
+      "screeningProvider": "Refinitiv World-Check",
+      "listsChecked": [
+        "OFAC_SDN",
+        "OFAC_NON_SDN",
+        "EU_CONSOLIDATED",
+        "UN_CONSOLIDATED",
+        "HMT",
+        "AUSTRAC"
+      ],
+      "matchDetails": []
+    },
+    "adverseMedia": {
+      "screeningStatus": "CLEAR",
+      "screeningDate": "2024-06-15T08:05:00Z",
+      "screeningProvider": "ComplyAdvantage",
+      "categories": [],
+      "summary": "No adverse media found after comprehensive search across 100,000+ global news sources."
+    },
+    "sourceOfFundsWealthDetail": {
+      "sourceOfFunds": [
+        "INVESTMENT_RETURNS",
+        "BUSINESS_INCOME"
+      ],
+      "sourceOfWealthNarrative": "Client accumulated wealth through senior government positions (salary, pension, legitimate investments) and subsequent private sector advisory roles in the GCC region. Business income derives from three wholly-owned holding companies registered in the UAE and BVI. Investment returns from a diversified portfolio of regional equities and real estate.",
+      "verificationStatus": "FULLY_VERIFIED",
+      "supportingDocuments": [
+        {
+          "documentType": "TAX_RETURN",
+          "documentReference": "AE-TAX-2023-FAR-001",
+          "verifiedDate": "2024-04-15"
+        },
+        {
+          "documentType": "AUDITED_ACCOUNTS",
+          "documentReference": "AUDIT-2023-GCCHOLDCO",
+          "verifiedDate": "2024-04-20"
+        },
+        {
+          "documentType": "BANK_STATEMENT",
+          "documentReference": "ADIB-STMT-Q12024",
+          "verifiedDate": "2024-05-01"
+        }
+      ]
+    },
+    "beneficialOwnership": [],
+    "monitoringInfo": {
+      "monitoringLevel": "ENHANCED",
+      "monitoringStatus": "ACTIVE",
+      "eddRequired": true,
+      "lastReviewDate": "2024-06-01",
+      "nextReviewDate": "2024-12-01",
+      "reviewFrequency": "SEMI_ANNUAL",
+      "alerts": [
+        {
+          "alertId": "ALT-2024-003921",
+          "alertDate": "2024-05-28T11:32:00Z",
+          "alertType": "VELOCITY_BREACH",
+          "alertStatus": "CLOSED_NO_ACTION",
+          "description": "Three cross-border transfers exceeding USD 50,000 within 7-day rolling window. Reviewed against customer's transaction profile and expected activity. Consistent with declared investment activity.",
+          "assignedTo": "compliance.officer@difc-exchange.ae"
+        }
+      ]
+    },
+    "auditMetadata": {
+      "recordId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+      "recordCreatedAt": "2024-01-10T10:00:00Z",
+      "recordUpdatedAt": "2024-06-15T08:10:00Z",
+      "recordVersion": 7,
+      "createdBy": "onboarding-system@difc-exchange.ae",
+      "updatedBy": "compliance.officer@difc-exchange.ae",
+      "dataSourceSystem": "FinStar KYC Platform v4.1",
+      "dataProvider": "DIFC Digital Asset Exchange LLC",
+      "sharingConsentReference": "RELIANCE-AGREE-2024-DIFC-GCM-001",
+      "dataRetentionDate": "2029-06-15",
+      "changeLog": [
+        {
+          "timestamp": "2024-01-10T10:00:00Z",
+          "changedBy": "onboarding-system",
+          "changeType": "CREATED",
+          "fieldsChanged": [
+            "all"
+          ],
+          "notes": "Initial KYC record created during onboarding."
+        },
+        {
+          "timestamp": "2024-06-01T14:22:00Z",
+          "changedBy": "compliance.officer@difc-exchange.ae",
+          "changeType": "REVIEWED",
+          "fieldsChanged": [
+            "kycProfile.pepStatus",
+            "kycProfile.sanctionsScreening",
+            "kycProfile.monitoringInfo"
+          ],
+          "notes": "Annual EDD review completed. Risk rating maintained at HIGH. Monitoring level ENHANCED confirmed."
+        }
+      ]
+    },
+    "onboardingChannel": "IN_PERSON",
+    "kycCompletionDate": "2024-01-15",
+    "consentRecord": {
+      "consentGiven": true,
+      "consentDate": "2024-01-10T09:45:00Z",
+      "consentPurpose": [
+        "AML_SCREENING",
+        "DATA_SHARING_TRAVEL_RULE",
+        "THIRD_PARTY_CDD"
+      ]
+    }
   }
 }

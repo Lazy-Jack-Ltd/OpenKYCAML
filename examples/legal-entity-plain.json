@@ -1,75 +1,103 @@
 {
-  "schemaVersion": "1.0.0",
-  "profileType": "legalEntity",
-  "legalEntity": {
-    "legalName": "Acme Fintech Solutions GmbH",
-    "tradingName": "Acme Fintech",
-    "registrationNumber": "HRB 12345",
-    "leiCode": "ACMEFINTECH123456ABC",
-    "incorporationDate": "2018-09-01",
-    "incorporationCountry": "DE",
-    "entityType": "corporation",
-    "registeredAddress": {
-      "streetAddress": "Friedrichstraße 100",
-      "city": "Berlin",
-      "stateProvince": "Berlin",
-      "postalCode": "10117",
-      "country": "DE"
+  "$schema": "https://openkycaml.org/schema/v1.3.0/kyc-aml-hybrid-extended.json",
+  "version": "1.18.0",
+  "messageId": "550e8400-e29b-41d4-a716-446655440002",
+  "messageDateTime": "2024-06-15T11:00:00Z",
+  "ivms101": {
+    "originator": {
+      "originatorPersons": [
+        {
+          "legalPerson": {
+            "name": {
+              "nameIdentifier": [
+                {
+                  "legalPersonName": "Global Trade Solutions GmbH",
+                  "legalPersonNameIdentifierType": "LEGL"
+                },
+                {
+                  "legalPersonName": "GTS",
+                  "legalPersonNameIdentifierType": "SHRT"
+                }
+              ]
+            },
+            "geographicAddress": [
+              {
+                "addressType": "BIZZ",
+                "streetName": "Frankfurter Allee",
+                "buildingNumber": "100",
+                "townName": "Frankfurt am Main",
+                "postCode": "60311",
+                "country": "DE"
+              }
+            ],
+            "nationalIdentification": {
+              "nationalIdentifier": "5299002E54U7O0MHZL76",
+              "nationalIdentifierType": "LEIX",
+              "registrationAuthority": "RA000687"
+            },
+            "customerNumber": "CORP-DE-0001234",
+            "countryOfRegistration": "DE"
+          }
+        }
+      ],
+      "accountNumber": [
+        "DE89370400440532013000",
+        "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"
+      ]
     },
-    "beneficialOwners": [
-      {
-        "name": "Hans Müller",
-        "dateOfBirth": "1975-08-12",
-        "nationality": "DE",
-        "ownershipPercentage": 60,
-        "controlType": "ownership"
-      },
-      {
-        "name": "Petra Schmidt",
-        "dateOfBirth": "1980-11-03",
-        "nationality": "DE",
-        "ownershipPercentage": 40,
-        "controlType": "ownership"
-      }
-    ],
-    "directors": [
-      {
-        "name": "Hans Müller",
-        "role": "CEO",
-        "dateOfBirth": "1975-08-12",
-        "nationality": "DE"
-      }
-    ],
-    "contactDetails": {
-      "email": "compliance@acme-fintech.example.com",
-      "phone": "+4930123456",
-      "website": "https://acme-fintech.example.com"
+    "beneficiary": {
+      "beneficiaryPersons": [
+        {
+          "legalPerson": {
+            "name": {
+              "nameIdentifier": [
+                {
+                  "legalPersonName": "Pacific Rim Investments Pte Ltd",
+                  "legalPersonNameIdentifierType": "LEGL"
+                },
+                {
+                  "legalPersonName": "PRI",
+                  "legalPersonNameIdentifierType": "SHRT"
+                },
+                {
+                  "legalPersonName": "Pacific Rim",
+                  "legalPersonNameIdentifierType": "TRAD"
+                }
+              ]
+            },
+            "geographicAddress": [
+              {
+                "addressType": "BIZZ",
+                "buildingNumber": "1",
+                "streetName": "Raffles Place",
+                "townName": "Singapore",
+                "postCode": "048616",
+                "country": "SG"
+              }
+            ],
+            "nationalIdentification": {
+              "nationalIdentifier": "335800ZETG7B8I3S5X35",
+              "nationalIdentifierType": "LEIX"
+            },
+            "countryOfRegistration": "SG"
+          }
+        }
+      ],
+      "accountNumber": [
+        "SG29DBSS0000000012345678"
+      ]
+    },
+    "originatingVASP": {
+      "name": "Deutsche Krypto Bank AG",
+      "vaspIdentifier": "DE-Deutsche Krypto Bank AG"
+    },
+    "beneficiaryVASP": {
+      "name": "MAS-Licensed Digital Assets Exchange",
+      "vaspIdentifier": "SG-MAS-Licensed Digital Assets Exchange"
+    },
+    "transferredAmount": {
+      "amount": "500000.00",
+      "assetType": "USD"
     }
-  },
-  "riskAssessment": {
-    "riskLevel": "low",
-    "riskScore": 15,
-    "assessmentDate": "2025-04-01T09:00:00Z",
-    "nextReviewDate": "2026-04-01",
-    "sanctions": {
-      "screened": true,
-      "matched": false,
-      "lists": ["EU Sanctions List", "UN Sanctions List", "OFAC SDN"]
-    },
-    "pepStatus": {
-      "screened": true,
-      "matched": false
-    },
-    "adverseMedia": {
-      "screened": true,
-      "matched": false
-    }
-  },
-  "metadata": {
-    "createdAt": "2025-04-01T09:00:00Z",
-    "updatedAt": "2025-04-10T12:00:00Z",
-    "source": "corporate-onboarding",
-    "jurisdiction": "DE",
-    "dataClassification": "confidential"
   }
 }

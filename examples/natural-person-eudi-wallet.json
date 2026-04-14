@@ -1,8 +1,9 @@
 {
   "$schema": "https://openkycaml.org/schema/v1.3.0/kyc-aml-hybrid-extended.json",
   "version": "1.18.0",
-  "messageId": "550e8400-e29b-41d4-a716-446655440003",
-  "messageDateTime": "2024-06-15T14:00:00Z",
+  "messageId": "c7d2e841-3f4a-4b5c-9d6e-7f8a9b0c1d2e",
+  "messageDateTime": "2025-07-15T09:30:00Z",
+  "_comment_eudi": "EUDI Wallet KYC Onboarding — Natural Person. Anna Müller (DE) onboards at Acme Crypto Exchange BV (NL) by presenting her German eIDAS 2.0 PID from her EU Digital Identity Wallet via OpenID4VP. Three DIDs triangulate the identity chain: (1) Subject wallet DID, (2) PID Issuer DID (DE national PID Provider), (3) VASP issuer DID.",
   "ivms101": {
     "originator": {
       "originatorPersons": [
@@ -28,16 +29,17 @@
               }
             ],
             "nationalIdentification": {
-              "nationalIdentifier": "DE-TAXID-77834455891",
-              "nationalIdentifierType": "TXID",
+              "nationalIdentifier": "DE-IDCARD-T220001293",
+              "nationalIdentifierType": "IDCD",
               "countryOfIssue": "DE"
             },
-            "customerIdentification": "CUST-DE-0009823",
+            "customerIdentification": "CUST-NL-EU-0048211",
             "dateAndPlaceOfBirth": {
               "dateOfBirth": "1990-11-20",
               "placeOfBirth": "Munich"
             },
-            "countryOfResidence": "DE"
+            "countryOfResidence": "DE",
+            "nationality": "DE"
           }
         }
       ],
@@ -52,67 +54,60 @@
             "name": {
               "nameIdentifier": [
                 {
-                  "primaryIdentifier": "Rossi",
-                  "secondaryIdentifier": "Marco",
+                  "primaryIdentifier": "Van der Berg",
+                  "secondaryIdentifier": "Pieter",
                   "nameIdentifierType": "LEGL"
                 }
               ]
             },
-            "geographicAddress": [
-              {
-                "addressType": "HOME",
-                "streetName": "Via Roma",
-                "buildingNumber": "42",
-                "townName": "Milan",
-                "postCode": "20121",
-                "country": "IT"
-              }
-            ],
             "nationalIdentification": {
-              "nationalIdentifier": "RSSMRC85T10F205F",
+              "nationalIdentifier": "NL-BSN-987654321",
               "nationalIdentifierType": "TXID",
-              "countryOfIssue": "IT"
+              "countryOfIssue": "NL"
             },
-            "countryOfResidence": "IT"
+            "countryOfResidence": "NL"
           }
         }
       ],
       "accountNumber": [
-        "0xAb5801a7D398351b8bE11C439e05C5B3259aeC9B"
+        "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"
       ]
     },
     "originatingVASP": {
-      "name": "BerlinDeFi GmbH",
-      "lei": "724500TEHJJ2L5MWSK89",
-      "vaspIdentifier": "DE-BerlinDeFi GmbH"
+      "name": "Acme Crypto Exchange BV",
+      "lei": "724500VNNHZHYDLFMO70",
+      "vaspIdentifier": "NL-Acme Crypto Exchange BV"
     },
     "beneficiaryVASP": {
-      "name": "MilanoChain S.p.A.",
-      "lei": "815600E86C0C8A1F1804",
-      "vaspIdentifier": "IT-MilanoChain S.p.A."
+      "name": "Acme Crypto Exchange BV",
+      "lei": "724500VNNHZHYDLFMO70",
+      "vaspIdentifier": "NL-Acme Crypto Exchange BV"
     },
     "transferredAmount": {
-      "amount": "2.75",
+      "amount": "0.15",
       "assetType": "ETH"
     }
   },
   "verifiableCredential": {
     "@context": [
       "https://www.w3.org/ns/credentials/v2",
-      "https://openkycaml.org/contexts/v1"
+      "https://openkycaml.org/contexts/v1",
+      "https://europa.eu/2018/credentials/eudi/v1"
     ],
-    "id": "urn:uuid:550e8400-e29b-41d4-a716-446655440003",
+    "id": "urn:uuid:c7d2e841-3f4a-4b5c-9d6e-7f8a9b0c1d2e",
     "type": [
       "VerifiableCredential",
       "OpenKYCAMLCredential",
-      "TravelRuleAttestation"
+      "KYCAttestation"
     ],
+    "_comment_issuer": "DID #3 — VASP (issuer of this OpenKYCAML VC, acting as relying party after verifying the PID)",
     "issuer": {
-      "id": "did:web:berlindefi.example.com",
-      "name": "BerlinDeFi GmbH"
+      "id": "did:web:acme-crypto.example.nl",
+      "name": "Acme Crypto Exchange BV"
     },
     "credentialSubject": {
-      "id": "did:example:customer:CUST-DE-0009823",
+      "_comment_subject": "DID #1 — Subject's EU Digital Identity Wallet DID (did:ebsi, issued by EBSI infrastructure)",
+      "id": "did:ebsi:z2LSzT7LiUNMxKKyGCnNjNT",
       "ivms101": {
         "originator": {
           "originatorPersons": [
@@ -138,16 +133,17 @@
                   }
                 ],
                 "nationalIdentification": {
-                  "nationalIdentifier": "DE-TAXID-77834455891",
-                  "nationalIdentifierType": "TXID",
+                  "nationalIdentifier": "DE-IDCARD-T220001293",
+                  "nationalIdentifierType": "IDCD",
                   "countryOfIssue": "DE"
                 },
-                "customerIdentification": "CUST-DE-0009823",
+                "customerIdentification": "CUST-NL-EU-0048211",
                 "dateAndPlaceOfBirth": {
                   "dateOfBirth": "1990-11-20",
                   "placeOfBirth": "Munich"
                 },
-                "countryOfResidence": "DE"
+                "countryOfResidence": "DE",
+                "nationality": "DE"
               }
             }
           ],
@@ -162,67 +158,67 @@
                 "name": {
                   "nameIdentifier": [
                     {
-                      "primaryIdentifier": "Rossi",
-                      "secondaryIdentifier": "Marco",
+                      "primaryIdentifier": "Van der Berg",
+                      "secondaryIdentifier": "Pieter",
                       "nameIdentifierType": "LEGL"
                     }
                   ]
                 },
                 "nationalIdentification": {
-                  "nationalIdentifier": "RSSMRC85T10F205F",
+                  "nationalIdentifier": "NL-BSN-987654321",
                   "nationalIdentifierType": "TXID",
-                  "countryOfIssue": "IT"
+                  "countryOfIssue": "NL"
                 },
-                "countryOfResidence": "IT"
+                "countryOfResidence": "NL"
               }
             }
           ],
           "accountNumber": [
-            "0xAb5801a7D398351b8bE11C439e05C5B3259aeC9B"
+            "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"
           ]
         },
         "originatingVASP": {
-          "name": "BerlinDeFi GmbH",
-          "lei": "724500TEHJJ2L5MWSK89",
-          "vaspIdentifier": "DE-BerlinDeFi GmbH"
+          "name": "Acme Crypto Exchange BV",
+          "lei": "724500VNNHZHYDLFMO70",
+          "vaspIdentifier": "NL-Acme Crypto Exchange BV"
         },
         "beneficiaryVASP": {
-          "name": "MilanoChain S.p.A.",
-          "lei": "815600E86C0C8A1F1804",
-          "vaspIdentifier": "IT-MilanoChain S.p.A."
+          "name": "Acme Crypto Exchange BV",
+          "lei": "724500VNNHZHYDLFMO70",
+          "vaspIdentifier": "NL-Acme Crypto Exchange BV"
         },
         "transferredAmount": {
-          "amount": "2.75",
+          "amount": "0.15",
           "assetType": "ETH"
         }
       },
       "kycProfile": {
-        "customerRiskRating": "MEDIUM",
+        "customerRiskRating": "LOW",
         "riskRatingDetail": {
-          "riskScore": 450,
-          "riskRatingDate": "2024-01-10",
+          "riskScore": 180,
+          "riskRatingDate": "2025-07-15",
           "riskFactors": {
             "geographicRisk": "LOW",
-            "productRisk": "MEDIUM",
-            "channelRisk": "MEDIUM",
+            "productRisk": "LOW",
+            "channelRisk": "LOW",
             "customerTypeRisk": "LOW",
-            "transactionRisk": "MEDIUM"
+            "transactionRisk": "LOW"
           },
-          "ratingMethodology": "EBA Risk Factor Guidelines 2024 + Internal Risk Model v3.2"
+          "ratingMethodology": "EBA Risk Factor Guidelines 2024 — EUDI Wallet PID onboarding reduces identity risk to minimum"
         },
         "customerClassification": {
           "customerType": "RETAIL"
         },
-        "dueDiligenceType": "CDD",
+        "dueDiligenceType": "SDD",
         "pepStatus": {
           "isPEP": false,
           "pepCategory": "NOT_PEP",
-          "screeningDate": "2024-01-10",
-          "screeningProvider": "Refinitiv World-Check"
+          "screeningDate": "2025-07-15",
+          "screeningProvider": "ComplyAdvantage"
         },
         "sanctionsScreening": {
           "screeningStatus": "CLEAR",
-          "screeningDate": "2024-06-15T13:55:00Z",
+          "screeningDate": "2025-07-15T09:25:00Z",
           "screeningProvider": "Refinitiv World-Check",
           "listsChecked": [
             "OFAC_SDN",
@@ -232,19 +228,47 @@
           ],
           "matchDetails": []
         },
-        "kycCompletionDate": "2024-01-15",
+        "onboardingChannel": "EUDI_WALLET",
+        "kycCompletionDate": "2025-07-15",
         "consentRecord": {
           "consentGiven": true,
-          "consentDate": "2024-01-10T09:45:00Z",
+          "consentDate": "2025-07-15T09:20:00Z",
           "consentPurpose": [
             "AML_SCREENING",
             "DATA_SHARING_TRAVEL_RULE"
           ]
+        },
+        "auditMetadata": {
+          "recordId": "c7d2e841-3f4a-4b5c-9d6e-7f8a9b0c1d2e",
+          "recordCreatedAt": "2025-07-15T09:30:00Z",
+          "recordUpdatedAt": "2025-07-15T09:30:00Z",
+          "recordVersion": 1,
+          "createdBy": "eudi-onboarding@acme-crypto.example.nl",
+          "dataSourceSystem": "EUDI Wallet Onboarding Gateway v2.0",
+          "dataProvider": "Acme Crypto Exchange BV",
+          "dataRetentionDate": "2030-07-15"
         }
       }
     },
+    "_comment_evidence": "W3C VC evidence block — links back to the PID credential presented by the subject. DID #2 is the German PID Provider (Bundesamt für Sicherheit in der Informationstechnik) who issued the source PID.",
+    "evidence": [
+      {
+        "id": "urn:uuid:pid-de-anna-muller-2025-07-15",
+        "type": [
+          "PIDCredential",
+          "EUDIWalletPresentationEvidence"
+        ],
+        "verifier": "did:web:acme-crypto.example.nl",
+        "credentialIssuer": "did:web:pid-provider.bsi.example.de",
+        "evidenceDocument": "German National Identity Card (eIDAS 2.0 PID — Regulation (EU) 2024/1183)",
+        "subjectPresence": "Digital",
+        "documentPresence": "Digital",
+        "presentationMethod": "OpenID4VP",
+        "presentationDate": "2025-07-15T09:27:00Z"
+      }
+    ],
     "credentialStatus": {
-      "id": "https://berlindefi.example.com/status/v1#42",
+      "id": "https://acme-crypto.example.nl/status/v1#4821",
       "type": "StatusList2021Entry"
     },
     "credentialSchema": {
@@ -253,58 +277,12 @@
     },
     "proof": {
       "type": "Ed25519Signature2020",
-      "created": "2024-06-15T14:00:05Z",
-      "verificationMethod": "did:web:berlindefi.example.com#key-1",
+      "created": "2025-07-15T09:30:05Z",
+      "verificationMethod": "did:web:acme-crypto.example.nl#key-1",
       "proofPurpose": "assertionMethod",
-      "proofValue": "z5hvHDmSNJMwLRGRjzGHnVXaP3yBjmHDGXtRJmWzXjHT7b3tYnKzPWLxEtRJmN5Q9xPdCzS"
+      "proofValue": "zAm7Kp9xNvQrL3TdF6HjY8WcE2BsZ5UoG4MiR1XnP0DbA"
     },
-    "validFrom": "2024-06-15T14:00:00Z",
-    "validUntil": "2025-06-15T14:00:00Z"
-  },
-  "transactionMonitoring": {
-    "transactionReference": "TXN-DE-IT-2024-0009823-001",
-    "monitoringDate": "2024-06-15T14:00:10Z",
-    "monitoringEngine": "FinStar TM Engine v4.1",
-    "overallOutcome": "CLEAR",
-    "rulesEvaluated": [
-      {
-        "ruleId": "RULE-VEL-001",
-        "ruleName": "Velocity – 7-day rolling window (crypto)",
-        "ruleCategory": "VELOCITY",
-        "ruleResult": "PASS",
-        "threshold": "10 ETH / 7 days",
-        "actualValue": "2.75 ETH"
-      },
-      {
-        "ruleId": "RULE-TR-001",
-        "ruleName": "Travel Rule threshold (EUR equivalent)",
-        "ruleCategory": "TRAVEL_RULE",
-        "ruleResult": "PASS",
-        "threshold": "1000 EUR",
-        "actualValue": "~7425 EUR",
-        "notes": "Travel Rule applicable; IVMS 101 message transmitted to beneficiary VASP."
-      },
-      {
-        "ruleId": "RULE-GEO-001",
-        "ruleName": "High-risk jurisdiction counterparty",
-        "ruleCategory": "GEOGRAPHY",
-        "ruleResult": "PASS",
-        "notes": "Both DE and IT are low-risk EU jurisdictions."
-      }
-    ],
-    "alerts": [],
-    "travelRuleCompliance": {
-      "travelRuleApplicable": true,
-      "jurisdictionThreshold": {
-        "amount": "1000",
-        "currency": "EUR",
-        "jurisdiction": "DE"
-      },
-      "complianceStatus": "COMPLIANT",
-      "ivms101MessageId": "550e8400-e29b-41d4-a716-446655440003",
-      "beneficiaryVaspVerified": true,
-      "notes": "IVMS 101 payload transmitted and acknowledged by MilanoChain S.p.A. via TRP protocol."
-    },
-    "reportingObligations": []
+    "validFrom": "2025-07-15T09:30:00Z",
+    "validUntil": "2026-07-15T09:30:00Z"
   }
 }

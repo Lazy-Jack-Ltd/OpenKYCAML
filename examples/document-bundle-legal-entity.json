@@ -1,0 +1,462 @@
+{
+  "$schema": "https://openkycaml.org/schema/v1.6.0/kyc-aml-hybrid-extended.json",
+  "version": "1.18.0",
+  "messageId": "a5b6c7d8-e9f0-4a1b-8c2d-3e4f5a6b7c8d",
+  "messageDateTime": "2026-04-06T09:00:00Z",
+  "ivms101": {
+    "originator": {
+      "originatorPersons": [
+        {
+          "legalPerson": {
+            "name": {
+              "nameIdentifier": [
+                {
+                  "legalPersonName": "Acme Global Trading PLC",
+                  "legalPersonNameIdentifierType": "LEGL"
+                }
+              ]
+            },
+            "geographicAddress": [
+              {
+                "addressType": "GEOG",
+                "streetName": "King William Street",
+                "buildingNumber": "30",
+                "postCode": "EC4R 9AT",
+                "townName": "London",
+                "country": "GB"
+              }
+            ],
+            "nationalIdentification": {
+              "nationalIdentifier": "529900W18LQJJN6SJ336",
+              "nationalIdentifierType": "LEIX",
+              "countryOfIssue": "GB",
+              "registrationAuthority": "RA000585",
+              "registrationAuthorityDetail": {
+                "ralCode": "RA000585",
+                "authorityName": "Companies House",
+                "jurisdiction": "GB",
+                "registryUrl": "https://find-and-update.company-information.service.gov.uk/",
+                "digitalAccessible": true
+              },
+              "verifyingDocumentRef": "urn:doc:gb-cert-incorp-acme-global-trading-plc"
+            },
+            "countryOfRegistration": "GB",
+            "legalFormCode": "Z13E",
+            "legalFormDescription": "Public Limited Company (PLC)",
+            "entityType": "COMPANY",
+            "verifyingDocumentRef": "urn:doc:gb-registry-extract-acme-global-trading-plc-2026-03"
+          }
+        }
+      ],
+      "accountNumber": [
+        "GB29NWBK60161331926819"
+      ]
+    },
+    "beneficiary": {
+      "beneficiaryPersons": [
+        {
+          "legalPerson": {
+            "name": {
+              "nameIdentifier": [
+                {
+                  "legalPersonName": "Apex Commodities GmbH",
+                  "legalPersonNameIdentifierType": "LEGL"
+                }
+              ]
+            },
+            "nationalIdentification": {
+              "nationalIdentifier": "HRB 123456 B",
+              "nationalIdentifierType": "RAID",
+              "countryOfIssue": "DE"
+            },
+            "countryOfRegistration": "DE"
+          }
+        }
+      ],
+      "accountNumber": [
+        "DE12500105170648489890"
+      ]
+    },
+    "originatingVASP": {
+      "originatingVASP": {
+        "name": {
+          "nameIdentifier": [
+            {
+              "legalPersonName": "UK Digital Assets Exchange Ltd",
+              "legalPersonNameIdentifierType": "LEGL"
+            }
+          ]
+        },
+        "nationalIdentification": {
+          "nationalIdentifier": "2138004X4LCOU9YDYZ52",
+          "nationalIdentifierType": "LEIX"
+        },
+        "countryOfRegistration": "GB"
+      }
+    },
+    "beneficiaryVASP": {
+      "beneficiaryVASP": {
+        "name": {
+          "nameIdentifier": [
+            {
+              "legalPersonName": "Deutsche Digital Asset Bank AG",
+              "legalPersonNameIdentifierType": "LEGL"
+            }
+          ]
+        },
+        "nationalIdentification": {
+          "nationalIdentifier": "5299001QVKNU8IROEJ59",
+          "nationalIdentifierType": "LEIX"
+        },
+        "countryOfRegistration": "DE"
+      }
+    }
+  },
+  "identityDocuments": {
+    "naturalPersonDocuments": [],
+    "legalEntityDocuments": [
+      {
+        "documentType": "CERTIFICATE_OF_INCORPORATION",
+        "documentTitle": "Certificate of Incorporation on Change of Name — Acme Global Trading PLC",
+        "documentNumber": "CH-CERT-00123456",
+        "registrationNumber": "00123456",
+        "issuingCountry": "GB",
+        "issuingAuthority": "Companies House",
+        "gleifRegistrationAuthority": {
+          "ralCode": "RA000585",
+          "authorityName": "Companies House",
+          "jurisdiction": "GB",
+          "registryUrl": "https://find-and-update.company-information.service.gov.uk/",
+          "digitalAccessible": true
+        },
+        "issueDate": "2009-06-01",
+        "verificationDate": "2026-03-15",
+        "verifiedByName": "UK Digital Assets Exchange Ltd Compliance Team",
+        "documentPresence": "Digital",
+        "documentId": "urn:openkycaml:doc:gb:cert-incorp:529900w18lqjjn6sj336:2009-06",
+        "documentRef": "urn:doc:gb-cert-incorp-acme-global-trading-plc",
+        "registryUrl": "https://find-and-update.company-information.service.gov.uk/company/00123456",
+        "elfCodeVerified": "Z13E",
+        "extractedAttributes": [
+          {
+            "attributeName": "legalName",
+            "value": "Acme Global Trading PLC",
+            "matchesRecord": true
+          },
+          {
+            "attributeName": "registrationNumber",
+            "value": "00123456",
+            "matchesRecord": true
+          },
+          {
+            "attributeName": "dateOfIncorporation",
+            "value": "2009-06-01",
+            "matchesRecord": true
+          },
+          {
+            "attributeName": "jurisdiction",
+            "value": "England and Wales",
+            "matchesRecord": true
+          },
+          {
+            "attributeName": "legalForm",
+            "value": "Public Limited Company",
+            "matchesRecord": true
+          }
+        ]
+      },
+      {
+        "documentType": "ARTICLES_OF_ASSOCIATION",
+        "documentTitle": "Articles of Association — Acme Global Trading PLC (adopted 2020-09-14)",
+        "registrationNumber": "00123456",
+        "issuingCountry": "GB",
+        "issuingAuthority": "Companies House",
+        "gleifRegistrationAuthority": {
+          "ralCode": "RA000585",
+          "authorityName": "Companies House",
+          "jurisdiction": "GB",
+          "registryUrl": "https://find-and-update.company-information.service.gov.uk/",
+          "digitalAccessible": true
+        },
+        "issueDate": "2020-09-14",
+        "verificationDate": "2026-03-15",
+        "verifiedByName": "UK Digital Assets Exchange Ltd Compliance Team",
+        "documentPresence": "Digital",
+        "documentId": "urn:openkycaml:doc:gb:articles:529900w18lqjjn6sj336:2020-09",
+        "documentRef": "urn:doc:gb-articles-acme-global-trading-plc-2020",
+        "registryUrl": "https://find-and-update.company-information.service.gov.uk/company/00123456/filing-history",
+        "elfCodeVerified": "Z13E",
+        "extractedAttributes": [
+          {
+            "attributeName": "entitySubType",
+            "value": "Public Limited Company — listed on regulated market",
+            "matchesRecord": true
+          },
+          {
+            "attributeName": "boardStructure",
+            "value": "Unitary board with non-executive directors",
+            "matchesRecord": true
+          }
+        ]
+      },
+      {
+        "documentType": "REGISTRY_EXTRACT",
+        "documentTitle": "Companies House Current Appointments Extract — Acme Global Trading PLC",
+        "registrationNumber": "00123456",
+        "issuingCountry": "GB",
+        "issuingAuthority": "Companies House",
+        "gleifRegistrationAuthority": {
+          "ralCode": "RA000585",
+          "authorityName": "Companies House",
+          "jurisdiction": "GB",
+          "registryUrl": "https://find-and-update.company-information.service.gov.uk/",
+          "digitalAccessible": true
+        },
+        "issueDate": "2026-03-10",
+        "expiryDate": "2026-06-10",
+        "verificationDate": "2026-03-15",
+        "verifiedByName": "UK Digital Assets Exchange Ltd Compliance Team",
+        "documentPresence": "Digital",
+        "documentId": "urn:openkycaml:doc:gb:registry-extract:529900w18lqjjn6sj336:2026-03",
+        "documentRef": "urn:doc:gb-registry-extract-acme-global-trading-plc-2026-03",
+        "registryUrl": "https://find-and-update.company-information.service.gov.uk/company/00123456",
+        "elfCodeVerified": "Z13E",
+        "extractedAttributes": [
+          {
+            "attributeName": "legalName",
+            "value": "Acme Global Trading PLC",
+            "matchesRecord": true
+          },
+          {
+            "attributeName": "registeredAddress",
+            "value": "30 King William Street, London, EC4R 9AT",
+            "matchesRecord": true
+          },
+          {
+            "attributeName": "companyStatus",
+            "value": "Active",
+            "matchesRecord": true
+          },
+          {
+            "attributeName": "sicCode",
+            "value": "64999",
+            "matchesRecord": true
+          }
+        ]
+      },
+      {
+        "documentType": "LEI_REGISTRATION",
+        "documentTitle": "LEI Registration Confirmation — 529900W18LQJJN6SJ336",
+        "registrationNumber": "529900W18LQJJN6SJ336",
+        "issuingCountry": "GB",
+        "issuingAuthority": "Bloomberg Finance L.P. (LOU — GLEIF-accredited)",
+        "issueDate": "2026-01-05",
+        "expiryDate": "2027-01-04",
+        "verificationDate": "2026-03-15",
+        "verifiedByName": "Bloomberg Finance L.P.",
+        "documentPresence": "Digital",
+        "documentId": "urn:openkycaml:doc:gb:lei:529900w18lqjjn6sj336:2026-01",
+        "documentRef": "urn:doc:lei-529900W18LQJJN6SJ336-confirmation-2026",
+        "registryUrl": "https://www.gleif.org/en/lei-data/global-lei-index/lei-search?lei=529900W18LQJJN6SJ336",
+        "elfCodeVerified": "Z13E",
+        "extractedAttributes": [
+          {
+            "attributeName": "lei",
+            "value": "529900W18LQJJN6SJ336",
+            "matchesRecord": true
+          },
+          {
+            "attributeName": "legalName",
+            "value": "Acme Global Trading PLC",
+            "matchesRecord": true
+          },
+          {
+            "attributeName": "legalJurisdiction",
+            "value": "GB",
+            "matchesRecord": true
+          },
+          {
+            "attributeName": "legalForm.elfCode",
+            "value": "Z13E",
+            "matchesRecord": true
+          },
+          {
+            "attributeName": "registrationStatus",
+            "value": "ISSUED",
+            "matchesRecord": true
+          },
+          {
+            "attributeName": "nextRenewalDate",
+            "value": "2027-01-04",
+            "matchesRecord": true
+          }
+        ]
+      },
+      {
+        "documentType": "VLEI_CREDENTIAL",
+        "documentTitle": "GLEIF vLEI Official Organisational Role (OOR) Credential — Director",
+        "registrationNumber": "529900W18LQJJN6SJ336",
+        "issuingCountry": "GB",
+        "issuingAuthority": "LuxTrust SA (GLEIF Qualified vLEI Issuer — QVI)",
+        "issueDate": "2026-02-01",
+        "expiryDate": "2027-01-31",
+        "verificationDate": "2026-03-15",
+        "verifiedByName": "LuxTrust SA",
+        "documentPresence": "Digital",
+        "credentialId": "urn:credential:vlei-oor-acme-director-j-bloggs-2026",
+        "credentialIssuer": "did:web:qvi.luxtrust.lu",
+        "vLEICredentialType": "OOR",
+        "documentId": "urn:openkycaml:doc:gb:vlei:529900w18lqjjn6sj336:2026-02",
+        "documentRef": "urn:doc:vlei-oor-acme-global-trading-plc-j-bloggs-2026",
+        "extractedAttributes": [
+          {
+            "attributeName": "legalEntityLEI",
+            "value": "529900W18LQJJN6SJ336",
+            "matchesRecord": true
+          },
+          {
+            "attributeName": "legalEntityName",
+            "value": "Acme Global Trading PLC",
+            "matchesRecord": true
+          },
+          {
+            "attributeName": "personLegalName",
+            "value": "James Bloggs",
+            "matchesRecord": true
+          },
+          {
+            "attributeName": "officialRole",
+            "value": "Director",
+            "matchesRecord": true
+          }
+        ]
+      },
+      {
+        "documentType": "ULTIMATE_BENEFICIAL_OWNER_REGISTER",
+        "documentTitle": "Companies House PSC (Persons with Significant Control) Register Extract — Acme Global Trading PLC",
+        "registrationNumber": "00123456",
+        "issuingCountry": "GB",
+        "issuingAuthority": "Companies House",
+        "gleifRegistrationAuthority": {
+          "ralCode": "RA000585",
+          "authorityName": "Companies House",
+          "jurisdiction": "GB",
+          "registryUrl": "https://find-and-update.company-information.service.gov.uk/",
+          "digitalAccessible": true
+        },
+        "issueDate": "2026-03-10",
+        "expiryDate": "2026-06-10",
+        "verificationDate": "2026-03-15",
+        "verifiedByName": "UK Digital Assets Exchange Ltd Compliance Team",
+        "documentPresence": "Digital",
+        "documentId": "urn:openkycaml:doc:gb:ubo-register:529900w18lqjjn6sj336:2026-03",
+        "documentRef": "urn:doc:gb-psc-register-acme-global-trading-plc-2026-03",
+        "registryUrl": "https://find-and-update.company-information.service.gov.uk/company/00123456/persons-with-significant-control",
+        "extractedAttributes": [
+          {
+            "attributeName": "pscName",
+            "value": "Thornbridge Holdings Ltd",
+            "matchesRecord": true
+          },
+          {
+            "attributeName": "ownershipPercentage",
+            "value": "75.0",
+            "matchesRecord": true
+          },
+          {
+            "attributeName": "controlType",
+            "value": "Ownership of shares — More than 50% but less than 75%",
+            "matchesRecord": false
+          },
+          {
+            "attributeName": "pscNotifiedOn",
+            "value": "2017-03-06",
+            "matchesRecord": true
+          }
+        ]
+      }
+    ],
+    "bundleCompleteness": "COMPLETE",
+    "bundleValidatedBy": "UK Digital Assets Exchange Ltd — KYB Compliance Officer (Jane Smith)",
+    "bundleValidationDate": "2026-03-20",
+    "requiredDocumentTypes": [
+      "CERTIFICATE_OF_INCORPORATION",
+      "ARTICLES_OF_ASSOCIATION",
+      "REGISTRY_EXTRACT",
+      "LEI_REGISTRATION",
+      "ULTIMATE_BENEFICIAL_OWNER_REGISTER"
+    ]
+  },
+  "kycProfile": {
+    "customerRiskRating": "MEDIUM",
+    "customerClassification": {
+      "customerType": "CORPORATE"
+    },
+    "dueDiligenceType": "EDD",
+    "kycCompletionDate": "2026-03-20",
+    "onboardingChannel": "IN_PERSON",
+    "beneficialOwnership": [
+      {
+        "person": {
+          "legalPerson": {
+            "name": {
+              "nameIdentifier": [
+                {
+                  "legalPersonName": "Thornbridge Holdings Ltd",
+                  "legalPersonNameIdentifierType": "LEGL"
+                }
+              ]
+            },
+            "countryOfRegistration": "GB",
+            "nationalIdentification": {
+              "nationalIdentifier": "09876543",
+              "nationalIdentifierType": "RAID",
+              "countryOfIssue": "GB"
+            }
+          }
+        },
+        "ownershipPercentage": 75.0,
+        "ownershipType": "DIRECT",
+        "controlMechanism": "SHAREHOLDING",
+        "verificationDate": "2026-03-15",
+        "verifyingDocumentRefs": [
+          "urn:doc:gb-psc-register-acme-global-trading-plc-2026-03",
+          "urn:doc:gb-registry-extract-acme-global-trading-plc-2026-03"
+        ]
+      }
+    ],
+    "dueDiligenceRequirements": {
+      "appliedTier": "EDD",
+      "verifiedAttributes": [
+        "legalPerson.name",
+        "legalPerson.nationalIdentification",
+        "legalPerson.countryOfRegistration",
+        "legalPerson.legalFormCode",
+        "legalPerson.geographicAddress"
+      ],
+      "verificationMethods": [
+        {
+          "attribute": "legalPerson.legalFormCode",
+          "method": "DATABASE_CHECK",
+          "verificationDate": "2026-03-15",
+          "verificationProvider": "Bloomberg Finance L.P. (GLEIF LOU)",
+          "documentRef": "urn:doc:lei-529900W18LQJJN6SJ336-confirmation-2026"
+        },
+        {
+          "attribute": "legalPerson.nationalIdentification",
+          "method": "DATABASE_CHECK",
+          "verificationDate": "2026-03-15",
+          "verificationProvider": "UK Digital Assets Exchange Ltd Compliance Team",
+          "documentRef": "urn:doc:gb-registry-extract-acme-global-trading-plc-2026-03"
+        },
+        {
+          "attribute": "legalPerson.geographicAddress",
+          "method": "DOCUMENT_CHECK",
+          "verificationDate": "2026-03-15",
+          "verificationProvider": "UK Digital Assets Exchange Ltd Compliance Team",
+          "documentRef": "urn:doc:gb-registry-extract-acme-global-trading-plc-2026-03"
+        }
+      ]
+    }
+  }
+}

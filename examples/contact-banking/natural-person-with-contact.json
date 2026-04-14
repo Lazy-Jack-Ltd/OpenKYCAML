@@ -1,0 +1,155 @@
+{
+  "$schema": "https://openkycaml.org/schema/v1.10.0/kyc-aml-hybrid-extended.json",
+  "version": "1.18.0",
+  "messageId": "c1e2f3a4-b5d6-7890-abcd-ef1234567890",
+  "messageDateTime": "2026-04-09T10:00:00Z",
+  "messageType": "KYC_PROFILE_WITH_CONTACT",
+  "ivms101": {
+    "originator": {
+      "originatorPersons": [
+        {
+          "naturalPerson": {
+            "name": {
+              "nameIdentifier": [
+                {
+                  "primaryIdentifier": "MUELLER",
+                  "secondaryIdentifier": "ANNA",
+                  "nameIdentifierType": "LEGL"
+                }
+              ]
+            },
+            "dateAndPlaceOfBirth": {
+              "dateOfBirth": "1985-07-14",
+              "placeOfBirth": "Frankfurt am Main"
+            },
+            "nationalIdentification": {
+              "nationalIdentifier": "L01X00T47",
+              "nationalIdentifierType": "CCPT",
+              "countryOfIssue": "DE"
+            },
+            "geographicAddress": [
+              {
+                "addressType": "HOME",
+                "streetName": "GOETHESTRASSE",
+                "buildingNumber": "12",
+                "postCode": "60313",
+                "townName": "FRANKFURT AM MAIN",
+                "country": "DE"
+              }
+            ],
+            "countryOfResidence": "DE",
+            "nationality": "DE",
+            "bankingDetails": [
+              {
+                "iban": "DE89370400440532013000",
+                "bic": "COBADEFFXXX",
+                "bankName": "Commerzbank AG",
+                "accountCurrency": "EUR",
+                "accountType": "CURRENT",
+                "bankingCountry": "DE"
+              }
+            ],
+            "emailAddresses": [
+              {
+                "emailType": "WORK",
+                "emailAddress": "anna.mueller@example.de",
+                "isPrimary": true
+              }
+            ],
+            "phoneNumbers": [
+              {
+                "phoneType": "WORK",
+                "phoneNumber": "+4969123456789",
+                "isPrimary": true
+              },
+              {
+                "phoneType": "MOBILE",
+                "phoneNumber": "+4915112345678"
+              }
+            ]
+          }
+        }
+      ],
+      "accountNumber": [
+        "DE89370400440532013000"
+      ]
+    },
+    "beneficiary": {
+      "beneficiaryPersons": [
+        {
+          "legalPerson": {
+            "name": {
+              "nameIdentifier": [
+                {
+                  "legalPersonName": "Acme Digital Finance GmbH",
+                  "legalPersonNameIdentifierType": "LEGL"
+                }
+              ]
+            },
+            "nationalIdentification": {
+              "nationalIdentifier": "529900T8BM49AURSDO55",
+              "nationalIdentifierType": "LEIX"
+            },
+            "countryOfRegistration": "DE"
+          }
+        }
+      ],
+      "accountNumber": [
+        "DE27200400600532013000"
+      ]
+    },
+    "originatingVASP": {
+      "vasp": {
+        "legalPerson": {
+          "name": {
+            "nameIdentifier": [
+              {
+                "legalPersonName": "Deutsche KYC Exchange AG",
+                "legalPersonNameIdentifierType": "LEGL"
+              }
+            ]
+          },
+          "nationalIdentification": {
+            "nationalIdentifier": "391200WKXQEXHGMST497",
+            "nationalIdentifierType": "LEIX"
+          },
+          "countryOfRegistration": "DE"
+        }
+      }
+    },
+    "beneficiaryVASP": {
+      "vasp": {
+        "legalPerson": {
+          "name": {
+            "nameIdentifier": [
+              {
+                "legalPersonName": "Acme Digital Finance GmbH",
+                "legalPersonNameIdentifierType": "LEGL"
+              }
+            ]
+          },
+          "nationalIdentification": {
+            "nationalIdentifier": "529900T8BM49AURSDO55",
+            "nationalIdentifierType": "LEIX"
+          },
+          "countryOfRegistration": "DE"
+        }
+      }
+    },
+    "transferredAmount": {
+      "amount": "1500.00",
+      "assetType": "EUR"
+    }
+  },
+  "kycProfile": {
+    "customerRiskRating": "LOW",
+    "dueDiligenceType": "SDD",
+    "kycCompletionDate": "2026-04-01",
+    "auditMetadata": {
+      "recordCreatedAt": "2026-04-01T09:00:00Z",
+      "recordCreatedBy": "kyc-ops",
+      "lastReviewDate": "2026-04-01",
+      "recordVersion": 1
+    }
+  }
+}

@@ -1,8 +1,9 @@
 {
   "$schema": "https://openkycaml.org/schema/v1.3.0/kyc-aml-hybrid-extended.json",
   "version": "1.18.0",
-  "messageId": "550e8400-e29b-41d4-a716-446655440003",
-  "messageDateTime": "2024-06-15T14:00:00Z",
+  "messageId": "e9f0a1b2-c3d4-4e5f-6a7b-8c9d0e1f2a3b",
+  "messageDateTime": "2025-10-20T11:45:00Z",
+  "_comment_eudi": "EUDI Wallet Hybrid VC — Natural Person, full IVMS 101 + kycProfile. This is the EUDI Wallet companion to hybrid-vc-wrapped.json. Anna Müller (DE) sends ETH to Marco Rossi (IT) via BerlinDeFi GmbH. Anna identified via German EUDI Wallet PID. Four DIDs: (1) Anna's EUDI Wallet DID, (2) German PID Issuer DID, (3) BerlinDeFi VASP DID, (4) MilanoChain VASP DID referenced in proof. The VC is issued by BerlinDeFi (originating VASP) and binds Anna's wallet DID as subject.",
   "ivms101": {
     "originator": {
       "originatorPersons": [
@@ -28,8 +29,8 @@
               }
             ],
             "nationalIdentification": {
-              "nationalIdentifier": "DE-TAXID-77834455891",
-              "nationalIdentifierType": "TXID",
+              "nationalIdentifier": "DE-IDCARD-T220001293",
+              "nationalIdentifierType": "IDCD",
               "countryOfIssue": "DE"
             },
             "customerIdentification": "CUST-DE-0009823",
@@ -37,7 +38,8 @@
               "dateOfBirth": "1990-11-20",
               "placeOfBirth": "Munich"
             },
-            "countryOfResidence": "DE"
+            "countryOfResidence": "DE",
+            "nationality": "DE"
           }
         }
       ],
@@ -99,20 +101,23 @@
   "verifiableCredential": {
     "@context": [
       "https://www.w3.org/ns/credentials/v2",
-      "https://openkycaml.org/contexts/v1"
+      "https://openkycaml.org/contexts/v1",
+      "https://europa.eu/2018/credentials/eudi/v1"
     ],
-    "id": "urn:uuid:550e8400-e29b-41d4-a716-446655440003",
+    "id": "urn:uuid:e9f0a1b2-c3d4-4e5f-6a7b-8c9d0e1f2a3b",
     "type": [
       "VerifiableCredential",
       "OpenKYCAMLCredential",
       "TravelRuleAttestation"
     ],
+    "_comment_issuer": "DID #3 — BerlinDeFi GmbH (originating VASP, assembled IVMS 101 from PID data and signs this OpenKYCAML VC)",
     "issuer": {
-      "id": "did:web:berlindefi.example.com",
+      "id": "did:web:berlindefi.example.de",
       "name": "BerlinDeFi GmbH"
     },
     "credentialSubject": {
-      "id": "did:example:customer:CUST-DE-0009823",
+      "_comment_subject": "DID #1 — Anna Müller's EU Digital Identity Wallet DID (German EUDI Wallet, BSI-anchored)",
+      "id": "did:ebsi:z2LSzT7LiUNMxKKyGCnNjNT",
       "ivms101": {
         "originator": {
           "originatorPersons": [
@@ -138,8 +143,8 @@
                   }
                 ],
                 "nationalIdentification": {
-                  "nationalIdentifier": "DE-TAXID-77834455891",
-                  "nationalIdentifierType": "TXID",
+                  "nationalIdentifier": "DE-IDCARD-T220001293",
+                  "nationalIdentifierType": "IDCD",
                   "countryOfIssue": "DE"
                 },
                 "customerIdentification": "CUST-DE-0009823",
@@ -147,7 +152,8 @@
                   "dateOfBirth": "1990-11-20",
                   "placeOfBirth": "Munich"
                 },
-                "countryOfResidence": "DE"
+                "countryOfResidence": "DE",
+                "nationality": "DE"
               }
             }
           ],
@@ -199,16 +205,16 @@
       "kycProfile": {
         "customerRiskRating": "MEDIUM",
         "riskRatingDetail": {
-          "riskScore": 450,
-          "riskRatingDate": "2024-01-10",
+          "riskScore": 420,
+          "riskRatingDate": "2025-01-10",
           "riskFactors": {
             "geographicRisk": "LOW",
             "productRisk": "MEDIUM",
-            "channelRisk": "MEDIUM",
+            "channelRisk": "LOW",
             "customerTypeRisk": "LOW",
             "transactionRisk": "MEDIUM"
           },
-          "ratingMethodology": "EBA Risk Factor Guidelines 2024 + Internal Risk Model v3.2"
+          "ratingMethodology": "EBA Risk Factor Guidelines 2024 — EUDI Wallet PID reduces identity and channel risk"
         },
         "customerClassification": {
           "customerType": "RETAIL"
@@ -217,12 +223,12 @@
         "pepStatus": {
           "isPEP": false,
           "pepCategory": "NOT_PEP",
-          "screeningDate": "2024-01-10",
+          "screeningDate": "2025-01-10",
           "screeningProvider": "Refinitiv World-Check"
         },
         "sanctionsScreening": {
           "screeningStatus": "CLEAR",
-          "screeningDate": "2024-06-15T13:55:00Z",
+          "screeningDate": "2025-10-20T11:40:00Z",
           "screeningProvider": "Refinitiv World-Check",
           "listsChecked": [
             "OFAC_SDN",
@@ -232,19 +238,60 @@
           ],
           "matchDetails": []
         },
-        "kycCompletionDate": "2024-01-15",
+        "onboardingChannel": "EUDI_WALLET",
+        "kycCompletionDate": "2025-01-15",
         "consentRecord": {
           "consentGiven": true,
-          "consentDate": "2024-01-10T09:45:00Z",
+          "consentDate": "2025-01-10T09:45:00Z",
           "consentPurpose": [
             "AML_SCREENING",
             "DATA_SHARING_TRAVEL_RULE"
           ]
+        },
+        "auditMetadata": {
+          "recordId": "e9f0a1b2-c3d4-4e5f-6a7b-8c9d0e1f2a3b",
+          "recordCreatedAt": "2025-01-15T10:00:00Z",
+          "recordUpdatedAt": "2025-10-20T11:45:00Z",
+          "recordVersion": 3,
+          "createdBy": "eudi-onboarding@berlindefi.example.de",
+          "dataSourceSystem": "EUDI Onboarding Platform v2.1",
+          "dataProvider": "BerlinDeFi GmbH",
+          "dataRetentionDate": "2030-10-20"
         }
       }
     },
+    "_comment_evidence": "Evidence block — German PID from BSI (DID #2) presented by Anna at onboarding. DID #4 is referenced as MilanoChain's DID in the Travel Rule acceptance record.",
+    "evidence": [
+      {
+        "id": "urn:uuid:pid-de-anna-muller-onboarding-2025-01-15",
+        "type": [
+          "PIDCredential",
+          "EUDIWalletPresentationEvidence"
+        ],
+        "verifier": "did:web:berlindefi.example.de",
+        "credentialIssuer": "did:web:pid-provider.bsi.example.de",
+        "evidenceDocument": "German National Identity Card (eIDAS 2.0 PID — Regulation (EU) 2024/1183)",
+        "subjectPresence": "Digital",
+        "documentPresence": "Digital",
+        "presentationMethod": "OpenID4VP",
+        "presentationDate": "2025-01-15T09:50:00Z"
+      },
+      {
+        "id": "urn:uuid:travel-rule-acceptance-milanochain-2025-10-20",
+        "type": [
+          "TravelRuleAcceptanceEvidence"
+        ],
+        "verifier": "did:web:milanchain.example.it",
+        "credentialIssuer": "did:web:berlindefi.example.de",
+        "evidenceDocument": "IVMS 101 Travel Rule message acknowledged by MilanoChain S.p.A. via TRP protocol",
+        "subjectPresence": "Digital",
+        "documentPresence": "Digital",
+        "presentationMethod": "TRP",
+        "presentationDate": "2025-10-20T11:44:00Z"
+      }
+    ],
     "credentialStatus": {
-      "id": "https://berlindefi.example.com/status/v1#42",
+      "id": "https://berlindefi.example.de/status/v1#3377",
       "type": "StatusList2021Entry"
     },
     "credentialSchema": {
@@ -253,23 +300,23 @@
     },
     "proof": {
       "type": "Ed25519Signature2020",
-      "created": "2024-06-15T14:00:05Z",
-      "verificationMethod": "did:web:berlindefi.example.com#key-1",
+      "created": "2025-10-20T11:45:05Z",
+      "verificationMethod": "did:web:berlindefi.example.de#key-1",
       "proofPurpose": "assertionMethod",
-      "proofValue": "z5hvHDmSNJMwLRGRjzGHnVXaP3yBjmHDGXtRJmWzXjHT7b3tYnKzPWLxEtRJmN5Q9xPdCzS"
+      "proofValue": "zDw6Ox2aQyRt7VgI9KnZ4XeL8FsC3BpA0MjE5HuN1TrP"
     },
-    "validFrom": "2024-06-15T14:00:00Z",
-    "validUntil": "2025-06-15T14:00:00Z"
+    "validFrom": "2025-10-20T11:45:00Z",
+    "validUntil": "2026-10-20T11:45:00Z"
   },
   "transactionMonitoring": {
-    "transactionReference": "TXN-DE-IT-2024-0009823-001",
-    "monitoringDate": "2024-06-15T14:00:10Z",
-    "monitoringEngine": "FinStar TM Engine v4.1",
+    "transactionReference": "TXN-DE-IT-2025-0009823-004",
+    "monitoringDate": "2025-10-20T11:45:10Z",
+    "monitoringEngine": "FinStar TM Engine v5.0",
     "overallOutcome": "CLEAR",
     "rulesEvaluated": [
       {
         "ruleId": "RULE-VEL-001",
-        "ruleName": "Velocity – 7-day rolling window (crypto)",
+        "ruleName": "Velocity - 7-day rolling window (crypto)",
         "ruleCategory": "VELOCITY",
         "ruleResult": "PASS",
         "threshold": "10 ETH / 7 days",
@@ -281,8 +328,8 @@
         "ruleCategory": "TRAVEL_RULE",
         "ruleResult": "PASS",
         "threshold": "1000 EUR",
-        "actualValue": "~7425 EUR",
-        "notes": "Travel Rule applicable; IVMS 101 message transmitted to beneficiary VASP."
+        "actualValue": "~8250 EUR",
+        "notes": "Travel Rule applicable; IVMS 101 message embedded in EUDI Wallet VC and transmitted to MilanoChain."
       },
       {
         "ruleId": "RULE-GEO-001",
@@ -290,6 +337,13 @@
         "ruleCategory": "GEOGRAPHY",
         "ruleResult": "PASS",
         "notes": "Both DE and IT are low-risk EU jurisdictions."
+      },
+      {
+        "ruleId": "RULE-EUDI-001",
+        "ruleName": "EUDI Wallet PID verification — high-assurance onboarding",
+        "ruleCategory": "IDENTITY",
+        "ruleResult": "PASS",
+        "notes": "Originator identity verified via eIDAS 2.0 PID from German BSI. Identity assurance level: High (LoA High per eIDAS Art. 8)."
       }
     ],
     "alerts": [],
@@ -301,9 +355,9 @@
         "jurisdiction": "DE"
       },
       "complianceStatus": "COMPLIANT",
-      "ivms101MessageId": "550e8400-e29b-41d4-a716-446655440003",
+      "ivms101MessageId": "e9f0a1b2-c3d4-4e5f-6a7b-8c9d0e1f2a3b",
       "beneficiaryVaspVerified": true,
-      "notes": "IVMS 101 payload transmitted and acknowledged by MilanoChain S.p.A. via TRP protocol."
+      "notes": "IVMS 101 payload embedded in EUDI Wallet VC. VC signed by BerlinDeFi DID and accepted by MilanoChain S.p.A. via TRP. EUDI Wallet source PID recorded in evidence block."
     },
     "reportingObligations": []
   }
