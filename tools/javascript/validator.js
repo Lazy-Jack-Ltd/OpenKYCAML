@@ -2,7 +2,7 @@
 /**
  * OpenKYCAML Schema Validator (JavaScript / Node.js)
  * ====================================================
- * Validates JSON payloads against the OpenKYCAML v1.18.0 schema.
+ * Validates JSON payloads against the OpenKYCAML v1.19.0 schema.
  *
  * Usage (CLI):
  *   node validator.js <path-to-payload.json>
