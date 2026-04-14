@@ -13,6 +13,41 @@ For the full project roadmap and planned features, see [ROADMAP.md](ROADMAP.md).
 
 ---
 
+## [1.19.0] — April 2026
+
+### Added — v1.19.0: Guernsey + Jersey gap-fill fields (NaturalPerson, BeneficialOwner, ThirdPartyCDDReliance)
+
+All additions are optional and backward-compatible. No existing required fields changed. Version: `1.19.0`.
+
+#### New properties — `$defs/NaturalPerson`
+
+- **`publicPositionHeld`** (string, maxLength 200) — Public position or office held (Guernsey Handbook 5.2.5(f)/5.3.8; Jersey PEP screening). Distinct from `occupation` to allow precise recording of e.g. `Minister of Finance` or `Judge`.
+- **`publicPositionOrganisation`** (string, maxLength 200) — Organisation or body in which the public position is held (e.g. `States of Guernsey`, `Government of Jersey`).
+
+#### New properties — `$defs/BeneficialOwner`
+
+- **`beneficiaryClassDescription`** (string, maxLength 500) — Description of a class or category of beneficiaries when they are not individually named (Guernsey Handbook 7.10.2(c)(iii) and 7.10.7).
+- **`isObjectOfPower`** (boolean, default `false`) — True if this party is an object of a power under a discretionary trust (Jersey Handbook Section 4.3.1 and 4.4).
+- **`threeTierTest`** (object) — Documents which tier of the Jersey Three Tier Test was applied to identify this beneficial owner/controller (Jersey Handbook Section 4.5). Contains required `tierApplied` enum (`Tier1_Ownership`, `Tier2_ControlByOtherMeans`, `Tier3_SeniorManagementFallback`) and optional `justification` string.
+
+#### New properties — `$defs/ThirdPartyCDDReliance`
+
+- **`introducerReference`** (string, maxLength 100) — Introducer or obliged-person reference number (Guernsey Chapter 10 and Jersey Section 5).
+- **`relianceRiskAssessment`** (string, maxLength 500) — Risk assessment or notes specific to the reliance arrangement (both islands' requirements).
+
+#### Version, snapshot, and documentation
+
+- `schema/kyc-aml-hybrid-extended.json`: `$id` and `version` bumped to `v1.19.0`.
+- `schema/versions/v1.19.0.json`: versioned snapshot created.
+- `docs/compliance/compliance-matrix.md` §28: Guernsey + Jersey gap-fill section added.
+- `pyproject.toml` bumped to `1.19.0`.
+
+#### Backward compatibility
+
+All seven new fields are optional. No existing fields renamed or removed. All existing payloads validate without change.
+
+---
+
 ## [1.18.0] — April 2026
 
 ### Changed — v1.18.0: W3C VC Data Model 2.0 upgrade
