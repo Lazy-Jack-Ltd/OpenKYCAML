@@ -1,0 +1,130 @@
+{
+  "$schema": "https://openkycaml.org/schema/v1.8.0/kyc-aml-hybrid-extended.json",
+  "version": "1.18.0",
+  "messageId": "c3d4e5f6-a1b2-4c3d-8e9f-0a1b2c3d4e5f",
+  "messageDateTime": "2026-04-07T12:00:00Z",
+  "ivms101": {
+    "originator": {
+      "originatorPersons": [
+        {
+          "legalPerson": {
+            "name": {
+              "nameIdentifier": [
+                {
+                  "legalPersonName": "Acme Bank PLC",
+                  "legalPersonNameIdentifierType": "LEGL"
+                }
+              ]
+            },
+            "nationalIdentification": {
+              "nationalIdentifier": "213800WAVVOPS85N2205",
+              "nationalIdentifierType": "LEIX",
+              "registrationAuthority": "RA000585"
+            },
+            "countryOfRegistration": "GB"
+          }
+        }
+      ],
+      "accountNumber": [
+        "GB29NWBK60161331926819"
+      ]
+    },
+    "beneficiary": {
+      "beneficiaryPersons": [
+        {
+          "legalPerson": {
+            "name": {
+              "nameIdentifier": [
+                {
+                  "legalPersonName": "Deutsche Finance AG",
+                  "legalPersonNameIdentifierType": "LEGL"
+                }
+              ]
+            },
+            "countryOfRegistration": "DE"
+          }
+        }
+      ],
+      "accountNumber": [
+        "DE89370400440532013000"
+      ]
+    },
+    "originatingVASP": {
+      "originatingVASP": {
+        "name": {
+          "nameIdentifier": [
+            {
+              "legalPersonName": "Acme Bank PLC",
+              "legalPersonNameIdentifierType": "LEGL"
+            }
+          ]
+        },
+        "nationalIdentification": {
+          "nationalIdentifier": "213800WAVVOPS85N2205",
+          "nationalIdentifierType": "LEIX"
+        },
+        "countryOfRegistration": "GB"
+      }
+    },
+    "beneficiaryVASP": {
+      "beneficiaryVASP": {
+        "name": {
+          "nameIdentifier": [
+            {
+              "legalPersonName": "Deutsche Finance AG",
+              "legalPersonNameIdentifierType": "LEGL"
+            }
+          ]
+        },
+        "countryOfRegistration": "DE"
+      }
+    }
+  },
+  "kycProfile": {
+    "customerRiskRating": "LOW",
+    "dueDiligenceType": "CDD",
+    "onboardingChannel": "EUDI_WALLET"
+  },
+  "legacyIdentifiers": {
+    "x500DN": "CN=Acme Bank PLC,OU=Treasury,O=AcmeBank,C=GB,serialNumber=213800WAVVOPS85N2205",
+    "x500DNType": "certificateSubject"
+  },
+  "pkiEvidence": {
+    "x509Certificate": {
+      "serialNumber": "0A1B2C3D4E5F6A7B",
+      "subjectDN": "CN=Acme Bank PLC,OU=Treasury,O=AcmeBank,C=GB,serialNumber=213800WAVVOPS85N2205",
+      "issuerDN": "CN=QTSP-UK-ROOT-CA,O=UK Qualified Trust Services Ltd,C=GB",
+      "validFrom": "2025-01-15T00:00:00Z",
+      "validTo": "2028-01-14T23:59:59Z",
+      "signatureAlgorithm": "ecdsa-with-SHA256",
+      "qcStatements": [
+        "id-etsi-qcs-QcCompliance",
+        "id-etsi-qcs-QcType-eSeal",
+        "id-etsi-qcs-QcSSCD",
+        "id-etsi-qcs-QcCClegislation"
+      ],
+      "crlDistributionPoints": [
+        "http://crl.qtsp-uk.example/crl/root.crl"
+      ],
+      "ocspResponderUrl": "http://ocsp.qtsp-uk.example",
+      "thumbprintSha256": "9649a687747f335c4c4f2a450cd7f167d9123ac1b65c97f9d41b4b35f06c4aa3"
+    },
+    "oids": [
+      {
+        "oid": "1.3.6.1.5.5.7.1.3",
+        "description": "id-pe-QCStatements",
+        "value": "QcCompliance + QcSSCD + QcType-eSeal"
+      },
+      {
+        "oid": "2.5.4.97",
+        "description": "organizationIdentifier (eIDAS 2.0 LPID / LEI in Subject DN)",
+        "value": "LEIXG-213800WAVVOPS85N2205"
+      },
+      {
+        "oid": "1.3.6.1.5.5.7.48.1",
+        "description": "id-ad-ocsp — OCSP access method OID",
+        "value": "http://ocsp.qtsp-uk.example"
+      }
+    ]
+  }
+}

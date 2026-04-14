@@ -1,0 +1,138 @@
+{
+  "$schema": "https://openkycaml.org/schema/v1.9.0/kyc-aml-hybrid-extended.json",
+  "version": "1.18.0",
+  "messageId": "a1b2c3d4-e5f6-7a8b-9c0d-e1f2a3b4c5d6",
+  "messageDateTime": "2026-04-07T10:00:00Z",
+  "ivms101": {
+    "originator": {
+      "originatorPersons": [
+        {
+          "naturalPerson": {
+            "name": {
+              "nameIdentifier": [
+                {
+                  "primaryIdentifier": "Johnson",
+                  "secondaryIdentifier": "Robert William",
+                  "nameIdentifierType": "LEGL"
+                }
+              ]
+            },
+            "geographicAddress": [
+              {
+                "addressType": "HOME",
+                "streetName": "Maple Avenue",
+                "buildingNumber": "47",
+                "townName": "New York",
+                "postCode": "10001",
+                "country": "US"
+              }
+            ],
+            "nationalIdentification": {
+              "nationalIdentifier": "123-45-6789",
+              "nationalIdentifierType": "SOCS",
+              "countryOfIssue": "US"
+            },
+            "dateAndPlaceOfBirth": {
+              "dateOfBirth": "1978-03-22",
+              "placeOfBirth": "Chicago, Illinois, USA"
+            },
+            "countryOfResidence": "US"
+          }
+        }
+      ],
+      "accountNumber": [
+        "US12345678901234567890"
+      ]
+    },
+    "beneficiary": {
+      "beneficiaryPersons": [
+        {
+          "naturalPerson": {
+            "name": {
+              "nameIdentifier": [
+                {
+                  "primaryIdentifier": "Smith",
+                  "secondaryIdentifier": "Helen",
+                  "nameIdentifierType": "LEGL"
+                }
+              ]
+            },
+            "countryOfResidence": "GB"
+          }
+        }
+      ],
+      "accountNumber": [
+        "GB29NWBK60161331926819"
+      ]
+    },
+    "originatingVASP": {
+      "originatingVASP": {
+        "name": {
+          "nameIdentifier": [
+            {
+              "legalPersonName": "First National VASP Inc.",
+              "legalPersonNameIdentifierType": "LEGL"
+            }
+          ]
+        },
+        "nationalIdentification": {
+          "nationalIdentifier": "549300EXAMPLE12345",
+          "nationalIdentifierType": "LEIX"
+        },
+        "countryOfRegistration": "US"
+      }
+    },
+    "beneficiaryVASP": {
+      "beneficiaryVASP": {
+        "name": {
+          "nameIdentifier": [
+            {
+              "legalPersonName": "UK Digital Payments Ltd",
+              "legalPersonNameIdentifierType": "LEGL"
+            }
+          ]
+        },
+        "countryOfRegistration": "GB"
+      }
+    }
+  },
+  "kycProfile": {
+    "customerRiskRating": "MEDIUM",
+    "dueDiligenceType": "CDD",
+    "onboardingChannel": "IN_PERSON",
+    "sanctionsScreening": {
+      "screeningStatus": "CLEAR",
+      "screeningDate": "2026-04-01T09:00:00Z",
+      "listsChecked": [
+        "OFAC_SDN",
+        "EU_CONSOLIDATED",
+        "UN_CONSOLIDATED"
+      ]
+    },
+    "auditMetadata": {
+      "recordCreatedAt": "2026-04-01T09:30:00Z",
+      "recordVersion": 1,
+      "dataSourceSystem": "KYC-Platform-v4"
+    }
+  },
+  "taxStatus": {
+    "tinIdentifiers": [
+      {
+        "jurisdiction": "US",
+        "tinType": "EIN",
+        "tinValue": "12-3456789",
+        "issuanceDate": "2005-06-15T00:00:00Z",
+        "verificationStatus": "verified",
+        "verificationSource": "IRS-TIN-Matching"
+      },
+      {
+        "jurisdiction": "GB",
+        "tinType": "functionalEquivalent",
+        "tinValue": "1234567890",
+        "issuanceDate": "2010-09-01T00:00:00Z",
+        "verificationStatus": "verified",
+        "verificationSource": "HMRC-API"
+      }
+    ]
+  }
+}

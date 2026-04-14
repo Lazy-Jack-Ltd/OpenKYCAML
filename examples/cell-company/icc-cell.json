@@ -1,0 +1,147 @@
+{
+  "$schema": "https://openkycaml.org/schema/v1.11.0/kyc-aml-hybrid-extended.json",
+  "version": "1.18.0",
+  "messageId": "f4a5b6c7-d8e9-0123-def0-123456789012",
+  "messageDateTime": "2026-04-09T13:00:00Z",
+  "messageType": "KYC_LEGAL_ENTITY_ICC_CELL",
+  "ivms101": {
+    "originator": {
+      "originatorPersons": [
+        {
+          "legalPerson": {
+            "name": {
+              "nameIdentifier": [
+                {
+                  "legalPersonName": "ICC Cell 3 - Marine ILS 2026 Ltd",
+                  "legalPersonNameIdentifierType": "LEGL"
+                }
+              ]
+            },
+            "nationalIdentification": {
+              "nationalIdentifier": "JLMARINE2026IC003",
+              "nationalIdentifierType": "RAID",
+              "countryOfIssue": "JE"
+            },
+            "countryOfRegistration": "JE",
+            "legalFormCode": "JEIC",
+            "cellCompanyDetails": {
+              "cellCompanyType": "ICC_CELL",
+              "cellIdentifier": "IC-003",
+              "cellName": "Marine ILS 2026",
+              "cellRegistrationNumber": "IC000123",
+              "hasIndependentLegalPersonality": true,
+              "isCellCompanyIssuer": true,
+              "issuancePurpose": "INSURANCE_LINKED_SECURITY",
+              "cellSpecificInstrumentReference": "https://example.com/ils/2026-marine"
+            },
+            "parentCellCompanyReference": {
+              "legalEntityIdentifier": "549300XYZ98765432100",
+              "jurisdiction": "JE",
+              "parentName": "Jersey ICC Holdings Core"
+            },
+            "cellSourceOfFundsWealth": {
+              "sourceOfFunds": [
+                "INVESTMENT_RETURNS"
+              ],
+              "sourceOfFundsVerified": true
+            },
+            "cellAuditMetadata": {
+              "recordCreatedAt": "2026-02-15T08:00:00Z",
+              "recordCreatedBy": "cell-kyc-officer",
+              "recordVersion": 1,
+              "lastReviewDate": "2026-03-01"
+            }
+          }
+        }
+      ],
+      "accountNumber": [
+        "GB29NWBK60161331926820"
+      ]
+    },
+    "beneficiary": {
+      "beneficiaryPersons": [
+        {
+          "legalPerson": {
+            "name": {
+              "nameIdentifier": [
+                {
+                  "legalPersonName": "Marine Risk Investors Fund Ltd",
+                  "legalPersonNameIdentifierType": "LEGL"
+                }
+              ]
+            },
+            "nationalIdentification": {
+              "nationalIdentifier": "549300MARINE2026FUND",
+              "nationalIdentifierType": "LEIX"
+            },
+            "countryOfRegistration": "KY"
+          }
+        }
+      ],
+      "accountNumber": [
+        "KY9876543210"
+      ]
+    },
+    "originatingVASP": {
+      "vasp": {
+        "legalPerson": {
+          "name": {
+            "nameIdentifier": [
+              {
+                "legalPersonName": "Jersey ICC Holdings Core",
+                "legalPersonNameIdentifierType": "LEGL"
+              }
+            ]
+          },
+          "nationalIdentification": {
+            "nationalIdentifier": "549300XYZ98765432100",
+            "nationalIdentifierType": "LEIX"
+          },
+          "countryOfRegistration": "JE"
+        }
+      }
+    },
+    "beneficiaryVASP": {
+      "vasp": {
+        "legalPerson": {
+          "name": {
+            "nameIdentifier": [
+              {
+                "legalPersonName": "Cayman ILS Custody Ltd",
+                "legalPersonNameIdentifierType": "LEGL"
+              }
+            ]
+          },
+          "nationalIdentification": {
+            "nationalIdentifier": "724500MARINE2026CUST",
+            "nationalIdentifierType": "LEIX"
+          },
+          "countryOfRegistration": "KY"
+        }
+      }
+    },
+    "transferredAmount": {
+      "amount": "10000000.00",
+      "assetType": "USD"
+    }
+  },
+  "kycProfile": {
+    "customerRiskRating": "HIGH",
+    "dueDiligenceType": "EDD",
+    "kycCompletionDate": "2026-02-28",
+    "beneficialOwnership": [
+      {
+        "fullName": "JERSEY ICC HOLDINGS CORE",
+        "ownershipPercentage": 100.0,
+        "ownershipType": "DIRECT",
+        "verificationDate": "2026-02-28",
+        "isVerified": true
+      }
+    ],
+    "auditMetadata": {
+      "recordCreatedAt": "2026-02-28T09:00:00Z",
+      "recordCreatedBy": "kyc-ops",
+      "recordVersion": 1
+    }
+  }
+}

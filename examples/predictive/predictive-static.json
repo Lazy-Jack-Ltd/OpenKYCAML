@@ -1,0 +1,75 @@
+{
+  "$schema": "https://schema.openkycaml.org/v1.7.0",
+  "version": "1.18.0",
+  "messageId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+  "messageDateTime": "2026-04-07T09:00:00Z",
+  "kycProfile": {
+    "customerRiskRating": "HIGH",
+    "dueDiligenceType": "EDD",
+    "onboardingChannel": "IN_PERSON",
+    "kycCompletionDate": "2026-01-15",
+    "monitoringInfo": {
+      "monitoringLevel": "ENHANCED",
+      "monitoringStatus": "ACTIVE",
+      "eddRequired": true,
+      "lastReviewDate": "2026-03-01",
+      "nextReviewDate": "2026-06-01",
+      "reviewFrequency": "QUARTERLY",
+      "alertFrequency": "REAL_TIME",
+      "tmModelVersion": "actimize-sam-9.2.1"
+    },
+    "auditMetadata": {
+      "recordId": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+      "recordCreatedAt": "2026-01-15T10:30:00Z",
+      "recordVersion": 1,
+      "dataSourceSystem": "core-kyc-platform",
+      "dataRetentionDate": "2031-01-15"
+    }
+  },
+  "predictiveAML": {
+    "modelMetadata": {
+      "modelId": "txn-risk-model-v3",
+      "modelVersion": "3.0.0",
+      "provider": "Acme AML Analytics Ltd",
+      "trainingDate": "2026-01-01T00:00:00Z",
+      "euAiActClassification": "high-risk-aml",
+      "conformityAssessmentReference": "EU-AIACT-2026-NB001-TXN-00342"
+    },
+    "predictiveScores": [
+      {
+        "scoreType": "transaction_anomaly",
+        "value": 72.5,
+        "confidence": 0.87,
+        "horizonDays": 30,
+        "timestamp": "2026-04-07T08:45:00Z"
+      },
+      {
+        "scoreType": "customer_lifetime_risk",
+        "value": 65.0,
+        "confidence": 0.91,
+        "horizonDays": 90,
+        "timestamp": "2026-04-07T08:45:00Z"
+      }
+    ],
+    "featureVector": {
+      "velocity_30d_txn_count_hash": "a3f9c12e",
+      "avg_txn_value_usd_bucket": "HIGH",
+      "cross_border_ratio": 0.68,
+      "cash_intensive": true
+    },
+    "explainability": {
+      "method": "SHAP",
+      "values": {
+        "cross_border_ratio": 0.31,
+        "velocity_30d_txn_count_hash": 0.24,
+        "cash_intensive": 0.18,
+        "avg_txn_value_usd_bucket": 0.15
+      }
+    },
+    "dataAggregationMetadata": {
+      "bcbs239ComplianceLevel": "full",
+      "lastAggregationTimestamp": "2026-04-07T08:00:00Z",
+      "dataLineageReference": "urn:lineage:acme:aml:job:20260407-080000"
+    }
+  }
+}
