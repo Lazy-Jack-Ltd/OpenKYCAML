@@ -1,0 +1,159 @@
+{
+  "$schema": "https://openkycaml.org/schema/v1.17.0/kyc-aml-hybrid-extended.json",
+  "version": "1.18.0",
+  "messageType": "PRESENTATION_DEFINITION",
+  "kycProfile": {
+    "customerRiskRating": "LOW",
+    "_note": "Minimal stub — this document is a W3C Presentation Exchange definition, not a live KYC instance."
+  },
+  "_comment": "Canonical OpenID4VP Presentation Definition for OpenKYCAML Travel Rule Minimum. Requests exactly the FATF Recommendation 16 minimum claims from an OpenKYCAML SD-JWT VC. Compliant with W3C Presentation Exchange 2.0 (https://identity.foundation/presentation-exchange/spec/v2.0.0/). Use this definition in an OpenID4VP Authorization Request when a VASP or bank needs to verify the Travel Rule minimum identity data for a natural person originator or beneficiary.",
+  "_version": "1.3.0",
+  "_spec": "W3C Presentation Exchange 2.0",
+  "_presentationDefinition": {
+    "id": "openkycaml-travel-rule-minimum-v1",
+    "name": "OpenKYCAML Travel Rule Minimum (FATF Rec 16 / TFR 2023/1113 Art. 14)",
+    "purpose": "Verify the FATF Recommendation 16 minimum identity data for a natural person originator or beneficiary in a Virtual Asset Service Provider (VASP) Travel Rule transfer. Minimum claims: legal name, date of birth or address, and national identifier.",
+    "format": {
+      "dc+sd-jwt": {
+        "sd-jwt_alg_values": [
+          "ES256",
+          "ES384",
+          "PS256"
+        ],
+        "kb-jwt_alg_values": [
+          "ES256",
+          "ES384",
+          "PS256"
+        ]
+      },
+      "jwt_vc_json": {
+        "alg": [
+          "ES256",
+          "ES384",
+          "PS256"
+        ]
+      }
+    },
+    "input_descriptors": [
+      {
+        "id": "openkycaml-natural-person-identity",
+        "name": "OpenKYCAML KYC Identity Attestation — Natural Person",
+        "purpose": "A W3C Verifiable Credential or SD-JWT VC issued by a KYC provider or identity authority containing the FATF Travel Rule minimum claims for a natural person.",
+        "format": {
+          "dc+sd-jwt": {
+            "sd-jwt_alg_values": [
+              "ES256",
+              "ES384",
+              "PS256"
+            ],
+            "kb-jwt_alg_values": [
+              "ES256",
+              "ES384",
+              "PS256"
+            ]
+          },
+          "jwt_vc_json": {
+            "alg": [
+              "ES256",
+              "ES384",
+              "PS256"
+            ]
+          }
+        },
+        "constraints": {
+          "limit_disclosure": "required",
+          "fields": [
+            {
+              "path": [
+                "$.vct",
+                "$.type"
+              ],
+              "purpose": "Credential type must be an OpenKYCAML KYC attestation.",
+              "filter": {
+                "type": "string",
+                "const": "https://openkycaml.org/credentials/v1/OpenKYCAMLCredential"
+              }
+            },
+            {
+              "path": [
+                "$.credentialSubject.ivms101.originator.originatorPersons[0].naturalPerson.name.nameIdentifier[0].primaryIdentifier",
+                "$.ivms101.originator.originatorPersons[0].naturalPerson.name.nameIdentifier[0].primaryIdentifier"
+              ],
+              "purpose": "Family name (primaryIdentifier) of the originator is required by FATF Rec 16.",
+              "filter": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            {
+              "path": [
+                "$.credentialSubject.ivms101.originator.originatorPersons[0].naturalPerson.name.nameIdentifier[0].secondaryIdentifier",
+                "$.ivms101.originator.originatorPersons[0].naturalPerson.name.nameIdentifier[0].secondaryIdentifier"
+              ],
+              "purpose": "Given name(s) (secondaryIdentifier) of the originator is required by FATF Rec 16.",
+              "filter": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            {
+              "path": [
+                "$.credentialSubject.ivms101.originator.originatorPersons[0].naturalPerson.nationalIdentification.nationalIdentifier",
+                "$.ivms101.originator.originatorPersons[0].naturalPerson.nationalIdentification.nationalIdentifier"
+              ],
+              "purpose": "National identifier (passport, national ID, or equivalent) required by FATF Rec 16 and TFR 2023/1113 Art. 14.",
+              "filter": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            {
+              "path": [
+                "$.credentialSubject.ivms101.originator.accountNumber[0]",
+                "$.ivms101.originator.accountNumber[0]"
+              ],
+              "purpose": "Originator account number (crypto address or IBAN) required by FATF Rec 16.",
+              "filter": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          ],
+          "is_holder": [
+            {
+              "field_id": [
+                "openkycaml-natural-person-identity"
+              ],
+              "directive": "required"
+            }
+          ]
+        }
+      }
+    ],
+    "_optional_dob_or_address": {
+      "_comment": "FATF Rec 16 requires date of birth OR residential address as an alternative to the national identifier when the national identifier is unavailable. Add one of the following field constraints as an optional group if your jurisdiction requires both the national identifier and date of birth / address simultaneously.",
+      "dob_field": {
+        "path": [
+          "$.credentialSubject.ivms101.originator.originatorPersons[0].naturalPerson.dateAndPlaceOfBirth.dateOfBirth",
+          "$.ivms101.originator.originatorPersons[0].naturalPerson.dateAndPlaceOfBirth.dateOfBirth"
+        ],
+        "purpose": "Date of birth — alternative identity attribute under FATF Rec 16.",
+        "filter": {
+          "type": "string",
+          "format": "date"
+        }
+      },
+      "address_field": {
+        "path": [
+          "$.credentialSubject.ivms101.originator.originatorPersons[0].naturalPerson.geographicAddresses[0].streetName",
+          "$.ivms101.originator.originatorPersons[0].naturalPerson.geographicAddresses[0].streetName"
+        ],
+        "purpose": "Street address — alternative identity attribute under FATF Rec 16.",
+        "filter": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    }
+  }
+}

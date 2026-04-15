@@ -1,0 +1,107 @@
+{
+  "$schema": "https://schema.openkycaml.org/v1.7.0",
+  "version": "1.18.0",
+  "messageId": "b2c3d4e5-f6a7-8901-bcde-f01234567891",
+  "messageDateTime": "2026-04-07T09:15:00Z",
+  "kycProfile": {
+    "customerRiskRating": "MEDIUM",
+    "dueDiligenceType": "CDD",
+    "onboardingChannel": "REMOTE_AUTOMATED",
+    "kycCompletionDate": "2025-07-10",
+    "monitoringInfo": {
+      "monitoringLevel": "STANDARD",
+      "monitoringStatus": "ACTIVE",
+      "eddRequired": false,
+      "lastReviewDate": "2026-01-10",
+      "nextReviewDate": "2027-01-10",
+      "reviewFrequency": "ANNUAL",
+      "alertFrequency": "DAILY",
+      "tmModelVersion": "fenergo-dynamic-risk-5.1.0",
+      "ruleTriggerHistory": [
+        {
+          "ruleId": "RULE-VEL-001",
+          "ruleDescription": "30-day transaction velocity exceeds 2x customer baseline",
+          "triggeredAt": "2026-02-14T16:22:00Z",
+          "outcome": "FALSE_POSITIVE"
+        },
+        {
+          "ruleId": "RULE-CBORD-003",
+          "ruleDescription": "Cross-border payment to FATF grey-listed jurisdiction",
+          "triggeredAt": "2026-03-28T11:05:00Z",
+          "outcome": "ALERT_RAISED"
+        }
+      ]
+    },
+    "auditMetadata": {
+      "recordId": "e57c20b3-48cc-4372-b678-1e13c3d4e580",
+      "recordCreatedAt": "2025-07-10T14:00:00Z",
+      "recordUpdatedAt": "2026-04-07T09:00:00Z",
+      "recordVersion": 4,
+      "dataSourceSystem": "core-kyc-platform",
+      "dataRetentionDate": "2030-07-10"
+    }
+  },
+  "predictiveAML": {
+    "modelMetadata": {
+      "modelId": "network-risk-model-v2",
+      "modelVersion": "2.1.3",
+      "provider": "Fenergo Dynamic Risk Engine",
+      "trainingDate": "2025-12-15T00:00:00Z",
+      "euAiActClassification": "high-risk-aml",
+      "conformityAssessmentReference": "EU-AIACT-2025-NB002-NET-00891"
+    },
+    "predictiveScores": [
+      {
+        "scoreType": "network_risk",
+        "value": 45.0,
+        "confidence": 0.78,
+        "horizonDays": 60,
+        "timestamp": "2026-04-07T08:50:00Z"
+      },
+      {
+        "scoreType": "velocity_fraud",
+        "value": 38.5,
+        "confidence": 0.83,
+        "horizonDays": 14,
+        "timestamp": "2026-04-07T08:50:00Z"
+      }
+    ],
+    "riskEvolutionHistory": [
+      {
+        "timestamp": "2026-01-01T00:00:00Z",
+        "overallRiskScore": 30.0,
+        "deltaFromPrevious": 0.0
+      },
+      {
+        "timestamp": "2026-02-01T00:00:00Z",
+        "overallRiskScore": 36.0,
+        "deltaFromPrevious": 6.0
+      },
+      {
+        "timestamp": "2026-03-01T00:00:00Z",
+        "overallRiskScore": 41.5,
+        "deltaFromPrevious": 5.5
+      },
+      {
+        "timestamp": "2026-04-01T00:00:00Z",
+        "overallRiskScore": 45.0,
+        "deltaFromPrevious": 3.5
+      }
+    ],
+    "alertCorrelationId": "ACTIMIZE-CASE-2026-00441",
+    "explainability": {
+      "method": "SHAP",
+      "values": {
+        "counterparty_risk_score": 0.29,
+        "jurisdiction_risk": 0.22,
+        "rule_trigger_count_90d": 0.19,
+        "pep_network_proximity": 0.11
+      }
+    },
+    "dataAggregationMetadata": {
+      "bcbs239ComplianceLevel": "partial",
+      "lastAggregationTimestamp": "2026-04-07T07:30:00Z",
+      "dataLineageReference": "urn:lineage:fenergo:risk:job:20260407-073000"
+    }
+  }
+}
