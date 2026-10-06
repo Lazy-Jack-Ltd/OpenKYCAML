@@ -115,7 +115,7 @@ https://openkycaml.org/credentials/v1/OpenKYCAMLCredential
 | `types` | `["VerifiableCredential", "OpenKYCAMLCredential", "KYCAttestation"]` |
 | `cryptographic_binding_methods_supported` | `["did:ebsi", "did:key"]` |
 | `proof_types_supported` | `["Ed25519Signature2020", "JsonWebSignature2020"]` |
-| `@context` | `["https://www.w3.org/2018/credentials/v1", "https://openkycaml.org/contexts/v1", "https://europa.eu/2018/credentials/eudi/v1"]` |
+| `@context` | `["https://www.w3.org/ns/credentials/v2", "https://openkycaml.org/contexts/v1", "https://europa.eu/2018/credentials/eudi/v1"]` |
 
 ### 3.5 Claim Path Mapping (SD-JWT VC)
 
@@ -375,8 +375,8 @@ Configure wallet display via the Credential Issuer Metadata `display` array:
 
 | Field | Recommended value | Notes |
 |---|---|---|
-| `issuanceDate` | Date of KYC completion | ISO 8601 with timezone |
-| `expirationDate` | `issuanceDate + 12 months` | Periodic re-verification per AMLR |
+| `validFrom` | Date of KYC completion | ISO 8601 with timezone (W3C VC DM 2.0) |
+| `validUntil` | `validFrom + 12 months` | Periodic re-verification per AMLR (W3C VC DM 2.0) |
 | `credentialStatus.type` | `StatusList2021Entry` | Supports instant revocation |
 | Refresh interval | Every 12 months or on risk event | AMLR Art. 22 periodic review |
 
@@ -700,14 +700,14 @@ tipping-off flag.
 
 ## W3C VC Data Model Version Support
 
-**Current position (v1.x):** OpenKYCAML v1.x uses the **W3C VC Data Model v1.1** `@context` URL:
+**Current position (v1.18.0+):** OpenKYCAML uses the **W3C VC Data Model 2.0** `@context` URL (W3C Recommendation, May 2024):
 
 ```
-https://www.w3.org/2018/credentials/v1
+https://www.w3.org/ns/credentials/v2
 ```
 
-This is enforced as a `const` in the schema at `verifiableCredential.@context[0]`. Some descriptions in earlier documentation referred to "W3C VC Data Model v2" — this referred to structural alignment with the v2 data model concepts, not the context URL. The v2 context URL (`https://www.w3.org/ns/credentials/v2`) introduces breaking changes and is scheduled for adoption in OpenKYCAML **v2.0.0** (planned H1 2027 to align with AMLR full applicability).
+This is enforced via a `contains` constraint in the schema at `verifiableCredential.@context`. The VC DM 2.0 upgrade was completed in OpenKYCAML v1.18.0. Credential date fields use the v2 names: `validFrom` (required, replaces v1.1 `issuanceDate`) and `validUntil` (optional, replaces v1.1 `expirationDate`).
 
-**EUDI Wallet context URL:** The second context URL used in EUDI Wallet examples (`https://europa.eu/2018/credentials/eudi/v1`) is a **placeholder** pending the European Commission's official ARF VC JSON-LD context publication. Adopters should monitor the EU Commission's ARF releases and update this URL when the official context is published. This document and the examples will be updated at that time.
+**EUDI Wallet context URL:** The second context URL used in EUDI Wallet examples (`https://europa.eu/2018/credentials/eudi/v1`) is a **placeholder** pending the European Commission's official ARF VC JSON-LD context publication. Adopters should monitor the EU Commission's ARF releases and update this URL when the official context is published.
 
-For the full v1.1 → v2.0 migration guide, see [`vc-data-model-migration.md`](../reference/vc-data-model-migration.md).
+For the historical v1.1 → v2.0 migration reference, see [`vc-data-model-migration.md`](../reference/vc-data-model-migration.md).

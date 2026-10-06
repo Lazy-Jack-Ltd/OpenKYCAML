@@ -5,12 +5,12 @@
 **The neutral, open hybrid KYC/AML data standard for the compliant digital economy.**
 
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
-[![Schema Version](https://img.shields.io/badge/schema-v1.14.0-brightgreen.svg)](schema/kyc-aml-hybrid-extended.json)
+[![Schema Version](https://img.shields.io/badge/schema-v1.18.0-brightgreen.svg)](schema/kyc-aml-hybrid-extended.json)
 [![IVMS 101](https://img.shields.io/badge/IVMS%20101-compatible-orange.svg)](docs/mappings/mapping-ivms101-eidas-amlr.md)
 [![eIDAS 2.0](https://img.shields.io/badge/eIDAS%202.0-VC%20ready-blueviolet.svg)](docs/mappings/mapping-ivms101-eidas-amlr.md)
 [![AMLR 2027 Ready](https://img.shields.io/badge/AMLR%202027-ready-red.svg)](docs/compliance/compliance-matrix.md)
 [![FATF Rec 16](https://img.shields.io/badge/FATF%20Rec%2016-compliant-yellow.svg)](docs/compliance/compliance-matrix.md)
-[![CI](https://github.com/Lazy-Jack-Ltd/OpenKYCAML/actions/workflows/validate-schema.yml/badge.svg)](https://github.com/Lazy-Jack-Ltd/OpenKYCAML/actions/workflows/validate-schema.yml)
+[![CI](https://github.com/Lazy-Jack-Ltd/OpenKYCAML/actions/workflows/validate-examples.yml/badge.svg)](https://github.com/Lazy-Jack-Ltd/OpenKYCAML/actions/workflows/validate-examples.yml)
 
 ---
 
@@ -62,7 +62,7 @@ OpenKYCAML provides the common language that turns KYC data into an interoperabl
 
 ### Not adopting this is a competitive disadvantage
 
-> By 2027, EU AMLR Articles 22 and 26 will require obliged entities to share CDD data in machine-readable form. FS businesses including VASPs that already speak OpenKYCAML will be able to comtinue to onboard new correspondents and institutional clients in minutes. Those that don't will face months of integration work — or be unable to onboard at all.
+> By 2027, EU AMLR Articles 22 and 26 will require obliged entities to share CDD data in machine-readable form. FS businesses including VASPs that already speak OpenKYCAML will be able to continue to onboard new correspondents and institutional clients in minutes. Those that don't will face months of integration work — or be unable to onboard at all.
 
 ---
 
@@ -164,9 +164,8 @@ node validator.js ../../examples/full-kyc-profile.json
 
 ```json
 {
-  "$schema": "https://openkycaml.org/schema/v1.14.0/kyc-aml-hybrid-extended.json",
-  "version": "1.8.0",
-  "messageId": "550e8400-e29b-41d4-a716-446655440001",
+  "$schema": "https://openkycaml.org/schema/v1.18.0/kyc-aml-hybrid-extended.json",
+  "version": "1.18.0",
   "messageDateTime": "2024-06-15T09:30:00Z",
   "ivms101": {
     "originator": {
@@ -201,8 +200,8 @@ node validator.js ../../examples/full-kyc-profile.json
 
 ```json
 {
-  "$schema": "https://openkycaml.org/schema/v1.14.0/kyc-aml-hybrid-extended.json",
-  "version": "1.8.0",
+  "$schema": "https://openkycaml.org/schema/v1.18.0/kyc-aml-hybrid-extended.json",
+  "version": "1.18.0",
   "verifiableCredential": {
     "issuer": { "id": "did:web:acme-crypto.example.nl", "name": "Acme Crypto Exchange BV" },
     "credentialSubject": {
@@ -228,7 +227,7 @@ node validator.js ../../examples/full-kyc-profile.json
 
 > **Fictional data notice:** All names, passport numbers, national identifiers, addresses, entity names, LEIs, DIDs, wallet addresses, and any other personal or entity data in the example payloads are **entirely fictional** and have been created solely for illustrative purposes. Any resemblance to real persons (living or deceased), real legal entities, or real transactions is entirely coincidental. Any names that may coincidentally resemble those of real-world individuals or organisations have been deliberately altered.
 
-There are **45 example payloads** in [`examples/`](examples/) covering the full range of scenarios — from a minimal two-party Travel Rule message to complex 4-tier ownership structures, EUDI Wallet DID triangulation, SD-JWT selective disclosure, v1.5.0 Verification Document Bundles, v1.8.0 X.509 PKI evidence, v1.9.0 taxStatus examples, v1.10.0 contact/banking, v1.11.0 PCC/ICC cell companies, v1.12.0 entity governance / review lifecycle examples, v1.13.0 CRM completeness examples, and v1.14.0 schema cleanup (alias removal, `isPrimary` constraints, `EntityReference` rename).
+There are **49 example payloads** in [`examples/`](examples/) covering the full range of scenarios — from a minimal two-party Travel Rule message to complex 4-tier ownership structures, EUDI Wallet DID triangulation, SD-JWT selective disclosure, v1.5.0 Verification Document Bundles, v1.8.0 X.509 PKI evidence, v1.9.0 taxStatus examples, v1.10.0 contact/banking, v1.11.0 PCC/ICC cell companies, v1.12.0 entity governance / review lifecycle examples, v1.13.0 CRM completeness examples, v1.14.0 schema cleanup (alias removal, `isPrimary` constraints, `EntityReference` rename), v1.15.0 schema hardening (`additionalProperties:false`, `messageType`, `minLength` enforcement), v1.16.0 company identifiers (`CompanyIdentifier` $def with 23-value enum), v1.17.0 array grouping (new structured arrays for `naturalPersonIdentifiers[]`, `riskRatingHistory[]`, `consentRecords[]` and more), and v1.18.0 W3C VC Data Model 2.0 upgrade (`validFrom`/`validUntil`, updated `@context`).
 
 The complete catalogue with per-file descriptions, schema block inventory, and testing guidance is in **[`examples/EXAMPLES.md`](examples/EXAMPLES.md)**.
 
@@ -263,6 +262,8 @@ Each `-eudi-wallet.json` example documents a **trust chain** using W3C VC eviden
 | Document | Description |
 |---|---|
 | [Adoption Guide](docs/guides/adoption-guide.md) | Step-by-step integration for VASPs, banks, KYC utilities |
+| [JSON 101 for AML](docs/guides/json-101-for-aml.md) | Plain-English introduction to JSON for compliance officers and operations managers — building blocks, AML examples, and common data-sync failure patterns |
+| [JSON 102 for AML](docs/guides/json-102-for-aml.md) | JSON Schema as a business data contract — `required`, `enum`, `format`, `pattern`, `$defs`, `if/then/else`, `additionalProperties`, and how OpenKYCAML v1.15.0 uses them |
 | [ISO 20022 Integration](iso20022-integration/README.md) | Complete ISO 20022 bridge — pacs.008/pain.001/camt.053 profiles, Python & TypeScript converters, XML examples, KYCAMLEnvelope schema |
 | [Mapping: IVMS 101 / eIDAS / AMLR](docs/mappings/mapping-ivms101-eidas-amlr.md) | Field-level mapping across all referenced standards |
 | [Compliance Matrix](docs/compliance/compliance-matrix.md) | Exact alignment with FATF, AMLR, ISO 20022, LEI, eIDAS, ERC-3643, Sovrin |
@@ -285,6 +286,9 @@ Each `-eudi-wallet.json` example documents a **trust chain** using W3C VC eviden
 | [Entity Governance Flags Mapping](docs/mappings/entity-governance.md) | `EntityGovernance` $def — regulatory status, multi-regulator array, listed status, parent/ownership flags — v1.12.0 |
 | [Natural Person Governance Mapping](docs/mappings/natural-person-governance.md) | `gender` and `occupation` fields — eIDAS PID / IVMS 101 alignment, GDPR Art. 9 guidance — v1.12.0 |
 | [Three-Tier Enforcement Model](docs/compliance/enforcement-tiers.md) | Normative document mapping Tier 1 (Ethereum ERC-3643), Tier 2 (XRPL protocol), and Tier 3 (Bitcoin/Lightning service-layer) compliance enforcement |
+| [EUDI Wallet Integration Guide](docs/guides/eudi-wallet-integration.md) | EUDIW storage profile (VC-JWT vs SD-JWT vs JSON-LD), OpenID4VCI/VP wallet API mapping, selective disclosure, trusted issuer validation, and GDPR/SAR tipping-off protection |
+| [W3C VC Data Model Migration Guide](docs/reference/vc-data-model-migration.md) | Migration reference for upgrading VC payloads from W3C VC DM v1.1 (≤ v1.17.0) to VC DM 2.0 (v1.18.0+) |
+| [BIPCircle / AML Gate Integration Wiring Guide](docs/integrations/bipcircle-aml-gate-wiring.md) | Integration wiring briefing capturing reusable adoption patterns: Pub/Sub event schema, wallet DID convention, dual-read fallback, and MLRO case auto-creation |
 | [Roadmap](ROADMAP.md) | Planned features and upcoming versions |
 | [Contributing](CONTRIBUTING.md) | How to contribute to the standard |
 | [Governance](GOVERNANCE.md) | Steering committee model, RFC process |
@@ -320,6 +324,10 @@ Each `-eudi-wallet.json` example documents a **trust chain** using W3C VC eviden
 | **Entity Governance / Review Lifecycle / Natural Person Completeness** | ✅ v1.12.0 — `EntityGovernance` $def (`regulatoryStatus`, `regulators[]`, `listedStatus`, `parentCompany`, `stateOwned`, `governmentOwnershipPercentage`); `ReviewLifecycle` state machine (AMLR Art. 21 audit trail); `NaturalPerson.gender` (ISO/IEC 5218) and `occupation` (ILO/ISCO-08) — see [Entity Governance mapping](docs/mappings/entity-governance.md) and [Natural Person Governance mapping](docs/mappings/natural-person-governance.md) |
 | **CRM Completeness — 20 field gaps closed** | ✅ v1.13.0 — 6 new $defs (`EmailAddress`, `EmergencyContact`, `IndustryCode`, `Mandate`, `PhoneNumber`, `RegisteredAgent`); typed contact arrays, historical names, marital status, deceased flag, preferred language/channel, emergency contact, incorporation/dissolution dates, operational status, employee count, revenue, website, social media, industry codes, registered agent, GLEIF ultimate parent/group, relationship manager, customer segment, net worth, structured mandates — see §24 in compliance matrix |
 | **Schema Cleanup — Alias removal and `isPrimary` constraints** | ✅ v1.14.0 — removed 8 deprecated alias fields (`isPep`, `lastPepCheckDate`, `SanctionsScreening.status`, `lastScreenedDate`, `AdverseMedia.lastCheckedDate`, `AuditMetadata.timestamp`, `lastKycReviewDate`, `BeneficialOwner.naturalPerson`); removed 5 legacy contact strings (`emailAddress`/`phoneNumber`/`mobileNumber` from `NaturalPerson`/`LegalPerson`); removed `KYCProfile.sourceOfFundsWealth` string array; renamed `ParentCellCompanyReference` → `EntityReference`; added `isPrimary` `maxContains:1` constraints on 6 arrays |
+| **Schema Hardening — Strict mode and mandatory field validation** | ✅ v1.15.0 — `additionalProperties: false` at root level; optional `messageType` root property; `minLength: 1` enforced on 10 critical fields (`primaryIdentifier`, `nationalIdentifier`, `customerIdentification`, `legalPersonName`, `currentLegalName`, `uniqueIdentifier`, `taxReferenceNumber`, `customerNumber`, `emailAddress`, `phoneNumber`); root `examples` array; `NaturalPerson` allOf `deceasedDate` conditional (required when `isDeceased: true`); `uniqueItems: true` on `NaturalPerson`/`LegalPerson`/`KYCProfile` `tags[]` |
+| **Company Identifiers — Structured legal entity identifier types** | ✅ v1.16.0 — new `CompanyIdentifier` $def with 23-value `identifierType` enum (DUNS, LEI, CRN_GB, SIREN_FR, SIRET_FR, HRB_DE, HRA_DE, CNPJ_BR, ABN_AU, ACN_AU, EIN_US, CIK_US, CAGE_US, PIC_EU, BVDID, ISIN, BIC, CHARITY_GB, KVK_NL, UID_AT, NIF_ES, RCS_LU, OTHER); `identifierIssuingBody` required when type = OTHER; `LegalPerson.companyIdentifiers[]` added; see §25 in compliance matrix |
+| **Array Grouping — Extended structured arrays** | ✅ v1.17.0 — 4 new $defs (`PersonIdentifier` 17-value enum, `RiskRatingEntry`, `RevenueRecord`, `ConsentRecord`); 12 new optional additive array properties: `NaturalPerson.naturalPersonIdentifiers[]`, `countriesOfResidence[]`, `nationalities[]`, `occupations[]`, `emergencyContacts[]`; `LegalPerson.legalNationalIdentifiers[]`, `revenueHistory[]`, `registeredAgents[]`; `KYCProfile.pepStatuses[]`, `riskRatingHistory[]`, `consentRecords[]`; `EntityGovernance.parentCompanies[]`; see §26 in compliance matrix |
+| **W3C VC Data Model 2.0** | ✅ v1.18.0 — `VerifiableCredentialWrapper` upgraded from W3C VC DM v1.1 to VC DM 2.0 (W3C Recommendation, May 2024); `@context[0]` const changed to `https://www.w3.org/ns/credentials/v2`; `issuanceDate` renamed to `validFrom` (required); `expirationDate` renamed to `validUntil` (optional); all 23 VC-bearing examples updated; all "planned for v2.0.0" deferral notes removed; see [VC Data Model Migration Guide](docs/reference/vc-data-model-migration.md) |
 
 ---
 
@@ -328,7 +336,7 @@ Each `-eudi-wallet.json` example documents a **trust chain** using W3C VC eviden
 ```
 openKYCAML/
 ├── schema/
-│   ├── kyc-aml-hybrid-extended.json     ← Canonical schema (latest — currently v1.14.0)
+│   ├── kyc-aml-hybrid-extended.json     ← Canonical schema (latest — currently v1.18.0)
 │   └── versions/
 │       ├── v1.0.0.json                  ← v1.0.0 snapshot
 │       ├── v1.1.0.json                  ← v1.1.0 snapshot
@@ -346,7 +354,11 @@ openKYCAML/
 │       ├── v1.11.2.json                 ← v1.11.2 snapshot (cell-level predictive AML scores)
 │       ├── v1.12.0.json                 ← v1.12.0 snapshot (gender, occupation, EntityGovernance, ReviewLifecycle)
 │       ├── v1.13.0.json                 ← v1.13.0 snapshot (CRM completeness: 20 field gaps, 6 new $defs)
-│       └── v1.14.0.json                 ← v1.14.0 snapshot (current — alias removal, isPrimary constraints, EntityReference rename)
+│       ├── v1.14.0.json                 ← v1.14.0 snapshot (alias removal, isPrimary constraints, EntityReference rename)
+│       ├── v1.15.0.json                 ← v1.15.0 snapshot (additionalProperties:false, messageType, minLength enforcement)
+│       ├── v1.16.0.json                 ← v1.16.0 snapshot (CompanyIdentifier $def, 23-value enum, companyIdentifiers[])
+│       ├── v1.17.0.json                 ← v1.17.0 snapshot (PersonIdentifier, RiskRatingEntry, ConsentRecord, RevenueRecord; 12 new array fields)
+│       └── v1.18.0.json                 ← v1.18.0 snapshot (current — W3C VC DM 2.0: validFrom/validUntil, updated @context)
 ├── examples/
 │   ├── *-plain.json                     ← Plain IVMS 101 baseline examples
 │   ├── *-wrapped.json                   ← VC-wrapped examples
@@ -357,6 +369,8 @@ openKYCAML/
 │   ├── contact-banking/                 ← Contact/banking identifier examples (v1.10.0)
 │   ├── cell-company/                    ← PCC/ICC cell company examples (v1.11.0)
 │   ├── predictive/                      ← PredictiveAML / EU AI Act examples (v1.7.0)
+│   ├── company-identifiers.json         ← CompanyIdentifier $def examples (v1.16.0)
+│   ├── array-grouping-*.json            ← Array-grouping field examples (v1.17.0)
 │   └── presentation-definitions/        ← OpenID4VP presentation definitions
 ├── iso20022-integration/                ← ISO 20022 bridge module (v1.3.0+)
 │   ├── mapping/                         ← Bidirectional field mapping YAML + gap analysis

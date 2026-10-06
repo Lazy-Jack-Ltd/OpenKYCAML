@@ -1,6 +1,6 @@
 {
   "$schema": "https://openkycaml.org/schema/v1.3.0/kyc-aml-hybrid-extended.json",
-  "version": "1.3.0",
+  "version": "1.18.0",
   "messageId": "a4b5c6d7-e8f9-0a1b-2c3d-4e5f6a7b8c9d",
   "messageDateTime": "2025-11-01T08:30:00Z",
   "_comment_scenario": "Limited Liability Partnership — UK LLP with Corporate General Partner, Multiple Limited Partners and Natural Person Directors. This example demonstrates AMLR Art. 26 and FATF R.24 beneficial ownership disclosure for Meridian Capital LLP (UK), a private digital asset fund structured as a limited liability partnership. The LLP is itself the originating VASP. Under the LLP agreement (LPA), management and control are exclusively vested in the General Partner (GP); limited partners have no management rights. Partnership interest breakdown: [GP, 0% economic / 100% management control] Meridian Capital GP Ltd (UK); [LP, 45%] Priya Sharma Investments Ltd (Mauritius); [LP, 35%] Ashworth Pension Fund Ltd (UK); [LP, 10%] Dr. Arjun Sharma (UK); [LP, 10%] Sita Patel (UK). UBO determination: Priya Sharma (UK/India) is the sole UBO because (i) she is the sole director and 100% shareholder of Meridian Capital GP Ltd — the General Partner holding all management and voting rights under the LPA; (ii) she also beneficially owns 100% of Priya Sharma Investments Ltd (the largest LP). Despite GP partners in an LLP having no formal ownership stake, control through the GP role constitutes DE_FACTO_CONTROL and CONTRACTUAL control for UBO purposes under AMLR Art. 26(1). FATF Guidance on Transparency of LPs (June 2023) explicitly requires identification of GP controllers as UBOs.",
@@ -86,7 +86,7 @@
   },
   "verifiableCredential": {
     "@context": [
-      "https://www.w3.org/2018/credentials/v1",
+      "https://www.w3.org/ns/credentials/v2",
       "https://openkycaml.org/contexts/v1"
     ],
     "id": "urn:uuid:a4b5c6d7-e8f9-0a1b-2c3d-4e5f6a7b8c9d",
@@ -99,8 +99,6 @@
       "id": "did:web:singapore-digital-securities.example.sg",
       "name": "Singapore Digital Securities Pte Ltd"
     },
-    "issuanceDate": "2025-11-01T08:30:00Z",
-    "expirationDate": "2026-11-01T08:30:00Z",
     "credentialSubject": {
       "ivms101": {
         "originator": {
@@ -507,6 +505,8 @@
       "verificationMethod": "did:web:singapore-digital-securities.example.sg#key-1",
       "proofPurpose": "assertionMethod",
       "proofValue": "zWx9Yz2AbCdEfGhIjKlMnOpQrStUvWxYz3AbCdEfGhIj"
-    }
+    },
+    "validFrom": "2025-11-01T08:30:00Z",
+    "validUntil": "2026-11-01T08:30:00Z"
   }
 }

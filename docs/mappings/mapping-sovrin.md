@@ -194,8 +194,8 @@ The AnonCreds credential is the signed object delivered to the holder. When repr
 | `rev_reg_id` | Revocation Registry Definition ID | `verifiableCredential.credentialStatus.id` ⭐ | `null` if credential is non-revocable. |
 | `rev_reg_index` | Holder's index in the revocation registry | ℹ️ Holder-private cryptographic state | Not stored in the OpenKYCAML record. |
 | `issuer_did` | DID of the credential issuer | `verifiableCredential.issuer` | Standard W3C VC field. |
-| `issuance_date` / `issuance_nonce` | When the credential was issued | `verifiableCredential.issuanceDate` | Standard W3C VC field. |
-| `expiry` (if set) | Expiry epoch | `verifiableCredential.expirationDate` | Standard W3C VC field. |
+| `issuance_date` / `issuance_nonce` | When the credential was issued | `verifiableCredential.validFrom` | Standard W3C VC DM 2.0 field. |
+| `expiry` (if set) | Expiry epoch | `verifiableCredential.validUntil` | Standard W3C VC DM 2.0 field. |
 | `values` (attr dict) | Dictionary of `{attr: {raw, encoded}}` pairs | `verifiableCredential.credentialSubject.*` / `ivms101.*` / `kycProfile.*` | See §5 for attribute-to-field mapping. |
 | `signature` (CL) | Camenisch-Lysyanskaya signature over the credential | `verifiableCredential.proof.proofValue` | In the W3C AnonCreds binding, this is in the `proof` section. |
 | `signature_correctness_proof` | Proof that the signature is correct | `verifiableCredential.proof.proofValue` | Included in the CL proof. |
@@ -231,7 +231,7 @@ The Rich Schema feature allows JSON-LD-based credentials on the Indy ledger. The
 | **JSON_LD_CONTEXT** (type 200) | `rsType: ctx` | JSON-LD `@context` definitions published to the ledger | `verifiableCredential.@context[]` | OpenKYCAML already supports JSON-LD context URIs in `@context`. A ledger-published context would be referenced by its `did:sov:<DID>` URI. |
 | **RICH_SCHEMA** (type 201) | `rsType: sch` | JSON-LD schema object (`@id`, `@type`, attributes with types) | `verifiableCredential.credentialSchema.id` | Schema ID would be a `did:sov:<DID>` URI pointing to the Rich Schema on the ledger. |
 | **RICH_SCHEMA_ENCODING** (type 202) | `rsType: enc` | Encoding algorithm definitions (maps string/date/etc. to integers for CL signing) | ℹ️ Cryptographic infrastructure | |
-| **RICH_SCHEMA_MAPPING** (type 203) | `rsType: map` | Maps Rich Schema attributes to encodings with `rank` ordering | ℹ️ Cryptographic infrastructure | The `issuer` and `issuanceDate` mapped attributes correspond to `verifiableCredential.issuer` and `verifiableCredential.issuanceDate`. |
+| **RICH_SCHEMA_MAPPING** (type 203) | `rsType: map` | Maps Rich Schema attributes to encodings with `rank` ordering | ℹ️ Cryptographic infrastructure | The `issuer` and `validFrom` mapped attributes correspond to `verifiableCredential.issuer` and `verifiableCredential.validFrom`. |
 | **RICH_SCHEMA_CRED_DEF** (type 204) | `rsType: cdfd` | Credential Definition for a Rich Schema (issuer public key + mapping ref) | `verifiableCredential.credentialSchema.credDefId` ⭐ | Same field as CLAIM_DEF — `credDefId` can reference either a CLAIM_DEF or RICH_SCHEMA_CRED_DEF ledger object. |
 | **RICH_SCHEMA_PRES_DEF** (type 205) | `rsType: pdf` | Presentation Definition — defines what attributes/predicates a verifier requires | `verifiableCredential.selectiveDisclosure.requiredClaimPaths[]` + `disclosableClaimPaths[]` | OpenKYCAML's selective disclosure paths mirror the intent of a presentation definition. |
 
@@ -289,8 +289,8 @@ The following fields were **added to OpenKYCAML v1.2.0** to close gaps identifie
 | All KYC identity attributes (name, DOB, address, document numbers) | `ivms101.*` — full IVMS 101 model |
 | Legal entity attributes (org name, registration, LEI) | `ivms101.*` legalPerson fields |
 | Issuer identity | `verifiableCredential.issuer` |
-| Credential issuance date | `verifiableCredential.issuanceDate` |
-| Credential expiry | `verifiableCredential.expirationDate` |
+| Credential issuance date | `verifiableCredential.validFrom` |
+| Credential expiry | `verifiableCredential.validUntil` |
 | JSON-LD context | `verifiableCredential.@context` |
 | Selective disclosure / ZKP claims | `verifiableCredential.selectiveDisclosure` |
 | KYC status, risk rating, AML checks | `kycProfile.*` |

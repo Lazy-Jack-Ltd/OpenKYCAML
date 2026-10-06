@@ -1,6 +1,6 @@
 {
   "$schema": "https://openkycaml.org/schema/v1.3.0/kyc-aml-hybrid-extended.json",
-  "version": "1.3.0",
+  "version": "1.18.0",
   "messageId": "d1e2f3a4-b5c6-7d8e-9f0a-1b2c3d4e5f6a",
   "messageDateTime": "2025-10-15T10:00:00Z",
   "_comment_scenario": "Complex Multi-Tier Corporate Group — 4-Layer Holding Structure with Natural Person Directors. This example demonstrates AMLR Art. 26 full beneficial ownership disclosure for a complex crypto-native fund group where one natural person UBO (Marcus Van Den Berg, Netherlands, 75%) controls Nexus Global Ventures Ltd (Cayman Islands VASP) through a three-tier chain: [Tier 3, closest to UBO] MVB Family Office BV (NL, 100%) → [Tier 2] Nexus Capital SA (LU, 88%) → [Tier 1, closest to subject] Nexus Holdings Ltd (BVI, 100%) → [Subject] Nexus Global Ventures Ltd (KY, 75%). Natural person directors are documented at every tier via LPID mandates, illustrating how the schema captures the full governance map of a complex group. A secondary shareholder, Ingrid Van Den Berg (NL, 5% direct), is also reported per EDD policy. The remaining 20% is held by institutional investors below the 25% FATF reporting threshold.",
@@ -72,7 +72,7 @@
   },
   "verifiableCredential": {
     "@context": [
-      "https://www.w3.org/2018/credentials/v1",
+      "https://www.w3.org/ns/credentials/v2",
       "https://openkycaml.org/contexts/v1"
     ],
     "id": "urn:uuid:d1e2f3a4-b5c6-7d8e-9f0a-1b2c3d4e5f6a",
@@ -85,8 +85,6 @@
       "id": "did:web:atlantic-digital-exchange.example.ie",
       "name": "Atlantic Digital Exchange Ltd"
     },
-    "issuanceDate": "2025-10-15T10:00:00Z",
-    "expirationDate": "2026-10-15T10:00:00Z",
     "credentialSubject": {
       "ivms101": {
         "originator": {
@@ -441,6 +439,8 @@
       "verificationMethod": "did:web:atlantic-digital-exchange.example.ie#key-1",
       "proofPurpose": "assertionMethod",
       "proofValue": "zHm5Kn8LoPqRsTuVwXyZaBcDeFgHiJkLmNoPqRsT0vW"
-    }
+    },
+    "validFrom": "2025-10-15T10:00:00Z",
+    "validUntil": "2026-10-15T10:00:00Z"
   }
 }

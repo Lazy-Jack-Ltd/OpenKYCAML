@@ -100,8 +100,8 @@ erDiagram
 
     VerifiableCredentialWrapper {
         string id
-        string issuanceDate
-        string expirationDate
+        string validFrom
+        string validUntil
     }
 
     VerifiableCredentialProof {

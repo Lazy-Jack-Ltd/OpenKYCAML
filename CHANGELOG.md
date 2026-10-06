@@ -13,6 +13,163 @@ For the full project roadmap and planned features, see [ROADMAP.md](ROADMAP.md).
 
 ---
 
+## [1.18.0] — April 2026
+
+### Changed — v1.18.0: W3C VC Data Model 2.0 upgrade
+
+Upgraded the `VerifiableCredentialWrapper` from W3C VC Data Model v1.1 to the W3C VC DM 2.0 Recommendation (published May 2024). Only payloads that include a `verifiableCredential` block are affected; all other schema structure is unchanged.
+
+#### Schema changes
+
+- **`VerifiableCredentialWrapper.$defs`**: `@context[0]` const changed from `https://www.w3.org/2018/credentials/v1` to `https://www.w3.org/ns/credentials/v2`.
+- **`issuanceDate`** (required string, ISO 8601) **renamed to `validFrom`**.
+- **`expirationDate`** (optional string, ISO 8601) **renamed to `validUntil`**.
+- All 23 VC-bearing example payloads updated to use the new field names and context URL.
+- All "planned for v2.0.0" deferral notes removed from schema, validator, and documentation.
+- `TinIdentifier.issuanceDate` is a separate field and remains **unchanged**.
+
+#### New documentation
+
+- **`docs/reference/vc-data-model-migration.md`** — migration reference and adopter checklist for upgrading existing VC payloads from v1.1 to v2.0.
+- **`docs/guides/eudi-wallet-integration.md`** updated to reflect VC DM 2.0 context URL and `validFrom`/`validUntil` field names.
+- **Compliance matrix §27** — VC DM 2.0 alignment section added.
+
+#### Backward compatibility
+
+Only payloads with a `verifiableCredential` block are affected. Non-VC payloads (IVMS 101 only, `kycProfile`, `taxStatus`, etc.) require no changes. Adopters of VC payloads must update `@context[0]`, rename `issuanceDate` → `validFrom`, and optionally rename `expirationDate` → `validUntil`.
+
+---
+
+## [1.17.0] — April 2026
+
+### Added — v1.17.0: Extended structured array properties (PersonIdentifier, RiskRatingEntry, RevenueRecord, ConsentRecord)
+
+All additions are optional and backward-compatible. No existing required fields changed. Version: `1.17.0`.
+
+#### New $defs
+
+- **`PersonIdentifier`** — 17-value `identifierType` enum for natural person identifier categorisation (NATIONAL_ID, PASSPORT, DRIVERS_LICENCE, TAX_ID, SOCIAL_SECURITY, BIRTH_CERTIFICATE, VOTER_ID, RESIDENT_PERMIT, WORK_PERMIT, STUDENT_ID, MILITARY_ID, HEALTH_CARD, PROFESSIONAL_LICENCE, CREDIT_BUREAU_ID, BIOMETRIC_ID, DIGITAL_ID, OTHER).
+- **`RiskRatingEntry`** — structured risk rating history entry with `riskRating`, `riskScore`, `ratedAt`, `ratedBy`, `ratingMethod`, and optional `notes`.
+- **`RevenueRecord`** — timestamped revenue record with `amount`, `currency`, `period`, `source`, and optional `verificationDate`.
+- **`ConsentRecord`** — GDPR/AML consent record with `consentType`, `givenAt`, `withdrawnAt`, `legalBasis`, `dataCategories[]`, and `consentVersion`.
+
+#### New array properties — 12 additive fields
+
+- **`NaturalPerson`**: `naturalPersonIdentifiers[]` (`$ref PersonIdentifier`), `countriesOfResidence[]` (ISO 3166-1 alpha-2), `nationalities[]` (ISO 3166-1 alpha-2), `occupations[]` (structured occupation array), `emergencyContacts[]` (`$ref EmergencyContact`).
+- **`LegalPerson`**: `legalNationalIdentifiers[]` (`$ref PersonIdentifier`), `revenueHistory[]` (`$ref RevenueRecord`), `registeredAgents[]` (`$ref RegisteredAgent`).
+- **`KYCProfile`**: `pepStatuses[]` (structured PEP status history), `riskRatingHistory[]` (`$ref RiskRatingEntry`), `consentRecords[]` (`$ref ConsentRecord`).
+- **`EntityGovernance`**: `parentCompanies[]` (array of `EntityReference`).
+
+#### Version, snapshot, and documentation
+
+- `schema/kyc-aml-hybrid-extended.json`: `$id` and `version` bumped to `v1.17.0`.
+- `schema/versions/v1.17.0.json`: versioned snapshot created.
+- `docs/compliance/compliance-matrix.md` §26: extended array grouping section added.
+- New examples: `examples/array-grouping-v1-17.json` (natural person) and `examples/array-grouping-legal-entity-v1-17.json` (legal entity).
+
+---
+
+## [1.16.0] — April 2026
+
+### Added — v1.16.0: Company Identifiers — structured legal entity identifier types
+
+All additions are optional and backward-compatible. No existing required fields changed. Version: `1.16.0`.
+
+#### New $defs
+
+- **`CompanyIdentifier`** — structured company identifier with a 23-value `identifierType` enum: `DUNS`, `LEI`, `CRN_GB`, `SIREN_FR`, `SIRET_FR`, `HRB_DE`, `HRA_DE`, `CNPJ_BR`, `ABN_AU`, `ACN_AU`, `EIN_US`, `CIK_US`, `CAGE_US`, `PIC_EU`, `BVDID`, `ISIN`, `BIC`, `CHARITY_GB`, `KVK_NL`, `UID_AT`, `NIF_ES`, `RCS_LU`, `OTHER`. An `if`/`then` constraint requires `identifierIssuingBody` when `identifierType` is `OTHER`.
+
+#### `LegalPerson` additions
+
+- `companyIdentifiers[]` — optional array of `$ref CompanyIdentifier`. Enables multi-registry legal entity identification beyond IVMS 101 `nationalIdentification` (LEIX/RAID/etc.).
+
+#### Version, snapshot, and documentation
+
+- `schema/kyc-aml-hybrid-extended.json`: `$id` and `version` bumped to `v1.16.0`.
+- `schema/versions/v1.16.0.json`: versioned snapshot created.
+- `docs/compliance/compliance-matrix.md` §25: company identifier section added.
+- New example: `examples/company-identifiers.json`.
+
+---
+
+## [1.15.0] — April 2026
+
+### Changed — v1.15.0: Schema hardening — strict mode, mandatory field validation, and structural improvements
+
+All changes are additive or constraint-tightening. No fields removed; no existing valid payloads broken (payloads with empty-string values on critical fields will now fail validation). Version: `1.15.0`.
+
+#### Schema hardening
+
+- **`additionalProperties: false`** added at root level — payloads may not include unrecognised root properties. Prevents silent schema drift.
+- **`messageType`** — new optional root string property for message classification (e.g. `TRAVEL_RULE`, `CDD_SHARE`, `ONBOARDING`).
+- **`minLength: 1`** enforced on 10 critical fields: `primaryIdentifier`, `nationalIdentifier`, `customerIdentification`, `legalPersonName`, `currentLegalName`, `uniqueIdentifier`, `taxReferenceNumber`, `customerNumber`, `emailAddress`, `phoneNumber`. Prevents semantically empty strings.
+- **Root `examples` array** — added to schema for tooling/IDE support.
+
+#### Conditional constraints
+
+- **`NaturalPerson` allOf** — new `if`/`then` constraint: `isDeceased: true` **requires** `deceasedDate`. Prevents records marked deceased without a date.
+- **`uniqueItems: true`** on `NaturalPerson.tags[]`, `LegalPerson.tags[]`, and `KYCProfile.tags[]` — prevents duplicate tag entries.
+
+#### New $defs
+
+- **`EUDIWalletPresentationContext`** — structured EUDI Wallet presentation context object.
+
+#### Documentation and tooling
+
+- `schema/kyc-aml-hybrid-extended.json`: `$id` and `version` bumped to `v1.15.0`.
+- `schema/versions/v1.15.0.json`: versioned snapshot created.
+- `_comment*` / `_disclaimer` annotation strings stripped from 18 example files to comply with `additionalProperties: false`.
+- `examples/sd-jwt-compact-token.json` stripped of SD-JWT compact token format fields not conforming to the schema.
+- Both Python and JS validators updated to reflect new constraints.
+
+---
+
+## [1.14.0] — April 2026
+
+### Changed — v1.14.0: Schema cleanup — alias removal, `isPrimary` constraints, and `EntityReference` rename
+
+All changes remove deprecated aliases or tighten existing constraints. No new fields added. Version: `1.14.0`.
+
+#### Removed deprecated alias fields
+
+Eight alias fields that duplicated information already captured in primary fields were removed:
+
+- `isPep` (alias of `pepStatus.isPep`) from `KYCProfile`
+- `lastPepCheckDate` (alias of `pepStatus.lastCheckDate`) from `KYCProfile`
+- `SanctionsScreening.status` (alias of `sanctionsScreening.overallResult`)
+- `SanctionsScreening.lastScreenedDate` (alias of `sanctionsScreening.lastScreened`)
+- `AdverseMedia.lastCheckedDate` (alias of `adverseMedia.lastChecked`)
+- `AuditMetadata.timestamp` (alias of `auditMetadata.createdAt`)
+- `lastKycReviewDate` (alias of `monitoringInfo.lastReviewDate`) from `KYCProfile`
+- `BeneficialOwner.naturalPerson` (alias of `BeneficialOwner.person`)
+
+#### Removed legacy contact string fields
+
+Five legacy single-string contact fields removed from `NaturalPerson` and `LegalPerson` (superseded by the typed arrays added in v1.13.0):
+
+- `emailAddress`, `phoneNumber`, `mobileNumber` from `NaturalPerson`
+- `emailAddress`, `phoneNumber` from `LegalPerson`
+
+#### Removed deprecated array field
+
+- `KYCProfile.sourceOfFundsWealth` (untyped string array) removed; replaced by the structured `SourceOfFundsWealth` $def introduced in an earlier version.
+
+#### Renamed $def
+
+- **`ParentCellCompanyReference` renamed to `EntityReference`** — the $def now serves as a general-purpose parent/related-entity reference, not just for cell company parent linkage.
+
+#### `isPrimary` constraints
+
+- `maxContains: 1` constraints added to 6 arrays to enforce at most one `isPrimary: true` item: `NaturalPerson.emailAddresses[]`, `NaturalPerson.phoneNumbers[]`, `LegalPerson.emailAddresses[]`, `LegalPerson.phoneNumbers[]`, `NaturalPerson.addresses[]`, `LegalPerson.addresses[]`.
+
+#### Version, snapshot, and documentation
+
+- `schema/kyc-aml-hybrid-extended.json`: `$id` and `version` bumped to `v1.14.0`.
+- `schema/versions/v1.14.0.json`: versioned snapshot created.
+- Python and JavaScript validators updated to remove references to removed fields.
+
+---
+
 ## [1.13.0] — April 2026
 
 ### Added — v1.13.0: CRM completeness — 20 contact/account field gaps closed (P1–P4)

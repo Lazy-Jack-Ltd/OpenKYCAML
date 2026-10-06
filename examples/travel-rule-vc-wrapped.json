@@ -1,11 +1,11 @@
 {
   "$schema": "https://openkycaml.org/schema/v1.3.0/kyc-aml-hybrid-extended.json",
-  "version": "1.3.0",
+  "version": "1.18.0",
   "messageId": "a3f7c210-1b2d-4e56-9f87-cc3344556677",
   "messageDateTime": "2024-09-01T10:30:00Z",
   "verifiableCredential": {
     "@context": [
-      "https://www.w3.org/2018/credentials/v1",
+      "https://www.w3.org/ns/credentials/v2",
       "https://openkycaml.org/contexts/v1"
     ],
     "id": "urn:uuid:a3f7c210-1b2d-4e56-9f87-cc3344556677",
@@ -18,8 +18,6 @@
       "id": "did:web:acme-crypto.example.nl",
       "name": "Acme Crypto Exchange BV"
     },
-    "issuanceDate": "2024-09-01T10:30:00Z",
-    "expirationDate": "2025-09-01T10:30:00Z",
     "credentialSubject": {
       "id": "did:example:customer:CUST-NL-0000042",
       "ivms101": {
@@ -130,7 +128,9 @@
       "verificationMethod": "did:web:acme-crypto.example.nl#key-1",
       "proofPurpose": "assertionMethod",
       "proofValue": "zABC123DEF456GHI789JKL012MNO345PQR678STU901VWX234YZA567BCD890EFG123HIJ456"
-    }
+    },
+    "validFrom": "2024-09-01T10:30:00Z",
+    "validUntil": "2025-09-01T10:30:00Z"
   },
   "transactionMonitoring": {
     "transactionReference": "TXN-NL-GB-2024-0042-001",

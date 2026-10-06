@@ -1,6 +1,6 @@
 {
   "$schema": "https://openkycaml.org/schema/v1.3.0/kyc-aml-hybrid-extended.json",
-  "version": "1.3.0",
+  "version": "1.18.0",
   "messageId": "a2b3c4d5-e6f7-4a8b-9c0d-1e2f3a4b5c6d",
   "messageDateTime": "2025-12-01T10:30:00Z",
   "_comment_eudi": "EUDI Wallet Travel Rule VC — Full VC wrapper. This is the EUDI Wallet companion to travel-rule-vc-wrapped.json. Pieter Jan Van Dijk (NL) sends BTC to Harold Hargreaves (GB). Pieter Jan presents his Dutch EUDI Wallet PID at Acme Crypto (NL). This is a fully VC-wrapped IVMS 101 message with EUDI Wallet source evidence and multi-DID triangulation. Five DIDs: (1) Pieter Jan's EUDI Wallet DID (NL), (2) Dutch PID Issuer DID (RVO), (3) Acme Crypto VASP DID (NL), (4) FinTech Exchange VASP DID (GB, beneficiary — referenced as travel rule counterpart), (5) Harold Hargreaves's UK-issued DID (referenced in beneficiary accountNumber context only; beneficiary wallets are not EUDI since GB is post-Brexit).",
@@ -100,7 +100,7 @@
   },
   "verifiableCredential": {
     "@context": [
-      "https://www.w3.org/2018/credentials/v1",
+      "https://www.w3.org/ns/credentials/v2",
       "https://openkycaml.org/contexts/v1",
       "https://europa.eu/2018/credentials/eudi/v1"
     ],
@@ -115,8 +115,6 @@
       "id": "did:web:acme-crypto.example.nl",
       "name": "Acme Crypto Exchange BV"
     },
-    "issuanceDate": "2025-12-01T10:30:00Z",
-    "expirationDate": "2026-12-01T10:30:00Z",
     "credentialSubject": {
       "_comment_subject": "DID #1 — Pieter Jan Van Dijk's Dutch EUDI Wallet DID (NL national wallet, DigiD-backed EUDI PID)",
       "id": "did:ebsi:zABkFm2PRPvLxNksMqJdVHK7",
@@ -259,7 +257,9 @@
       "verificationMethod": "did:web:acme-crypto.example.nl#key-1",
       "proofPurpose": "assertionMethod",
       "proofValue": "zFr8Qz4cSzTv9XiK1MoA6YgN0HuB5EsC2LjG7JwP3Vd"
-    }
+    },
+    "validFrom": "2025-12-01T10:30:00Z",
+    "validUntil": "2026-12-01T10:30:00Z"
   },
   "transactionMonitoring": {
     "transactionReference": "TXN-NL-GB-2025-0042-007",

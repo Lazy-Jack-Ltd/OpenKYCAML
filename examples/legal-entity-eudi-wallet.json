@@ -1,6 +1,6 @@
 {
   "$schema": "https://openkycaml.org/schema/v1.3.0/kyc-aml-hybrid-extended.json",
-  "version": "1.3.0",
+  "version": "1.18.0",
   "messageId": "d4e5f6a7-b8c9-4d0e-1f2a-3b4c5d6e7f8a",
   "messageDateTime": "2025-09-10T10:00:00Z",
   "_comment_eudi": "EUDI Wallet KYC — Legal Entity. Global Trade Solutions GmbH (DE) onboards at Deutsche Krypto Bank AG by presenting its eIDAS 2.0 LPID from the German company EUDI Wallet, issued by Bundesanzeiger (DE business registry). Director Hans Bauer presents a QEAA mandate confirming his power of representation. Four DIDs triangulate the identity chain: (1) Company wallet DID, (2) LPID Issuer DID (Bundesanzeiger), (3) Director personal wallet DID, (4) VASP DID. LPID mandatory attributes: currentLegalName + uniqueIdentifier. Optional attributes: lei, vatRegistrationNumber, eoriNumber, europeanUniqueIdentifier, currentAddress. Mandates block carries AMLR Art. 26 authorised representative data.",
@@ -113,7 +113,7 @@
   },
   "verifiableCredential": {
     "@context": [
-      "https://www.w3.org/2018/credentials/v1",
+      "https://www.w3.org/ns/credentials/v2",
       "https://openkycaml.org/contexts/v1",
       "https://europa.eu/2018/credentials/eudi/v1"
     ],
@@ -128,8 +128,6 @@
       "id": "did:web:deutsche-krypto-bank.example.de",
       "name": "Deutsche Krypto Bank AG"
     },
-    "issuanceDate": "2025-09-10T10:00:00Z",
-    "expirationDate": "2026-09-10T10:00:00Z",
     "credentialSubject": {
       "_comment_subject": "DID #1 — Global Trade Solutions GmbH company EUDI Wallet DID. Companies receive a legal entity wallet DID anchored to their EUID/LEI.",
       "id": "did:ebsi:z2JJFoq4joyXKABBGe7mJmN5",
@@ -382,6 +380,8 @@
       "verificationMethod": "did:web:deutsche-krypto-bank.example.de#key-1",
       "proofPurpose": "assertionMethod",
       "proofValue": "zCv5Nw1zPxQs6VfH8JmY3WdK7GrB4OtA0LkE2IsX9UeR"
-    }
+    },
+    "validFrom": "2025-09-10T10:00:00Z",
+    "validUntil": "2026-09-10T10:00:00Z"
   }
 }

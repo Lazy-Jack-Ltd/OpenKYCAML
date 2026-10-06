@@ -6,7 +6,23 @@ This document is the **authoritative project roadmap** covering schema features,
 
 ---
 
-## Current Version: v1.12.0
+## Current Version: v1.18.0
+
+**Released:** April 2026
+
+**Highlights (v1.18.0):**
+- **W3C VC Data Model 2.0** — Upgraded `VerifiableCredentialWrapper` from W3C VC DM v1.1 to the W3C VC DM 2.0 Recommendation (May 2024). `@context[0]` now requires `https://www.w3.org/ns/credentials/v2`. Field renames: `issuanceDate` → `validFrom` (required), `expirationDate` → `validUntil` (optional). All 23 VC-bearing examples updated. All "planned for v2.0.0" deferral notes removed.
+- **Fully backward-compatible for non-VC payloads** — Only payloads that include a `verifiableCredential` block are affected. All other schema structure unchanged.
+
+---
+
+## Previous Version: v1.17.0
+
+**Released:** April 2026
+
+---
+
+## Previous Version: v1.12.0
 
 **Released:** April 2026
 

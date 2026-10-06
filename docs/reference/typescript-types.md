@@ -661,8 +661,8 @@ export interface VerifiableCredentialWrapper {
   id?: string;
   type: string[];
   issuer: string | { id: string; name?: string };
-  issuanceDate: string;
-  expirationDate?: string;
+  validFrom: string;
+  validUntil?: string;
   credentialSubject: CredentialSubject;
   credentialStatus?: CredentialStatus;
   credentialSchema?: CredentialSchema;

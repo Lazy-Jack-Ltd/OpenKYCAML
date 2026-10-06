@@ -73,11 +73,11 @@ The XRPL Credential object is explicitly designed as an **on-ledger anchor for a
 | `id` — credential URI | Derived: `CredentialID` (SHA-512/256 hash of `{Subject, Issuer, CredentialType}`) | `verifiableCredential.id` | 🔄 XRPL uses a hash key; OpenKYCAML stores the canonical URI. Map: `verifiableCredential.id` → set as XRPL `URI` |
 | `issuer` | `Issuer` (XRPL account address, e.g. `rKYCIssuer...`) | `verifiableCredential.issuer.id` (DID, e.g. `did:xrpl:1:rKYCIssuer...`) | ✅ DID-to-r-address derivation is deterministic (see §3) |
 | `credentialSubject.id` | `Subject` (XRPL account address) | `verifiableCredential.credentialSubject.id` (DID, e.g. `did:xrpl:1:rCustomer...`) | ✅ Same derivation |
-| `validUntil` / `expirationDate` | `Expiration` (Ripple epoch seconds) | `verifiableCredential.expirationDate` (ISO 8601) | ✅ Convert: Ripple epoch = Unix epoch − 946684800 |
+| `validUntil` / `expirationDate` | `Expiration` (Ripple epoch seconds) | `verifiableCredential.validUntil` (ISO 8601) | ✅ Convert: Ripple epoch = Unix epoch − 946684800 |
 | `type[]` — credential type | `CredentialType` (1–64 bytes hex-encoded) | `verifiableCredential.type[]` (string array) | 🔄 See §2.2 |
 | `proof` — cryptographic proof | Validated by XRPL ledger consensus; `Issuer` account signature | `verifiableCredential.proof` (Ed25519Signature2020 / JWS) | 🔄 XRPL ledger consensus replaces the VC `proof` for on-ledger anchors; the off-chain VC retains its own `proof` |
 | `credentialStatus` — revocation | `CredentialDelete` transaction removes the on-ledger credential | `verifiableCredential.credentialStatus` (StatusList2021Entry) | 🔄 On-ledger deletion is the XRPL revocation mechanism; off-chain `credentialStatus` is retained for VC-native verification flows |
-| `issuanceDate` / `validFrom` | Not a distinct field (block close-time of `CredentialCreate` tx) | `verifiableCredential.issuanceDate` | ✅ Store block close-time as `issuanceDate` in the off-chain VC |
+| `validFrom` | Not a distinct field (block close-time of `CredentialCreate` tx) | `verifiableCredential.validFrom` | ✅ Store block close-time as `validFrom` in the off-chain VC |
 | `credentialSubject.*` | `URI` → off-chain payload | All `verifiableCredential.credentialSubject.*` fields | ✅ Full OpenKYCAML payload is the off-chain content |
 | `lsfAccepted` flag | `Flags` bit on `Credential` | No direct field (acceptance is on-ledger state) | ℹ️ On-ledger only; record acceptance date in `kycProfile.auditMetadata.changeLog[]` |
 
@@ -145,7 +145,7 @@ The `Credential` ledger object (XLS-70) stores the on-ledger metadata for a W3C 
 | `Issuer` | XRPL account address | The credential issuer | `verifiableCredential.issuer.id` | In OpenKYCAML, expressed as `did:xrpl:1:<Issuer>`. |
 | `CredentialType` | hex (1–64 bytes) | Type identifier for the credential (e.g. `4b5943` = `KYC`) | `verifiableCredential.type[]` | See §2.2 for hex ↔ string mapping. The W3C VC `type[]` array carries the human-readable equivalent. |
 | `URI` | hex (optional, ≤ 256 bytes) | URI of the off-chain VC payload | `verifiableCredential.id` | Set this to the canonical URI of the OpenKYCAML VC. Resolves to the full `verifiableCredential` block. |
-| `Expiration` | UInt32 (Ripple epoch) | Credential expiry as seconds since 2000-01-01T00:00:00Z | `verifiableCredential.expirationDate` | Convert: Unix timestamp = Ripple epoch + 946684800. |
+| `Expiration` | UInt32 (Ripple epoch) | Credential expiry as seconds since 2000-01-01T00:00:00Z | `verifiableCredential.validUntil` | Convert: Unix timestamp = Ripple epoch + 946684800. |
 | `Flags: lsfAccepted` (0x00010000) | bool | Whether the `Subject` account has accepted the credential via `CredentialAccept` | ℹ️ On-ledger state only | Record the acceptance date in `kycProfile.auditMetadata.changeLog[]` with event `UPDATED` and note `"credential_accepted"`. |
 | `CredentialID` | Hash256 | Ledger key: `SHA-512/256(Subject || Issuer || CredentialType)` | `kycProfile.auditMetadata.changeLog[].details` or external reference | Opaque on-ledger key; store in audit metadata if XRPL-anchored flow is needed for cross-reference. |
 | `SubjectNode` / `IssuerNode` | UInt64 | Ledger navigation links (skiplist) | ℹ️ Ledger infrastructure, not KYC data | Not relevant to the KYC record. |
@@ -158,7 +158,7 @@ The `Credential` ledger object (XLS-70) stores the on-ledger metadata for a W3C 
 | `Subject` | `verifiableCredential.credentialSubject.id` | The customer receiving the credential. |
 | `CredentialType` | `verifiableCredential.type[]` | Hex-encoded type; decode to string for OpenKYCAML. |
 | `URI` | `verifiableCredential.id` | Canonical URI of the OpenKYCAML VC payload. |
-| `Expiration` | `verifiableCredential.expirationDate` | Convert ISO 8601 → Ripple epoch. |
+| `Expiration` | `verifiableCredential.validUntil` | Convert ISO 8601 → Ripple epoch. |
 
 ### 4.2 DepositPreauth with Credential Gating
 
@@ -402,7 +402,7 @@ These are the per-investor KYC/AML data points that determine on-ledger gating d
 | Not on sanctions list | `Credential` with AML type and screening result | `kycProfile.sanctionsScreening.screeningStatus` ≠ `MATCH` | ✅ |
 | PEP status determined | EDD triggers elevated `CredentialType` requirement | `kycProfile.pepStatus.isPEP` + `kycProfile.dueDiligenceType = EDD` | ✅ |
 | Source of funds verified | Custom credential type in high-risk issuances | `kycProfile.sourceOfFundsWealthDetail` | ✅ |
-| Credential not expired | `Expiration` on `Credential` object (XLS-70) | `verifiableCredential.expirationDate` | ✅ |
+| Credential not expired | `Expiration` on `Credential` object (XLS-70) | `verifiableCredential.validUntil` | ✅ |
 | Credential accepted by holder | `lsfAccepted` flag (XLS-70) | Record in `kycProfile.auditMetadata.changeLog[]` | 🔄 |
 | Holder authorised for MPT | `lsfMPTAuthorized` on `MPToken` | `kycProfile.isEligible: true` + `kycProfile.eligibilityLastConfirmed` | ✅ |
 | Holder wallet frozen | `lsfMPTLocked` on `MPToken` | `kycProfile.blockchainAccountIds[].isFrozen: true` | ✅ |
@@ -429,7 +429,7 @@ The following XRPL-specific concepts are **fully covered** by existing OpenKYCAM
 |---|---|
 | `Credential.Subject` → DID | `verifiableCredential.credentialSubject.id` (DID-agnostic) |
 | `Credential.Issuer` → DID | `verifiableCredential.issuer.id` (DID-agnostic) |
-| `Credential.Expiration` | `verifiableCredential.expirationDate` |
+| `Credential.Expiration` | `verifiableCredential.validUntil` |
 | `Credential.URI` → VC payload | `verifiableCredential.id` (canonical URI of the VC) |
 | `did:xrpl` DID method | All DID fields are DID-method-agnostic; `did:xrpl:1:r...` is a valid value |
 | DID triangulation (subject / KYC issuer / relying party) | `verifiableCredential.evidence[].credentialIssuer` + `.verifier` + `credentialSubject.id` |
@@ -478,7 +478,7 @@ Complete KYC/AML and issue the OpenKYCAML payload. Set:
 {
   "verifiableCredential": {
     "@context": [
-      "https://www.w3.org/2018/credentials/v1",
+      "https://www.w3.org/ns/credentials/v2",
       "https://openkycaml.org/contexts/v1"
     ],
     "id": "https://kyc.vasp.example/vc/550e8400-e29b-41d4-a716-446655440000",
@@ -487,8 +487,8 @@ Complete KYC/AML and issue the OpenKYCAML payload. Set:
       "id": "did:xrpl:1:rKYCIssuerAccountAddress",
       "name": "VASP KYC Division"
     },
-    "issuanceDate": "2026-04-01T12:00:00Z",
-    "expirationDate": "2027-04-01T12:00:00Z",
+    "validFrom": "2026-04-01T12:00:00Z",
+    "validUntil": "2027-04-01T12:00:00Z",
     "credentialSubject": {
       "id": "did:xrpl:1:rCustomerAccountAddress",
       "ivms101": { "...": "..." },
@@ -537,7 +537,7 @@ Submit a `CredentialCreate` transaction:
 Field derivation:
 - `CredentialType` = `hex("OpenKYCAMLCredential")` = `4f70656e4b5943414d4c43726564656e7469616c`
 - `URI` = hex-encoded `verifiableCredential.id`
-- `Expiration` = ISO 8601 `expirationDate` converted to Ripple epoch (`Unix timestamp − 946684800`)
+- `Expiration` = ISO 8601 `validUntil` converted to Ripple epoch (`Unix timestamp − 946684800`)
 
 ### Step 3 — Customer accepts the credential
 

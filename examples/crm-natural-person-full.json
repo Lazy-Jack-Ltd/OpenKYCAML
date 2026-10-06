@@ -1,6 +1,6 @@
 {
   "$schema": "https://openkycaml.org/schema/v1.13.0/kyc-aml-hybrid-extended.json",
-  "version": "1.13.0",
+  "version": "1.18.0",
   "messageId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
   "messageDateTime": "2026-04-15T10:00:00Z",
   "ivms101": {

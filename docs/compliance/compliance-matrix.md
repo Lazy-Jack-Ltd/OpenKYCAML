@@ -232,7 +232,7 @@ _✅ = full field mapping. 🔄 = conceptual equivalent (see [mapping-sovrin.md]
 | **`Credential.Subject`** (XRPL account → `did:xrpl`) — XLS-70 | ✅ | `verifiableCredential.credentialSubject.id` (`did:xrpl:1:r...`) |
 | **`Credential.Issuer`** (XRPL account → `did:xrpl`) — XLS-70 | ✅ | `verifiableCredential.issuer.id` (`did:xrpl:1:r...`) |
 | **`Credential.URI`** (off-chain VC payload URI) — XLS-70 | ✅ | `verifiableCredential.id` (canonical URI of the OpenKYCAML VC) |
-| **`Credential.Expiration`** (Ripple epoch) — XLS-70 | ✅ | `verifiableCredential.expirationDate` (ISO 8601; Ripple epoch = Unix − 946684800) |
+| **`Credential.Expiration`** (Ripple epoch) — XLS-70 | ✅ | `verifiableCredential.validUntil` (ISO 8601; Ripple epoch = Unix − 946684800) |
 | **`Credential.CredentialType`** (hex-encoded type) — XLS-70 | 🔄 | `verifiableCredential.type[]` (decoded string; see hex→string table in mapping doc §2.2) |
 | **`lsfAccepted`** (credential accepted by subject) — XLS-70 | 🔄 | `kycProfile.auditMetadata.changeLog[]` entry (`credential_accepted`) |
 | **`DID` object** (`DIDDocument` + `URI`) — XLS-70 | ✅ | `verifiableCredential.credentialSubject.id` / `verifiableCredential.issuer.id` (DID resolves via XRPL DID resolver) |
@@ -764,4 +764,246 @@ _✅ = full field mapping. ⭐⭐⭐⭐ = added in v1.13.0. All additions backwa
 
 ---
 
-*Last updated: v1.13.0 — April 2026. Maintained by the OpenKYCAML Technical Working Group.*
+## §25. Company Identifier Registry Array — `companyIdentifiers[]` (v1.16.0)
+
+Multi-registry company identifiers are critical for legal-entity due diligence. D&B D-U-N-S, Companies House CRN, GLEIF LEI, and commercial data-provider IDs (BvD Orbis, SWIFT BIC, ISIN) are routinely required by FATF Recommendations 10, 24 & 25, EU AMLR Art. 20 & 26, and Wolfsberg CBDDQ. Prior to v1.16.0 the schema offered only a single `nationalIdentification` object with an IVMS 101-constrained type enum; there was no way to carry DUNS, CRN, BvD IDs, or other commercial data-provider references. v1.16.0 adds:
+
+* **`CompanyIdentifier` $def** — typed object with `identifierType` (23-value enum), `identifierValue`, optional `identifierIssuingBody`, `countryOfIssue`, `verificationDate`, `verificationSource`. A hard `if/then` constraint requires `identifierIssuingBody` when `identifierType = "OTHER"`.
+* **`LegalPerson.companyIdentifiers[]`** — array of `CompanyIdentifier` items with `uniqueItems: true`.
+
+### 25.1 Supported Identifier Types
+
+| Code | Full Name | Issuing Body | Country Scope |
+|---|---|---|---|
+| `DUNS` | D-U-N-S Number | Dun & Bradstreet (dnb.co.uk) | Global |
+| `LEI` | Legal Entity Identifier | GLEIF / ISO 17442 | Global |
+| `CRN_GB` | Companies House Registration Number | Companies House (UK) | GB |
+| `SIREN_FR` | SIREN | INSEE (France) | FR |
+| `SIRET_FR` | SIRET | INSEE (France) | FR |
+| `HRB_DE` | Handelsregister B (GmbH/AG) | German state courts | DE |
+| `HRA_DE` | Handelsregister A (OHG/KG) | German state courts | DE |
+| `CNPJ_BR` | CNPJ | Receita Federal (Brazil) | BR |
+| `ABN_AU` | Australian Business Number | ATO | AU |
+| `ACN_AU` | Australian Company Number | ASIC | AU |
+| `EIN_US` | Employer Identification Number | IRS (USA) | US |
+| `CIK_US` | Central Index Key | SEC EDGAR (USA) | US |
+| `CAGE_US` | Commercial and Government Entity Code | US DoD SAM.gov | US |
+| `PIC_EU` | Participant Identification Code | EU Funding & Tenders Portal | EU |
+| `BVDID` | Bureau van Dijk (Orbis) ID | Moody's Analytics / BvD | Global |
+| `ISIN` | International Securities Identification Number | ISO 6166 / ANNA | Global |
+| `BIC` | Business Identifier Code | SWIFT / ISO 9362 | Global |
+| `CHARITY_GB` | Charity Commission Registration Number | Charity Commission (UK) | GB |
+| `KVK_NL` | KvK Number | Netherlands Chamber of Commerce | NL |
+| `UID_AT` | Umsatzsteueridentifikationsnummer | Austrian Finanzamt | AT |
+| `NIF_ES` | Número de Identificación Fiscal / CIF | Spain AEAT | ES |
+| `RCS_LU` | Registre de Commerce et des Sociétés | Luxembourg RCS | LU |
+| `OTHER` | Custom / non-enumerated type | Implementer-defined | Any |
+
+### 25.2 Regulatory Mapping
+
+| Requirement | Standard / Article | Coverage |
+|---|---|---|
+| Legal entity identification | FATF Rec. 10 | DUNS, LEI, CRN, national IDs all supported |
+| Beneficial ownership & entity transparency | FATF Rec. 24 / 25 | Multi-registry cross-check via array |
+| Legal-entity CDD | EU AMLR Art. 20 | LEI + national registry IDs |
+| Entity verification | EU AMLR Art. 26 | CRN, SIREN, Handelsregister, etc. |
+| Correspondent banking — entity due diligence | FATF Rec. 13 / Wolfsberg CBDDQ | BIC, LEI, DUNS |
+| Commercial-data enrichment | BvD Orbis / D&B data-layer KYC | BVDID, DUNS |
+
+### 25.3 Relationship to Existing Identifier Fields
+
+The existing `LegalPerson.lei` (IVMS 101 scalar) and `LegalPerson.nationalIdentification` (single IVMS 101 object) are **retained as authoritative IVMS 101 / travel-rule fields**. `companyIdentifiers[]` is an additive overlay allowing multiple registries and commercial-data identifiers to be recorded alongside the primary IVMS fields, with full verification metadata per entry.
+
+### 25.4 Schema-Level Changes (v1.16.0)
+
+| Change | Scope | Backward compatible |
+|---|---|---|
+| New `CompanyIdentifier` $def (23-value enum, if/then for OTHER) | `$defs` | ✅ |
+| `LegalPerson.companyIdentifiers[]` optional array | `$defs.LegalPerson` | ✅ |
+| New example `examples/company-identifiers.json` | `examples/` | ✅ |
+| Schema `$id` bumped to `v1.16.0` | Root | ✅ |
+
+_✅ = full field mapping. All additions backward-compatible._
+
+---
+
+---
+
+## §26. Array-Grouping Enhancements — Multi-Identifier, Multi-PEP, History Arrays (v1.17.0)
+
+Prior to v1.17.0 several KYC/AML data elements were constrained to single scalars or single objects, preventing the recording of real-world multi-value data (multiple government IDs, dual residency, simultaneous PEP roles, risk-rating audit trails, multi-year revenue records). v1.17.0 adds 12 backward-compatible additive arrays covering all high-, medium-, and lower-priority gaps.
+
+### 26.1 Natural Person Identifier Array (`naturalPersonIdentifiers[]`)
+
+| Change | Schema Location | Compliance Driver |
+|---|---|---|
+| New `PersonIdentifier` $def (17-value enum: CCPT, IDCD, ARNU, DRLC, TXID, SOCS, FIIN, RAID, LEIX, BTHC, VDOC, RESI, HLTH, MILN, EMPL, MISC, OTHER) | `$defs.PersonIdentifier` | FATF Rec. 10, AMLR Art. 20 |
+| `NaturalPerson.naturalPersonIdentifiers[]` optional array with `isPrimary` maxContains:1 | `$defs.NaturalPerson` | FATF Rec. 10, eIDAS 2.0 PID |
+| if/then: MISC or OTHER requires `identifierIssuingBody` | `$defs.PersonIdentifier` | Data quality / audit trail |
+
+**Supported identifier types:** Passport (CCPT), National/Identity Card (IDCD), Alien Registration (ARNU), Driver Licence (DRLC), Tax ID (TXID), Social Security/NI (SOCS), Foreign Investment (FIIN), eIDAS Registration Authority ID (RAID), LEI-sole-trader (LEIX), Birth Certificate (BTHC), Voter ID (VDOC), Residence Permit (RESI), Health/Medical (HLTH), Military ID (MILN), Employer ID (EMPL), Miscellaneous (MISC), Other (OTHER).
+
+### 26.2 Legal Entity National Identifier Array (`legalNationalIdentifiers[]`)
+
+| Change | Schema Location | Compliance Driver |
+|---|---|---|
+| `LegalPerson.legalNationalIdentifiers[]` — array of `NationalIdentification` items | `$defs.LegalPerson` | FATF Rec. 10, 24; AMLR Art. 20 |
+
+Allows a legal entity to carry multiple IVMS 101-typed national identifiers simultaneously (e.g. LEIX + MISC + ISO_20275_ELF_CODE). Additive alongside `nationalIdentification` (primary IVMS 101 / travel-rule field) and `companyIdentifiers[]` (commercial registry IDs).
+
+### 26.3 PEP Status Array (`pepStatuses[]`)
+
+| Change | Schema Location | Compliance Driver |
+|---|---|---|
+| `KYCProfile.pepStatuses[]` — array of `PEPStatus` items | `$defs.KYCProfile` | FATF Rec. 12 EDD, Wolfsberg CBDDQ |
+
+A person may hold multiple simultaneous PEP roles (e.g. CLOSE_ASSOCIATE_OF_PEP + FORMER_PEP). Each item carries its own `pepCategory`, `pepRole`, `screeningDate`, and `screeningProvider`. Additive alongside legacy `pepStatus` scalar.
+
+### 26.4 Countries of Residence Array (`countriesOfResidence[]`)
+
+| Change | Schema Location | Compliance Driver |
+|---|---|---|
+| `NaturalPerson.countriesOfResidence[]` — alpha-2 string array | `$defs.NaturalPerson` | FATCA/CRS, AMLR Art. 20 |
+
+Allows dual- or multi-residency to be recorded (e.g. UK/UAE). Required for accurate FATCA/CRS multi-residency reporting and geographic risk-tier scoring.
+
+### 26.5 Unified Nationality Array (`nationalities[]`)
+
+| Change | Schema Location | Compliance Driver |
+|---|---|---|
+| `NaturalPerson.nationalities[]` — alpha-2 string array | `$defs.NaturalPerson` | IVMS 101 §3.3, eIDAS 2.0 PID |
+
+Unifies the legacy `nationality` (single alpha-2) and `nationalitiesAlpha3[]` (alpha-3 EUDI wallet array) into a single IVMS 101-compatible alpha-2 array. Legacy fields retained for backward compatibility; new implementations should use `nationalities[]`.
+
+### 26.6 Risk Rating History (`riskRatingHistory[]`)
+
+| Change | Schema Location | Compliance Driver |
+|---|---|---|
+| New `RiskRatingEntry` $def (customerRiskRating, riskScore, riskRatingDate, ratingMethodology, ratingChangedBy, ratingChangeReason, riskFactors) | `$defs.RiskRatingEntry` | BCBS 239, AMLR Art. 21 |
+| `KYCProfile.riskRatingHistory[]` optional array | `$defs.KYCProfile` | BCBS 239, AMLR Art. 21 |
+
+Enables chronological audit trails of all risk rating changes for periodic- and event-driven re-assessment compliance.
+
+### 26.7 Multiple Occupations (`occupations[]`)
+
+| Change | Schema Location | Compliance Driver |
+|---|---|---|
+| `NaturalPerson.occupations[]` — inline object array (occupationCode, occupationDescription, employerName, isPrimary) with maxContains:1 on isPrimary | `$defs.NaturalPerson` | EDD / CDD completeness |
+
+Allows multiple concurrent occupations (employed + director + self-employed consultant) to be recorded with employer names. Additive alongside legacy `occupation` scalar.
+
+### 26.8 Revenue History (`revenueHistory[]`)
+
+| Change | Schema Location | Compliance Driver |
+|---|---|---|
+| New `RevenueRecord` $def (amount, currency, fiscalYear, verificationDate, verificationSource) | `$defs.RevenueRecord` | AMLR Art. 29 EDD |
+| `LegalPerson.revenueHistory[]` optional array | `$defs.LegalPerson` | AMLR Art. 29, Wolfsberg CBDDQ |
+
+Enables multi-year revenue history to be maintained. Additive alongside legacy `annualRevenue` / `annualRevenueCurrency` / `annualRevenueVerificationDate` scalars.
+
+### 26.9 Consent Record Array (`consentRecords[]`)
+
+| Change | Schema Location | Compliance Driver |
+|---|---|---|
+| New `ConsentRecord` $def (consentPurpose, consentGiven, consentDate, consentWithdrawnDate, consentMethod, consentReference, legalBasis) | `$defs.ConsentRecord` | GDPR Art. 7 |
+| `KYCProfile.consentRecords[]` optional array | `$defs.KYCProfile` | GDPR Art. 7 |
+
+Per-purpose consent event records maintain a full GDPR Art. 7 audit trail. `legalBasis` records the applicable Art. 6 basis (CONSENT, CONTRACT, LEGAL_OBLIGATION, VITAL_INTERESTS, PUBLIC_TASK, LEGITIMATE_INTERESTS).
+
+### 26.10 Multiple Parent Companies (`parentCompanies[]`)
+
+| Change | Schema Location | Compliance Driver |
+|---|---|---|
+| `EntityGovernance.parentCompanies[]` — array of `EntityReference` items | `$defs.EntityGovernance` | FATF Rec. 24 |
+
+Handles joint-venture parents, dual-listed holding structures, or entities with multiple co-owners. Additive alongside legacy `parentCompany` scalar.
+
+### 26.11 Multiple Emergency Contacts (`emergencyContacts[]`)
+
+| Change | Schema Location | Compliance Driver |
+|---|---|---|
+| `NaturalPerson.emergencyContacts[]` — array of `EmergencyContact` items | `$defs.NaturalPerson` | CRM completeness |
+
+CRM systems typically support multiple emergency contacts. Additive alongside legacy `emergencyContact` scalar.
+
+### 26.12 Multiple Registered Agents (`registeredAgents[]`)
+
+| Change | Schema Location | Compliance Driver |
+|---|---|---|
+| `LegalPerson.registeredAgents[]` — array of `RegisteredAgent` items | `$defs.LegalPerson` | Cayman / BVI / Jersey / Guernsey CDD |
+
+Handles offshore jurisdictions requiring multiple registered agents (REGISTERED_AGENT, COMPANY_SECRETARY, RESIDENT_DIRECTOR, OTHER) or agent-change history. Additive alongside legacy `registeredAgent` scalar.
+
+### 26.13 Regulatory Mapping Summary
+
+| Requirement | Standard / Article | Fields Added |
+|---|---|---|
+| Natural person identification | FATF Rec. 10, AMLR Art. 20 | `naturalPersonIdentifiers[]`, `PersonIdentifier` $def |
+| Legal entity identification | FATF Rec. 10, 24; AMLR Art. 20 | `legalNationalIdentifiers[]` |
+| PEP disclosure — all roles | FATF Rec. 12 EDD, Wolfsberg CBDDQ | `pepStatuses[]` |
+| Multi-residency / FATCA/CRS | FATCA §1471, OECD CRS, AMLR Art. 20 | `countriesOfResidence[]` |
+| Nationality (IVMS 101-aligned) | IVMS 101 §3.3, eIDAS 2.0 PID | `nationalities[]` |
+| Risk rating audit trail | BCBS 239 Principle 6, AMLR Art. 21 | `riskRatingHistory[]`, `RiskRatingEntry` $def |
+| Occupation (multi-role EDD) | EDD / CDD best practice | `occupations[]` |
+| Revenue history (EDD) | AMLR Art. 29, Wolfsberg CBDDQ | `revenueHistory[]`, `RevenueRecord` $def |
+| Consent audit trail | GDPR Art. 7, Art. 6 | `consentRecords[]`, `ConsentRecord` $def |
+| Beneficial ownership chain | FATF Rec. 24 | `parentCompanies[]` |
+| Emergency contacts (CRM) | CRM completeness | `emergencyContacts[]` |
+| Multi-agent offshore CDD | Cayman / BVI / Jersey AML regs | `registeredAgents[]` |
+
+### 26.14 Schema-Level Changes (v1.17.0)
+
+| Change | Scope | Backward compatible |
+|---|---|---|
+| New `PersonIdentifier` $def (17-value enum, if/then for MISC/OTHER) | `$defs` | ✅ |
+| New `RiskRatingEntry` $def | `$defs` | ✅ |
+| New `RevenueRecord` $def | `$defs` | ✅ |
+| New `ConsentRecord` $def | `$defs` | ✅ |
+| `NaturalPerson.naturalPersonIdentifiers[]` optional array | `$defs.NaturalPerson` | ✅ |
+| `NaturalPerson.countriesOfResidence[]` optional array | `$defs.NaturalPerson` | ✅ |
+| `NaturalPerson.nationalities[]` optional array | `$defs.NaturalPerson` | ✅ |
+| `NaturalPerson.occupations[]` optional array | `$defs.NaturalPerson` | ✅ |
+| `NaturalPerson.emergencyContacts[]` optional array | `$defs.NaturalPerson` | ✅ |
+| `LegalPerson.legalNationalIdentifiers[]` optional array | `$defs.LegalPerson` | ✅ |
+| `LegalPerson.revenueHistory[]` optional array | `$defs.LegalPerson` | ✅ |
+| `LegalPerson.registeredAgents[]` optional array | `$defs.LegalPerson` | ✅ |
+| `KYCProfile.pepStatuses[]` optional array | `$defs.KYCProfile` | ✅ |
+| `KYCProfile.riskRatingHistory[]` optional array | `$defs.KYCProfile` | ✅ |
+| `KYCProfile.consentRecords[]` optional array | `$defs.KYCProfile` | ✅ |
+| `EntityGovernance.parentCompanies[]` optional array | `$defs.EntityGovernance` | ✅ |
+| New examples `examples/array-grouping-v1-17.json`, `examples/array-grouping-legal-entity-v1-17.json` | `examples/` | ✅ |
+| Schema `$id` and `version` bumped to `v1.17.0` | Root | ✅ |
+
+_✅ = full field mapping. All additions backward-compatible. All legacy scalar/object fields retained._
+
+---
+
+## §27 — W3C VC Data Model 2.0 (v1.18.0)
+
+Upgrades the `VerifiableCredentialWrapper` from W3C VC DM v1.1 to the W3C VC DM 2.0 W3C Recommendation (May 2024), completing the upgrade that was previously deferred. This also aligns with OID4VP and W3C DID Auth interoperability requirements that increasingly assume the v2 context URL.
+
+### 27.1 Regulatory Alignment
+
+| Standard | Requirement | Schema Coverage | Status |
+|---|---|---|---|
+| EU eIDAS 2.0 ARF §6.3 | EUDIW credentials must use VCDM 2.0-compatible structures | `verifiableCredential.@context[0]: "https://www.w3.org/ns/credentials/v2"` | ✅ |
+| W3C VC DM 2.0 (May 2024) | `@context[0]` must be `https://www.w3.org/ns/credentials/v2` | `@context` contains constraint updated | ✅ |
+| W3C VC DM 2.0 (May 2024) | `issuanceDate` renamed to `validFrom` | `VerifiableCredentialWrapper.validFrom` (required) | ✅ |
+| W3C VC DM 2.0 (May 2024) | `expirationDate` renamed to `validUntil` | `VerifiableCredentialWrapper.validUntil` (optional) | ✅ |
+| OID4VP / OpenID4VC | Credential presentation assumes v2 context URL | Context URL aligned | ✅ |
+
+### 27.2 Schema-Level Changes (v1.18.0)
+
+| Change | Scope | Backward compatible |
+|---|---|---|
+| `@context` contains constraint updated from v1.1 URL to v2 URL | `$defs.VerifiableCredentialWrapper` | ⚠️ Breaking for existing VC payloads (context URL must be updated) |
+| `issuanceDate` renamed to `validFrom` (required) | `$defs.VerifiableCredentialWrapper` | ⚠️ Breaking — field rename |
+| `expirationDate` renamed to `validUntil` (optional) | `$defs.VerifiableCredentialWrapper` | ⚠️ Breaking — field rename |
+| Description updated to reference W3C VC DM 2.0 | `$defs.VerifiableCredentialWrapper` | ✅ |
+| All 23 VC-bearing examples updated | `examples/` | ✅ |
+| "Planned for v2.0.0" deferral notes removed from schema and docs | Schema, guides, mappings | ✅ |
+| Schema `$id` and `version` bumped to `v1.18.0` | Root | ✅ |
+
+---
+
+*Last updated: v1.18.0 — April 2026. Maintained by the OpenKYCAML Technical Working Group.*

@@ -1,6 +1,6 @@
 {
   "$schema": "https://schema.openkycaml.org/v1.7.0",
-  "version": "1.7.0",
+  "version": "1.18.0",
   "messageId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
   "messageDateTime": "2026-04-07T09:00:00Z",
   "kycProfile": {

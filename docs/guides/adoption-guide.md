@@ -25,6 +25,8 @@ This guide walks you through integrating OpenKYCAML into your product or infrast
 
 ## 1. Prerequisites
 
+- **New to JSON?** Read [JSON 101 for AML](json-101-for-aml.md) — a plain-English introduction to JSON and the most common AML data-sync failure patterns.
+- **Want to understand JSON Schema as a data contract?** Read [JSON 102 for AML](json-102-for-aml.md) — covers `required`, `enum`, `format`, `pattern`, `$defs`, `if/then/else`, and `additionalProperties`.
 - An understanding of [IVMS 101](https://intervasp.org/) for the Travel Rule payload.
 - JSON Schema draft 2020-12 compatible validator (see [tools/](../../tools/)).
 - Optional: familiarity with [W3C Verifiable Credentials Data Model v2](https://www.w3.org/TR/vc-data-model-2.0/) for VC wrapping.

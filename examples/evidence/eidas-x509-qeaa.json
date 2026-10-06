@@ -1,6 +1,6 @@
 {
   "$schema": "https://openkycaml.org/schema/v1.8.0/kyc-aml-hybrid-extended.json",
-  "version": "1.8.0",
+  "version": "1.18.0",
   "messageId": "d4e5f6a7-b2c3-4d5e-9f0a-1b2c3d4e5f6a",
   "messageDateTime": "2026-04-07T14:00:00Z",
   "ivms101": {
@@ -97,7 +97,7 @@
   },
   "verifiableCredential": {
     "@context": [
-      "https://www.w3.org/2018/credentials/v1",
+      "https://www.w3.org/ns/credentials/v2",
       "https://openkycaml.org/contexts/v1.8.0"
     ],
     "id": "urn:uuid:d4e5f6a7-b2c3-4d5e-9f0a-1b2c3d4e5f6a",
@@ -106,7 +106,6 @@
       "OpenKYCAMLCredential"
     ],
     "issuer": "did:ebsi:zqe56fHwQaK7V1kCiAVME1z",
-    "issuanceDate": "2026-04-07T14:00:00Z",
     "credentialSubject": {
       "id": "did:ebsi:z2gqVRGEZGNiQvpNwvHG3dQ7",
       "credentialType": "QEAA",
@@ -135,7 +134,8 @@
       "verificationMethod": "did:ebsi:zqe56fHwQaK7V1kCiAVME1z#keys-1",
       "proofPurpose": "assertionMethod",
       "jws": "eyJhbGciOiJFUzI1NksiLCJiNjQiOmZhbHNlLCJjcml0IjpbImI2NCJdfQ..placeholder"
-    }
+    },
+    "validFrom": "2026-04-07T14:00:00Z"
   },
   "kycProfile": {
     "customerRiskRating": "LOW",

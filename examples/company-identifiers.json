@@ -1,0 +1,136 @@
+{
+  "$schema": "https://openkycaml.org/schema/v1.17.0/kyc-aml-hybrid-extended.json",
+  "version": "1.18.0",
+  "messageId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+  "messageDateTime": "2026-04-14T09:00:00Z",
+  "messageType": "ORIGINATOR",
+  "ivms101": {
+    "originator": {
+      "originatorPersons": [
+        {
+          "legalPerson": {
+            "name": {
+              "nameIdentifier": [
+                {
+                  "legalPersonName": "Acme Global Holdings Ltd",
+                  "legalPersonNameIdentifierType": "LEGL"
+                }
+              ]
+            },
+            "geographicAddress": [
+              {
+                "addressType": "REGISTERED_OFFICE",
+                "streetName": "1 Fenchurch Street",
+                "buildingNumber": "1",
+                "postCode": "EC3M 3BY",
+                "townName": "London",
+                "country": "GB",
+                "isPrimary": true
+              }
+            ],
+            "customerNumber": "CUST-GB-0012345",
+            "lei": "213800WSGIIZCXF1P572",
+            "countryOfRegistration": "GB",
+            "legalFormCode": "Z13E",
+            "legalFormDescription": "Public Limited Company",
+            "entityType": "COMPANY",
+            "companyIdentifiers": [
+              {
+                "identifierType": "DUNS",
+                "identifierValue": "123456789",
+                "identifierIssuingBody": "Dun & Bradstreet",
+                "countryOfIssue": "GB",
+                "verificationDate": "2026-01-15",
+                "verificationSource": "https://www.dnb.co.uk"
+              },
+              {
+                "identifierType": "CRN_GB",
+                "identifierValue": "01234567",
+                "identifierIssuingBody": "Companies House",
+                "countryOfIssue": "GB",
+                "verificationDate": "2026-01-15",
+                "verificationSource": "https://find-and-update.company-information.service.gov.uk"
+              },
+              {
+                "identifierType": "LEI",
+                "identifierValue": "213800WSGIIZCXF1P572",
+                "identifierIssuingBody": "GLEIF",
+                "countryOfIssue": "GB",
+                "verificationDate": "2026-01-10",
+                "verificationSource": "https://www.gleif.org"
+              },
+              {
+                "identifierType": "BVDID",
+                "identifierValue": "GB01234567",
+                "identifierIssuingBody": "Bureau van Dijk (Moody's Orbis)",
+                "countryOfIssue": "GB",
+                "verificationDate": "2026-02-01"
+              },
+              {
+                "identifierType": "OTHER",
+                "identifierValue": "NZBN-9429000000000",
+                "identifierIssuingBody": "New Zealand Companies Office — New Zealand Business Number (NZBN)",
+                "countryOfIssue": "NZ",
+                "verificationDate": "2026-01-20",
+                "verificationSource": "https://www.nzbn.govt.nz"
+              }
+            ]
+          }
+        }
+      ],
+      "accountNumber": [
+        "GB29NWBK60161331926819"
+      ]
+    },
+    "beneficiary": {
+      "beneficiaryPersons": [
+        {
+          "legalPerson": {
+            "name": {
+              "nameIdentifier": [
+                {
+                  "legalPersonName": "Beneficiary Corp SARL",
+                  "legalPersonNameIdentifierType": "LEGL"
+                }
+              ]
+            },
+            "companyIdentifiers": [
+              {
+                "identifierType": "SIREN_FR",
+                "identifierValue": "552144503",
+                "identifierIssuingBody": "INSEE",
+                "countryOfIssue": "FR",
+                "verificationDate": "2026-01-05",
+                "verificationSource": "https://www.infogreffe.fr"
+              },
+              {
+                "identifierType": "SIRET_FR",
+                "identifierValue": "55214450300034",
+                "identifierIssuingBody": "INSEE",
+                "countryOfIssue": "FR",
+                "verificationDate": "2026-01-05"
+              }
+            ]
+          }
+        }
+      ],
+      "accountNumber": [
+        "FR7630006000011234567890189"
+      ]
+    },
+    "originatingVASP": {
+      "name": "OpenKYCAML Demo VASP",
+      "vaspIdentifier": "GB-OpenKYCAML-Demo-VASP"
+    },
+    "beneficiaryVASP": {
+      "name": "FR Demo Exchange",
+      "vaspIdentifier": "FR-Demo-Exchange"
+    },
+    "transferredAmount": {
+      "amount": "10000.00",
+      "assetType": "FIAT",
+      "currency": "GBP"
+    },
+    "ivmsVersion": "IVMS101.2023"
+  }
+}

@@ -21,7 +21,7 @@ Every example is a complete, schema-valid payload that can be used as a starting
 
 > **Fictional data notice:** All names, passport numbers, national identifiers, addresses, entity names, LEIs, DIDs, wallet addresses, and any other personal or entity data in the example payloads are **entirely fictional** and have been created solely for illustrative purposes. Any resemblance to real persons (living or deceased), real legal entities, or real transactions is entirely coincidental.
 
-There are currently **46 example files** covering fifteen categories:
+There are currently **49 example files** covering seventeen categories:
 
 | # | Category | Files |
 |---|---|---|
@@ -41,6 +41,8 @@ There are currently **46 example files** covering fifteen categories:
 | N | Entity & Person Governance (v1.12.0) | 3 |
 | O | Presentation Definitions (OpenID4VP) | 1 |
 | P | CRM Completeness (v1.13.0) | 2 |
+| Q | Company Identifiers (v1.16.0) | 1 |
+| R | Array Grouping (v1.17.0) | 2 |
 
 All files in `examples/` and its sub-directories (`evidence/`, `tax/`, `predictive/`, `contact-banking/`, `cell-company/`, `presentation-definitions/`) validate against [`schema/kyc-aml-hybrid-extended.json`](../schema/kyc-aml-hybrid-extended.json) (JSON Schema draft 2020-12), with the exception of `sd-jwt-compact-token.json` which is an annotated reference document — see [§6](#6-notes-on-special-files).
 
@@ -181,6 +183,9 @@ Each example targets a specific compliance scenario.  Use the catalogue table in
 | [`amlr2027-fatca-ai-act.json`](amlr2027-fatca-ai-act.json) | N — Governance | Legal entity | 1.9.1 | ✓ | ✓ | ✓ | ✓ | | | ✓ | End-to-end reference: predictiveAML (EU AI Act) + taxStatus (FATCA/CRS/Pillar 2) + pkiEvidence (QSealC) + legacyIdentifiers (X.500 DN) |
 | [`crm-natural-person-full.json`](crm-natural-person-full.json) | P — CRM Completeness | Natural person | 1.13.0 | ✓ | | ✓ | | | | | Full CRM natural person: historicalNames, marital status, emergency contact, typed emailAddresses/phoneNumbers, preferred language/channel, relationship manager, customer segment, estimated net worth |
 | [`crm-legal-entity-full.json`](crm-legal-entity-full.json) | P — CRM Completeness | Legal entity | 1.13.0 | ✓ | | ✓ | | | | | Full CRM legal entity: incorporation/dissolution dates, operational status, employee count, revenue, website, social media, industryCodes, registeredAgent, typed contact arrays, entityGovernance (ultimate parent, group LEI), mandates, relationship manager |
+| [`company-identifiers.json`](company-identifiers.json) | Q — Company Identifiers | Legal entity | 1.16.0 | ✓ | | ✓ | | | | | Legal entity with `companyIdentifiers[]` using the 23-value `CompanyIdentifier` $def (DUNS, LEI, CRN_GB, ABN_AU, EIN_US, etc.) |
+| [`array-grouping-v1-17.json`](array-grouping-v1-17.json) | R — Array Grouping | Natural person | 1.17.0 | ✓ | | ✓ | | | | | Natural person with new v1.17.0 structured arrays: `naturalPersonIdentifiers[]`, `countriesOfResidence[]`, `nationalities[]`, `occupations[]`, `emergencyContacts[]`; `kycProfile` with `riskRatingHistory[]`, `pepStatuses[]`, `consentRecords[]` |
+| [`array-grouping-legal-entity-v1-17.json`](array-grouping-legal-entity-v1-17.json) | R — Array Grouping | Legal entity | 1.17.0 | ✓ | | ✓ | | | | | Legal entity with new v1.17.0 structured arrays: `legalNationalIdentifiers[]`, `revenueHistory[]`, `registeredAgents[]`; `entityGovernance.parentCompanies[]` |
 | [`presentation-definitions/travel-rule-minimum.json`](presentation-definitions/travel-rule-minimum.json) | O — Presentation Defs | — | 1.7.0 | — | — | — | — | — | — | — | OpenID4VP Presentation Definition for the FATF Travel Rule minimum credential request |
 
 ---
@@ -279,6 +284,19 @@ Two files demonstrate the 20 CRM-completeness field gaps closed in schema v1.13.
 - `crm-natural-person-full.json` — natural person with the full set of v1.13.0 CRM fields: `historicalNames[]`, `maritalStatus`, `numberOfDependants`, `householdSize`, `emergencyContact`, typed `emailAddresses[]` and `phoneNumbers[]`, `faxNumber`, `preferredLanguage`, `preferredCommunicationChannel`, `marketingOptOut`, `isDeceased`, `tags`, and `customAttributes`; `kycProfile` adds `relationshipManagerId`, `relationshipManagerName`, `primaryBranchCode`, `servingBusinessUnit`, `customerSegment`, `estimatedNetWorth` (with currency and date), `tags`, and `customAttributes`.
 - `crm-legal-entity-full.json` — legal entity with the full set of v1.13.0 CRM fields: `dateOfIncorporation`, `dateOfRegistration`, `operationalStatus`, `numberOfEmployees`, `annualRevenue` (with currency and verification date), `websiteUrl`, `socialMediaProfiles[]`, `industryCodes[]`, `registeredAgent`, typed `emailAddresses[]` and `phoneNumbers[]`, `faxNumber`, `entityGovernance` (including `ultimateParentLEI`, `ultimateParentName`, `groupName`, `groupLEI`), structured `mandates[]`, `tags`, and `customAttributes`; `kycProfile` mirrors the natural person CRM profile additions.
 
+### Q — Company Identifiers (v1.16.0)
+
+One file demonstrates the new `CompanyIdentifier` $def and `LegalPerson.companyIdentifiers[]` array added in schema v1.16.0:
+
+- `company-identifiers.json` — legal entity with a `companyIdentifiers[]` block populated with multiple identifier types from the 23-value enum (DUNS, LEI, CRN_GB, ABN_AU, EIN_US, BVDID). Includes an `OTHER` entry with `identifierIssuingBody` as required by the schema's `if`/`then` constraint.
+
+### R — Array Grouping (v1.17.0)
+
+Two files demonstrate the 12 new structured array properties and 4 new $defs (`PersonIdentifier`, `RiskRatingEntry`, `RevenueRecord`, `ConsentRecord`) added in schema v1.17.0:
+
+- `array-grouping-v1-17.json` — natural person with `naturalPersonIdentifiers[]`, `countriesOfResidence[]`, `nationalities[]`, `occupations[]`, `emergencyContacts[]`; `kycProfile` with `riskRatingHistory[]`, `pepStatuses[]`, and `consentRecords[]` (GDPR consent tracking with legalBasis and dataCategories).
+- `array-grouping-legal-entity-v1-17.json` — legal entity with `legalNationalIdentifiers[]`, `revenueHistory[]`, `registeredAgents[]`; `entityGovernance.parentCompanies[]` demonstrating multi-parent chain representation.
+
 ---
 
 ## 6. Notes on special files
@@ -328,6 +346,9 @@ examples/
 ├── natural-person-gender-occupation.json N — Governance
 ├── crm-natural-person-full.json     P — CRM Completeness (v1.13.0)
 ├── crm-legal-entity-full.json       P — CRM Completeness (v1.13.0)
+├── company-identifiers.json         Q — Company Identifiers (v1.16.0)
+├── array-grouping-v1-17.json        R — Array Grouping (v1.17.0)
+├── array-grouping-legal-entity-v1-17.json R — Array Grouping (v1.17.0)
 ├── evidence/                        I — PKI Evidence (v1.8.0)
 ├── tax/                             J — Tax Status (v1.9.0)
 ├── predictive/                      K — PredictiveAML (v1.7.0)

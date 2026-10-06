@@ -1,6 +1,6 @@
 {
   "$schema": "https://openkycaml.org/schema/v1.4.0/kyc-aml-hybrid-extended.json",
-  "version": "1.4.0",
+  "version": "1.18.0",
   "messageId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
   "messageDateTime": "2026-04-06T10:00:00Z",
   "_comment_scenario": "ISO 20275 Trust Example — Cayman Islands Discretionary Trust onboarded as VASP originator. Demonstrates: (1) legalFormCode using ISO 20275 ELF code for Cayman Islands Exempted Trust; (2) entityType: TRUST with fully populated trustDetails (settlors, trustees, protector, beneficiaryClass, namedBeneficiaries); (3) ISO_20275_ELF_CODE in nationalIdentification for IVMS 101 interoperability. This example satisfies FATF Recommendation 25 typed disclosure and AMLR Art. 26(2)(b) named-role requirements.",

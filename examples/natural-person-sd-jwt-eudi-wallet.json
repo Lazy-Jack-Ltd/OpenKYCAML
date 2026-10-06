@@ -1,6 +1,6 @@
 {
   "$schema": "https://openkycaml.org/schema/v1.3.0/kyc-aml-hybrid-extended.json",
-  "version": "1.3.0",
+  "version": "1.18.0",
   "messageId": "d9e3f742-5a6b-4c7d-8e9f-0a1b2c3d4e5f",
   "messageDateTime": "2025-09-10T11:00:00Z",
   "_comment_scenario": "SD-JWT Selective Disclosure — Natural Person (EUDI Wallet). Anna Müller presents a German eIDAS 2.0 PID via SD-JWT VC in OpenID4VP. She discloses her legal name and residential address (required for FATF Travel Rule minimum) but withholds her date of birth, place of birth, and nationality (GDPR data-minimisation). This file shows the DECODED SD-JWT payload form: in the actual compact SD-JWT token the selectively-disclosable claim values are replaced by their SHA-256 digests inside _sd arrays and the plaintext disclosures are appended after the '~' separator.",
@@ -80,7 +80,7 @@
   },
   "verifiableCredential": {
     "@context": [
-      "https://www.w3.org/2018/credentials/v1",
+      "https://www.w3.org/ns/credentials/v2",
       "https://openkycaml.org/contexts/v1",
       "https://europa.eu/2018/credentials/eudi/v1"
     ],
@@ -94,8 +94,6 @@
       "id": "did:web:acme-crypto.example.nl",
       "name": "Acme Crypto Exchange BV"
     },
-    "issuanceDate": "2025-09-10T11:00:00Z",
-    "expirationDate": "2026-09-10T11:00:00Z",
     "credentialSubject": {
       "id": "did:ebsi:z2LSzT7LiUNMxKKyGCnNjNT",
       "ivms101": {
@@ -298,6 +296,8 @@
       "verificationMethod": "did:web:acme-crypto.example.nl#key-1",
       "proofPurpose": "assertionMethod",
       "proofValue": "zBm8Lp0yNwRrM4UeG7KjZ9WdF3CsY6VoH5NiS2XoQ1EcB"
-    }
+    },
+    "validFrom": "2025-09-10T11:00:00Z",
+    "validUntil": "2026-09-10T11:00:00Z"
   }
 }

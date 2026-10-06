@@ -1,6 +1,6 @@
 {
   "$schema": "https://openkycaml.org/schema/v1.4.0/kyc-aml-hybrid-extended.json",
-  "version": "1.4.0",
+  "version": "1.18.0",
   "messageId": "f9e8d7c6-b5a4-3210-fedc-ba9876543210",
   "messageDateTime": "2026-04-06T11:00:00Z",
   "_comment_scenario": "ISO 20275 Partnership Example — Scotland-registered Limited Liability Partnership (LLP) onboarded as VASP originator. Demonstrates: (1) legalFormCode using ISO 20275 ELF code 'XLCT' (Scotland LLP); (2) entityType: PARTNERSHIP with partnershipDetails.partnershipType LLP and members array; (3) ISO_20275_ELF_CODE in nationalIdentification for IVMS 101 interoperability via nationalIdentifierType. This example satisfies FATF Recommendation 24 typed disclosure for partnership legal forms.",

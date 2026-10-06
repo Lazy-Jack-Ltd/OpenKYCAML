@@ -1,6 +1,6 @@
 {
   "$schema": "https://openkycaml.org/schema/v1.3.0/kyc-aml-hybrid-extended.json",
-  "version": "1.3.0",
+  "version": "1.18.0",
   "messageId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
   "messageDateTime": "2025-11-05T14:00:00Z",
   "_comment_scenario": "SAR Restriction + Tipping-Off Protection. Acme Crypto Exchange BV (NL) has filed a Suspicious Activity Report (SAR) on customer Pieter Van Houten after detecting anomalous transaction patterns. The KYC profile retains all standard CDD data but the SAR-related fields (adverse media, internal flags, and the SAR filing reference) are classified as 'sar_restricted' with tippingOffProtected:true. When this VC is stored in or presented from an EUDI Wallet, wallet software and relying parties MUST NOT disclose the existence or content of the SAR to the data subject or any party other than authorised FIU/LEA recipients. The credential uses SD-JWT selective disclosure to cryptographically withhold the SAR-restricted fields — they appear only as SHA-256 digests in the Issuer-JWT _sd array and are never appended as disclosures in any presentation token.",
@@ -79,7 +79,7 @@
   },
   "verifiableCredential": {
     "@context": [
-      "https://www.w3.org/2018/credentials/v1",
+      "https://www.w3.org/ns/credentials/v2",
       "https://openkycaml.org/contexts/v1",
       "https://europa.eu/2018/credentials/eudi/v1"
     ],
@@ -93,8 +93,6 @@
       "id": "did:web:acme-crypto.example.nl",
       "name": "Acme Crypto Exchange BV"
     },
-    "issuanceDate": "2025-11-05T14:00:00Z",
-    "expirationDate": "2026-11-05T14:00:00Z",
     "credentialSubject": {
       "id": "did:ebsi:z5KMnPq9rLtUvWxYz3NjRsT",
       "ivms101": {
@@ -297,7 +295,9 @@
       "verificationMethod": "did:web:acme-crypto.example.nl#key-1",
       "proofPurpose": "assertionMethod",
       "proofValue": "zKn9Lp1yOwSsN5VfH8MkA0WeBtZ7UqI6PjR3XmQ2DdC"
-    }
+    },
+    "validFrom": "2025-11-05T14:00:00Z",
+    "validUntil": "2026-11-05T14:00:00Z"
   },
   "gdprSensitivityMetadata": {
     "classification": "sar_restricted",

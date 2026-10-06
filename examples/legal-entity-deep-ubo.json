@@ -1,6 +1,6 @@
 {
   "$schema": "https://openkycaml.org/schema/v1.3.0/kyc-aml-hybrid-extended.json",
-  "version": "1.3.0",
+  "version": "1.18.0",
   "messageId": "f1a5b964-7c8d-6e9f-0a1b-2c3d4e5f6a7b",
   "messageDateTime": "2025-10-01T09:00:00Z",
   "_comment_scenario": "Enhanced Beneficial Ownership — 4-Tier Corporate Chain. This example demonstrates AMLR Art. 26 deep beneficial ownership disclosure for a complex holding structure: Fatima Al-Rashidi (UAE national, 75%) ultimately controls Meridian Digital Assets Ltd (Cayman Islands) through a three-tier intermediate chain: [1] Al-Rashidi Family Office Holding Ltd (BVI, 100%) → [2] Meridian Holdings SA (Luxembourg, 88%) → [3] Meridian Ventures Ltd (Cayman, 75%). A second UBO, Sheikh Omar Al-Farsi, holds 20% directly (depth 1). The remaining 5% is dispersed below the 25% FATF threshold and not reported. This structure is increasingly common in crypto-native fund vehicles and AMLR Art. 26 requires full chain disclosure for all UBOs ≥ 25%.",
@@ -72,7 +72,7 @@
   },
   "verifiableCredential": {
     "@context": [
-      "https://www.w3.org/2018/credentials/v1",
+      "https://www.w3.org/ns/credentials/v2",
       "https://openkycaml.org/contexts/v1"
     ],
     "id": "urn:uuid:f1a5b964-7c8d-6e9f-0a1b-2c3d4e5f6a7b",
@@ -85,8 +85,6 @@
       "id": "did:web:prime-digital-exchange.example.co.uk",
       "name": "Prime Digital Exchange Ltd"
     },
-    "issuanceDate": "2025-10-01T09:00:00Z",
-    "expirationDate": "2026-10-01T09:00:00Z",
     "credentialSubject": {
       "ivms101": {
         "originator": {
@@ -366,6 +364,8 @@
       "verificationMethod": "did:web:prime-digital-exchange.example.co.uk#key-1",
       "proofPurpose": "assertionMethod",
       "proofValue": "zDo0Nr2zPxTtO6WgI9MlB1YfH5EuA8VqJ7KjU4ZsS3GcE"
-    }
+    },
+    "validFrom": "2025-10-01T09:00:00Z",
+    "validUntil": "2026-10-01T09:00:00Z"
   }
 }

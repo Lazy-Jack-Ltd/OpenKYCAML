@@ -1,6 +1,6 @@
 {
   "$schema": "https://openkycaml.org/schema/v1.10.0/kyc-aml-hybrid-extended.json",
-  "version": "1.10.0",
+  "version": "1.18.0",
   "messageId": "d2e3f4a5-c6d7-8901-bcde-f01234567891",
   "messageDateTime": "2026-04-09T11:00:00Z",
   "messageType": "KYC_PROFILE_LEGAL_ENTITY_BANKING",

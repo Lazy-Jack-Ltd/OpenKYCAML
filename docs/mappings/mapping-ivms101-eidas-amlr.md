@@ -71,8 +71,8 @@ All IVMS 101 fields map 1:1 into the `ivms101` block. No IVMS 101 fields are ren
 | `verifiableCredential.id` | `id` | Credential URI | — |
 | `verifiableCredential.type[]` | `type` | `VerifiableAttestation` sub-types | — |
 | `verifiableCredential.issuer` | `issuer` | PID Issuer DID | Art. 22(5)(b) — remote onboarding provider |
-| `verifiableCredential.issuanceDate` | `issuanceDate` | `validFrom` | — |
-| `verifiableCredential.expirationDate` | `expirationDate` | `validUntil` | — |
+| `verifiableCredential.validFrom` | `validFrom` | `validFrom` | — |
+| `verifiableCredential.validUntil` | `validUntil` | `validUntil` | — |
 | `verifiableCredential.credentialSubject.id` | `credentialSubject.id` | User's EUDIW DID | — |
 | `verifiableCredential.credentialStatus` | `credentialStatus` | Revocation endpoint | — |
 | `verifiableCredential.proof` | `proof` | Signature Suite | Art. 22(5)(b) |
@@ -183,10 +183,10 @@ For EUDI Wallet flows where a full IVMS 101 Travel Rule payload is not required,
 
 ```json
 {
-  "@context": ["https://www.w3.org/2018/credentials/v1"],
+  "@context": ["https://www.w3.org/ns/credentials/v2"],
   "type": ["VerifiableCredential", "LegalPersonIdentificationCredential"],
   "issuer": "did:example:pidprovider",
-  "issuanceDate": "2025-01-15T00:00:00Z",
+  "validFrom": "2025-01-15T00:00:00Z",
   "credentialSubject": {
     "id": "did:example:acmecorp",
     "lpid": {

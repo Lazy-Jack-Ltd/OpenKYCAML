@@ -8,6 +8,8 @@ Step-by-step integration and implementation guides.
 
 | Document | Description |
 |---|---|
+| [JSON 101 for AML](guides/json-101-for-aml.md) | Plain-English introduction to JSON for compliance officers and operations managers — building blocks, AML examples, and common data-sync failure patterns |
+| [JSON 102 for AML](guides/json-102-for-aml.md) | JSON Schema as a business data contract — `required`, `enum`, `format`, `pattern`, `$defs`, `if/then/else`, `additionalProperties`, and how OpenKYCAML v1.15.0 uses them |
 | [Adoption Guide](guides/adoption-guide.md) | Step-by-step guide for VASPs, banks, and KYC utilities |
 | [Travel Rule Implementation Guide](guides/travel-rule-implementation-guide.md) | Protocol-specific integration guide (TRISA, OpenVASP, Notabene, TRP, Sygna Bridge) |
 | [EUDI Wallet Integration](guides/eudi-wallet-integration.md) | EUDIW storage profile (VC-JWT vs SD-JWT vs JSON-LD), OpenID4VCI/VP wallet API mapping, selective disclosure, trusted issuer validation, and GDPR/SAR tipping-off protection |
@@ -56,6 +58,14 @@ API references, generated model docs, and migration guides.
 | [TypeScript Type Definitions](reference/typescript-types.md) | TypeScript interfaces for all OpenKYCAML schema types, validator API, and usage examples |
 | [Pydantic Model Documentation](reference/pydantic-models.md) | Pydantic v2 model reference (auto-generated from schema), with field tables, validators, and usage examples |
 | [W3C VC Data Model Migration Guide](reference/vc-data-model-migration.md) | Migration guide from W3C VC Data Model v1.1 to v2.0 for adopters |
+
+## Integrations
+
+Real-world integration wiring guides and platform-specific adoption patterns.
+
+| Document | Description |
+|---|---|
+| [BIPCircle / AML Gate Integration Wiring Guide](integrations/bipcircle-aml-gate-wiring.md) | Pre-meeting briefing snapshot of the BIPCircle ↔ AML Gate integration wiring — Pub/Sub event schema reconciliation, compliance gate gaps, wallet DID convention, dual-read fallback, and MLRO case auto-creation. Captures reusable OpenKYCAML adoption patterns. |
 
 ## Diagrams
 

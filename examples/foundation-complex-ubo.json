@@ -1,6 +1,6 @@
 {
   "$schema": "https://openkycaml.org/schema/v1.3.0/kyc-aml-hybrid-extended.json",
-  "version": "1.3.0",
+  "version": "1.18.0",
   "messageId": "f3a4b5c6-d7e8-9f0a-1b2c-3d4e5f6a7b8c",
   "messageDateTime": "2025-10-25T08:00:00Z",
   "_comment_scenario": "Private Foundation Beneficial Ownership — Liechtenstein Privatstiftung with Founder, Foundation Council and Named Beneficiaries. This example demonstrates AMLR Art. 26(2)(c) disclosure for a foundation structure where Steinberg Asset Management AG (Switzerland) — the subject VASP entity — is 100% owned by the Steinberg Privatstiftung (Liechtenstein). Liechtenstein private foundations (Privatstiftung under PGR Art. 552 §§1–41) are a common wealth-structuring vehicle but present high opacity risk. FATF Recommendation 25 and AMLR Art. 26(2)(c) require identification of: [Founder] Heinrich Steinberg (DE) — settled assets into the foundation and, under the foundation statutes, retains reserved powers including the right to appoint and dismiss foundation council members and to amend the foundation purpose; [Foundation Council] Dr. Andreas Mayer LI (Chairman), Dr. Helga Kirchner DE, Marco Bergomi CH — three natural persons who constitute the governing body, documented via LPID mandates; [Beneficiaries] Heinrich Steinberg and his lineal descendants — identified in the foundation statutes and a supplementary beneficiary declaration. UBO determination: Heinrich Steinberg is the UBO because (i) as founder he retains statutory appointment/dismissal powers over the foundation council under PGR Art. 552 §29, giving him DE_FACTO_CONTROL, and (ii) he and his family are the exclusive beneficiaries. The foundation's charter has been obtained, reviewed and retained on the EDD file.",
@@ -86,7 +86,7 @@
   },
   "verifiableCredential": {
     "@context": [
-      "https://www.w3.org/2018/credentials/v1",
+      "https://www.w3.org/ns/credentials/v2",
       "https://openkycaml.org/contexts/v1"
     ],
     "id": "urn:uuid:f3a4b5c6-d7e8-9f0a-1b2c-3d4e5f6a7b8c",
@@ -99,8 +99,6 @@
       "id": "did:web:frankfurt-digital-assets.example.de",
       "name": "Frankfurt Digital Assets GmbH"
     },
-    "issuanceDate": "2025-10-25T08:00:00Z",
-    "expirationDate": "2026-10-25T08:00:00Z",
     "credentialSubject": {
       "ivms101": {
         "originator": {
@@ -357,6 +355,8 @@
       "verificationMethod": "did:web:frankfurt-digital-assets.example.de#key-1",
       "proofPurpose": "assertionMethod",
       "proofValue": "zRs6Tu9VwXyZaBcDeFgHiJkLmNo1PqRsTuVwXyZaBcDe"
-    }
+    },
+    "validFrom": "2025-10-25T08:00:00Z",
+    "validUntil": "2026-10-25T08:00:00Z"
   }
 }

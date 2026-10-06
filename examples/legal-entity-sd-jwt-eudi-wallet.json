@@ -1,6 +1,6 @@
 {
   "$schema": "https://openkycaml.org/schema/v1.3.0/kyc-aml-hybrid-extended.json",
-  "version": "1.3.0",
+  "version": "1.18.0",
   "messageId": "e0f4a853-6b7c-5d8e-9f0a-1b2c3d4e5f6a",
   "messageDateTime": "2025-09-11T14:00:00Z",
   "_comment_scenario": "SD-JWT Selective Disclosure — Legal Entity (EUDI Wallet LPID). Acme Digital Trading SL (ES) onboards at a Swiss VASP by presenting a Spanish LPID credential via SD-JWT VC / OpenID4VP. The entity discloses its legal name, LEI, and country of registration (required for FATF Travel Rule). VAT number and registered address are selectively withheld in this presentation (GDPR data-minimisation for the counterparty VASP). This file shows the DECODED SD-JWT payload; in the compact token withheld claim values appear only as SHA-256 digests.",
@@ -72,7 +72,7 @@
   },
   "verifiableCredential": {
     "@context": [
-      "https://www.w3.org/2018/credentials/v1",
+      "https://www.w3.org/ns/credentials/v2",
       "https://openkycaml.org/contexts/v1",
       "https://europa.eu/2018/credentials/eudi/v1"
     ],
@@ -86,8 +86,6 @@
       "id": "did:web:swiss-digital-finance.example.ch",
       "name": "Swiss Digital Finance AG"
     },
-    "issuanceDate": "2025-09-11T14:00:00Z",
-    "expirationDate": "2026-09-11T14:00:00Z",
     "credentialSubject": {
       "id": "did:web:acme-digital-trading.example.es",
       "ivms101": {
@@ -311,6 +309,8 @@
       "verificationMethod": "did:web:swiss-digital-finance.example.ch#key-1",
       "proofPurpose": "assertionMethod",
       "proofValue": "zCn9Mq1yOwSsN5VfH8LkA0XeG4DtZ7UpI6JiT3YrR2FbD"
-    }
+    },
+    "validFrom": "2025-09-11T14:00:00Z",
+    "validUntil": "2026-09-11T14:00:00Z"
   }
 }

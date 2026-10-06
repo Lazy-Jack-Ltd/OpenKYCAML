@@ -1,6 +1,6 @@
 {
   "$schema": "https://openkycaml.org/schema/v1.9.1/kyc-aml-hybrid-extended.json",
-  "version": "1.9.1",
+  "version": "1.18.0",
   "messageId": "f7a8b9c0-d1e2-3f4a-5b6c-7d8e9f0a1b2c",
   "messageDateTime": "2026-04-08T10:00:00Z",
   "_comment": "End-to-end AMLR 2027 + FATCA Chapter 4 + EU AI Act integration example. Combines: predictiveAML (EU AI Act Art. 13, BCBS 239), taxStatus (FATCA GIIN, CRS multi-residency, OECD Pillar 2), pkiEvidence (eIDAS 2.0 QSealC X.509), legacyIdentifiers (X.500 DN), ivms101 (FATF R.16 Travel Rule), and kycProfile (AMLR Art. 22 EDD). This is the reference payload for implementers targeting full AMLR 2027 + FATCA + EU AI Act compliance from a single OpenKYCAML v1.9.1 envelope.",

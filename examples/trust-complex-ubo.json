@@ -1,6 +1,6 @@
 {
   "$schema": "https://openkycaml.org/schema/v1.3.0/kyc-aml-hybrid-extended.json",
-  "version": "1.3.0",
+  "version": "1.18.0",
   "messageId": "e2f3a4b5-c6d7-8e9f-0a1b-2c3d4e5f6a7b",
   "messageDateTime": "2025-10-20T09:00:00Z",
   "_comment_scenario": "Discretionary Trust Beneficial Ownership — Jersey Discretionary Trust with Corporate Trustee, Named Protector, Settlor and Beneficiaries. This example demonstrates EDD disclosure for a trust structure where Windermere Digital Assets Ltd (BVI) — the subject VASP entity — is 100% owned by the Windermere Discretionary Trust (Jersey). The schema captures all four categories of trust principal required by FATF Recommendation 25 and AMLR Art. 26(2)(b): [Settlor] Sir James Hartley (UK) — contributed the settlement assets and retains a letter of wishes; [Trustee] Windermere Trustees Ltd (Jersey) — a professional corporate trustee whose natural person directors (Margaret Forsyth and David Okonkwo) are documented via LPID mandates; [Protector] Lady Catherine Hartley (UK) — holds the power to remove and replace trustees under the trust deed; [Beneficiaries] Sir James Hartley (life interest), James Hartley Jr. and Emma Hartley (remainder). UBO determination: Sir James Hartley is identified as the effective UBO because (i) he is the settlor and primary beneficiary, (ii) Lady Catherine Hartley, the protector, acts in accordance with his letter of wishes and can remove trustees, and (iii) the combination of settlor reservation and protector influence constitutes DE_FACTO_CONTROL under AMLR Art. 26(2)(b). FATF R.25 and AMLR Art. 26(2)(b) require VASPs to identify all these roles and trace effective control.",
@@ -72,7 +72,7 @@
   },
   "verifiableCredential": {
     "@context": [
-      "https://www.w3.org/2018/credentials/v1",
+      "https://www.w3.org/ns/credentials/v2",
       "https://openkycaml.org/contexts/v1"
     ],
     "id": "urn:uuid:e2f3a4b5-c6d7-8e9f-0a1b-2c3d4e5f6a7b",
@@ -85,8 +85,6 @@
       "id": "did:web:caledonian-digital-bank.example.co.uk",
       "name": "Caledonian Digital Bank plc"
     },
-    "issuanceDate": "2025-10-20T09:00:00Z",
-    "expirationDate": "2026-10-20T09:00:00Z",
     "credentialSubject": {
       "ivms101": {
         "originator": {
@@ -340,6 +338,8 @@
       "verificationMethod": "did:web:caledonian-digital-bank.example.co.uk#key-1",
       "proofPurpose": "assertionMethod",
       "proofValue": "zPq4Rs7TuVwXyZaBcDeFgHiJkL2mNoPqRsTuVwXy3ZaB"
-    }
+    },
+    "validFrom": "2025-10-20T09:00:00Z",
+    "validUntil": "2026-10-20T09:00:00Z"
   }
 }
