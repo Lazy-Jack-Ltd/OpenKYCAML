@@ -35,6 +35,18 @@ It is a **superset of IVMS 101** — the Travel Rule standard — extended with:
 
 ---
 
+## Data minimisation by design
+
+OpenKYCAML is a shared **convention**, not a default instruction to share everything.
+
+- **Schema is a superset; payloads should be scoped subsets.**
+- **Default posture: least data per interaction.**
+- **Internal and external exchanges should use different profiles**, with restricted/internal-only fields withheld from external recipients unless legally or contractually required.
+
+Use purpose-bound field allowlists and explicit sharing policies so that each exchange contains only what is necessary for that specific compliance objective.
+
+---
+
 ## Why OpenKYCAML?
 
 ### The Problem
@@ -431,4 +443,3 @@ This standard references IVMS 101, eIDAS 2.0 ARF, FATF Recommendations, EU AMLR,
 *Building the common language for compliant digital finance.*
 
 </div>
-
