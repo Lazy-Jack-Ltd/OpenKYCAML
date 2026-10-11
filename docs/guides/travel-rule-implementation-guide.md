@@ -41,6 +41,8 @@ Originating VASP                              Beneficiary VASP
 
 The **minimum required** OpenKYCAML fields for any Travel Rule exchange are the fields within `ivms101` that satisfy FATF Rec 16 / TFR 2023. See [Use Case 1 in the Adoption Guide](adoption-guide.md#2-use-case-1-travel-rule-vasp).
 
+> **Minimum-necessary rule:** Do **not** attach `kycProfile` unless required by law, regulator instruction, or a binding bilateral/multilateral contract.
+
 ---
 
 ## 2. Protocol Comparison
@@ -101,9 +103,9 @@ ivms = openkycaml_to_ivms101(payload)
 
 > **Note:** TRISA protobuf field names are `snake_case` (protobuf convention) whereas IVMS 101 JSON uses `camelCase`. TRISA SDKs handle the serialization automatically.
 
-**Step 3: Attach kycProfile as TRISA extra data (optional)**
+**Step 3: Attach kycProfile as TRISA extra data (optional, exception-only)**
 
-TRISA supports an `extra_json` field in the `SecureEnvelope` for additional data. Include the `kycProfile` JSON-encoded string here if sharing risk ratings or screening results with a trusted counterparty.
+TRISA supports an `extra_json` field in the `SecureEnvelope` for additional data. Include the `kycProfile` JSON-encoded string here only when your legal/contractual basis requires expanded sharing with a trusted counterparty.
 
 **Step 4: Send via TRISA**
 
@@ -442,6 +444,18 @@ Before transmitting, verify the IVMS 101 block contains at minimum:
 - [ ] ONE of: `nationalIdentification`, `dateAndPlaceOfBirth.dateOfBirth`, or `geographicAddress`
 - [ ] `accountNumber[0]`
 - [ ] `originatingVASP` name and identifier
+
+### Purpose-bound field allowlists by protocol integration
+
+Apply a field-level allowlist per integration profile before serialisation:
+
+| Protocol integration | Default allowlist | Expanded-by-exception allowlist |
+|---|---|---|
+| TRISA | `ivms101` FATF/TFR minimum fields only | Add selected `kycProfile` fields in `extra_json` only when law/contract requires |
+| OpenVASP | `originator.ivms101`, `beneficiary`, and transfer context only | Add non-default extension fields only with documented legal basis |
+| Notabene / DAP | `ivms` payload minimum set plus transaction metadata | Add `originator_data`/supplementary blocks only under approved sharing profile |
+| TRP (SWIFT) | `data.ivms101` minimum set only | Add supplemental CDD fields only under contractual profile and recipient controls |
+| Sygna Bridge | `private_info.ivms101` minimum set only | Add optional sections only after policy gate and recipient validation |
 
 **Legal entity originator:**
 - [ ] `name.nameIdentifier[0].legalPersonName`
