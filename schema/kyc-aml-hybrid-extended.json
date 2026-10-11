@@ -1,10 +1,10 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://openkycaml.org/schema/v1.19.0/kyc-aml-hybrid-extended.json",
+  "$id": "https://openkycaml.org/schema/v1.20.0/kyc-aml-hybrid-extended.json",
   "title": "OpenKYCAML Hybrid KYC/AML Schema",
   "description": "Root OpenKYCAML document. At least one of 'ivms101' or 'verifiableCredential' MUST be present.",
-  "version": "1.19.0",
-  "x-changelog": "v1.18.0: W3C VC Data Model 2.0 upgrade — upgraded VerifiableCredentialWrapper from W3C VC DM v1.1 to W3C VC DM 2.0 (W3C Recommendation, May 2024): @context[0] const changed from https://www.w3.org/2018/credentials/v1 to https://www.w3.org/ns/credentials/v2; issuanceDate renamed to validFrom (required); expirationDate renamed to validUntil (optional); description updated to reflect v2.0 compliance. All deferred 'planned for v2.0.0' notes removed. Fully backward-compatible for new issuers; existing payloads must update context URL and field names. | v1.17.0: Array-grouping enhancements (12 items): PersonIdentifier $def + NaturalPerson.naturalPersonIdentifiers[]; LegalPerson.legalNationalIdentifiers[]; KYCProfile.pepStatuses[]; NaturalPerson.countriesOfResidence[]; NaturalPerson.nationalities[]; RiskRatingEntry $def + KYCProfile.riskRatingHistory[]; NaturalPerson.occupations[]; RevenueRecord $def + LegalPerson.revenueHistory[]; ConsentRecord $def + KYCProfile.consentRecords[]; EntityGovernance.parentCompanies[]; NaturalPerson.emergencyContacts[]; LegalPerson.registeredAgents[]. All additions are backward-compatible additive arrays. | v1.16.0: Added CompanyIdentifier $def (23-value identifierType enum covering DUNS, LEI, CRN_GB, SIREN_FR, SIRET_FR, HRB_DE, HRA_DE, CNPJ_BR, ABN_AU, ACN_AU, EIN_US, CIK_US, CAGE_US, PIC_EU, BVDID, ISIN, BIC, CHARITY_GB, KVK_NL, UID_AT, NIF_ES, RCS_LU, OTHER) with if/then constraint requiring identifierIssuingBody when identifierType=OTHER; LegalPerson.companyIdentifiers[] optional array (uniqueItems:true). | v1.15.0: Added root additionalProperties:false; minLength:1 on 10 critical identity string fields; root examples annotation; NaturalPerson deceasedDate conditional (allOf if/then: isDeceased:true requires deceasedDate); uniqueItems:true on NaturalPerson/LegalPerson/KYCProfile tag arrays; added messageType optional root property. Resolved version-field/$id mismatch (version field now tracks $id). Titles/descriptions on all $defs were already complete (no change). Boolean defaults deferred.",
+  "version": "1.20.0",
+  "x-changelog": "v1.20.0: EUDI/EWC alignment — added EUDIPidClaims, EUDILpidClaims, EUDIUboAttestation, EUDIIssuingMetadata definitions; extended evidence items with eudiCredentialType, sourceSchemaId, eudiIssuingMetadata; added PHOTO_ID and ID_PROOFING_ETSI461 document types; added eudiPidClaims, eudiLpidClaims, eudiUboAttestation to credentialSubject. | v1.18.0: W3C VC Data Model 2.0 upgrade — upgraded VerifiableCredentialWrapper from W3C VC DM v1.1 to W3C VC DM 2.0 (W3C Recommendation, May 2024): @context[0] const changed from https://www.w3.org/2018/credentials/v1 to https://www.w3.org/ns/credentials/v2; issuanceDate renamed to validFrom (required); expirationDate renamed to validUntil (optional); description updated to reflect v2.0 compliance. All deferred 'planned for v2.0.0' notes removed. Fully backward-compatible for new issuers; existing payloads must update context URL and field names. | v1.17.0: Array-grouping enhancements (12 items): PersonIdentifier $def + NaturalPerson.naturalPersonIdentifiers[]; LegalPerson.legalNationalIdentifiers[]; KYCProfile.pepStatuses[]; NaturalPerson.countriesOfResidence[]; NaturalPerson.nationalities[]; RiskRatingEntry $def + KYCProfile.riskRatingHistory[]; NaturalPerson.occupations[]; RevenueRecord $def + LegalPerson.revenueHistory[]; ConsentRecord $def + KYCProfile.consentRecords[]; EntityGovernance.parentCompanies[]; NaturalPerson.emergencyContacts[]; LegalPerson.registeredAgents[]. All additions are backward-compatible additive arrays. | v1.16.0: Added CompanyIdentifier $def (23-value identifierType enum covering DUNS, LEI, CRN_GB, SIREN_FR, SIRET_FR, HRB_DE, HRA_DE, CNPJ_BR, ABN_AU, ACN_AU, EIN_US, CIK_US, CAGE_US, PIC_EU, BVDID, ISIN, BIC, CHARITY_GB, KVK_NL, UID_AT, NIF_ES, RCS_LU, OTHER) with if/then constraint requiring identifierIssuingBody when identifierType=OTHER; LegalPerson.companyIdentifiers[] optional array (uniqueItems:true). | v1.15.0: Added root additionalProperties:false; minLength:1 on 10 critical identity string fields; root examples annotation; NaturalPerson deceasedDate conditional (allOf if/then: isDeceased:true requires deceasedDate); uniqueItems:true on NaturalPerson/LegalPerson/KYCProfile tag arrays; added messageType optional root property. Resolved version-field/$id mismatch (version field now tracks $id). Titles/descriptions on all $defs were already complete (no change). Boolean defaults deferred.",
   "examples": [
     {
       "version": "1.15.0",
@@ -1917,6 +1917,18 @@
             "walletPresentationContext": {
               "$ref": "#/$defs/EUDIWalletPresentationContext",
               "description": "Optional EUDI Wallet presentation context embedded in the VC credentialSubject. Enables a single signed VC to carry both the IVMS 101 identity data and the wallet-specific presentation metadata required for eIDAS 2.0 / OpenID4VP audit trails."
+            },
+            "eudiPidClaims": {
+              "$ref": "#/$defs/EUDIPidClaims",
+              "description": "Optional EWC-native PID claim container (ds012). Populated when ingesting an official EUDI Wallet PID credential. Complements the ivms101 normalised model without replacing it."
+            },
+            "eudiLpidClaims": {
+              "$ref": "#/$defs/EUDILpidClaims",
+              "description": "Optional EWC-native LPID claim container (ds004). Populated when ingesting an official EUDI Wallet LPID credential. Complements the ivms101 / legalPerson.lpid model without replacing it."
+            },
+            "eudiUboAttestation": {
+              "$ref": "#/$defs/EUDIUboAttestation",
+              "description": "Optional EWC-native UBO attestation container (ds006). Populated when ingesting an official EWC UBO attestation credential. Complements kycProfile.beneficialOwnership[] without replacing it."
             }
           }
         },
@@ -2033,6 +2045,20 @@
                 "type": "string",
                 "format": "date-time",
                 "description": "ISO 8601 datetime when the credential was presented."
+              },
+              "eudiCredentialType": {
+                "type": "string",
+                "description": "EWC schema identifier of the source credential type (e.g. 'ds012-person-identification-data', 'ds004-legal-person-identification-data', 'ds006-ultimate-beneficial-owners-attestation', 'ds001-eu-company-certificate', 'ds002-iban-attestation', 'ds003-signatory-rights-attestation', 'ds007-payment-wallet-attestation', 'ds013-photo-id', 'ds014-idproofing-etsi461'). Enables exact traceability to the originating EWC credential shape.",
+                "maxLength": 100
+              },
+              "sourceSchemaId": {
+                "type": "string",
+                "format": "uri",
+                "description": "URI of the JSON Schema that governs the source credential presented. For EWC credentials this is the canonical EWC schema URI (e.g. https://github.com/EWC-consortium/eudi-wallet-rulebooks-and-schemas/blob/main/data-schemas/ds012-person-identification-data.json). Enables schema-version-aware processing and future compatibility assertion."
+              },
+              "eudiIssuingMetadata": {
+                "$ref": "#/$defs/EUDIIssuingMetadata",
+                "description": "EWC authentic-source and issuing-authority metadata preserved from the original official credential."
               }
             }
           }
@@ -2579,7 +2605,11 @@
           "properties": {
             "tierApplied": {
               "type": "string",
-              "enum": ["Tier1_Ownership", "Tier2_ControlByOtherMeans", "Tier3_SeniorManagementFallback"],
+              "enum": [
+                "Tier1_Ownership",
+                "Tier2_ControlByOtherMeans",
+                "Tier3_SeniorManagementFallback"
+              ],
               "description": "The tier applied to identify this beneficial owner."
             },
             "justification": {
@@ -2589,7 +2619,9 @@
             }
           },
           "additionalProperties": false,
-          "required": ["tierApplied"]
+          "required": [
+            "tierApplied"
+          ]
         }
       }
     },
@@ -4106,6 +4138,8 @@
             "SOCIAL_SECURITY",
             "BIOMETRIC_DATA_RECORD",
             "EIDAS_PID_CREDENTIAL",
+            "PHOTO_ID",
+            "ID_PROOFING_ETSI461",
             "OTHER"
           ]
         },
@@ -4234,6 +4268,7 @@
             "VAT_REGISTRATION_CERTIFICATE",
             "REGULATORY_LICENCE",
             "LPID_CREDENTIAL",
+            "ID_PROOFING_ETSI461",
             "OTHER"
           ]
         },
@@ -6257,6 +6292,369 @@
             "PUBLIC_TASK",
             "LEGITIMATE_INTERESTS"
           ]
+        }
+      }
+    },
+    "EUDIIssuingMetadata": {
+      "title": "EUDIIssuingMetadata",
+      "description": "Authentic-source and issuing-authority metadata carried by official EWC credentials (PID ds012, LPID ds004, IBAN ds002, company certificate ds001, UBO attestation ds006, ID-proofing ds014, etc.). Preserved when an official credential is ingested into OpenKYCAML so that the authentic-source provenance chain is traceable without transformation loss.",
+      "type": "object",
+      "properties": {
+        "issuing_authority": {
+          "type": "string",
+          "description": "Name of the governmental or authoritative body that issued the credential (e.g. 'Bundesdruckerei', 'Estonian Police and Border Guard Board').",
+          "maxLength": 256
+        },
+        "issuing_authority_id": {
+          "type": "string",
+          "description": "Unique identifier of the issuing authority, typically a DID, LEI, or national registry identifier.",
+          "maxLength": 256
+        },
+        "issuing_country": {
+          "type": "string",
+          "description": "ISO 3166-1 alpha-2 country code of the issuing authority.",
+          "pattern": "^[A-Z]{2}$"
+        },
+        "issuing_jurisdiction": {
+          "type": "string",
+          "description": "ISO 3166-2 subdivision code where the credential was issued (e.g. 'DE-BY' for Bavaria), when jurisdiction is more specific than country.",
+          "maxLength": 20
+        },
+        "issuance_date": {
+          "type": "string",
+          "format": "date",
+          "description": "Date the credential was issued by the authentic source (ISO 8601 date, YYYY-MM-DD)."
+        },
+        "expiry_date": {
+          "type": "string",
+          "format": "date",
+          "description": "Date the credential expires (ISO 8601 date, YYYY-MM-DD)."
+        },
+        "authentic_source_id": {
+          "type": "string",
+          "description": "Identifier of the authentic source that attests the data (e.g. national identity register URI, company registry OID, GLEIF LEI).",
+          "maxLength": 256
+        },
+        "authentic_source_name": {
+          "type": "string",
+          "description": "Human-readable name of the authentic source (e.g. 'German Federal Population Register', 'UK Companies House').",
+          "maxLength": 256
+        },
+        "trust_anchor": {
+          "type": "string",
+          "description": "Trust anchor identifier or DID for the credential's trust chain — typically the EUDIW trusted-issuer-list or national trust anchor.",
+          "maxLength": 512
+        },
+        "document_number": {
+          "type": "string",
+          "description": "Official document number issued by the authentic source (e.g. passport number, national ID card number).",
+          "maxLength": 100
+        }
+      }
+    },
+    "EUDIPidClaims": {
+      "title": "EUDIPidClaims",
+      "description": "Optional container preserving the EWC-native PID claim names and shapes from ds012-person-identification-data.json. Populated when an official EUDI Wallet PID credential is ingested into OpenKYCAML. Keeps the authentic EWC attribute names intact alongside the IVMS 101 normalised model. MUST NOT replace or conflict with ivms101 or kycProfile data.",
+      "type": "object",
+      "properties": {
+        "family_name": {
+          "type": "string",
+          "description": "Current last name(s) or surname(s) of the PID subject (ds012 family_name).",
+          "maxLength": 150
+        },
+        "given_name": {
+          "type": "string",
+          "description": "Current first name(s) including middle name(s) of the PID subject (ds012 given_name).",
+          "maxLength": 150
+        },
+        "birthdate": {
+          "type": "string",
+          "format": "date",
+          "description": "Day, month, and year on which the PID subject was born (ds012 birthdate, ISO 8601)."
+        },
+        "birth_place": {
+          "type": "object",
+          "description": "Structured place of birth from ds012, preserving country, region, and locality.",
+          "properties": {
+            "country": {
+              "type": "string",
+              "pattern": "^[A-Z]{2}$",
+              "description": "ISO 3166-1 alpha-2 country code of the place of birth."
+            },
+            "region": {
+              "type": "string",
+              "description": "ISO 3166-2 region / subdivision code of the place of birth.",
+              "maxLength": 10
+            },
+            "locality": {
+              "type": "string",
+              "description": "Municipality or city of birth.",
+              "maxLength": 150
+            }
+          }
+        },
+        "age_over_18": {
+          "type": "boolean",
+          "description": "Attests that the PID subject is older than 18 years (ds012 age_over_18)."
+        },
+        "age_equal_or_over": {
+          "type": "object",
+          "description": "Age-threshold attestations (ds012 age_equal_or_over). Each key is a string age threshold (e.g. '16', '18', '21') and the value is a boolean.",
+          "additionalProperties": {
+            "type": "boolean"
+          }
+        },
+        "age_in_years": {
+          "type": "integer",
+          "description": "Current age of the PID subject in full years (ds012 age_in_years).",
+          "minimum": 0,
+          "maximum": 150
+        },
+        "age_birth_year": {
+          "type": "integer",
+          "description": "Year of birth of the PID subject (ds012 age_birth_year).",
+          "minimum": 1800,
+          "maximum": 2100
+        },
+        "sex": {
+          "type": "integer",
+          "description": "PID subject's sex using ISO/IEC 5218 values: 0=Not known, 1=Male, 2=Female, 3=Non-binary, 4=Transgender, 5=Intersex, 6=Other, 9=Not applicable (ds012 sex).",
+          "enum": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            9
+          ]
+        },
+        "nationalities": {
+          "type": "array",
+          "description": "Alpha-2 nationality code(s) of the PID subject (ds012 nationalities).",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Z]{2}$"
+          }
+        },
+        "address": {
+          "type": "object",
+          "description": "Structured residential address of the PID subject (ds012 address).",
+          "properties": {
+            "formatted": {
+              "type": "string",
+              "description": "Full address as a formatted free-text string.",
+              "maxLength": 500
+            },
+            "street_address": {
+              "type": "string",
+              "description": "Street name and number of the residence.",
+              "maxLength": 250
+            },
+            "house_number": {
+              "type": "string",
+              "description": "House or building number of the residence.",
+              "maxLength": 20
+            },
+            "postal_code": {
+              "type": "string",
+              "description": "Postal code of the residence.",
+              "maxLength": 20
+            },
+            "region": {
+              "type": "string",
+              "description": "Region or state of the residence.",
+              "maxLength": 150
+            },
+            "locality": {
+              "type": "string",
+              "description": "City or locality of the residence.",
+              "maxLength": 150
+            },
+            "country": {
+              "type": "string",
+              "description": "ISO 3166-1 alpha-2 country code of the residence.",
+              "pattern": "^[A-Z]{2}$"
+            }
+          }
+        },
+        "personal_administrative_number": {
+          "type": "string",
+          "description": "National personal administrative number issued by the PID issuer's jurisdiction (ds012 personal_administrative_number). Equivalent to IVMS 101 nationalIdentifier.",
+          "maxLength": 100
+        },
+        "birth_family_name": {
+          "type": "string",
+          "description": "Birth surname(s) of the PID subject (ds012 birth_family_name).",
+          "maxLength": 150
+        },
+        "birth_given_name": {
+          "type": "string",
+          "description": "Birth first name(s) of the PID subject (ds012 birth_given_name).",
+          "maxLength": 150
+        },
+        "eudiIssuingMetadata": {
+          "$ref": "#/$defs/EUDIIssuingMetadata",
+          "description": "Authentic-source and issuing-authority metadata from the original PID credential."
+        }
+      }
+    },
+    "EUDILpidClaims": {
+      "title": "EUDILpidClaims",
+      "description": "Optional container preserving the EWC-native LPID claim names and shapes from ds004-legal-person-identification-data.json. Populated when an official EUDI Wallet LPID credential is ingested into OpenKYCAML. Keeps the authentic EWC attribute names intact alongside the existing legalPerson / legalPerson.lpid model. MUST NOT replace or conflict with ivms101 or kycProfile data.",
+      "type": "object",
+      "properties": {
+        "legal_person_id": {
+          "type": "string",
+          "description": "Unique legal person identifier issued by the authentic source (ds004 legal_person_id). Typically the LEI or a national registry identifier.",
+          "maxLength": 256
+        },
+        "legal_person_name": {
+          "type": "string",
+          "description": "Official registered legal name of the entity (ds004 legal_person_name).",
+          "maxLength": 500
+        },
+        "legal_address": {
+          "type": "string",
+          "description": "Registered address of the legal entity as a free-text string (ds004 legal_address).",
+          "maxLength": 500
+        },
+        "country": {
+          "type": "string",
+          "description": "ISO 3166-1 alpha-2 country code of the legal entity's registered jurisdiction (ds004 country).",
+          "pattern": "^[A-Z]{2}$"
+        },
+        "established_in": {
+          "type": "string",
+          "description": "ISO 3166-2 subdivision code of the jurisdiction where the entity was established (ds004 established_in), where more specific than country.",
+          "maxLength": 10
+        },
+        "registration_date": {
+          "type": "string",
+          "format": "date",
+          "description": "Date the entity was registered (ds004 registration_date, ISO 8601)."
+        },
+        "vat_number": {
+          "type": "string",
+          "description": "VAT identification number of the legal entity (ds004 vat_number).",
+          "maxLength": 30
+        },
+        "lei": {
+          "type": "string",
+          "description": "Legal Entity Identifier (LEI) of the legal entity (ds004 lei). 20-character ISO 17442 code.",
+          "pattern": "^[A-Z0-9]{18}[0-9]{2}$"
+        },
+        "eori": {
+          "type": "string",
+          "description": "Economic Operators Registration and Identification number (ds004 eori).",
+          "maxLength": 17
+        },
+        "legal_status": {
+          "type": "string",
+          "description": "Current operational status of the legal entity as attested by the authentic source (ds004 legal_status, e.g. 'active', 'dissolved').",
+          "maxLength": 50
+        },
+        "eudiIssuingMetadata": {
+          "$ref": "#/$defs/EUDIIssuingMetadata",
+          "description": "Authentic-source and issuing-authority metadata from the original LPID credential."
+        }
+      }
+    },
+    "EUDIUboAttestation": {
+      "title": "EUDIUboAttestation",
+      "description": "Optional container preserving the EWC-native UBO attestation claim names and shapes from ds006-ultimate-beneficial-owners-attestation.json. Populated when an official EWC UBO attestation credential is ingested into OpenKYCAML. The richer operational UBO model remains in kycProfile.beneficialOwnership[]. MUST NOT replace or conflict with kycProfile data.",
+      "type": "object",
+      "properties": {
+        "legal_person_id": {
+          "type": "string",
+          "description": "Unique identifier of the legal entity to which this UBO attestation relates (ds006 legal_person_id).",
+          "maxLength": 256
+        },
+        "legal_person": {
+          "type": "object",
+          "description": "Legal person details for the entity to which this UBO attestation relates (ds006 legal_person).",
+          "properties": {
+            "legal_form_type": {
+              "type": "string",
+              "description": "Legal form type of the entity (e.g. 'GmbH', 'SA', 'UAB').",
+              "maxLength": 100
+            },
+            "registered_address": {
+              "type": "string",
+              "description": "Registered address of the legal entity.",
+              "maxLength": 500
+            }
+          }
+        },
+        "ultimate_beneficial_owner": {
+          "type": "array",
+          "description": "Ordered list of ultimate beneficial owners as attested by the authentic source (ds006 ultimate_beneficial_owner).",
+          "items": {
+            "type": "object",
+            "properties": {
+              "natural_person_details": {
+                "type": "object",
+                "description": "Personal details of the UBO.",
+                "properties": {
+                  "family_name": {
+                    "type": "string",
+                    "description": "UBO family name.",
+                    "maxLength": 150
+                  },
+                  "first_name": {
+                    "type": "string",
+                    "description": "UBO first name(s).",
+                    "maxLength": 150
+                  },
+                  "birth_date": {
+                    "type": "string",
+                    "format": "date",
+                    "description": "UBO date of birth (ISO 8601)."
+                  },
+                  "postal_address": {
+                    "type": "string",
+                    "description": "Postal address of the UBO.",
+                    "maxLength": 500
+                  },
+                  "nationality": {
+                    "type": "string",
+                    "pattern": "^[A-Z]{2}$",
+                    "description": "UBO primary nationality (ISO 3166-1 alpha-2)."
+                  }
+                }
+              },
+              "ownership_details": {
+                "type": "array",
+                "description": "Ownership and control details for this UBO.",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "nature_of_control": {
+                      "type": "string",
+                      "description": "Nature of control exercised by the UBO (e.g. 'ownership', 'voting_rights', 'other_means').",
+                      "maxLength": 100
+                    },
+                    "ownership_type": {
+                      "type": "string",
+                      "description": "Type of ownership (e.g. 'direct', 'indirect').",
+                      "maxLength": 100
+                    },
+                    "ownership_percentage": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 100,
+                      "description": "Percentage of ownership or voting rights held by this UBO (ds006 ownership_percentage)."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "eudiIssuingMetadata": {
+          "$ref": "#/$defs/EUDIIssuingMetadata",
+          "description": "Authentic-source and issuing-authority metadata from the original UBO attestation credential."
         }
       }
     }
