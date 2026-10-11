@@ -14,7 +14,7 @@ This guide walks you through integrating OpenKYCAML into your product or infrast
 2. [Use Case 1: Travel Rule (VASP)](#2-use-case-1-travel-rule-vasp)
 3. [Use Case 2: Third-Party CDD Reliance (Bank)](#3-use-case-2-third-party-cdd-reliance-bank)
 4. [Use Case 3: Portable KYC with eIDAS 2.0 VC](#4-use-case-3-portable-kyc-with-eidas-20-vc)
-5. [Use Case 4: Full KYC Profile Sharing](#5-use-case-4-full-kyc-profile-sharing)
+5. [Use Case 4: Expanded Sharing (exception-based)](#5-use-case-4-expanded-sharing-exception-based)
 6. [Use Case 5: Integrating with Legacy Payment Rails via ISO 20022](#6-use-case-5-integrating-with-legacy-payment-rails-via-iso-20022)
 7. [Validation](#7-validation)
 8. [Building a Compliant Document Bundle](#8-building-a-compliant-document-bundle)
@@ -82,9 +82,17 @@ Accept KYC data from a third-party CDD provider and store/forward it in a standa
 
 1. **Request a KYC record** from the third-party provider in OpenKYCAML format.
 2. **Validate** the received record against the schema.
-3. **Store the full `kycProfile`** in your customer master data system.
+3. **Apply a purpose-bound field allowlist** before storage and onward sharing (see [Data Sharing Profiles](data-sharing-profiles.md)).
 4. **Map the `auditMetadata`** to your own record-keeping system for regulatory compliance (AMLR Art. 56 — 5-year retention).
 5. **Record your own `changeLog` entry** showing that you received and accepted the CDD.
+
+### Decision Gate (required)
+
+Before storing or forwarding any CDD payload, answer:
+
+> **Can this purpose be met with a smaller profile?**
+
+If yes, store/share only the minimum required subset. Reserve expanded sharing for exceptional cases backed by legal basis, contract, or documented risk justification.
 
 ### Key Fields to Check
 
@@ -127,14 +135,22 @@ See [`examples/hybrid-vc-wrapped.json`](../../examples/hybrid-vc-wrapped.json).
 
 ---
 
-## 5. Use Case 4: Full KYC Profile Sharing
+## 5. Use Case 4: Expanded Sharing (exception-based)
 
 ### Goal
-Share a complete risk-rated KYC/AML profile between institutions for correspondent banking, VASP onboarding, or cross-border data sharing under data-sharing agreements.
+Share an expanded risk-rated KYC/AML profile **only when minimum-for-purpose data is insufficient** for correspondent banking, VASP onboarding, or cross-border data sharing under binding data-sharing agreements.
 
-### Recommended Profile for Corporate Customers
+### Decision Gate (must pass before expanded sharing)
 
-When sharing a legal entity record, always include:
+Use expanded sharing only after confirming:
+
+1. The specific purpose cannot be met with an IVMS-only or reduced profile.
+2. The recipient type is permitted for the data category being shared.
+3. Legal basis, retention period, and disclosure restrictions are documented.
+
+### Recommended Expanded Profile for Corporate Customers
+
+When expanded sharing is justified for a legal entity record, include:
 
 ```json
 {
@@ -156,6 +172,11 @@ When sharing a legal entity record, always include:
 
 ### Beneficial Ownership Requirement
 Per AMLR Article 26, you **must** include the `beneficialOwnership` array for all legal entities, listing all UBOs with ≥ 25% ownership or effective control.
+
+### Internal vs External sharing intent
+
+- **External exchange:** send only purpose-required fields, excluding internal case-management details.
+- **Internal case management:** may retain broader context, but apply access controls, retention controls, and role-based disclosure.
 
 ### Example
 See [`examples/legal-entity-plain.json`](../../examples/legal-entity-plain.json) and [`examples/full-kyc-profile.json`](../../examples/full-kyc-profile.json).

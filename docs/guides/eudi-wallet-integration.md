@@ -22,6 +22,7 @@ specifications.
 10. [Trusted Issuer Validation](#10-trusted-issuer-validation)
 11. [Examples](#11-examples)
 12. [Handling Restricted Data in EUDIW Presentations](#12-handling-restricted-data-in-eudiw-presentations)
+13. [EWC Schema Side-by-Side Reference](#13-ewc-schema-side-by-side-reference)
 
 ---
 
@@ -486,6 +487,27 @@ When a relying party receives an OpenKYCAML credential:
       `http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/granted`.
 5. Reject the credential if trust validation fails.
 
+### 10.1 Required verifier checks before acceptance
+
+Before accepting any OpenKYCAML credential for reliance, verifiers MUST complete all checks below:
+
+1. **Proof validation**: verify issuer signature, disclosure hashes, and holder/key binding JWT.
+2. **Status validation**: resolve `credentialStatus` and confirm credential is not revoked/suspended.
+3. **Issuer trust validation**: confirm issuer is on your trust allowlist and, where applicable, on eIDAS TSL/LOTL.
+4. **Replay-window validation**: enforce nonce, message ID, and timestamp freshness windows for OpenID4VP responses.
+
+Any failed check MUST result in rejection and an auditable failure record.
+
+### 10.2 Forbidden claim requests (policy examples)
+
+Relying parties MUST NOT request claims that are restricted by policy or unnecessary for the stated purpose.
+
+| Context | Forbidden claim request examples |
+|---|---|
+| Travel Rule minimum exchange | Full `credentialSubject.kycProfile`, `adverseMedia`, `sourceOfFundsWealthDetail` |
+| SAR-restricted or internal suspicion context | Any path listed in `gdprSensitivityMetadata.restrictedFields` |
+| Non-required enrichment | National identifier, full address history, or PEP/sanctions detail when not required by law/contract |
+
 The EU Commission publishes the authoritative List of Trusted Lists (LOTL) at:
 `https://ec.europa.eu/tools/lotl/eu-lotl.xml`
 
@@ -502,6 +524,10 @@ The EU Commission publishes the authoritative List of Trusted Lists (LOTL) at:
 | [`examples/sd-jwt-compact-token.json`](../../examples/sd-jwt-compact-token.json) | Annotated SD-JWT compact-token format — shows encoded `_sd` digests and `~disclosure` structure |
 | [`examples/full-kyc-profile-eudi-wallet.json`](../../examples/full-kyc-profile-eudi-wallet.json) | Full KYC profile with EUDI Wallet evidence |
 | [`examples/hybrid-with-sar-restriction.json`](../../examples/hybrid-with-sar-restriction.json) | SAR-restricted VC with `gdprSensitivityMetadata`, `tippingOffProtected: true`, and SD-JWT withholding of SAR fields |
+| [`examples/ewc-ingested-pid.json`](../../examples/ewc-ingested-pid.json) | EWC PID (ds012) ingested into OpenKYCAML — dual-layer: `eudiPidClaims` + IVMS 101 |
+| [`examples/ewc-ingested-lpid.json`](../../examples/ewc-ingested-lpid.json) | EWC LPID (ds004) ingested into OpenKYCAML — dual-layer: `eudiLpidClaims` + IVMS 101 |
+| [`examples/ewc-ingested-ubo.json`](../../examples/ewc-ingested-ubo.json) | EWC UBO attestation (ds006) ingested — `eudiUboAttestation` + `kycProfile.beneficialOwnership[]` |
+| [`examples/ewc-ingested-company-signatory.json`](../../examples/ewc-ingested-company-signatory.json) | EWC company certificate (ds001) + signatory attestation (ds003) ingested |
 
 ---
 
@@ -584,7 +610,15 @@ When `tippingOffProtected` is `true`:
 
 ### 12.3 Cryptographic Enforcement with SD-JWT
 
-The `gdprSensitivityMetadata.restrictedFields` declaration is a policy hint.
+> **Enforcement requirement:** `gdprSensitivityMetadata.restrictedFields` is policy metadata, not UI decoration.
+>
+> Verifiers and relying parties MUST enforce it through:
+> 1. OpenID4VP request filtering (no restricted claim paths in `input_descriptors`),
+> 2. response validation and rejection of restricted disclosures, and
+> 3. transport/policy controls aligned with recipient and purpose constraints.
+>
+> A credential with this metadata but without enforcement is non-compliant.
+
 **Cryptographic enforcement** is achieved by never generating SD-JWT disclosures
 for the restricted fields:
 
@@ -695,6 +729,152 @@ tipping-off flag.
 
 *This document is part of the [OpenKYCAML](https://openkycaml.org) specification.*
 *For schema details see [`schema/versions/v1.7.0.json`](../../schema/versions/v1.7.0.json).*
+
+---
+
+## 13. EWC Schema Side-by-Side Reference
+
+This section documents how each EWC official wallet credential schema maps to OpenKYCAML. The recommended pattern is a **dual-layer** approach:
+
+- **EWC-native layer** — `eudiPidClaims` / `eudiLpidClaims` / `eudiUboAttestation` in `credentialSubject` preserve the official EWC claim names and shapes exactly as issued by the authentic source.
+- **OpenKYCAML operational layer** — `ivms101`, `kycProfile`, and `kycProfile.beneficialOwnership[]` provide the richer AML / Travel Rule model.
+
+**Fallback processing order** when consuming an OpenKYCAML credential that originated from an EWC wallet presentation:
+
+1. If `credentialSubject.eudiPidClaims` / `eudiLpidClaims` / `eudiUboAttestation` is present, use EWC-native claim values for wallet-boundary interoperability.
+2. Otherwise fall back to `credentialSubject.ivms101` IVMS 101 paths and `kycProfile` for the full operational model.
+
+---
+
+### 13.1 ds012 — Person Identification Data (PID)
+
+**EWC schema file:** `ds012-person-identification-data.json`
+**OpenKYCAML container:** `credentialSubject.eudiPidClaims`
+
+| EWC ds012 claim | OpenKYCAML `eudiPidClaims` field | IVMS 101 fallback path | AMLR Art. 22 |
+|---|---|---|---|
+| `family_name` | `eudiPidClaims.family_name` | `ivms101.originator.originatorPersons[0].naturalPerson.name.nameIdentifier[0].primaryIdentifier` | Art. 22(2)(a) |
+| `given_name` | `eudiPidClaims.given_name` | `ivms101.originator.originatorPersons[0].naturalPerson.name.nameIdentifier[0].secondaryIdentifier` | Art. 22(2)(a) |
+| `birthdate` | `eudiPidClaims.birthdate` | `ivms101.originator.originatorPersons[0].naturalPerson.dateAndPlaceOfBirth.dateOfBirth` | Art. 22(2)(b) |
+| `birth_place` (structured) | `eudiPidClaims.birth_place.{country,region,locality}` | `ivms101.originator.originatorPersons[0].naturalPerson.dateAndPlaceOfBirth.placeOfBirth` | Art. 22(2)(b) |
+| `age_over_18` | `eudiPidClaims.age_over_18` | — | — |
+| `age_equal_or_over` | `eudiPidClaims.age_equal_or_over` | — | — |
+| `age_in_years` | `eudiPidClaims.age_in_years` | — | — |
+| `age_birth_year` | `eudiPidClaims.age_birth_year` | — | — |
+| `sex` | `eudiPidClaims.sex` | `ivms101.originator.originatorPersons[0].naturalPerson.gender` | — |
+| `nationalities` | `eudiPidClaims.nationalities[]` | `ivms101.originator.originatorPersons[0].naturalPerson.nationality` | Art. 22(2) |
+| `address` (structured) | `eudiPidClaims.address.{formatted,street_address,house_number,postal_code,region,locality,country}` | `ivms101.originator.originatorPersons[0].naturalPerson.geographicAddress[0]` | Art. 22(2)(c) |
+| `personal_administrative_number` | `eudiPidClaims.personal_administrative_number` | `ivms101.originator.originatorPersons[0].naturalPerson.nationalIdentification.nationalIdentifier` | Art. 22(2)(d) |
+| `birth_family_name` | `eudiPidClaims.birth_family_name` | — | — |
+| `birth_given_name` | `eudiPidClaims.birth_given_name` | — | — |
+| `issuing_authority` | `eudiPidClaims.eudiIssuingMetadata.issuing_authority` | `verifiableCredential.evidence[0].eudiIssuingMetadata.issuing_authority` | — |
+| `issuing_country` | `eudiPidClaims.eudiIssuingMetadata.issuing_country` | `verifiableCredential.evidence[0].eudiIssuingMetadata.issuing_country` | — |
+| `issuance_date` | `eudiPidClaims.eudiIssuingMetadata.issuance_date` | `verifiableCredential.evidence[0].eudiIssuingMetadata.issuance_date` | — |
+| `expiry_date` | `eudiPidClaims.eudiIssuingMetadata.expiry_date` | `verifiableCredential.evidence[0].eudiIssuingMetadata.expiry_date` | — |
+| `document_number` | `eudiPidClaims.eudiIssuingMetadata.document_number` | `verifiableCredential.evidence[0].eudiIssuingMetadata.document_number` | Art. 22(2)(d) |
+| `authentic_source_id` | `eudiPidClaims.eudiIssuingMetadata.authentic_source_id` | `verifiableCredential.evidence[0].credentialIssuer` | — |
+
+---
+
+### 13.2 ds004 — Legal Person Identification Data (LPID)
+
+**EWC schema file:** `ds004-legal-person-identification-data.json`
+**OpenKYCAML container:** `credentialSubject.eudiLpidClaims`
+
+| EWC ds004 claim | OpenKYCAML `eudiLpidClaims` field | IVMS 101 / legalPerson fallback path | AMLR Art. 26 |
+|---|---|---|---|
+| `legal_person_id` | `eudiLpidClaims.legal_person_id` | `ivms101.originator.originatorPersons[0].legalPerson.nationalIdentification.nationalIdentifier` | Art. 26(1)(b) |
+| `legal_person_name` | `eudiLpidClaims.legal_person_name` | `ivms101.originator.originatorPersons[0].legalPerson.name.nameIdentifier[0].legalPersonName` | Art. 26(1)(a) |
+| `legal_address` | `eudiLpidClaims.legal_address` | `ivms101.originator.originatorPersons[0].legalPerson.geographicAddresses[0]` | Art. 26(1)(c) |
+| `country` | `eudiLpidClaims.country` | `ivms101.originator.originatorPersons[0].legalPerson.countryOfRegistration` | Art. 26(1)(a) |
+| `established_in` | `eudiLpidClaims.established_in` | — | — |
+| `registration_date` | `eudiLpidClaims.registration_date` | `legalPerson.registrationDate` | — |
+| `vat_number` | `eudiLpidClaims.vat_number` | `legalPerson.vatNumber` | — |
+| `lei` | `eudiLpidClaims.lei` | `ivms101.originator.originatorPersons[0].legalPerson.nationalIdentification.nationalIdentifier` (LEIX) | Art. 26(1)(b) |
+| `eori` | `eudiLpidClaims.eori` | — | — |
+| `legal_status` | `eudiLpidClaims.legal_status` | `legalPerson.operationalStatus` | — |
+| `issuing_authority` | `eudiLpidClaims.eudiIssuingMetadata.issuing_authority` | `verifiableCredential.evidence[0].eudiIssuingMetadata.issuing_authority` | — |
+| `issuing_country` | `eudiLpidClaims.eudiIssuingMetadata.issuing_country` | `verifiableCredential.evidence[0].eudiIssuingMetadata.issuing_country` | — |
+
+---
+
+### 13.3 ds006 — Ultimate Beneficial Owners Attestation (UBO)
+
+**EWC schema file:** `ds006-ultimate-beneficial-owners-attestation.json`
+**OpenKYCAML containers:**
+- EWC-native: `credentialSubject.eudiUboAttestation`
+- Operational AML model: `kycProfile.beneficialOwnership[]`
+
+| EWC ds006 claim | OpenKYCAML `eudiUboAttestation` field | OpenKYCAML operational path | AMLR Art. 26 |
+|---|---|---|---|
+| `legal_person_id` | `eudiUboAttestation.legal_person_id` | — | Art. 26 |
+| `legal_person.legal_form_type` | `eudiUboAttestation.legal_person.legal_form_type` | — | Art. 26(1)(a) |
+| `legal_person.registered_address` | `eudiUboAttestation.legal_person.registered_address` | — | Art. 26(1)(c) |
+| `ultimate_beneficial_owner[].natural_person_details.family_name` | `eudiUboAttestation.ultimate_beneficial_owner[].natural_person_details.family_name` | `kycProfile.beneficialOwnership[].naturalPerson.name.nameIdentifier[0].primaryIdentifier` | Art. 26 |
+| `ultimate_beneficial_owner[].natural_person_details.first_name` | `eudiUboAttestation.ultimate_beneficial_owner[].natural_person_details.first_name` | `kycProfile.beneficialOwnership[].naturalPerson.name.nameIdentifier[0].secondaryIdentifier` | Art. 26 |
+| `ultimate_beneficial_owner[].natural_person_details.birth_date` | `eudiUboAttestation.ultimate_beneficial_owner[].natural_person_details.birth_date` | `kycProfile.beneficialOwnership[].naturalPerson.dateAndPlaceOfBirth.dateOfBirth` | Art. 26 |
+| `ultimate_beneficial_owner[].natural_person_details.nationality` | `eudiUboAttestation.ultimate_beneficial_owner[].natural_person_details.nationality` | — | Art. 26 |
+| `ultimate_beneficial_owner[].ownership_details[].ownership_percentage` | `eudiUboAttestation.ultimate_beneficial_owner[].ownership_details[].ownership_percentage` | `kycProfile.beneficialOwnership[].ownershipPercentage` | Art. 26 (≥25% threshold) |
+| `ultimate_beneficial_owner[].ownership_details[].nature_of_control` | `eudiUboAttestation.ultimate_beneficial_owner[].ownership_details[].nature_of_control` | `kycProfile.beneficialOwnership[].controlMechanism` | Art. 26 |
+| `ultimate_beneficial_owner[].ownership_details[].ownership_type` | `eudiUboAttestation.ultimate_beneficial_owner[].ownership_details[].ownership_type` | `kycProfile.beneficialOwnership[].ownershipType` | Art. 26 |
+
+> **Note:** OpenKYCAML's `kycProfile.beneficialOwnership[]` carries significantly richer data than ds006: multi-tier ownership chains (`ownershipChainDepth`, `intermediateEntities[]`), nominee flags, legal-arrangement roles, screening results, and document references. The `eudiUboAttestation` container preserves the authentic-source snapshot; the `kycProfile` model provides the operational AML depth.
+
+---
+
+### 13.4 ds001 — EU Company Certificate
+
+**EWC schema file:** `ds001-eu-company-certificate.json`
+**Recommended OpenKYCAML approach:** Absorb `ds001` business data into the existing `legalPerson` model. Preserve the original credential as an evidence item (`eudiCredentialType: "ds001-eu-company-certificate"`) with `eudiIssuingMetadata`.
+
+| EWC ds001 field group | OpenKYCAML path | Notes |
+|---|---|---|
+| Legal name | `ivms101.originator.originatorPersons[0].legalPerson.name` | — |
+| Registration number | `ivms101.originator.originatorPersons[0].legalPerson.nationalIdentification` | Use `RAID` or `MISC` type |
+| Registered address | `ivms101.originator.originatorPersons[0].legalPerson.geographicAddresses[0]` | — |
+| Legal form | `legalPerson.legalFormCode` + `legalPerson.legalFormDescription` | ISO 20275 ELF codes |
+| Company status | `legalPerson.operationalStatus` | — |
+| Registration date | `legalPerson.registrationDate` | — |
+| NACE code | `legalPerson.naceCode` | — |
+| Share capital | — | Not yet a named field; use `legalPerson.customAttributes` pending v1.21.0 |
+| Legal representatives | `legalPerson.mandates[]` | See `docs/mappings/entity-governance.md` |
+| Credential provenance | `verifiableCredential.evidence[0].eudiIssuingMetadata` | Set `eudiCredentialType: "ds001-eu-company-certificate"` |
+
+---
+
+### 13.5 ds003 — Signatory Rights Attestation
+
+**EWC schema file:** `ds003-signatory-rights-attestation.json`
+**Recommended OpenKYCAML approach:** Map `ds003` signatory data into `legalPerson.mandates[]`. Preserve the original credential as an evidence item (`eudiCredentialType: "ds003-signatory-rights-attestation"`).
+
+| EWC ds003 field | OpenKYCAML path | Notes |
+|---|---|---|
+| Legal entity identifier | `ivms101.originator.originatorPersons[0].legalPerson.nationalIdentification.nationalIdentifier` | — |
+| Signatory name | `legalPerson.mandates[].authorisedPersonName` | — |
+| Signatory authority type | `legalPerson.mandates[].mandateType` | e.g. `SOLE`, `JOINT_ANY_TWO` |
+| Authority scope / limits | `legalPerson.mandates[].mandateScope` | — |
+| Credential provenance | `verifiableCredential.evidence[0].eudiIssuingMetadata` | Set `eudiCredentialType: "ds003-signatory-rights-attestation"` |
+
+---
+
+### 13.6 ds013 — Photo ID and ds014 — ETSI 119 461 ID-Proofing Attestation
+
+**EWC schema files:** `ds013-photo-id.json`, `ds014-idproofing-etsi461.json`
+
+From v1.20.0, both credential types are explicitly supported in the OpenKYCAML document type enums:
+
+| EWC schema | OpenKYCAML document type | Evidence type label |
+|---|---|---|
+| `ds013-photo-id.json` | `NaturalPersonDocument.documentType: "PHOTO_ID"` | `eudiCredentialType: "ds013-photo-id"` |
+| `ds014-idproofing-etsi461.json` | `NaturalPersonDocument.documentType: "ID_PROOFING_ETSI461"` | `eudiCredentialType: "ds014-idproofing-etsi461"` |
+
+For ETSI TS 119 461 identity-proofing attestations, record the proofing assurance level in:
+- `kycProfile.dueDiligenceRequirements.verificationMethods[].assuranceLevel` — use `HIGH` for ETSI 119 461 Level 4 (highest), `SUBSTANTIAL` for Level 3.
+- `verifiableCredential.evidence[0].eudiIssuingMetadata` — populate `issuing_authority` with the qualified identity provider (QTSP).
+
+For PHOTO_ID credentials, the biometric photograph may be stored in `walletPresentationContext.photoImage` (base64, GDPR Art. 9 special-category data) or referenced via `walletPresentationContext.photoHash` (SHA-256 digest only, preferred for data-minimisation).
+
+---
 
 ---
 
