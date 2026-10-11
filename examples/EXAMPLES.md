@@ -21,12 +21,12 @@ Every example is a complete, schema-valid payload that can be used as a starting
 
 > **Fictional data notice:** All names, passport numbers, national identifiers, addresses, entity names, LEIs, DIDs, wallet addresses, and any other personal or entity data in the example payloads are **entirely fictional** and have been created solely for illustrative purposes. Any resemblance to real persons (living or deceased), real legal entities, or real transactions is entirely coincidental.
 
-There are currently **49 example files** covering seventeen categories:
+There are currently **51 example files** covering seventeen categories:
 
 | # | Category | Files |
 |---|---|---|
-| A | Baseline — Travel Rule | 2 |
-| B | Natural Person | 5 |
+| A | Baseline — Travel Rule | 3 |
+| B | Natural Person | 6 |
 | C | Legal Entity | 5 |
 | D | Complex Ownership Structures | 5 |
 | E | VC-Wrapped & Travel Rule VC | 4 |
@@ -134,59 +134,61 @@ Each example targets a specific compliance scenario.  Use the catalogue table in
 ## 4. Example catalogue
 
 > **Column key**  
-> `IVMS` = `ivms101` block present · `VC` = `verifiableCredential` block · `KYC` = `kycProfile` block · `Docs` = `identityDocuments` block · `GDPR` = `gdprSensitivityMetadata` block · `TxMon` = `transactionMonitoring` block · `PKI` = `pkiEvidence` / `legacyIdentifiers` blocks
+> `IVMS` = `ivms101` block present · `VC` = `verifiableCredential` block · `KYC` = `kycProfile` block · `Docs` = `identityDocuments` block · `GDPR` = `gdprSensitivityMetadata` block · `TxMon` = `transactionMonitoring` block · `PKI` = `pkiEvidence` / `legacyIdentifiers` blocks · `Exposure` = expected sharing footprint
 
-| File | Category | Subject | Ver | IVMS | VC | KYC | Docs | GDPR | TxMon | PKI | Scenario |
-|---|---|---|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|---|
-| [`minimal-travel-rule.json`](minimal-travel-rule.json) | A — Baseline | Natural person | 1.3.0 | ✓ | | | | | | | Minimum-viable FATF Travel Rule payload: originator + beneficiary, no extras |
-| [`minimal-travel-rule-eudi-wallet.json`](minimal-travel-rule-eudi-wallet.json) | A — Baseline | Natural person | 1.3.0 | ✓ | ✓ | | | | | | Travel Rule with EUDI Wallet VC evidence; DID triangulation (JP→BTC→FR) |
-| [`natural-person-plain.json`](natural-person-plain.json) | B — Natural Person | Natural person | 1.3.0 | ✓ | | | | | | | Plain IVMS 101 natural person CDD — SDD-level KYC onboarding baseline |
-| [`natural-person-eudi-wallet.json`](natural-person-eudi-wallet.json) | B — Natural Person | Natural person | 1.3.0 | ✓ | ✓ | | | | | | EUDI Wallet onboarding (Anna Müller / DE); PID Issuer + VASP DID chain |
-| [`natural-person-sd-jwt-eudi-wallet.json`](natural-person-sd-jwt-eudi-wallet.json) | B — Natural Person | Natural person | 1.3.0 | ✓ | ✓ | | | | | | SD-JWT selective disclosure via EUDI Wallet; `_sd` digests for non-revealed claims |
-| [`full-kyc-profile.json`](full-kyc-profile.json) | B — Natural Person | Natural person | 1.3.0 | ✓ | | ✓ | | | | | Full KYC profile with EDD, PEP flag, source of wealth, and UBO list |
-| [`full-kyc-profile-eudi-wallet.json`](full-kyc-profile-eudi-wallet.json) | B — Natural Person | Natural person | 1.3.0 | ✓ | ✓ | | | | | | EDD / PEP KYC profile via EUDI Wallet (Fatima Al-Rashidi / AE); vLEI chain |
-| [`legal-entity-plain.json`](legal-entity-plain.json) | C — Legal Entity | Legal entity | 1.3.0 | ✓ | | | | | | | Plain IVMS 101 legal entity — minimal corporate CDD baseline |
-| [`legal-entity-eudi-wallet.json`](legal-entity-eudi-wallet.json) | C — Legal Entity | Legal entity | 1.3.0 | ✓ | ✓ | | | | | | EUDI Wallet LPID onboarding (Global Trade Solutions GmbH / DE) |
-| [`legal-entity-sd-jwt-eudi-wallet.json`](legal-entity-sd-jwt-eudi-wallet.json) | C — Legal Entity | Legal entity | 1.3.0 | ✓ | ✓ | | | | | | SD-JWT selective disclosure for LPID credential (Acme Digital Trading BV) |
-| [`legal-entity-trust.json`](legal-entity-trust.json) | C — Legal Entity | Legal entity | 1.4.0 | ✓ | | ✓ | | | | | ISO 20275 trust (ELF code `L295`); `trustDetails` sub-object; Cayman Islands discretionary trust |
-| [`legal-entity-partnership.json`](legal-entity-partnership.json) | C — Legal Entity | Legal entity | 1.4.0 | ✓ | | ✓ | | | | | ISO 20275 LLP (ELF code `Z13E`); `partnershipDetails` sub-object; Scottish LP |
-| [`legal-entity-deep-ubo.json`](legal-entity-deep-ubo.json) | D — Complex Ownership | Legal entity | 1.3.0 | ✓ | ✓ | | | | | | 4-tier corporate UBO chain — AMLR Art. 26 EDD beneficial ownership disclosure |
-| [`complex-group-multi-tier.json`](complex-group-multi-tier.json) | D — Complex Ownership | Legal entity | 1.3.0 | ✓ | ✓ | | | | | | 4-layer holding structure with natural person UBOs at every tier |
-| [`foundation-complex-ubo.json`](foundation-complex-ubo.json) | D — Complex Ownership | Legal entity | 1.3.0 | ✓ | ✓ | | | | | | Liechtenstein Privatstiftung; `foundationDetails`; settlor + protector + beneficiary roles |
-| [`llp-complex-ubo.json`](llp-complex-ubo.json) | D — Complex Ownership | Legal entity | 1.3.0 | ✓ | ✓ | | | | | | UK LLP with corporate general partner; multiple designated member roles |
-| [`trust-complex-ubo.json`](trust-complex-ubo.json) | D — Complex Ownership | Legal entity | 1.3.0 | ✓ | ✓ | | | | | | Jersey discretionary trust with corporate trustee and multiple beneficiary classes |
-| [`hybrid-vc-wrapped.json`](hybrid-vc-wrapped.json) | E — VC-Wrapped | Natural person | 1.3.0 | ✓ | ✓ | | | | ✓ | | IVMS 101 + `kycProfile` inside a W3C VC; transaction monitoring block |
-| [`hybrid-vc-eudi-wallet.json`](hybrid-vc-eudi-wallet.json) | E — VC-Wrapped | Natural person | 1.3.0 | ✓ | ✓ | | | | ✓ | | EUDI Wallet companion to `hybrid-vc-wrapped.json`; full DID triangulation |
-| [`travel-rule-vc-wrapped.json`](travel-rule-vc-wrapped.json) | E — VC-Wrapped | Natural person | 1.3.0 | | ✓ | | | | ✓ | | Travel Rule entirely inside a VC — no top-level `ivms101` (VC-only pattern) |
-| [`travel-rule-vc-eudi-wallet.json`](travel-rule-vc-eudi-wallet.json) | E — VC-Wrapped | Natural person | 1.3.0 | ✓ | ✓ | | | | ✓ | | EUDI Wallet companion to `travel-rule-vc-wrapped.json` |
-| [`document-bundle-natural-person.json`](document-bundle-natural-person.json) | F — Document Bundles | Natural person | 1.5.0 | ✓ | | ✓ | ✓ | | | | German national: Personalausweis + proof of address + eIDAS PID VC; `verifyingDocumentRef` linkage |
-| [`document-bundle-legal-entity.json`](document-bundle-legal-entity.json) | F — Document Bundles | Legal entity | 1.5.0 | ✓ | | ✓ | ✓ | | | | UK PLC: Certificate of Incorporation + Companies House extract + LEI + vLEI OOR |
-| [`hybrid-with-sar-restriction.json`](hybrid-with-sar-restriction.json) | G — Advanced | Legal entity | 1.3.0 | ✓ | ✓ | | | ✓ | | | SAR filing in progress; `gdprSensitivityMetadata` tipping-off protection; restricted field list |
-| [`sd-jwt-compact-token.json`](sd-jwt-compact-token.json) | H — Reference Token | Natural person | 1.3.0 | | | ✓ | | | | | ⚠ Annotated reference — decoded SD-JWT with `compactToken`, `decodedDisclosures`, `verificationSteps`; **not schema-valid** |
-| [`evidence/eidas-x509-dn.json`](evidence/eidas-x509-dn.json) | I — PKI Evidence | Legal entity | 1.8.0 | ✓ | | ✓ | ✓ | | | ✓ | Legal entity QSealC certificate: `legacyIdentifiers.x500DN` + `pkiEvidence.x509Certificate` (ETSI EN 319 412 QCStatements, OCSP) |
-| [`evidence/eidas-x509-qeaa.json`](evidence/eidas-x509-qeaa.json) | I — PKI Evidence | Natural person | 1.8.0 | ✓ | ✓ | ✓ | ✓ | | | ✓ | Natural person QEAA + EUDI Wallet triangulation: VC evidence + `pkiEvidence` X.509 metadata + `legacyIdentifiers.x500DN` + OIDs |
-| [`tax/tax-individual-tin.json`](tax/tax-individual-tin.json) | J — Tax Status | Natural person | 1.9.0 | ✓ | | ✓ | | | | | Individual TIN self-certification — OECD CRS multi-jurisdiction TIN array, unverified status |
-| [`tax/tax-corporate-vat-gst.json`](tax/tax-corporate-vat-gst.json) | J — Tax Status | Legal entity | 1.9.0 | ✓ | | ✓ | | | | | Corporate VAT/GST registrations across EU/UK/AU/SG jurisdictions; VIES and GST-portal verification |
-| [`tax/tax-fatca-crs.json`](tax/tax-fatca-crs.json) | J — Tax Status | Legal entity | 1.9.1 | ✓ | | ✓ | | | | | FATCA GIIN + Chapter 4 classification (participatingFFI) + CRS crsTaxResidencies[] |
-| [`tax/tax-mne-pillar2.json`](tax/tax-mne-pillar2.json) | J — Tax Status | Legal entity | 1.9.0 | ✓ | | ✓ | | | | | Multinational constituent entity — OECD Pillar 2 GloBE ETR per jurisdiction + GIR filing reference |
-| [`tax/tax-offshore-esr.json`](tax/tax-offshore-esr.json) | J — Tax Status | Legal entity | 1.9.0 | ✓ | | ✓ | | | | | Cayman Islands holding company — Economic Substance Regulation compliance (inScope + compliant) |
-| [`predictive/predictive-static.json`](predictive/predictive-static.json) | K — PredictiveAML | Natural person | 1.7.0 | ✓ | | ✓ | | | | | Static risk snapshot with SHAP feature importance; EU AI Act model card metadata |
-| [`predictive/predictive-delta.json`](predictive/predictive-delta.json) | K — PredictiveAML | Natural person | 1.7.0 | ✓ | | ✓ | | | | | Delta-based cKYC — risk evolution history with multiple scored snapshots |
-| [`predictive/predictive-ai-high-risk.json`](predictive/predictive-ai-high-risk.json) | K — PredictiveAML | Natural person | 1.7.0 | ✓ | | ✓ | | | | | High-risk AI score with EU AI Act conformity statement and BCBS 239 gap-analysis flags |
-| [`contact-banking/natural-person-with-contact.json`](contact-banking/natural-person-with-contact.json) | L — Contact/Banking | Natural person | 1.10.0 | ✓ | | ✓ | | | | | Natural person with email, E.164 phone/mobile, and verified IBAN/BIC banking details |
-| [`contact-banking/legal-entity-with-banking.json`](contact-banking/legal-entity-with-banking.json) | L — Contact/Banking | Legal entity | 1.10.0 | ✓ | | ✓ | | | | | Legal entity with business email, phone, and multi-account banking details (IBAN + BIC + accountType) |
-| [`cell-company/pcc-cell.json`](cell-company/pcc-cell.json) | M — Cell Companies | Legal entity | 1.11.0 | ✓ | | ✓ | | | | | PCC Cell with `cellCompanyDetails` + mandatory `parentCellCompanyReference`; Guernsey PCC structure |
-| [`cell-company/icc-cell.json`](cell-company/icc-cell.json) | M — Cell Companies | Legal entity | 1.11.0 | ✓ | | ✓ | | | | | ICC Cell with own legal personality (`hasIndependentLegalPersonality: true`) + registration number; Jersey ICC |
-| [`cell-company/pcc-cell-predictive-aml.json`](cell-company/pcc-cell-predictive-aml.json) | M — Cell Companies | Legal entity | 1.11.2 | ✓ | | ✓ | | | | | PCC Cell with `cellLevelPredictiveScores[]` in predictiveAML block (v1.11.2 addition) |
-| [`legal-entity-governance.json`](legal-entity-governance.json) | N — Governance | Legal entity | 1.12.0 | ✓ | | ✓ | | | | | Dual-regulated, exchange-listed subsidiary; `entityGovernance` with `regulators[]`, `listedStatus` (XETR), `parentRegulated`, `majorityOwnedSubsidiary` |
-| [`natural-person-gender-occupation.json`](natural-person-gender-occupation.json) | N — Governance | Natural person | 1.12.0 | ✓ | | ✓ | | | | | Natural person with `gender: FEMALE`, `occupation.occupationCode: SELF_EMPLOYED`, and `reviewLifecycle` state history |
-| [`amlr2027-fatca-ai-act.json`](amlr2027-fatca-ai-act.json) | N — Governance | Legal entity | 1.9.1 | ✓ | ✓ | ✓ | ✓ | | | ✓ | End-to-end reference: predictiveAML (EU AI Act) + taxStatus (FATCA/CRS/Pillar 2) + pkiEvidence (QSealC) + legacyIdentifiers (X.500 DN) |
-| [`crm-natural-person-full.json`](crm-natural-person-full.json) | P — CRM Completeness | Natural person | 1.13.0 | ✓ | | ✓ | | | | | Full CRM natural person: historicalNames, marital status, emergency contact, typed emailAddresses/phoneNumbers, preferred language/channel, relationship manager, customer segment, estimated net worth |
-| [`crm-legal-entity-full.json`](crm-legal-entity-full.json) | P — CRM Completeness | Legal entity | 1.13.0 | ✓ | | ✓ | | | | | Full CRM legal entity: incorporation/dissolution dates, operational status, employee count, revenue, website, social media, industryCodes, registeredAgent, typed contact arrays, entityGovernance (ultimate parent, group LEI), mandates, relationship manager |
-| [`company-identifiers.json`](company-identifiers.json) | Q — Company Identifiers | Legal entity | 1.16.0 | ✓ | | ✓ | | | | | Legal entity with `companyIdentifiers[]` using the 23-value `CompanyIdentifier` $def (DUNS, LEI, CRN_GB, ABN_AU, EIN_US, etc.) |
-| [`array-grouping-v1-17.json`](array-grouping-v1-17.json) | R — Array Grouping | Natural person | 1.17.0 | ✓ | | ✓ | | | | | Natural person with new v1.17.0 structured arrays: `naturalPersonIdentifiers[]`, `countriesOfResidence[]`, `nationalities[]`, `occupations[]`, `emergencyContacts[]`; `kycProfile` with `riskRatingHistory[]`, `pepStatuses[]`, `consentRecords[]` |
-| [`array-grouping-legal-entity-v1-17.json`](array-grouping-legal-entity-v1-17.json) | R — Array Grouping | Legal entity | 1.17.0 | ✓ | | ✓ | | | | | Legal entity with new v1.17.0 structured arrays: `legalNationalIdentifiers[]`, `revenueHistory[]`, `registeredAgents[]`; `entityGovernance.parentCompanies[]` |
-| [`presentation-definitions/travel-rule-minimum.json`](presentation-definitions/travel-rule-minimum.json) | O — Presentation Defs | — | 1.7.0 | — | — | — | — | — | — | — | OpenID4VP Presentation Definition for the FATF Travel Rule minimum credential request |
+| File | Category | Subject | Ver | IVMS | VC | KYC | Docs | GDPR | TxMon | PKI | Scenario | Data Exposure Level |
+|---|---|---|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|---|---|
+| [`minimal-travel-rule.json`](minimal-travel-rule.json) | A — Baseline | Natural person | 1.3.0 | ✓ |  |  |  |  |  |  | Minimum-viable FATF Travel Rule payload: originator + beneficiary, no extras | Minimum for purpose |
+| [`minimal-travel-rule-eudi-wallet.json`](minimal-travel-rule-eudi-wallet.json) | A — Baseline | Natural person | 1.3.0 | ✓ | ✓ |  |  |  |  |  | Travel Rule with EUDI Wallet VC evidence; DID triangulation (JP→BTC→FR) | Minimum for purpose |
+| [`natural-person-plain.json`](natural-person-plain.json) | B — Natural Person | Natural person | 1.3.0 | ✓ |  |  |  |  |  |  | Plain IVMS 101 natural person CDD — SDD-level KYC onboarding baseline | Minimum for purpose |
+| [`natural-person-eudi-wallet.json`](natural-person-eudi-wallet.json) | B — Natural Person | Natural person | 1.3.0 | ✓ | ✓ |  |  |  |  |  | EUDI Wallet onboarding (Anna Müller / DE); PID Issuer + VASP DID chain | Standard |
+| [`natural-person-sd-jwt-eudi-wallet.json`](natural-person-sd-jwt-eudi-wallet.json) | B — Natural Person | Natural person | 1.3.0 | ✓ | ✓ |  |  |  |  |  | SD-JWT selective disclosure via EUDI Wallet; `_sd` digests for non-revealed claims | Selective |
+| [`full-kyc-profile.json`](full-kyc-profile.json) | B — Natural Person | Natural person | 1.3.0 | ✓ |  | ✓ |  |  |  |  | Full KYC profile with EDD, PEP flag, source of wealth, and UBO list | Expanded by exception |
+| [`full-kyc-profile-eudi-wallet.json`](full-kyc-profile-eudi-wallet.json) | B — Natural Person | Natural person | 1.3.0 | ✓ | ✓ |  |  |  |  |  | EDD / PEP KYC profile via EUDI Wallet (Fatima Al-Rashidi / AE); vLEI chain | Expanded by exception |
+| [`minimum-for-purpose-external.json`](minimum-for-purpose-external.json) | A — Baseline | Natural person | 1.18.0 | ✓ |  |  |  |  |  |  | Minimum-for-purpose external sharing profile: IVMS-only Travel Rule payload with no enrichment blocks | Minimum for purpose |
+| [`expanded-by-exception-external.json`](expanded-by-exception-external.json) | B — Natural Person | Natural person | 1.18.0 | ✓ |  | ✓ |  |  |  |  | Expanded external profile by exception: selected `kycProfile` fields shared, internal-only operational metadata removed | Expanded by exception |
+| [`legal-entity-plain.json`](legal-entity-plain.json) | C — Legal Entity | Legal entity | 1.3.0 | ✓ |  |  |  |  |  |  | Plain IVMS 101 legal entity — minimal corporate CDD baseline | Minimum for purpose |
+| [`legal-entity-eudi-wallet.json`](legal-entity-eudi-wallet.json) | C — Legal Entity | Legal entity | 1.3.0 | ✓ | ✓ |  |  |  |  |  | EUDI Wallet LPID onboarding (Global Trade Solutions GmbH / DE) | Standard |
+| [`legal-entity-sd-jwt-eudi-wallet.json`](legal-entity-sd-jwt-eudi-wallet.json) | C — Legal Entity | Legal entity | 1.3.0 | ✓ | ✓ |  |  |  |  |  | SD-JWT selective disclosure for LPID credential (Acme Digital Trading BV) | Selective |
+| [`legal-entity-trust.json`](legal-entity-trust.json) | C — Legal Entity | Legal entity | 1.4.0 | ✓ |  | ✓ |  |  |  |  | ISO 20275 trust (ELF code `L295`); `trustDetails` sub-object; Cayman Islands discretionary trust | Standard |
+| [`legal-entity-partnership.json`](legal-entity-partnership.json) | C — Legal Entity | Legal entity | 1.4.0 | ✓ |  | ✓ |  |  |  |  | ISO 20275 LLP (ELF code `Z13E`); `partnershipDetails` sub-object; Scottish LP | Standard |
+| [`legal-entity-deep-ubo.json`](legal-entity-deep-ubo.json) | D — Complex Ownership | Legal entity | 1.3.0 | ✓ | ✓ |  |  |  |  |  | 4-tier corporate UBO chain — AMLR Art. 26 EDD beneficial ownership disclosure | Standard |
+| [`complex-group-multi-tier.json`](complex-group-multi-tier.json) | D — Complex Ownership | Legal entity | 1.3.0 | ✓ | ✓ |  |  |  |  |  | 4-layer holding structure with natural person UBOs at every tier | Standard |
+| [`foundation-complex-ubo.json`](foundation-complex-ubo.json) | D — Complex Ownership | Legal entity | 1.3.0 | ✓ | ✓ |  |  |  |  |  | Liechtenstein Privatstiftung; `foundationDetails`; settlor + protector + beneficiary roles | Standard |
+| [`llp-complex-ubo.json`](llp-complex-ubo.json) | D — Complex Ownership | Legal entity | 1.3.0 | ✓ | ✓ |  |  |  |  |  | UK LLP with corporate general partner; multiple designated member roles | Standard |
+| [`trust-complex-ubo.json`](trust-complex-ubo.json) | D — Complex Ownership | Legal entity | 1.3.0 | ✓ | ✓ |  |  |  |  |  | Jersey discretionary trust with corporate trustee and multiple beneficiary classes | Standard |
+| [`hybrid-vc-wrapped.json`](hybrid-vc-wrapped.json) | E — VC-Wrapped | Natural person | 1.3.0 | ✓ | ✓ |  |  |  | ✓ |  | IVMS 101 + `kycProfile` inside a W3C VC; transaction monitoring block | Standard |
+| [`hybrid-vc-eudi-wallet.json`](hybrid-vc-eudi-wallet.json) | E — VC-Wrapped | Natural person | 1.3.0 | ✓ | ✓ |  |  |  | ✓ |  | EUDI Wallet companion to `hybrid-vc-wrapped.json`; full DID triangulation | Standard |
+| [`travel-rule-vc-wrapped.json`](travel-rule-vc-wrapped.json) | E — VC-Wrapped | Natural person | 1.3.0 |  | ✓ |  |  |  | ✓ |  | Travel Rule entirely inside a VC — no top-level `ivms101` (VC-only pattern) | Standard |
+| [`travel-rule-vc-eudi-wallet.json`](travel-rule-vc-eudi-wallet.json) | E — VC-Wrapped | Natural person | 1.3.0 | ✓ | ✓ |  |  |  | ✓ |  | EUDI Wallet companion to `travel-rule-vc-wrapped.json` | Standard |
+| [`document-bundle-natural-person.json`](document-bundle-natural-person.json) | F — Document Bundles | Natural person | 1.5.0 | ✓ |  | ✓ | ✓ |  |  |  | German national: Personalausweis + proof of address + eIDAS PID VC; `verifyingDocumentRef` linkage | Standard |
+| [`document-bundle-legal-entity.json`](document-bundle-legal-entity.json) | F — Document Bundles | Legal entity | 1.5.0 | ✓ |  | ✓ | ✓ |  |  |  | UK PLC: Certificate of Incorporation + Companies House extract + LEI + vLEI OOR | Standard |
+| [`hybrid-with-sar-restriction.json`](hybrid-with-sar-restriction.json) | G — Advanced | Legal entity | 1.3.0 | ✓ | ✓ |  |  | ✓ |  |  | SAR filing in progress; `gdprSensitivityMetadata` tipping-off protection; restricted field list | Restricted |
+| [`sd-jwt-compact-token.json`](sd-jwt-compact-token.json) | H — Reference Token | Natural person | 1.3.0 |  |  | ✓ |  |  |  |  | ⚠ Annotated reference — decoded SD-JWT with `compactToken`, `decodedDisclosures`, `verificationSteps`; **not schema-valid** | Selective |
+| [`evidence/eidas-x509-dn.json`](evidence/eidas-x509-dn.json) | I — PKI Evidence | Legal entity | 1.8.0 | ✓ |  | ✓ | ✓ |  |  | ✓ | Legal entity QSealC certificate: `legacyIdentifiers.x500DN` + `pkiEvidence.x509Certificate` (ETSI EN 319 412 QCStatements, OCSP) | Standard |
+| [`evidence/eidas-x509-qeaa.json`](evidence/eidas-x509-qeaa.json) | I — PKI Evidence | Natural person | 1.8.0 | ✓ | ✓ | ✓ | ✓ |  |  | ✓ | Natural person QEAA + EUDI Wallet triangulation: VC evidence + `pkiEvidence` X.509 metadata + `legacyIdentifiers.x500DN` + OIDs | Standard |
+| [`tax/tax-individual-tin.json`](tax/tax-individual-tin.json) | J — Tax Status | Natural person | 1.9.0 | ✓ |  | ✓ |  |  |  |  | Individual TIN self-certification — OECD CRS multi-jurisdiction TIN array, unverified status | Standard |
+| [`tax/tax-corporate-vat-gst.json`](tax/tax-corporate-vat-gst.json) | J — Tax Status | Legal entity | 1.9.0 | ✓ |  | ✓ |  |  |  |  | Corporate VAT/GST registrations across EU/UK/AU/SG jurisdictions; VIES and GST-portal verification | Standard |
+| [`tax/tax-fatca-crs.json`](tax/tax-fatca-crs.json) | J — Tax Status | Legal entity | 1.9.1 | ✓ |  | ✓ |  |  |  |  | FATCA GIIN + Chapter 4 classification (participatingFFI) + CRS crsTaxResidencies[] | Standard |
+| [`tax/tax-mne-pillar2.json`](tax/tax-mne-pillar2.json) | J — Tax Status | Legal entity | 1.9.0 | ✓ |  | ✓ |  |  |  |  | Multinational constituent entity — OECD Pillar 2 GloBE ETR per jurisdiction + GIR filing reference | Standard |
+| [`tax/tax-offshore-esr.json`](tax/tax-offshore-esr.json) | J — Tax Status | Legal entity | 1.9.0 | ✓ |  | ✓ |  |  |  |  | Cayman Islands holding company — Economic Substance Regulation compliance (inScope + compliant) | Standard |
+| [`predictive/predictive-static.json`](predictive/predictive-static.json) | K — PredictiveAML | Natural person | 1.7.0 | ✓ |  | ✓ |  |  |  |  | Static risk snapshot with SHAP feature importance; EU AI Act model card metadata | Standard |
+| [`predictive/predictive-delta.json`](predictive/predictive-delta.json) | K — PredictiveAML | Natural person | 1.7.0 | ✓ |  | ✓ |  |  |  |  | Delta-based cKYC — risk evolution history with multiple scored snapshots | Standard |
+| [`predictive/predictive-ai-high-risk.json`](predictive/predictive-ai-high-risk.json) | K — PredictiveAML | Natural person | 1.7.0 | ✓ |  | ✓ |  |  |  |  | High-risk AI score with EU AI Act conformity statement and BCBS 239 gap-analysis flags | Standard |
+| [`contact-banking/natural-person-with-contact.json`](contact-banking/natural-person-with-contact.json) | L — Contact/Banking | Natural person | 1.10.0 | ✓ |  | ✓ |  |  |  |  | Natural person with email, E.164 phone/mobile, and verified IBAN/BIC banking details | Standard |
+| [`contact-banking/legal-entity-with-banking.json`](contact-banking/legal-entity-with-banking.json) | L — Contact/Banking | Legal entity | 1.10.0 | ✓ |  | ✓ |  |  |  |  | Legal entity with business email, phone, and multi-account banking details (IBAN + BIC + accountType) | Standard |
+| [`cell-company/pcc-cell.json`](cell-company/pcc-cell.json) | M — Cell Companies | Legal entity | 1.11.0 | ✓ |  | ✓ |  |  |  |  | PCC Cell with `cellCompanyDetails` + mandatory `parentCellCompanyReference`; Guernsey PCC structure | Standard |
+| [`cell-company/icc-cell.json`](cell-company/icc-cell.json) | M — Cell Companies | Legal entity | 1.11.0 | ✓ |  | ✓ |  |  |  |  | ICC Cell with own legal personality (`hasIndependentLegalPersonality: true`) + registration number; Jersey ICC | Standard |
+| [`cell-company/pcc-cell-predictive-aml.json`](cell-company/pcc-cell-predictive-aml.json) | M — Cell Companies | Legal entity | 1.11.2 | ✓ |  | ✓ |  |  |  |  | PCC Cell with `cellLevelPredictiveScores[]` in predictiveAML block (v1.11.2 addition) | Standard |
+| [`legal-entity-governance.json`](legal-entity-governance.json) | N — Governance | Legal entity | 1.12.0 | ✓ |  | ✓ |  |  |  |  | Dual-regulated, exchange-listed subsidiary; `entityGovernance` with `regulators[]`, `listedStatus` (XETR), `parentRegulated`, `majorityOwnedSubsidiary` | Standard |
+| [`natural-person-gender-occupation.json`](natural-person-gender-occupation.json) | N — Governance | Natural person | 1.12.0 | ✓ |  | ✓ |  |  |  |  | Natural person with `gender: FEMALE`, `occupation.occupationCode: SELF_EMPLOYED`, and `reviewLifecycle` state history | Standard |
+| [`amlr2027-fatca-ai-act.json`](amlr2027-fatca-ai-act.json) | N — Governance | Legal entity | 1.9.1 | ✓ | ✓ | ✓ | ✓ |  |  | ✓ | End-to-end reference: predictiveAML (EU AI Act) + taxStatus (FATCA/CRS/Pillar 2) + pkiEvidence (QSealC) + legacyIdentifiers (X.500 DN) | Standard |
+| [`crm-natural-person-full.json`](crm-natural-person-full.json) | P — CRM Completeness | Natural person | 1.13.0 | ✓ |  | ✓ |  |  |  |  | Full CRM natural person: historicalNames, marital status, emergency contact, typed emailAddresses/phoneNumbers, preferred language/channel, relationship manager, customer segment, estimated net worth | Expanded by exception |
+| [`crm-legal-entity-full.json`](crm-legal-entity-full.json) | P — CRM Completeness | Legal entity | 1.13.0 | ✓ |  | ✓ |  |  |  |  | Full CRM legal entity: incorporation/dissolution dates, operational status, employee count, revenue, website, social media, industryCodes, registeredAgent, typed contact arrays, entityGovernance (ultimate parent, group LEI), mandates, relationship manager | Expanded by exception |
+| [`company-identifiers.json`](company-identifiers.json) | Q — Company Identifiers | Legal entity | 1.16.0 | ✓ |  | ✓ |  |  |  |  | Legal entity with `companyIdentifiers[]` using the 23-value `CompanyIdentifier` $def (DUNS, LEI, CRN_GB, ABN_AU, EIN_US, etc.) | Standard |
+| [`array-grouping-v1-17.json`](array-grouping-v1-17.json) | R — Array Grouping | Natural person | 1.17.0 | ✓ |  | ✓ |  |  |  |  | Natural person with new v1.17.0 structured arrays: `naturalPersonIdentifiers[]`, `countriesOfResidence[]`, `nationalities[]`, `occupations[]`, `emergencyContacts[]`; `kycProfile` with `riskRatingHistory[]`, `pepStatuses[]`, `consentRecords[]` | Standard |
+| [`array-grouping-legal-entity-v1-17.json`](array-grouping-legal-entity-v1-17.json) | R — Array Grouping | Legal entity | 1.17.0 | ✓ |  | ✓ |  |  |  |  | Legal entity with new v1.17.0 structured arrays: `legalNationalIdentifiers[]`, `revenueHistory[]`, `registeredAgents[]`; `entityGovernance.parentCompanies[]` | Standard |
+| [`presentation-definitions/travel-rule-minimum.json`](presentation-definitions/travel-rule-minimum.json) | O — Presentation Defs | — | 1.7.0 | — | — | — | — | — | — | — | OpenID4VP Presentation Definition for the FATF Travel Rule minimum credential request | Minimum for purpose |
 
 ---
 
@@ -194,11 +196,11 @@ Each example targets a specific compliance scenario.  Use the catalogue table in
 
 ### A — Baseline: Travel Rule
 
-The two `minimal-travel-rule` files are the lightest possible payloads that satisfy FATF Travel Rule requirements: originator and beneficiary IVMS 101 blocks, a `messageId`, and a timestamp.  Use these as the starting point when building a new integration or when you need a minimal fixture for unit tests.
+The three baseline files (`minimal-travel-rule`, `minimal-travel-rule-eudi-wallet`, and `minimum-for-purpose-external`) are the lightest payloads that satisfy FATF Travel Rule requirements with different transport/envelope choices. Use these as the starting point when building new integrations or minimal fixtures.
 
 ### B — Natural Person
 
-Natural person examples span the full range of onboarding complexity, from a plain SDD CDD payload through to a full EDD profile with PEP flag, source-of-wealth narrative, and UBO list.  The three EUDI Wallet variants (`-eudi-wallet`, `-sd-jwt-eudi-wallet`, `full-kyc-profile-eudi-wallet`) demonstrate EBSI DID triangulation and selective disclosure using SD-JWT `_sd` digest arrays.
+Natural person examples span the full range of onboarding complexity, from a plain SDD CDD payload through to expanded-by-exception profiles. The EUDI Wallet variants (`-eudi-wallet`, `-sd-jwt-eudi-wallet`, `full-kyc-profile-eudi-wallet`) demonstrate EBSI DID triangulation and selective disclosure, and `expanded-by-exception-external.json` shows external expanded sharing with internal operational metadata removed.
 
 ### C — Legal Entity
 
